@@ -1,0 +1,95 @@
+1)
+http://localhost:8080/bicorpus/search/corpus?ql=leg%E1ltal%E1nosabb&qr=&source=all
+DEBUG   2009-09-01 19:37:41.065  [fortress.corpus-searcher        ] (): query =
+left:legáltalánosabb left_stemmed:legáltalánosabb found = 1
+query: legáltalánosabb
+query: legáltalánosabb
+problem: stemming results the same word -> Ocamorph should handle this
+
+-----------
+2)
+Sorrendezéshez egy ötlet: 
+ha több forrásból is van találat, 
+akkor az első pár találat lehetőleg legyen különböző forrásokból, 
+hogy növelje a találatok sokféleségét.
+
+-----------
+3)
+??? 
+egy user kérte, hogy jó lenne, ha ctrl+enter a lap aljáról a tetejére ugrana.
+ez szerintem hülyeség, erre ott van a home billentyű (home+T on mac)
+
+a keresés után legyen a fókusz az inputboxon 
+(amelyiket használta, ha mind a kettőt használta, akkor a magyaron) 
+és legyen kijelölve a keresőkifejezés, 
+hogy azonnal lehessen gépelni az új keresést
+
+---
+4)
+duplumszűrés:
+a központozás nélküli mondatokból csinálunk egy hash-t és azt lerakjuk egy plusz mezőben.
+a lucene az indexeléskor figyelje, hogy ez szerepelt-e már a mondat (a hash-re keresünk rá) 
+és ha igen, akkor egy plusz fieldben megjegyezzük, hogy duplikátum
+
+Valami minimális heurisztika arra, hogy több közül melyiket mutatja meg.
+---
+4)
+bugs:
+search for this "-+tuesday"
+http://szotar.mokk.bme.hu/hunglish/search/corpus?ql=&qr=-%2Btuesday&source=all
+search for this "- tuesday"
+http://szotar.mokk.bme.hu/hunglish/search/corpus?ql=&qr=-+tuesday&source=all 
+----
+6)
+bug:
+eltűnik a keresőkifejezés a dobozból
+lásd (3)
+---
+7)
+feature
+Webapp. A felhasználó finomabban adhassa meg, hogy mely kategóriákban keres és melyeket hagy ki a keresésbol.
+A jelenlegi rendszer tetszőleges mélységű hierarchiát kezel. 
+A hierarchiát lehessen bővíteni. (hogyan?)
+A UI-en legyen kétféle szűkítési lehetőség. 
+Az egyik néhány olyan előredrótozott nodeset-re szűr, 
+mint pl: informális, formális, irodalmi, jogi. 
+A másikban ki van lapítva az egész fa, és ctrl-click-kel tetszőleges részhalmaz kijelölhető.
+---
+8)
+feature
+Webapp. Felhasználói visszajelzés (downvote, upvote) a találatokra.
+(implementation: plusz field az adatbázisban a szavazatokra, jobban kigondolni!!)
+Jó lenne, ha egy "Jelentem" funnkcióból annyi meglenne, hogy teccik/nem teccik
+ezeket pedig meg lehet nézni kézzel (commnd line),
+hogy mik voltak azok, amik sokakaknak teccenek ill. amik nem
+Ha úgy döntünk egy idő után, hogy érdemes,
+akkor lehessen config fáljból átállítani az alkalmazást, hogy a rankingben 
+előre vegye, amit sokan szerettek és hátra sorolja, amit sokan nem szerettek 
+---
+9)
+feature
+Webapp. A ranking javítása. 
+same as (2)
+
+---
+feature
+10) 
+Webapp. Webes felület az adatbetöltéshez.
+jogosultságokkal 
+---
+11)
+bug
+Idézőjel-eltűnős bug.
+
+---
+12)
+bug
+Jöjjön vissza az angol tövezés, ami valamilyen elszállós bug miatt lett kiszedve.
+---
+13)
+feature?
+Többszavas kifejezésekre is menjen a highlight.
+---
+
+
+  
