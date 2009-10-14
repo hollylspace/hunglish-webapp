@@ -1,6 +1,8 @@
 /*
  * Created by Peter Halacsy <peter at halacsy.com>
  * 
+ * Modified by bpgergo <bpgergo at gmail >
+ * 
  * This work is licensed under the Creative Commons 
  * Attribution License. To view a copy of this license, 
  * visit http://creativecommons.org/licenses/by/2.0/ 
@@ -129,7 +131,7 @@ Disposable {
         
         for( int i = 0 ; i < m_requestHandlerIds.length; i++)
         {
-           if(p.startsWith(m_requestHandlerPaths[i]))
+           if(p != null && p.startsWith(m_requestHandlerPaths[i]))
            {
                selectedRequestHandler = m_requestHandlers[i];
            }
