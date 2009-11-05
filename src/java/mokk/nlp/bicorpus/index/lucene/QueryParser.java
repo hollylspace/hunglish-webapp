@@ -55,7 +55,7 @@ public class QueryParser {
  
 
 
-    public Query parse(String left, String right) throws ParseException {
+    public BooleanQuery parse(String left, String right) throws ParseException {
         HunglishQueryParser qp = new HunglishQueryParser();
         QueryStructure qs = qp.parse(left, right);
         
@@ -204,14 +204,13 @@ public class QueryParser {
 
     }
 
-    private String[] stem(String s) {
+    /*private String[] stem(String s) {
         String[] stems = new String[3];
         stems[0] = s + "1";
         stems[1] = s + "2";
         stems[2] = s + "3";
-
         return stems;
-    }
+    }*/
 
     private Query termsToQuery(QueryPhrase.Field field, String[] terms) {
         String luceneField = "left";

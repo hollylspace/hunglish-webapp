@@ -143,8 +143,7 @@ Disposable {
             result = m_searcher.search(searchRequest );
         } catch (SearchException e) {
             logger.error("search exception", e);
-            throw new ServletException("search exception", e);
-            
+            throw new ServletException("search exception", e);            
         }
         context.put("request", searchRequest);
         context.put("result", result);
