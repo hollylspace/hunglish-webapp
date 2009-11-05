@@ -62,10 +62,10 @@ public class HunglishQueryParser {
 
         String p = pc;
 
-        if (p.charAt(0) == '-') {
+        if (p.length() > 1 && p.charAt(0) == '-') {
             qualifier = QueryPhrase.Qualifier.MUSTNOT;
             p = p.substring(1);
-        } else if (p.charAt(0) == '+') {
+        } else if (p.length() > 1 && p.charAt(0) == '+') {
             qualifier = QueryPhrase.Qualifier.MUST;
             p = p.substring(1);
         } else {
