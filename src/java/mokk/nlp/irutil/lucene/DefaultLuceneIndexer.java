@@ -128,7 +128,12 @@ Contextualizable {
        // RAMDirectory ram = new RAMDirectory();
         indexWriter = new IndexWriter(indexDir, analyzer, true);
         indexWriter.setMergeFactor(mergeFactor);
-        indexWriter.minMergeDocs = minMergeDocs;
+
+        //TODO this is commented out due to switch to latest Lucene release.
+        //find the equivalent method in new Lucene http://lucene.apache.org/java/1_9_0/api/index.html
+        //indexWriter.minMergeDocs = minMergeDocs;
+        indexWriter.setMaxBufferedDocs(minMergeDocs);
+        
        // indexWriter = new IndexWriter(ram, analyzer, true);
         logger.info("indexWriter opened in:" + indexDir);
         
@@ -149,8 +154,11 @@ Contextualizable {
         
         sourceId = config.getChild("source").getValue();
         logger.info("reading from source:" + sourceId);
-        
-        minMergeDocs = config.getChild("min-merge-docs").getValueAsInteger(IndexWriter.DEFAULT_MIN_MERGE_DOCS);
+
+        //TODO this is commented out due to switch to latest Lucene release.
+        //find the equivalent method in new Lucene http://lucene.apache.org/java/1_9_0/api/index.html
+        //minMergeDocs = config.getChild("min-merge-docs").getValueAsInteger(IndexWriter.DEFAULT_MIN_MERGE_DOCS);
+        minMergeDocs = config.getChild("min-merge-docs").getValueAsInteger(IndexWriter.DEFAULT_MAX_BUFFERED_DOCS);
         logger.info("minMergeDocs: " + minMergeDocs);
         
         mergeFactor = config.getChild("merge-factor").getValueAsInteger(IndexWriter.DEFAULT_MERGE_FACTOR);
