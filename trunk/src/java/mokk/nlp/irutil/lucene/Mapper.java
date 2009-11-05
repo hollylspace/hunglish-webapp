@@ -14,6 +14,7 @@
 package mokk.nlp.irutil.lucene;
 
 import mokk.nlp.irutil.Document;
+import mokk.nlp.irutil.SearchException;
 
 
 
@@ -27,7 +28,7 @@ import mokk.nlp.irutil.Document;
 public interface Mapper {
     public String ROLE = Mapper.class.getName();
 
-    public org.apache.lucene.document.Document toLucene(Document d);
+    public org.apache.lucene.document.Document toLucene(Document d) throws SearchException;
     
     public Document toResource(org.apache.lucene.document.Document luceneDocument);
 }

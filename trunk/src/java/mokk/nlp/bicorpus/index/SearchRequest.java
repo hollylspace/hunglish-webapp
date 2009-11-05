@@ -60,6 +60,12 @@ public class SearchRequest {
     protected String sourceId = null;
     
     
+    /**
+     * filter out duplicate values,
+     * see http://code.google.com/p/hunglish-webapp/issues/detail?id=4	
+     */
+    protected boolean excludeDuplicates = false;
+    
     
     public SearchRequest() {
        
@@ -170,4 +176,14 @@ public class SearchRequest {
     public void setCommonQuery(String commonQuery) {
         this.commonQuery = commonQuery;
     }
+
+
+	public boolean isExcludeDuplicates() {
+		return excludeDuplicates;
+	}
+
+
+	public void setExcludeDuplicates(boolean excludeDuplicates) {
+		this.excludeDuplicates = excludeDuplicates;
+	}
 }

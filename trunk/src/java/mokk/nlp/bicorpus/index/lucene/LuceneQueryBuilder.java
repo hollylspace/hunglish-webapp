@@ -14,16 +14,16 @@
 package mokk.nlp.bicorpus.index.lucene;
 
 import java.util.HashMap;
-import java.util.Map;
 
 import mokk.nlp.bicorpus.index.SearchRequest;
 import mokk.nlp.bicorpus.index.query.ParseException;
-import mokk.nlp.irutil.SearchException;
-import mokk.nlp.irutil.lucene.analysis.AnalyzerFactory;
 
-
+import org.apache.lucene.index.Term;
+import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.FilteredQuery;
 import org.apache.lucene.search.Query;
+import org.apache.lucene.search.TermQuery;
 
 /**
  * SearchRequest objektumbol csinal lucene szamara ertheto Queryt 
@@ -47,8 +47,8 @@ public class LuceneQueryBuilder {
 
     public Query parseRequest(SearchRequest request) throws  ParseException {
         
-    		String leftField = "left";
-    		String rightField = "right";
+    		//String leftField = "left";
+    		//String rightField = "right";
     		
     		
     //		if(request.getCommonQuery() != null ) {
@@ -56,7 +56,15 @@ public class LuceneQueryBuilder {
     	//	}
     		
     		
-    		Query query = qp.parse(request.getLeftQuery(), request.getRightQuery());
+    	Query query = qp.parse(request.getLeftQuery(), request.getRightQuery());
+    		
+    		//duplicate filter
+    		if (request.isExcludeDuplicates()){
+    			Term term = new Term(BisMapper.isDuplicateName, BisMapper.NO);
+    			TermQuery termQuery = new TermQuery(term);
+    			BooleanClause bc = new BooleanClause(termQuery, BooleanClause.Occur.MUST);
+    			((BooleanQuery)query).add(bc);
+    		}
     		
     		
     		if(query == null) {
