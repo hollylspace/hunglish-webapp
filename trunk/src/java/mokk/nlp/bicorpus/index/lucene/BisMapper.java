@@ -101,7 +101,9 @@ public class BisMapper implements Mapper, Component, LogEnabled, Configurable,
 
 	public void initialize() throws Exception {
 		sourceDb = (SourceDB) manager.lookup(SourceDB.ROLE);
-		indexReader = IndexReader.open(getContextualizedPath(indexDir));
+		String dbg = getContextualizedPath(indexDir);
+		logger.warn("Bismapper index dir:"+dbg);
+		indexReader = IndexReader.open(dbg);
 		leftDuplicateFilters = new HashSet<String>();
 		rightDuplicateFilters = new HashSet<String>();
 		searcher = new IndexSearcher(indexReader);
@@ -111,7 +113,7 @@ public class BisMapper implements Mapper, Component, LogEnabled, Configurable,
 
 	public void configure(Configuration config) throws ConfigurationException {
 		indexDir = config.getChild("index-dir").getValue();
-		if (indexDir == null) {
+		if (indexDir == null) { //this will not happen; avalon framework will throw exception on the line before 
 			throw new ConfigurationException("no index-dir specified");
 		}
 	}

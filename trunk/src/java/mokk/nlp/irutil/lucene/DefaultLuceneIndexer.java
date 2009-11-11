@@ -17,6 +17,7 @@ import java.io.IOException;
 
 import mokk.nlp.irutil.Document;
 import mokk.nlp.irutil.Indexer;
+import mokk.nlp.irutil.SearchException;
 import mokk.nlp.irutil.io.DocumentHandler;
 import mokk.nlp.irutil.io.DocumentSource;
 import mokk.nlp.irutil.io.ProcessingException;
@@ -37,6 +38,7 @@ import org.apache.avalon.framework.service.ServiceException;
 import org.apache.avalon.framework.service.ServiceManager;
 import org.apache.avalon.framework.service.Serviceable;
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexWriter;
 
 /**
@@ -63,7 +65,7 @@ public class DefaultLuceneIndexer implements Indexer, Component, LogEnabled,
 	private int minMergeDocs;
 
 
-	public void index() throws ProcessingException, IOException {
+	public void index() throws ProcessingException {
 
 		DocumentSource source;
 		try {
@@ -77,18 +79,28 @@ public class DefaultLuceneIndexer implements Indexer, Component, LogEnabled,
 			public void processDocument(Document d) throws ProcessingException {
 
 				try {
-					indexWriter.addDocument(mapper.toLucene(d)); // System.out.println(d.getText());
-				} catch (IOException e) {
-
-					new ProcessingException("can't index:" + d.getDocId(), e);
-				}
+					indexWriter.addDocument(mapper.toLucene(d));
+					// System.out.println(d.getText());
+				} catch (Exception e) { //IOException, SearchException
+					throw new ProcessingException("can't index:" + d.getDocId(), e);
+				} 
 			}
 		});
 		logger.info("starting to read from the source");
 
-		source.read();
+		try {
+			source.read();
+		} catch (IOException e) {
+			throw new ProcessingException("can't read:" + sourceId, e);			
+		}
 		logger.info("starting optimazitation");
-		indexWriter.optimize();
+		try {
+			indexWriter.optimize();
+		} catch (CorruptIndexException e) {
+			throw new ProcessingException("can't optimize index, CorruptIndexException", e);			
+		} catch (IOException e) {
+			throw new ProcessingException("can't optimize index, IOException", e);			
+		}
 	}
 
 	/**
@@ -98,7 +110,6 @@ public class DefaultLuceneIndexer implements Indexer, Component, LogEnabled,
 	 */
 	public void service(ServiceManager manager) throws ServiceException {
 		this.manager = manager;
-
 	}
 
 	/*
