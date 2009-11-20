@@ -37,6 +37,7 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.store.FSDirectory;
 
 /*
  * Az a komponens, ami egy BiSentence objektumot atalakit Lucene indexelhetove.
@@ -101,9 +102,12 @@ public class BisMapper implements Mapper, Component, LogEnabled, Configurable,
 
 	public void initialize() throws Exception {
 		sourceDb = (SourceDB) manager.lookup(SourceDB.ROLE);
-		String dbg = getContextualizedPath(indexDir);
-		logger.warn("Bismapper index dir:"+dbg);
-		indexReader = IndexReader.open(dbg);
+		String path = getContextualizedPath(indexDir);
+		logger.warn("Bismapper index dir:"+path);
+		//TODO it can be opened readonly in the webapp
+		//it should be opened readwrite when indexing
+		boolean readOnly = false;
+		indexReader = IndexReader.open(FSDirectory.open(new File(path)), readOnly);
 		leftDuplicateFilters = new HashSet<String>();
 		rightDuplicateFilters = new HashSet<String>();
 		searcher = new IndexSearcher(indexReader);
@@ -268,15 +272,19 @@ public class BisMapper implements Mapper, Component, LogEnabled, Configurable,
 		 * token
 		 */
 		d.add(new Field(leftFieldName, bis.getLeftSentence(), Field.Store.YES,
-				Field.Index.TOKENIZED, Field.TermVector.WITH_OFFSETS));
+				//Field.Index.TOKENIZED, Field.TermVector.WITH_OFFSETS));
+				Field.Index.ANALYZED, Field.TermVector.WITH_OFFSETS));
 		d.add(new Field(leftStemmedFieldName, bis.getLeftSentence(),
-				Field.Store.NO, Field.Index.TOKENIZED,
+				//Field.Store.NO, Field.Index.TOKENIZED,
+				Field.Store.NO, Field.Index.ANALYZED,
 				Field.TermVector.WITH_OFFSETS));
 		d.add(new Field(rightFieldName, bis.getRightSentence(),
-				Field.Store.YES, Field.Index.TOKENIZED,
+				//Field.Store.YES, Field.Index.TOKENIZED,
+				Field.Store.YES, Field.Index.ANALYZED,
 				Field.TermVector.WITH_OFFSETS));
 		d.add(new Field(rightStemmedFieldName, bis.getRightSentence(),
-				Field.Store.NO, Field.Index.TOKENIZED,
+				//Field.Store.NO, Field.Index.TOKENIZED,
+				Field.Store.NO, Field.Index.ANALYZED,
 				Field.TermVector.WITH_OFFSETS));
 
 		Source source;
@@ -285,7 +293,8 @@ public class BisMapper implements Mapper, Component, LogEnabled, Configurable,
 				.getParent()) {
 
 			d.add(new Field("source", source.getId(), Field.Store.YES,
-					Field.Index.UN_TOKENIZED, Field.TermVector.NO));
+					//Field.Index.UN_TOKENIZED, Field.TermVector.NO));
+					Field.Index.NOT_ANALYZED, Field.TermVector.NO));
 		}
 		d.add(new Field("sen", bis.getSenId(), Field.Store.YES, Field.Index.NO,
 				Field.TermVector.NO));

@@ -19,37 +19,43 @@ import java.util.BitSet;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.index.TermDocs;
+import org.apache.lucene.search.DocIdSet;
 import org.apache.lucene.search.Filter;
+import org.apache.lucene.util.DocIdBitSet;
 
 public class SourceFilter extends Filter {
 
-    		protected final static String SOURCE_FIELD = "source";
-       
-    		protected String sourceId  = null;
+	protected final static String SOURCE_FIELD = "source";
 
+	protected String sourceId = null;
 
-        public SourceFilter(String sourceId) {
-                this.sourceId = sourceId;
-             
-        }
+	public SourceFilter(String sourceId) {
+		this.sourceId = sourceId;
 
-        public BitSet bits(IndexReader reader) throws IOException {
-                BitSet bits = new BitSet(reader.maxDoc());
+	}
 
-                TermDocs termDocs = reader.termDocs(new Term(SOURCE_FIELD, sourceId));
+	public BitSet bits(IndexReader reader) throws IOException {
+		BitSet bits = new BitSet(reader.maxDoc());
 
-                if (termDocs == null) {
-                        return bits;
-                }
+		TermDocs termDocs = reader.termDocs(new Term(SOURCE_FIELD, sourceId));
 
-                try {
-                        while (termDocs.next())
-                                bits.set(termDocs.doc());
-                } finally {
-                        termDocs.close();
-                }
+		if (termDocs == null) {
+			return bits;
+		}
 
-                return bits;
-        }
+		try {
+			while (termDocs.next())
+				bits.set(termDocs.doc());
+		} finally {
+			termDocs.close();
+		}
+
+		return bits;
+	}
+
+	@Override
+	public DocIdSet getDocIdSet(IndexReader reader) throws IOException {
+		return new DocIdBitSet(bits(reader));
+	}
 
 }
