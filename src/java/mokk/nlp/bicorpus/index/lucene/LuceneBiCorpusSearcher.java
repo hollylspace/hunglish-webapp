@@ -45,11 +45,17 @@ import org.apache.avalon.framework.service.Serviceable;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.search.Hits;
+import org.apache.lucene.search.Collector;
+//import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
+import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.TopScoreDocCollector;
 
 import org.apache.lucene.search.highlight.TokenSources;
+import org.apache.lucene.store.FSDirectory;
+
+
 
 /**
  * @author hp
@@ -195,7 +201,12 @@ public class LuceneBiCorpusSearcher implements BiCorpusSearcher,
         rightLemmatizer = (Lemmatizer) manager.lookup(Lemmatizer.ROLE + "/" +rightLemmatizerId);
         m_mapper = (Mapper) manager.lookup(Mapper.ROLE + "/" + m_mapperId);
 
-        indexReader = IndexReader.open(getContextualizedPath(indexDir));
+        String path = getContextualizedPath(indexDir);
+		//TODO it can be opened readonly in the webapp
+		//it should be opened readwrite when indexing
+		boolean readOnly = false;
+		indexReader = IndexReader.open(FSDirectory.open(new File(path)), readOnly);
+        //indexReader = IndexReader.open(getContextualizedPath(indexDir));
         searcher = new IndexSearcher(indexReader);
         ;
 
@@ -215,6 +226,8 @@ public class LuceneBiCorpusSearcher implements BiCorpusSearcher,
         return contextDirectory.getAbsolutePath() + "/" + file;
     }
 
+    //TODO this should be totally rewritten
+    //this version always ask for ALL the matching documents
     public SearchResult search(SearchRequest request) throws SearchException {
 
         Query query;
@@ -225,14 +238,23 @@ public class LuceneBiCorpusSearcher implements BiCorpusSearcher,
         }
         SearchResult result = new SearchResult();
 
-        Hits h = null;
+        //TODO 
+        int maxDocumments = Integer.MAX_VALUE;
+        // Collect enough docs to show 1 pages
+        TopScoreDocCollector collector = TopScoreDocCollector.create(
+        		maxDocumments, false);
+
+        //Hits h = null;
         try {
-            h = searcher.search(query);
+            //h = 
+        	searcher.search(query, collector);
 
         } catch (IOException ioe) {
             throw new SearchException(ioe);
         }
-        int l = h.length();
+        //int l = h.length();
+        ScoreDoc[] hits = collector.topDocs().scoreDocs;
+        int l = collector.getTotalHits();
 
         if (logger.isDebugEnabled()) {
             logger.debug("query = " + query + " found = " + l);
@@ -254,9 +276,10 @@ public class LuceneBiCorpusSearcher implements BiCorpusSearcher,
         // bimondatot, plusz adunk hozza highlightingot
         for (int i = request.getStartOffset(); i < end; i++) {
             Document d;
-
+            int docId = hits[i].doc;
             try {
-                d = h.doc(i);
+                //d = h.doc(i);
+                d = searcher.doc(docId);
             } catch (IOException ioe) {
 
                 throw new SearchException(ioe);
@@ -267,7 +290,8 @@ public class LuceneBiCorpusSearcher implements BiCorpusSearcher,
 
                 try {
                     TokenStream leftTokens = TokenSources.getTokenStream(
-                            indexReader, h.id(i), "left_stemmed");
+                            //indexReader, h.id(i), "left_stemmed");
+                    		indexReader, docId, "left_stemmed");
 
     
                     bis.setLeftSentence(highlighter.highlight(bis.getLeftSentence(), leftTokens, queryTerms));
@@ -280,7 +304,8 @@ public class LuceneBiCorpusSearcher implements BiCorpusSearcher,
             if (request.isRightQuery()) {
                 TokenStream rightTokens;
                 try {
-                    rightTokens = TokenSources.getTokenStream(indexReader, h.id(i), "right_stemmed");
+                    //rightTokens = TokenSources.getTokenStream(indexReader, h.id(i), "right_stemmed");
+                	rightTokens = TokenSources.getTokenStream(indexReader, docId, "right_stemmed");
                     bis.setRightSentence(highlighter.highlight(bis.getRightSentence(), rightTokens, queryTerms));
 
                 } catch (IOException e) {

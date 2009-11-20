@@ -13,6 +13,7 @@
 
 package mokk.nlp.irutil.lucene;
 
+import java.io.File;
 import java.io.IOException;
 
 import mokk.nlp.irutil.Document;
@@ -40,6 +41,9 @@ import org.apache.avalon.framework.service.Serviceable;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.store.FSDirectory;
+
+
 
 /**
  * @avalon.component
@@ -61,9 +65,9 @@ public class DefaultLuceneIndexer implements Indexer, Component, LogEnabled,
 	private Analyzer analyzer;
 	private Mapper mapper;
 
+	private static int defaultMergeFactor = 100;
 	private int mergeFactor;
 	private int minMergeDocs;
-
 
 	public void index() throws ProcessingException {
 
@@ -81,9 +85,10 @@ public class DefaultLuceneIndexer implements Indexer, Component, LogEnabled,
 				try {
 					indexWriter.addDocument(mapper.toLucene(d));
 					// System.out.println(d.getText());
-				} catch (Exception e) { //IOException, SearchException
-					throw new ProcessingException("can't index:" + d.getDocId(), e);
-				} 
+				} catch (Exception e) { // IOException, SearchException
+					throw new ProcessingException(
+							"can't index:" + d.getDocId(), e);
+				}
 			}
 		});
 		logger.info("starting to read from the source");
@@ -91,15 +96,17 @@ public class DefaultLuceneIndexer implements Indexer, Component, LogEnabled,
 		try {
 			source.read();
 		} catch (IOException e) {
-			throw new ProcessingException("can't read:" + sourceId, e);			
+			throw new ProcessingException("can't read:" + sourceId, e);
 		}
 		logger.info("starting optimazitation");
 		try {
 			indexWriter.optimize();
 		} catch (CorruptIndexException e) {
-			throw new ProcessingException("can't optimize index, CorruptIndexException", e);			
+			throw new ProcessingException(
+					"can't optimize index, CorruptIndexException", e);
 		} catch (IOException e) {
-			throw new ProcessingException("can't optimize index, IOException", e);			
+			throw new ProcessingException("can't optimize index, IOException",
+					e);
 		}
 	}
 
@@ -129,7 +136,10 @@ public class DefaultLuceneIndexer implements Indexer, Component, LogEnabled,
 
 		mapper = (Mapper) manager.lookup(Mapper.ROLE + "/" + mapperId);
 		// RAMDirectory ram = new RAMDirectory();
-		indexWriter = new IndexWriter(indexDir, analyzer, true);
+
+		// indexWriter = new IndexWriter(indexDir, analyzer, true);
+		indexWriter = new IndexWriter(FSDirectory.open(new File(indexDir)),
+				analyzer, true, IndexWriter.MaxFieldLength.UNLIMITED);
 		indexWriter.setMergeFactor(mergeFactor);
 
 		// TODO this is commented out due to switch to latest Lucene release.
@@ -141,9 +151,7 @@ public class DefaultLuceneIndexer implements Indexer, Component, LogEnabled,
 		// indexWriter = new IndexWriter(ram, analyzer, true);
 		logger.info("indexWriter opened in:" + indexDir);
 
-
 	}
-
 
 	public void configure(Configuration config) throws ConfigurationException {
 		indexDir = config.getChild("index-dir").getValue();
@@ -170,7 +178,8 @@ public class DefaultLuceneIndexer implements Indexer, Component, LogEnabled,
 		logger.info("minMergeDocs: " + minMergeDocs);
 
 		mergeFactor = config.getChild("merge-factor").getValueAsInteger(
-				IndexWriter.DEFAULT_MERGE_FACTOR);
+				//IndexWriter.DEFAULT_MERGE_FACTOR);
+				defaultMergeFactor);
 		logger.info("mergeFactor:" + mergeFactor);
 	}
 
@@ -198,7 +207,7 @@ public class DefaultLuceneIndexer implements Indexer, Component, LogEnabled,
 	 * 
 	 * @see org.apache.avalon.framework.activity.Disposable#dispose()
 	 */
-	public void dispose() {        
+	public void dispose() {
 		if (indexWriter != null) {
 			try {
 				indexWriter.close();

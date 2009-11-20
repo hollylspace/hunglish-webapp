@@ -32,6 +32,7 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.LowerCaseFilter;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.standard.StandardTokenizer;
+import org.apache.lucene.util.Version;
 
 /**
  * @avalon.component
@@ -254,7 +255,8 @@ public class BiCorpusAnalyzerFactory
 	    
 		public TokenStream tokenStream(String field, Reader reader) {
 			 //  TokenStream result = new LetterTokenizer(reader);
-			 TokenStream result = new StandardTokenizer(reader);
+			//TODO FIXME VERSION
+			 TokenStream result = new StandardTokenizer(Version.LUCENE_CURRENT, reader);
 			
 	
 			 if(field.equals("left_stemmed") && leftLemmatizer != null) 
