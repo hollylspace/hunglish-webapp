@@ -35,7 +35,7 @@ import org.apache.lucene.analysis.TokenStream;
  * algorithm to achieve this.
  * </p>
  */
-public class CompoundWordTokenFilter extends CompoundWordTokenFilterBase {
+public class CompoundStemmerTokenFilter extends CompoundWordTokenFilterBase {
 
 	protected Lemmatizer lemmatizer = null;
 
@@ -52,7 +52,7 @@ public class CompoundWordTokenFilter extends CompoundWordTokenFilterBase {
 	 * @param input
 	 *            the {@link TokenStream} to process
 	 */
-	public CompoundWordTokenFilter(TokenStream input, Lemmatizer lemmatizer,
+	public CompoundStemmerTokenFilter(TokenStream input, Lemmatizer lemmatizer,
 			boolean returnOrig, boolean returnOOVOrig, boolean returnPOS) {
 		super(input);
 		this.returnOrig = returnOrig;

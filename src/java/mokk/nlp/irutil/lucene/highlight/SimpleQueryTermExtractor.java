@@ -19,21 +19,21 @@ import org.apache.lucene.search.highlight.WeightedTerm;
 
 /**
  * @author hp
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
+ * 
+ *         TODO To change the template for this generated type comment go to
+ *         Window - Preferences - Java - Code Style - Code Templates
  */
 public class SimpleQueryTermExtractor {
-    public static String[] getTerms(Query q) {
-        WeightedTerm[] weightedTerms = QueryTermExtractor.getTerms(q);
-        
-        String[] terms = new String[weightedTerms.length];
-        
-        for(int i = 0; i < weightedTerms.length; i++ ) {
-            terms[i] = weightedTerms[i].getTerm();
-            System.out.println("query: " + terms[i]);
-        }
-        
-        return terms;
-    }
+	public static String[] getTerms(Query q) {
+		WeightedTerm[] weightedTerms = QueryTermExtractor.getTerms(q);
+
+		String[] terms = new String[weightedTerms.length];
+
+		for (int i = 0; i < weightedTerms.length; i++) {
+			terms[i] = weightedTerms[i].getTerm();
+			// System.out.println("query: " + terms[i]);
+		}
+
+		return terms;
+	}
 }
