@@ -128,8 +128,10 @@ Serviceable
         LinkedList matchedToken = new LinkedList();
         // nem tul effektiven keresunk, dehat keves terms van
         Token token = null;
+        /*
         try {
-            while((token = t.next()) != null) {
+            
+        	while((token = t.next()) != null) {
            //    logger.debug("Token: " + token.termText());
                 for(int i = 0; i<terms.length; i++) {
                   
@@ -142,7 +144,7 @@ Serviceable
         } catch (IOException e) {
             logger.error("can't parse string:" + text);
             return text;
-        }
+        }*/
         
       //logger.debug("tn = " + matchedToken.size());
         // vegig a tokenekek is kuszurjuk az egymasba skatulyazottakat. a kezdet
@@ -157,9 +159,9 @@ Serviceable
             } else {
                 Token lastToken = (Token) filteredMatchedToken.getLast();
                 if (lastToken.startOffset() == token.startOffset()) {
-                    Token v = new Token(lastToken.termText(), lastToken.startOffset(), Math.max(lastToken.endOffset(), token.endOffset()));
+                    /*Token v = new Token(lastToken.termText(), lastToken.startOffset(), Math.max(lastToken.endOffset(), token.endOffset()));
                     filteredMatchedToken.removeLast();
-                    filteredMatchedToken.addLast(v);
+                    filteredMatchedToken.addLast(v);*/
                 } else {
                     filteredMatchedToken.addLast(token);
                 }

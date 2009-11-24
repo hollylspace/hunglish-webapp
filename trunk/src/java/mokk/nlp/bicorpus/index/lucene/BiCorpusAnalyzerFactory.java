@@ -11,7 +11,7 @@ package mokk.nlp.bicorpus.index.lucene;
 import java.io.Reader;
 
 import mokk.nlp.irutil.lucene.analysis.AnalyzerFactory;
-import mokk.nlp.irutil.lucene.analysis.StemmerTokenFilter;
+import mokk.nlp.irutil.lucene.analysis.CompoundStemmerTokenFilter;
 import mokk.nlp.jmorph.Analyser;
 import net.sf.jhunlang.jmorph.analysis.AnalyserContext;
 import net.sf.jhunlang.jmorph.analysis.AnalyserControl;
@@ -56,6 +56,13 @@ public class BiCorpusAnalyzerFactory
 	 * The jmorph analyser that used be the left lemmatizer
 	 */
 	private String leftAnalyserId;
+	
+	
+	/**
+	 * Whether the tokenfilter should return original word 
+	 */
+	private boolean returnOrig = false;
+	
 	/**
 	 * Whether the tokenfilter should return OOV words 
 	 */
@@ -116,7 +123,7 @@ public class BiCorpusAnalyzerFactory
 		this.logger=logger;
 		
 	}
-
+	
 	public void configure(Configuration config) throws ConfigurationException {
 	    
 	    Configuration leftLemmaConfig = config.getChild("left").getChild("lemmatization", false);
@@ -262,12 +269,15 @@ public class BiCorpusAnalyzerFactory
 			 if(field.equals("left_stemmed") && leftLemmatizer != null) 
 			 {
 			 	
-			 	result = new StemmerTokenFilter(leftLemmatizer, leftReturnOOVs, leftReturnPOS, result);
+			 	 //bpgergo forget old StemmerTokenFilter
+				 //result = new StemmerTokenFilter(leftLemmatizer, leftReturnOOVs, leftReturnPOS, result);
+				result = new CompoundStemmerTokenFilter(result, leftLemmatizer, returnOrig, leftReturnOOVs, leftReturnPOS);
 			
 			 } else if ( field.equals("right_stemmed" ) && rightLemmatizer != null)
 			 { 
 			 	
-			     result = new StemmerTokenFilter(rightLemmatizer, rightReturnOOVs, rightReturnPOS, result);
+			     //result = new StemmerTokenFilter(rightLemmatizer, rightReturnOOVs, rightReturnPOS, result);
+				 result = new CompoundStemmerTokenFilter(result, leftLemmatizer, returnOrig, leftReturnOOVs, leftReturnPOS);
 			 
 			 } 
 			    result = new LowerCaseFilter(result);

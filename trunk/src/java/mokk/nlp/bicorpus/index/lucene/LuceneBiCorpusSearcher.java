@@ -45,8 +45,7 @@ import org.apache.avalon.framework.service.Serviceable;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.search.Collector;
-//import org.apache.lucene.search.Hits;
+import org.apache.lucene.search.Collector; //import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
@@ -55,13 +54,12 @@ import org.apache.lucene.search.TopScoreDocCollector;
 import org.apache.lucene.search.highlight.TokenSources;
 import org.apache.lucene.store.FSDirectory;
 
-
-
 /**
  * @author hp
  * 
- * Implements the BiCorpusSearcher interface using the Jakarta Lucene search
- * engine API. It reads the index created by LuceneBiCorpusIndexer.
+ *         Implements the BiCorpusSearcher interface using the Jakarta Lucene
+ *         search engine API. It reads the index created by
+ *         LuceneBiCorpusIndexer.
  * 
  * @avalon.component
  * @avalon.service type=mokk.nlp.bicorpus.index.BiCorpusSearcher
@@ -70,258 +68,271 @@ import org.apache.lucene.store.FSDirectory;
  */
 public class LuceneBiCorpusSearcher implements BiCorpusSearcher,
 
- Component, LogEnabled, Configurable, Initializable, Serviceable, Disposable,
-        Contextualizable {
-    private Logger logger;
+Component, LogEnabled, Configurable, Initializable, Serviceable, Disposable,
+		Contextualizable {
+	private Logger logger;
 
-    private ServiceManager manager;
+	private ServiceManager manager;
 
-    private String indexDir;
+	private String indexDir;
 
-    private IndexSearcher searcher = null;
+	private IndexSearcher searcher = null;
 
-    private IndexReader indexReader = null;
+	private IndexReader indexReader = null;
 
-    private String leftLemmatizerId;
-    private String rightLemmatizerId;
+	private String leftLemmatizerId;
+	private String rightLemmatizerId;
 
-    private String m_mapperId;
+	private String m_mapperId;
 
-//    private String m_highlighterId;
+	// private String m_highlighterId;
 
-    private Mapper m_mapper = null;
+	private Mapper m_mapper = null;
 
-    private Lemmatizer leftLemmatizer;
-    private Lemmatizer rightLemmatizer;
+	private Lemmatizer leftLemmatizer;
+	private Lemmatizer rightLemmatizer;
 
-    //private Highlighter m_highlighter;
+	// private Highlighter m_highlighter;
 
-    private File contextDirectory;
+	private File contextDirectory;
 
-    private LuceneQueryBuilder queryBuilder;
+	private LuceneQueryBuilder queryBuilder;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.avalon.framework.activity.Disposable#dispose()
-     */
-    public void dispose() {
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.avalon.framework.activity.Disposable#dispose()
+	 */
+	public void dispose() {
 
-        if (indexReader != null) {
-            try {
-                indexReader.close();
-                indexReader = null;
-            } catch (IOException e) {
-                logger.error("can't gracefuly close indexReader", e);
-            }
-        }
+		if (indexReader != null) {
+			try {
+				indexReader.close();
+				indexReader = null;
+			} catch (IOException e) {
+				logger.error("can't gracefuly close indexReader", e);
+			}
+		}
 
-        if (leftLemmatizer != null) {
-            manager.release(leftLemmatizer);
-        }
+		if (leftLemmatizer != null) {
+			manager.release(leftLemmatizer);
+		}
 
-        if (rightLemmatizer != null) {
-            manager.release(rightLemmatizer);
-        }
+		if (rightLemmatizer != null) {
+			manager.release(rightLemmatizer);
+		}
 
-        if (m_mapper != null) {
-            manager.release(m_mapper);
-        }
+		if (m_mapper != null) {
+			manager.release(m_mapper);
+		}
 
-        //	if(m_highlighter != null) {
-        //	    manager.release(m_highlighter);
-        //	}
+		// if(m_highlighter != null) {
+		// manager.release(m_highlighter);
+		// }
 
-    }
+	}
 
-    /*
-     * @see org.apache.avalon.framework.logger.LogEnabled#enableLogging(org.apache.avalon.framework.logger.Logger)
-     */
-    public void enableLogging(Logger logger) {
-        this.logger = logger;
+	/*
+	 * @see
+	 * org.apache.avalon.framework.logger.LogEnabled#enableLogging(org.apache
+	 * .avalon.framework.logger.Logger)
+	 */
+	public void enableLogging(Logger logger) {
+		this.logger = logger;
 
-    }
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.avalon.framework.context.Contextualizable#contextualize(org.apache.avalon.framework.context.Context)
-     */
-    public void contextualize(Context context) throws ContextException {
-        contextDirectory = (File) context
-                .get(ContextManagerConstants.CONTEXT_DIRECTORY);
-        logger.info("context directory:" + contextDirectory);
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.avalon.framework.context.Contextualizable#contextualize(org
+	 * .apache.avalon.framework.context.Context)
+	 */
+	public void contextualize(Context context) throws ContextException {
+		contextDirectory = (File) context
+				.get(ContextManagerConstants.CONTEXT_DIRECTORY);
+		logger.info("context directory:" + contextDirectory);
 
-    }
+	}
 
-    /**
-     * @avalon.dependency type="mokk.nlp.jmorph.Lemmatizer"
-     * @avalon.dependency type="mokk.nlp.irutil.lucene.Mapper"
-     * 
-     */
-    public void service(ServiceManager manager) throws ServiceException {
-        this.manager = manager;
+	/**
+	 * @avalon.dependency type="mokk.nlp.jmorph.Lemmatizer"
+	 * @avalon.dependency type="mokk.nlp.irutil.lucene.Mapper"
+	 * 
+	 */
+	public void service(ServiceManager manager) throws ServiceException {
+		this.manager = manager;
 
-    }
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.avalon.framework.configuration.Configurable#configure(org.apache.avalon.framework.configuration.Configuration)
-     */
-    public void configure(Configuration config) throws ConfigurationException {
-        indexDir = config.getChild("index-dir").getValue();
-        if (indexDir == null) {
-            throw new ConfigurationException("no index-dir specified");
-        }
-        logger.info("index searched in directory: " + indexDir);
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.avalon.framework.configuration.Configurable#configure(org.
+	 * apache.avalon.framework.configuration.Configuration)
+	 */
+	public void configure(Configuration config) throws ConfigurationException {
+		indexDir = config.getChild("index-dir").getValue();
+		if (indexDir == null) {
+			throw new ConfigurationException("no index-dir specified");
+		}
+		logger.info("index searched in directory: " + indexDir);
 
-        leftLemmatizerId = config.getChild("left-lemmatizer").getValue();
-        logger.info("using left lemmatizer: " + leftLemmatizerId);
+		leftLemmatizerId = config.getChild("left-lemmatizer").getValue();
+		logger.info("using left lemmatizer: " + leftLemmatizerId);
 
-        rightLemmatizerId = config.getChild("right-lemmatizer").getValue();
-        logger.info("using right lemmatizer: " + rightLemmatizerId);
+		rightLemmatizerId = config.getChild("right-lemmatizer").getValue();
+		logger.info("using right lemmatizer: " + rightLemmatizerId);
 
-        m_mapperId = config.getChild("mapper").getValue();
-        logger.info("using mapper to recontstruct bisentence objects: "
-                + m_mapperId);
+		m_mapperId = config.getChild("mapper").getValue();
+		logger.info("using mapper to recontstruct bisentence objects: "
+				+ m_mapperId);
 
+	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.avalon.framework.activity.Initializable#initialize()
+	 */
+	public void initialize() throws Exception {
 
-    }
+		leftLemmatizer = (Lemmatizer) manager.lookup(Lemmatizer.ROLE + "/"
+				+ leftLemmatizerId);
+		rightLemmatizer = (Lemmatizer) manager.lookup(Lemmatizer.ROLE + "/"
+				+ rightLemmatizerId);
+		m_mapper = (Mapper) manager.lookup(Mapper.ROLE + "/" + m_mapperId);
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.avalon.framework.activity.Initializable#initialize()
-     */
-    public void initialize() throws Exception {
-
-        leftLemmatizer = (Lemmatizer) manager.lookup(Lemmatizer.ROLE + "/" +leftLemmatizerId);
-        rightLemmatizer = (Lemmatizer) manager.lookup(Lemmatizer.ROLE + "/" +rightLemmatizerId);
-        m_mapper = (Mapper) manager.lookup(Mapper.ROLE + "/" + m_mapperId);
-
-        String path = getContextualizedPath(indexDir);
-		//TODO it can be opened readonly in the webapp
-		//it should be opened readwrite when indexing
+		String path = getContextualizedPath(indexDir);
+		// TODO it can be opened readonly in the webapp
+		// it should be opened readwrite when indexing
 		boolean readOnly = false;
-		indexReader = IndexReader.open(FSDirectory.open(new File(path)), readOnly);
-        //indexReader = IndexReader.open(getContextualizedPath(indexDir));
-        searcher = new IndexSearcher(indexReader);
-        ;
+		indexReader = IndexReader.open(FSDirectory.open(new File(path)),
+				readOnly);
+		// indexReader = IndexReader.open(getContextualizedPath(indexDir));
+		searcher = new IndexSearcher(indexReader);
+		;
 
-        logger.info("indexReader opened in:" + indexDir);
+		logger.info("indexReader opened in:" + indexDir);
 
-        //	m_highlighter = (Highlighter) manager.lookup(Highlighter.ROLE + "/" +
-        // m_highlighterId);
-        queryBuilder = new LuceneQueryBuilder(new mokk.nlp.bicorpus.index.lucene.QueryParser(leftLemmatizer, rightLemmatizer));
+		// m_highlighter = (Highlighter) manager.lookup(Highlighter.ROLE + "/" +
+		// m_highlighterId);
+		queryBuilder = new LuceneQueryBuilder(
+				new mokk.nlp.bicorpus.index.lucene.QueryParser(leftLemmatizer,
+						rightLemmatizer));
 
-    }
+	}
 
-    private String getContextualizedPath(String file) {
-        if (file.startsWith("/")) {
-            return file;
-        }
+	private String getContextualizedPath(String file) {
+		if (file.startsWith("/")) {
+			return file;
+		}
 
-        return contextDirectory.getAbsolutePath() + "/" + file;
-    }
+		return contextDirectory.getAbsolutePath() + "/" + file;
+	}
 
-    //TODO this should be totally rewritten
-    //this version always ask for ALL the matching documents
-    public SearchResult search(SearchRequest request) throws SearchException {
+	// TODO FIXME this should be totally rewritten
+	// this version always ask for ALL the matching documents
+	public SearchResult search(SearchRequest request) throws SearchException {
 
-        Query query;
-        try {
-            query = queryBuilder.parseRequest(request);
-        } catch (ParseException e1) {
-            throw new SearchException(e1.getMessage(), e1);
-        }
-        SearchResult result = new SearchResult();
+		Query query;
+		try {
+			query = queryBuilder.parseRequest(request);
+		} catch (ParseException e1) {
+			throw new SearchException(e1.getMessage(), e1);
+		}
+		SearchResult result = new SearchResult();
 
-        //TODO 
-        int maxDocumments = Integer.MAX_VALUE;
-        // Collect enough docs to show 1 pages
-        TopScoreDocCollector collector = TopScoreDocCollector.create(
-        		maxDocumments, false);
+		// TODO
+		final int maxDocumments = 1000;
+		// Collect enough docs to show 1 pages
+		TopScoreDocCollector collector = TopScoreDocCollector.create(
+				maxDocumments, false);
 
-        //Hits h = null;
-        try {
-            //h = 
-        	searcher.search(query, collector);
+		// Hits h = null;
+		try {
+			// h =
+			searcher.search(query, collector);
 
-        } catch (IOException ioe) {
-            throw new SearchException(ioe);
-        }
-        //int l = h.length();
-        ScoreDoc[] hits = collector.topDocs().scoreDocs;
-        int l = collector.getTotalHits();
+		} catch (IOException ioe) {
+			throw new SearchException(ioe);
+		}
+		// int l = h.length();
+		ScoreDoc[] hits = collector.topDocs().scoreDocs;
+		int l = collector.getTotalHits();
 
-        if (logger.isDebugEnabled()) {
-            logger.debug("query = " + query + " found = " + l);
-        }
+		if (logger.isDebugEnabled()) {
+			logger.debug("query = " + query + " found = " + l);
+		}
 
-        result.setTotalCount(l);
-        result.setStartOffset(request.getStartOffset());
-        int end = request.getStartOffset() + request.getMaxResults();
-        if (end > l) {
-            end = l;
-        }
-        result.setEndOffset(end);
+		result.setTotalCount(l);
+		result.setStartOffset(request.getStartOffset());
+		int end = request.getStartOffset() + request.getMaxResults();
+		if (end > l) {
+			end = l;
+		}
+		result.setEndOffset(end);
 
-        // kiemeleshez
-        String queryTerms[] = SimpleQueryTermExtractor.getTerms(query);
-        Highlighter highlighter = new Highlighter("b", null);
-        
-        // kiolvassuk az aktualis lapon levo dokumentumokat, csinalunk beloluk
-        // bimondatot, plusz adunk hozza highlightingot
-        for (int i = request.getStartOffset(); i < end; i++) {
-            Document d;
-            int docId = hits[i].doc;
-            try {
-                //d = h.doc(i);
-                d = searcher.doc(docId);
-            } catch (IOException ioe) {
+		// kiemeleshez
+		String queryTerms[] = SimpleQueryTermExtractor.getTerms(query);
+		//Highlighter highlighter = new Highlighter("b", null);
 
-                throw new SearchException(ioe);
-            }
+		// kiolvassuk az aktualis lapon levo dokumentumokat, csinalunk beloluk
+		// bimondatot, plusz adunk hozza highlightingot
+		for (int i = request.getStartOffset(); i < end; i++) {
+			Document d;
+			int docId = hits[i].doc;
+			try {
+				// d = h.doc(i);
+				d = searcher.doc(docId);
+			} catch (IOException ioe) {
 
-            BiSentence bis = (BiSentence) m_mapper.toResource(d);
-            if (request.isLeftQuery()) {
+				throw new SearchException(ioe);
+			}
 
-                try {
-                    TokenStream leftTokens = TokenSources.getTokenStream(
-                            //indexReader, h.id(i), "left_stemmed");
-                    		indexReader, docId, "left_stemmed");
+			BiSentence bis = (BiSentence) m_mapper.toResource(d);
+			/*
+			if (request.isLeftQuery()) {
 
-    
-                    bis.setLeftSentence(highlighter.highlight(bis.getLeftSentence(), leftTokens, queryTerms));
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-            }
+				try {
+					TokenStream leftTokens = TokenSources.getTokenStream(
+					// indexReader, h.id(i), "left_stemmed");
+							indexReader, docId, "left_stemmed");
 
-            if (request.isRightQuery()) {
-                TokenStream rightTokens;
-                try {
-                    //rightTokens = TokenSources.getTokenStream(indexReader, h.id(i), "right_stemmed");
-                	rightTokens = TokenSources.getTokenStream(indexReader, docId, "right_stemmed");
-                    bis.setRightSentence(highlighter.highlight(bis.getRightSentence(), rightTokens, queryTerms));
+					bis.setLeftSentence(highlighter.highlight(bis
+							.getLeftSentence(), leftTokens, queryTerms));
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-            }
+			if (request.isRightQuery()) {
+				TokenStream rightTokens;
+				try {
+					// rightTokens = TokenSources.getTokenStream(indexReader,
+					// h.id(i), "right_stemmed");
+					rightTokens = TokenSources.getTokenStream(indexReader,
+							docId, "right_stemmed");
+					bis.setRightSentence(highlighter.highlight(bis
+							.getRightSentence(), rightTokens, queryTerms));
 
-            result.addToHits(bis);
-        }
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			} */
 
-        return result;
+			result.addToHits(bis);
+		}
 
-    }
+		return result;
 
-    public void close() throws IOException {
-        searcher.close();
-    }
+	}
+
+	public void close() throws IOException {
+		searcher.close();
+	}
 }

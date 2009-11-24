@@ -46,8 +46,8 @@ import org.apache.velocity.context.Context;
 
 /**
  * @author hp
- *
- * Handle request for search of BiCorpus
+ * 
+ *         Handle request for search of BiCorpus
  * 
  * @avalon.component
  * @avalon.service type=mokk.nlp.dictweb.RequestHandler
@@ -55,41 +55,36 @@ import org.apache.velocity.context.Context;
  * @x-avalon.lifestyle type=singleton
  * 
  */
-public class BiCorpusSearchHandler implements RequestHandler,
-Component, 
-LogEnabled, 
-Configurable, 
-Initializable, 
-Serviceable, 
-Disposable {
+public class BiCorpusSearchHandler implements RequestHandler, Component,
+		LogEnabled, Configurable, Initializable, Serviceable, Disposable {
 
-    public   int defaultN = 10;
-    public static final int defaultStart = 0;
-    
-    private BiCorpusSearcher  m_searcher;
-    private ServiceManager manager;
-    
-    private String m_searcherId = null;
- 
-    private Logger logger;
-    
-    private SourceDB sourceDb;
-	
-    private List availableSources = null;
+	public int defaultN = 10;
+	public static final int defaultStart = 0;
+
+	private BiCorpusSearcher m_searcher;
+	private ServiceManager manager;
+
+	private String m_searcherId = null;
+
+	private Logger logger;
+
+	private SourceDB sourceDb;
+
+	private List availableSources = null;
+
 	public void enableLogging(Logger logger) {
 		this.logger = logger;
 	}
-	
-	
-    public void configure(Configuration config) throws ConfigurationException {
-        m_searcherId = (String) config.getChild("searcher").getValue();
-        
-        defaultN = config.getChild("page-size").getValueAsInteger(defaultN);
-        
-        logger.info("using searcher: " + m_searcherId);
-        
-    }
-    
+
+	public void configure(Configuration config) throws ConfigurationException {
+		m_searcherId = (String) config.getChild("searcher").getValue();
+
+		defaultN = config.getChild("page-size").getValueAsInteger(defaultN);
+
+		logger.info("using searcher: " + m_searcherId);
+
+	}
+
 	/**
 	 * @avalon.dependency type="mokk.nlp.bicorpus.index.BiCorpusSearcher"
 	 * @avalon.dependency type="mokk.nlp.bicorpus.SourceDB"
@@ -97,142 +92,154 @@ Disposable {
 	public void service(ServiceManager manager) throws ServiceException {
 		this.manager = manager;
 	}
-	
-    public void initialize() throws Exception {
-        m_searcher = (BiCorpusSearcher) manager.lookup(BiCorpusSearcher.ROLE+ "/" +m_searcherId);
-    		sourceDb = (SourceDB) manager.lookup(SourceDB.ROLE);
-    		
-    		availableSources = new ArrayList(sourceDb.getKnownSources());
-    		Collections.sort(availableSources);
-    		
-    }
-    
 
-    public void dispose() {
-        if(m_searcher != null ) {
-            manager.release(m_searcher);
-        }
-        if(sourceDb != null ) {
-            manager.release(sourceDb);
-        }
-    }
-    
-    /* (non-Javadoc)
-     * @see mokk.nlp.bicorpus.servlet.RequestHandler#handleRequest(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, org.apache.velocity.context.Context)
-     */
-    public String handleRequest(HttpServletRequest request,
-            HttpServletResponse response, Context context) throws Exception {
-        request.setCharacterEncoding("ISO-8859-2");
-        response.setContentType("text/html; charset=iso-8859-2");
-        
-        
-        SearchRequest searchRequest = parseParameters(request);
-        
-        if(searchRequest.getCommonQuery() == null && searchRequest.getLeftQuery() == null && searchRequest.getRightQuery() == null) {
-            // no query specified
-            return "index.vm";
+	public void initialize() throws Exception {
+		m_searcher = (BiCorpusSearcher) manager.lookup(BiCorpusSearcher.ROLE
+				+ "/" + m_searcherId);
+		sourceDb = (SourceDB) manager.lookup(SourceDB.ROLE);
 
-         
+		availableSources = new ArrayList(sourceDb.getKnownSources());
+		Collections.sort(availableSources);
 
-        }
-        
-        
-      
-        SearchResult result = null;
-        try {
-            result = m_searcher.search(searchRequest );
-        } catch (SearchException e) {
-            logger.error("search exception", e);
-            throw new ServletException("search exception", e);            
-        }
-        context.put("request", searchRequest);
-        context.put("result", result);
-        context.put("sources", availableSources);
-        context.put("source", sourceDb.get(searchRequest.getSourceId()));
-        context.put("pager", getPager(request, searchRequest, result));
-        Template template = null;
+	}
 
-        return "result.vm";
-        
-    } 
+	public void dispose() {
+		if (m_searcher != null) {
+			manager.release(m_searcher);
+		}
+		if (sourceDb != null) {
+			manager.release(sourceDb);
+		}
+	}
 
-   public Pager getPager(HttpServletRequest request, SearchRequest searchRequest, SearchResult result) {
-       StringBuffer baseQuery = request.getRequestURL();
-       baseQuery.append("?");
-       try {
-           if (searchRequest.getCommonQuery() != null) {
-               baseQuery.append("&q=").append(URLEncoder.encode(searchRequest.getCommonQuery(), "ISO-8859-2"));
-               
-           }
-           baseQuery.append("ql=").append(URLEncoder.encode(searchRequest.getLeftQuery(), "ISO-8859-2"));
-           if(searchRequest.getLeftQuery() != null ) {
-               baseQuery.append("&qr=").append(URLEncoder.encode(searchRequest.getRightQuery(), "ISO-8859-2"));
-                   
-           }
-           if(searchRequest.getRightQuery() != null) {
-               baseQuery.append("&n=").append(searchRequest.getMaxResults());
-           }
-           if(searchRequest.getSourceId() != null) {
-            baseQuery.append("&source=").append(URLEncoder.encode(searchRequest.getSourceId(), "ISO-8859-2"));
-           }
-       } catch (UnsupportedEncodingException e) {
-           
-           // TODO Auto-generated catch block
-        e.printStackTrace();
-       }
-       if(!searchRequest.isStemLeftQuery()) {
-           baseQuery.append("&nostem_left=on");
-       }
-       if(!searchRequest.isStemRightQuery()) {
-           baseQuery.append("&nostem_right=on");
-       }
-       Pager pager = new Pager(baseQuery.toString(), searchRequest.getStartOffset(), searchRequest.getMaxResults(),result.getTotalCount(), "start" );
-       return pager;
-   }
-   
-   public String requestCharacterEncoding = "ISO-8859-2";
-   
-   public SearchRequest parseParameters(HttpServletRequest request) {
-       
-       SearchRequest searchRequest = new SearchRequest();
-       
-       String sourceId = request.getParameter("source");
-       if( sourceId == "" || sourceId == "all") {
-           sourceId = null;
-       }
-       searchRequest.setSourceId(sourceId);
-       String leftQuery = null;
-       
-   
-       searchRequest.setCommonQuery(request.getParameter("q"));
-       searchRequest.setLeftQuery(request.getParameter("ql"));
-       searchRequest.setRightQuery(request.getParameter("qr"));
-       
-       int n = defaultN;
-       int start = defaultStart;
-       try {
-           n = Integer.parseInt(request.getParameter("n"));
-           start = Integer.parseInt(request.getParameter("start"));
-       } catch (NumberFormatException nfe) {
-           // do nothing but use default values
-       }
-       
-       searchRequest.setStartOffset(start);
-       searchRequest.setMaxResults(n);
-       
-       if(request.getParameter("nostem_left") != null) {
-           searchRequest.setStemLeftQuery(false);
-       } else {
-           searchRequest.setStemLeftQuery(true);
-       }
-       if(request.getParameter("nostem_right") != null) {
-           searchRequest.setStemRightQuery(false);
-       } else {
-           searchRequest.setStemRightQuery(true);
-       }
-       return searchRequest;
-   }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * mokk.nlp.bicorpus.servlet.RequestHandler#handleRequest(javax.servlet.
+	 * http.HttpServletRequest, javax.servlet.http.HttpServletResponse,
+	 * org.apache.velocity.context.Context)
+	 */
+	public String handleRequest(HttpServletRequest request,
+			HttpServletResponse response, Context context) throws Exception {
+		request.setCharacterEncoding("ISO-8859-2");
+		response.setContentType("text/html; charset=iso-8859-2");
 
- 
+		SearchRequest searchRequest = parseParameters(request);
+
+		if (searchRequest.getCommonQuery() == null
+				&& searchRequest.getLeftQuery() == null
+				&& searchRequest.getRightQuery() == null) {
+			// no query specified
+			return "index.vm";
+
+		}
+
+		SearchResult result = null;
+		try {
+			result = m_searcher.search(searchRequest);
+		} catch (SearchException e) {
+			logger.error("search exception", e);
+			throw new ServletException("search exception", e);
+		}
+		context.put("request", searchRequest);
+		context.put("result", result);
+		context.put("sources", availableSources);
+		context.put("source", sourceDb.get(searchRequest.getSourceId()));
+		context.put("pager", getPager(request, searchRequest, result));
+		Template template = null;
+
+		return "result.vm";
+
+	}
+
+	public Pager getPager(HttpServletRequest request,
+			SearchRequest searchRequest, SearchResult result) {
+		StringBuffer baseQuery = request.getRequestURL();
+		baseQuery.append("?");
+		try {
+			if (searchRequest.getCommonQuery() != null) {
+				baseQuery.append("&q=").append(
+						URLEncoder.encode(searchRequest.getCommonQuery(),
+								"ISO-8859-2"));
+
+			}
+			baseQuery.append("ql=").append(
+					URLEncoder.encode(searchRequest.getLeftQuery(),
+							"ISO-8859-2"));
+			if (searchRequest.getLeftQuery() != null) {
+				baseQuery.append("&qr=").append(
+						URLEncoder.encode(searchRequest.getRightQuery(),
+								"ISO-8859-2"));
+
+			}
+			if (searchRequest.getRightQuery() != null) {
+				baseQuery.append("&n=").append(searchRequest.getMaxResults());
+			}
+			if (searchRequest.getSourceId() != null) {
+				baseQuery.append("&source=").append(
+						URLEncoder.encode(searchRequest.getSourceId(),
+								"ISO-8859-2"));
+			}
+		} catch (UnsupportedEncodingException e) {
+
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if (!searchRequest.isStemLeftQuery()) {
+			baseQuery.append("&nostem_left=on");
+		}
+		if (!searchRequest.isStemRightQuery()) {
+			baseQuery.append("&nostem_right=on");
+		}
+		Pager pager = new Pager(baseQuery.toString(), searchRequest
+				.getStartOffset(), searchRequest.getMaxResults(), result
+				.getTotalCount(), "start");
+		return pager;
+	}
+
+	public String requestCharacterEncoding = "ISO-8859-2";
+
+	public SearchRequest parseParameters(HttpServletRequest request) {
+
+		SearchRequest searchRequest = new SearchRequest();
+		//TODO FIXME from config
+		searchRequest.setExcludeDuplicates(true); 
+		
+		String sourceId = request.getParameter("source");
+		if (sourceId == "" || sourceId == "all") {
+			sourceId = null;
+		}
+		searchRequest.setSourceId(sourceId);
+		String leftQuery = null;
+
+		searchRequest.setCommonQuery(request.getParameter("q"));
+		searchRequest.setLeftQuery(request.getParameter("ql"));
+		searchRequest.setRightQuery(request.getParameter("qr"));
+
+		int n = defaultN;
+		int start = defaultStart;
+		try {
+			n = Integer.parseInt(request.getParameter("n"));
+			start = Integer.parseInt(request.getParameter("start"));
+		} catch (NumberFormatException nfe) {
+			// do nothing but use default values
+		}
+
+		searchRequest.setStartOffset(start);
+		searchRequest.setMaxResults(n);
+
+		if (request.getParameter("nostem_left") != null) {
+			searchRequest.setStemLeftQuery(false);
+		} else {
+			searchRequest.setStemLeftQuery(true);
+		}
+		if (request.getParameter("nostem_right") != null) {
+			searchRequest.setStemRightQuery(false);
+		} else {
+			searchRequest.setStemRightQuery(true);
+		}
+		return searchRequest;
+	}
 
 }
