@@ -64,9 +64,7 @@ public class LuceneQueryBuilder {
     			TermQuery termQuery = new TermQuery(term);
     			BooleanClause bc = new BooleanClause(termQuery, BooleanClause.Occur.MUST);
     			((BooleanQuery)query).add(bc);
-    		} else {
-    			throw new RuntimeException("fakkkkkkerrrrrrrrrrr");
-    		}
+    		} 
     		
     		
     		if(query == null) {
