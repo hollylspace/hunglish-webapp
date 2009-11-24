@@ -22,9 +22,7 @@ import mokk.nlp.bicorpus.index.SearchRequest;
 import mokk.nlp.bicorpus.index.query.ParseException;
 import mokk.nlp.irutil.SearchException;
 import mokk.nlp.irutil.SearchResult;
-import mokk.nlp.irutil.lucene.highlight.*;
 import mokk.nlp.irutil.lucene.Mapper;
-
 import mokk.nlp.jmorph.Lemmatizer;
 
 import org.apache.avalon.fortress.util.ContextManagerConstants;
@@ -45,12 +43,15 @@ import org.apache.avalon.framework.service.Serviceable;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.search.Collector; //import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopScoreDocCollector;
-
+import org.apache.lucene.search.highlight.Highlighter;
+import org.apache.lucene.search.highlight.InvalidTokenOffsetsException;
+import org.apache.lucene.search.highlight.QueryScorer;
+import org.apache.lucene.search.highlight.SimpleFragmenter;
+import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
 import org.apache.lucene.search.highlight.TokenSources;
 import org.apache.lucene.store.FSDirectory;
 
@@ -235,6 +236,8 @@ Component, LogEnabled, Configurable, Initializable, Serviceable, Disposable,
 
 	// TODO FIXME this should be totally rewritten
 	// this version always ask for ALL the matching documents
+	// TODO
+	static int maxDocumments = 1000;
 	public SearchResult search(SearchRequest request) throws SearchException {
 
 		Query query;
@@ -245,8 +248,6 @@ Component, LogEnabled, Configurable, Initializable, Serviceable, Disposable,
 		}
 		SearchResult result = new SearchResult();
 
-		// TODO
-		final int maxDocumments = 1000;
 		// Collect enough docs to show 1 pages
 		TopScoreDocCollector collector = TopScoreDocCollector.create(
 				maxDocumments, false);
@@ -275,10 +276,13 @@ Component, LogEnabled, Configurable, Initializable, Serviceable, Disposable,
 		}
 		result.setEndOffset(end);
 
+		
+		
 		// kiemeleshez
-		String queryTerms[] = SimpleQueryTermExtractor.getTerms(query);
+		//String queryTerms[] = SimpleQueryTermExtractor.getTerms(query);
 		//Highlighter highlighter = new Highlighter("b", null);
-
+		// */
+		
 		// kiolvassuk az aktualis lapon levo dokumentumokat, csinalunk beloluk
 		// bimondatot, plusz adunk hozza highlightingot
 		for (int i = request.getStartOffset(); i < end; i++) {
@@ -293,17 +297,24 @@ Component, LogEnabled, Configurable, Initializable, Serviceable, Disposable,
 			}
 
 			BiSentence bis = (BiSentence) m_mapper.toResource(d);
-			/*
+			
+			
 			if (request.isLeftQuery()) {
 
 				try {
+					
 					TokenStream leftTokens = TokenSources.getTokenStream(
 					// indexReader, h.id(i), "left_stemmed");
 							indexReader, docId, "left_stemmed");
-
+					/*
 					bis.setLeftSentence(highlighter.highlight(bis
 							.getLeftSentence(), leftTokens, queryTerms));
+					*/
+					bis.setLeftSentence(highlightField(leftTokens, query, "left_stemmed", bis.getLeftSentence())); 
 				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (InvalidTokenOffsetsException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
@@ -316,14 +327,18 @@ Component, LogEnabled, Configurable, Initializable, Serviceable, Disposable,
 					// h.id(i), "right_stemmed");
 					rightTokens = TokenSources.getTokenStream(indexReader,
 							docId, "right_stemmed");
-					bis.setRightSentence(highlighter.highlight(bis
-							.getRightSentence(), rightTokens, queryTerms));
+					//bis.setRightSentence(highlighter.highlight(bis
+					//		.getRightSentence(), rightTokens, queryTerms));
+					bis.setLeftSentence(highlightField(rightTokens, query, "left_stemmed", bis.getLeftSentence()));
 
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+				} catch (InvalidTokenOffsetsException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
-			} */
+			} //*/
 
 			result.addToHits(bis);
 		}
@@ -332,6 +347,17 @@ Component, LogEnabled, Configurable, Initializable, Serviceable, Disposable,
 
 	}
 
+	
+	  private static String highlightField(TokenStream tokenStream, Query query, String fieldName, String text)
+      throws IOException, InvalidTokenOffsetsException {
+		  SimpleHTMLFormatter formatter = new SimpleHTMLFormatter();
+    QueryScorer scorer = new QueryScorer(query, fieldName);
+    Highlighter highlighter = new Highlighter(formatter, scorer);
+    highlighter.setTextFragmenter(new SimpleFragmenter(Integer.MAX_VALUE));
+    String rv = highlighter.getBestFragments(tokenStream, text, 1, "(FIELD TEXT TRUNCATED)");
+    return rv.length() == 0 ? text : rv;
+  }
+	
 	public void close() throws IOException {
 		searcher.close();
 	}
