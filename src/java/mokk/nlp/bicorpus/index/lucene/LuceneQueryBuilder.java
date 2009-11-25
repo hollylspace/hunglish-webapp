@@ -18,12 +18,8 @@ import java.util.HashMap;
 import mokk.nlp.bicorpus.index.SearchRequest;
 import mokk.nlp.bicorpus.index.query.ParseException;
 
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.FilteredQuery;
 import org.apache.lucene.search.Query;
-import org.apache.lucene.search.TermQuery;
 
 /**
  * SearchRequest objektumbol csinal lucene szamara ertheto Queryt 
@@ -60,10 +56,11 @@ public class LuceneQueryBuilder {
     		
     		//duplicate filter
     		if (request.isExcludeDuplicates()){
-    			Term term = new Term(BisMapper.isDuplicateName, BisMapper.NO);
-    			TermQuery termQuery = new TermQuery(term);
-    			BooleanClause bc = new BooleanClause(termQuery, BooleanClause.Occur.MUST);
-    			((BooleanQuery)query).add(bc);
+    			//Term term = new Term(BisMapper.isDuplicateName, BisMapper.NO);
+    			//TermQuery termQuery = new TermQuery(term);
+    			//BooleanClause bc = new BooleanClause(termQuery, BooleanClause.Occur.MUST);
+    			//((BooleanQuery)query).add(bc);
+    			query = addSourceFilter(query, BisMapper.isDuplicateName, BisMapper.NO); 
     		} 
     		
     		
@@ -71,12 +68,12 @@ public class LuceneQueryBuilder {
     		    throw new ParseException ("no query");
     		}
     		
-    		query = addSourceFilter(query, request.getSourceId());
+    		query = addSourceFilter(query, null, request.getSourceId());
     		return query;
     	
     }
     
-    private Query addSourceFilter(Query q, String sourceId) {
+    private Query addSourceFilter(Query q, String fieldName, String sourceId) {
         if(sourceId == null || sourceId == "" || sourceId.equals("all")) {
             return q;
         }
@@ -87,7 +84,7 @@ public class LuceneQueryBuilder {
         synchronized (sourceFilterCache) {  // check cache
             filter = (SourceFilter) sourceFilterCache.get(sourceId);
             if (filter == null) {
-              filter = new CachingSourceFilter(sourceId);
+              filter = new CachingSourceFilter(fieldName, sourceId);
               sourceFilterCache.put(sourceId, filter);
             }
           }
