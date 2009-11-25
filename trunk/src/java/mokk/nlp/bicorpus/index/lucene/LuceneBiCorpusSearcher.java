@@ -316,6 +316,8 @@ Component, LogEnabled, Configurable, Initializable, Serviceable, Disposable,
 				} catch (InvalidTokenOffsetsException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+				} catch (IllegalArgumentException e){
+					// TODO do nothing
 				}
 			}
 

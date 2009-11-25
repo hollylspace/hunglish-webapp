@@ -23,21 +23,30 @@ import org.apache.lucene.search.DocIdSet;
 import org.apache.lucene.search.Filter;
 import org.apache.lucene.util.DocIdBitSet;
 
+/**
+ * @author bpgergo
+ * 
+ * Users can provide a fieldName with the constructor.
+ * If null, then a filter will be created on the "source" field
+ */
 public class SourceFilter extends Filter {
 
 	protected final static String SOURCE_FIELD = "source";
 
 	protected String sourceId = null;
+	protected String fieldName = SOURCE_FIELD;
 
-	public SourceFilter(String sourceId) {
+	public SourceFilter(String fieldName, String sourceId) {
 		this.sourceId = sourceId;
-
+		if (fieldName != null){
+			this.fieldName = fieldName;
+		}
 	}
 
 	public BitSet bits(IndexReader reader) throws IOException {
 		BitSet bits = new BitSet(reader.maxDoc());
 
-		TermDocs termDocs = reader.termDocs(new Term(SOURCE_FIELD, sourceId));
+		TermDocs termDocs = reader.termDocs(new Term(fieldName, sourceId));
 
 		if (termDocs == null) {
 			return bits;

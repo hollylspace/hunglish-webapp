@@ -21,24 +21,19 @@ import java.util.WeakHashMap;
 import org.apache.lucene.index.IndexReader;
 
 /**
- * @author hp
+ * @author hp, bpgergo
  *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
  */
 public class CachingSourceFilter extends SourceFilter {
-
-	private final static String SOURCE_FIELD = "source";
-
 
 	private transient Map cache;
 	
 	private SourceFilter filter = null;
 	
-	public CachingSourceFilter(String sourceId) {
+	public CachingSourceFilter(String fieldName, String sourceId) {
 	    
-        super(sourceId);
-        filter = new SourceFilter(sourceId);
+        super(fieldName, sourceId);
+        filter = new SourceFilter(fieldName, sourceId);
 	}
 
 	public BitSet bits(IndexReader reader) throws IOException {
