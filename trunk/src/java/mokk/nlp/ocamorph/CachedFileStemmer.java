@@ -17,7 +17,23 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * This class is actually used in the pipeline.
+ * It is used to stem an input file useing a stemtable.
+ * stemtable file format:
+ * word1<TAB>stem1.1<TAB>stem1.2<TAB>stem1.3
+ * word2<TAB>stem2.1<TAB>stem2.2
+ * word3<TAB>stem3
+ * 
+ * @author bpgergo
+ *
+ */
 public class CachedFileStemmer {
+	protected static String defaultEncoding = "ISO-8859-2"; 
+	protected static String SPACE = " ";
+	protected static String WHITESPACE = "\\s";
+	protected static String TAB = "\t";
+	protected static String EMPTY = "";
 
 	private Map<String, Set<String>> stemCache;
 
@@ -30,24 +46,67 @@ public class CachedFileStemmer {
 	 * this is the stemmer to get the stem of a token
 	 */
 	protected OcamorphStemmer stemmer;
+	
 	/**
 	 * encoding of the input file
 	 */
-	protected String fromEncoding = "ISO-8859-2";
+	protected String fromEncoding; 
 	/**
 	 * encoding of the output file
 	 */
-	protected String toEncoding = "ISO-8859-2";
+	protected String toEncoding;
 
-	BreakIterator wordIterator = BreakIterator.getWordInstance();
-
-	protected static String SPACE = " ";
-	protected static String WHITESPACE = "\\s";
-	protected static String TAB = "\t";
+	/**
+	 * The separator separates the word and the stems in the stemtable
+	 */
+	protected String separator; 
 	
-	static String EMPTY = "";
+	private BreakIterator wordIterator = BreakIterator.getWordInstance();
+
 
 	protected boolean debug = false;
+
+	public CachedFileStemmer(){
+		super();
+		this.ocamorphResource = null;
+		this.fromEncoding = defaultEncoding;
+		this.toEncoding = defaultEncoding;
+		this.separator = TAB;
+	}
+
+	public CachedFileStemmer(String separator){
+		super();
+		this.ocamorphResource = null;
+		this.fromEncoding = defaultEncoding;
+		this.toEncoding = defaultEncoding;
+		this.separator = separator;
+	}
+
+	public CachedFileStemmer(String encoding, String separator){
+		super();
+		this.ocamorphResource = null;
+		this.fromEncoding = encoding;
+		this.toEncoding = encoding;
+		this.separator = separator;
+	}
+
+	public CachedFileStemmer(String fromEncoding,
+			String toEncoding, String separator){
+		super();
+		this.ocamorphResource = null;
+		this.fromEncoding = fromEncoding;
+		this.toEncoding = toEncoding;
+		this.separator = separator;
+	}
+	
+	public CachedFileStemmer(String ocamorphResource, String fromEncoding,
+			String toEncoding, String separator) {
+		super();
+		this.ocamorphResource = ocamorphResource;
+		this.fromEncoding = fromEncoding;
+		this.toEncoding = toEncoding;
+		this.separator = separator;
+	}
 
 	/**
 	 * return the longest stem, useful with verbal particle (like
@@ -208,7 +267,7 @@ public class CachedFileStemmer {
 					if (line.length() > 0) {
 						boolean first = true;
 						Set<String> set = null;
-						for (String token : line.split("\t")) {
+						for (String token : line.split(TAB)) {
 							if (first) {
 								first = false;
 								set = stemCache.get(token);
@@ -294,6 +353,14 @@ public class CachedFileStemmer {
 
 	public void setOcamorphResource(String ocamorphResource) {
 		this.ocamorphResource = ocamorphResource;
+	}
+
+	public String getSeparator() {
+		return separator;
+	}
+
+	public void setSeparator(String separator) {
+		this.separator = separator;
 	}
 
 }
