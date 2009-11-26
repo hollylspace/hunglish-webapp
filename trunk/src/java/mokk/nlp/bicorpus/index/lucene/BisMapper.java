@@ -103,21 +103,27 @@ public class BisMapper implements Mapper, Component, LogEnabled, Configurable,
 	public void initialize() throws Exception {
 		sourceDb = (SourceDB) manager.lookup(SourceDB.ROLE);
 		String path = getContextualizedPath(indexDir);
-		logger.warn("Bismapper index dir:"+path);
-		//TODO it can be opened readonly in the webapp
-		//it should be opened readwrite when indexing
+		logger.warn("Bismapper index dir:" + path);
+		// TODO it can be opened readonly in the webapp
+		// it should be opened readwrite when indexing
 		boolean readOnly = false;
-		indexReader = IndexReader.open(FSDirectory.open(new File(path)), readOnly);
+		try {
+			indexReader = IndexReader.open(FSDirectory.open(new File(path)),
+					readOnly);
+			searcher = new IndexSearcher(indexReader);
+			logger.info("indexReader opened in:" + indexDir);
+		} catch (Exception e) {
+			logger.warn("no indexer provided for the sentence2doc mapper");
+		}
 		leftDuplicateFilters = new HashSet<String>();
 		rightDuplicateFilters = new HashSet<String>();
-		searcher = new IndexSearcher(indexReader);
-		logger.info("indexReader opened in:" + indexDir);
 
 	}
 
 	public void configure(Configuration config) throws ConfigurationException {
 		indexDir = config.getChild("index-dir").getValue();
-		if (indexDir == null) { //this will not happen; avalon framework will throw exception on the line before 
+		if (indexDir == null) { // this will not happen; avalon framework will
+			// throw exception on the line before
 			throw new ConfigurationException("no index-dir specified");
 		}
 	}
@@ -180,6 +186,14 @@ public class BisMapper implements Mapper, Component, LogEnabled, Configurable,
 	public static String YES = "Y";
 	public static String NO = "N";
 
+	/**
+	 * Duplicate will be searched in the currently processed file (using the cache)
+	 * and also in the index (actually in a copy)
+	 * @param d
+	 * @param bis
+	 * @param side
+	 * @throws SearchException
+	 */
 	private void addDuplicateFilterField(Document d, BiSentence bis, Side side)
 			throws SearchException {
 
@@ -215,7 +229,7 @@ public class BisMapper implements Mapper, Component, LogEnabled, Configurable,
 		// method allows you to test whether any updates have occurred to the
 		// index since your IndexReader was opened.
 		String isDuplicateValue = NO;
-		if ( checkCache(unIndexedDuplicateFilters, duplicateFilter)
+		if (checkCache(unIndexedDuplicateFilters, duplicateFilter)
 				|| alreadyInIndex(fieldName, duplicateFilter)) {
 			isDuplicateValue = YES;
 		}
@@ -231,32 +245,35 @@ public class BisMapper implements Mapper, Component, LogEnabled, Configurable,
 
 	}
 
-	private static void addCache(HashSet<String> cache, String word){
+	private static void addCache(HashSet<String> cache, String word) {
 		synchronized (cache) {
 			cache.add(word);
 		}
 	}
-	private static boolean checkCache(HashSet<String> cache, String word){
-		boolean result = false; 
+
+	private static boolean checkCache(HashSet<String> cache, String word) {
+		boolean result = false;
 		synchronized (cache) {
 			result = cache.contains(word);
 		}
 		return result;
 	}
-	
+
 	private boolean alreadyInIndex(String fieldName, String duplicateFilter)
 			throws SearchException {
 		boolean res = false;
-		Term term = new Term(fieldName, duplicateFilter);
-		Query query = new TermQuery(term);
-		TopDocs topDocs = null;
-		try {
-			topDocs = searcher.search(query, 1);
-		} catch (IOException ioe) {
-			throw new SearchException(ioe);
-		}
-		if (topDocs.totalHits > 0) {
-			res = true;
+		if (searcher != null) {
+			Term term = new Term(fieldName, duplicateFilter);
+			Query query = new TermQuery(term);
+			TopDocs topDocs = null;
+			try {
+				topDocs = searcher.search(query, 1);
+			} catch (IOException ioe) {
+				throw new SearchException(ioe);
+			}
+			if (topDocs.totalHits > 0) {
+				res = true;
+			}
 		}
 		return res;
 	}
@@ -272,18 +289,18 @@ public class BisMapper implements Mapper, Component, LogEnabled, Configurable,
 		 * token
 		 */
 		d.add(new Field(leftFieldName, bis.getLeftSentence(), Field.Store.YES,
-				//Field.Index.TOKENIZED, Field.TermVector.WITH_OFFSETS));
+		// Field.Index.TOKENIZED, Field.TermVector.WITH_OFFSETS));
 				Field.Index.ANALYZED, Field.TermVector.WITH_OFFSETS));
 		d.add(new Field(leftStemmedFieldName, bis.getLeftSentence(),
-				//Field.Store.NO, Field.Index.TOKENIZED,
+				// Field.Store.NO, Field.Index.TOKENIZED,
 				Field.Store.NO, Field.Index.ANALYZED,
 				Field.TermVector.WITH_OFFSETS));
 		d.add(new Field(rightFieldName, bis.getRightSentence(),
-				//Field.Store.YES, Field.Index.TOKENIZED,
+				// Field.Store.YES, Field.Index.TOKENIZED,
 				Field.Store.YES, Field.Index.ANALYZED,
 				Field.TermVector.WITH_OFFSETS));
 		d.add(new Field(rightStemmedFieldName, bis.getRightSentence(),
-				//Field.Store.NO, Field.Index.TOKENIZED,
+				// Field.Store.NO, Field.Index.TOKENIZED,
 				Field.Store.NO, Field.Index.ANALYZED,
 				Field.TermVector.WITH_OFFSETS));
 
@@ -293,7 +310,7 @@ public class BisMapper implements Mapper, Component, LogEnabled, Configurable,
 				.getParent()) {
 
 			d.add(new Field("source", source.getId(), Field.Store.YES,
-					//Field.Index.UN_TOKENIZED, Field.TermVector.NO));
+			// Field.Index.UN_TOKENIZED, Field.TermVector.NO));
 					Field.Index.NOT_ANALYZED, Field.TermVector.NO));
 		}
 		d.add(new Field("sen", bis.getSenId(), Field.Store.YES, Field.Index.NO,
@@ -342,10 +359,12 @@ public class BisMapper implements Mapper, Component, LogEnabled, Configurable,
 	}
 
 	public void close() throws IOException {
-		searcher.close();
+		if (searcher != null){
+			searcher.close();
+		}
 	}
 
-	//@Override
+	// @Override
 	public void enableLogging(Logger logger) {
 		this.logger = logger;
 	}
