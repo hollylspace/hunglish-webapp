@@ -345,7 +345,7 @@ public class BisMapper implements Mapper, Component, LogEnabled, Configurable,
 		searcher.close();
 	}
 
-	@Override
+	//@Override
 	public void enableLogging(Logger logger) {
 		this.logger = logger;
 	}
