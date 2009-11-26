@@ -3,6 +3,20 @@ package mokk.nlp.ocamorph;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
+/**
+ * This class is actually used in the pipeline.
+ * Stemming the input files is done in two steps.
+ * First a stemtable is created which contains the stems
+ * for every unique word.
+ * The second step is done by this class: every word is 
+ * replaced by its stem.
+ * 
+ * The first argument must be tokenized file, the second must be the cache file.
+ * The input and output encoding will be ISO-8859-2 
+ * 
+ * @author bpgergo
+ *
+ */
 public class FileStemmer {
 
 	public static void main(String[] args) throws FileNotFoundException {
