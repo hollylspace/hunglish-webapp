@@ -55,7 +55,7 @@ public class QueryParser {
  
 
 
-    public BooleanQuery parse(String left, String right) throws ParseException {
+    public Query parse(String left, String right) throws ParseException {
         HunglishQueryParser qp = new HunglishQueryParser();
         QueryStructure qs = qp.parse(left, right);
         
@@ -65,6 +65,7 @@ public class QueryParser {
             return null;
         }
         BooleanQuery theQuery = new BooleanQuery();
+        //PhraseQuery phraseQuery = new PhraseQuery();
         
         
         for (int i = 0; i < phrases.length; i++) {
@@ -90,6 +91,7 @@ public class QueryParser {
             }
 
             theQuery.add(bc);
+            //phraseQuery.add(term)
 
             if (stemmedQuery != null) {
 
