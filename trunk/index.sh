@@ -1,19 +1,23 @@
+#create index dir if not exists
 if [ -d index ]; then
-else 
-	mkdir index_copy
-fi 
+	echo "index dir already exits"
+else
+	mkdir index
+fi
+
+#create index_copy dir of not exists; otherwise remove its content
 if [ -d index_copy ]; then
 	rm -rf index_copy/*
-else 
+else
 	mkdir index_copy
 fi
+#copy old index into index_copy
+cp index/* index_copy/
+#remove old index ?
 if [ -d index ]; then
 	rm -rf index/*
-else 
 fi 
 
- 
-cp index/* index_copy/
 
 CLASSPATH="output/hunglishdict-1.0.jar"
 
