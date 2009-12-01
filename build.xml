@@ -153,6 +153,7 @@
 		<copy todir="${build.webapp}/index">
 			<fileset dir="${index.dir}">
 				<include name="*" />
+				<exclude name="*svn"/>
 			</fileset>
 		</copy>
 	</target>
