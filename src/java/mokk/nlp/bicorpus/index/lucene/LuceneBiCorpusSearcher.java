@@ -54,6 +54,7 @@ import org.apache.lucene.search.highlight.SimpleFragmenter;
 import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
 import org.apache.lucene.search.highlight.TokenSources;
 import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.store.SimpleFSDirectory;
 
 /**
  * @author hp
@@ -207,15 +208,15 @@ Component, LogEnabled, Configurable, Initializable, Serviceable, Disposable,
 		m_mapper = (Mapper) manager.lookup(Mapper.ROLE + "/" + m_mapperId);
 
 		String path = getContextualizedPath(indexDir);
-		// TODO it can be opened readonly in the webapp
-		// it should be opened readwrite when indexing
-		boolean readOnly = false;
-		indexReader = IndexReader.open(FSDirectory.open(new File(path)),
-				readOnly);
+		boolean readOnly = true;
 		// indexReader = IndexReader.open(getContextualizedPath(indexDir));
+		//indexReader = IndexReader.open(FSDirectory.open(new File(path)),
+		//		readOnly);
+		// TODO
+		// http://code.google.com/p/hunglish-webapp/issues/detail?id=24
+		indexReader = IndexReader.open(new SimpleFSDirectory(new File(path)),
+				readOnly);
 		searcher = new IndexSearcher(indexReader);
-		;
-
 		logger.info("indexReader opened in:" + indexDir);
 
 		// m_highlighter = (Highlighter) manager.lookup(Highlighter.ROLE + "/" +
