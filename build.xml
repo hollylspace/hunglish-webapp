@@ -155,11 +155,6 @@
 				<include name="*" />
 			</fileset>
 		</copy>
-		<copy todir="${build.webapp}/index_copy">
-			<fileset dir="${index_copy.dir}">
-				<include name="*" />
-			</fileset>
-		</copy>
 	</target>
 
 	<!-- =================================================================== -->
