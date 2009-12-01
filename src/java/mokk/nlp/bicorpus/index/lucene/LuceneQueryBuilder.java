@@ -56,11 +56,7 @@ public class LuceneQueryBuilder {
     		
     		//duplicate filter
     		if (request.isExcludeDuplicates()){
-    			//Term term = new Term(BisMapper.isDuplicateName, BisMapper.NO);
-    			//TermQuery termQuery = new TermQuery(term);
-    			//BooleanClause bc = new BooleanClause(termQuery, BooleanClause.Occur.MUST);
-    			//((BooleanQuery)query).add(bc);
-    			query = addSourceFilter(query, BisMapper.isDuplicateName, BisMapper.NO); 
+    			query = addSourceFilter(query, BisMapper.isDuplicateName, BisMapper.NO);
     		} 
     		
     		
@@ -68,14 +64,15 @@ public class LuceneQueryBuilder {
     		    throw new ParseException ("no query");
     		}
     		
-    		query = addSourceFilter(query, null, request.getSourceId());
+    		query = addSourceFilter(query, "source", request.getSourceId());
+    		
     		return query;
     	
     }
     
     private Query addSourceFilter(Query q, String fieldName, String sourceId) {
-        if(sourceId == null || sourceId == "" || sourceId.equals("all")) {
-            return q;
+        if(sourceId == null || sourceId == "" || (sourceId.equals("all") && fieldName.equals("source"))) {
+        	return q;
         }
         SourceFilter filter = null;
         // TODO: ha valami tobb indexben is keresni kell, akkor itt azzal kell

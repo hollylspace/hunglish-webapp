@@ -168,7 +168,7 @@ public class OcamorphWrapper {
 
 	/*private static void debug(String string) {
 		if (debug) {
-			System.out.println(string);
+			//System.out.printlnln(string);
 		}
 	}*/
 

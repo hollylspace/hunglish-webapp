@@ -24,8 +24,8 @@ public class Pager {
     
     public static void main (String args[]) {
         Pager pager = new Pager("", 0,  10, 12, "p");
-      //  System.out.println(pager.getPrev().getUrl());
-        System.out.println(pager.getNext().getUrl());
+      //  //System.out.printlnln(pager.getPrev().getUrl());
+      //System.out.printlnntln(pager.getNext().getUrl());
     }
     private String baseQuery;
     

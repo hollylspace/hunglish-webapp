@@ -246,7 +246,7 @@ public class CatalogReader implements DocumentSource, Component, LogEnabled,
         public void processDocument(Document d) throws ProcessingException {
             BiSentence bis = (BiSentence) d;
             bis.setSource(source);
-            //    System.out.println(source.getAbsoluteId());
+            //    //System.out.printlnln(source.getAbsoluteId());
             handler.processDocument(bis);
 
         }

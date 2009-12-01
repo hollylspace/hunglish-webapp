@@ -30,10 +30,10 @@ public class CachingSourceFilter extends SourceFilter {
 	
 	private SourceFilter filter = null;
 	
-	public CachingSourceFilter(String fieldName, String sourceId) {
+	public CachingSourceFilter(String fieldName, String fieldValue) {
 	    
-        super(fieldName, sourceId);
-        filter = new SourceFilter(fieldName, sourceId);
+        super(fieldName, fieldValue);
+        filter = new SourceFilter(fieldName, fieldValue);
 	}
 
 	public BitSet bits(IndexReader reader) throws IOException {

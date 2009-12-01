@@ -23,19 +23,23 @@ import org.apache.lucene.util.Version;
 
 public class Tester {
 
-	public static void hahahah(){
-		Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_CURRENT); // or any other analyzer
-	      TokenStream ts = analyzer.tokenStream("myfield", new StringReader("some text goes here"));
-	      TermAttribute termAtt = ts.addAttribute(TermAttribute.class);
-	      try {
+	public static void hahahah() {
+		Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_CURRENT); // or
+																			// any
+																			// other
+																			// analyzer
+		TokenStream ts = analyzer.tokenStream("myfield", new StringReader(
+				"some text goes here"));
+		TermAttribute termAtt = ts.addAttribute(TermAttribute.class);
+		try {
 			while (ts.incrementToken()) {
-			    System.out.println("--------token: "+ts);
-			    System.out.println("TermAtt: "+termAtt.term());
-			  }
+				// System.out.printlnln("--------token: "+ts);
+				// System.out.printlnntln("TermAtt: "+termAtt.term());
+			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}		
+		}
 	}
 
 	/**
@@ -88,8 +92,7 @@ public class Tester {
 			BufferedReader input, BufferedWriter out) throws IOException {
 		String line = null;
 		Map<String, Set<String>> stemCache = new HashMap<String, Set<String>>();
-		// Set<String> stems;
-		System.out.println("hehe1");
+		// Set<String> stems;//System.out.printlnrintln("hehe1");
 		while ((line = input.readLine()) != null) {
 			// out.write(line);
 			// out.write(colon);
@@ -100,21 +103,21 @@ public class Tester {
 				stemCache.put(word, stemmer.getStems(word));
 				// out.write("\n");
 			}
-		}
-		System.out.println("hehe2");
-		for (String word : stemCache.keySet()) {
-			out.write(word);
-			out.write(COLON);
-			for (String stem : stemCache.get(word)) {
-				out.write(stem);
-				out.write(TAB);
+			// System.out.println.println("hehe2");
+			for (String word : stemCache.keySet()) {
+				out.write(word);
+				out.write(COLON);
+				for (String stem : stemCache.get(word)) {
+					out.write(stem);
+					out.write(TAB);
+				}
+				out.write(NEWLINE);
 			}
-			out.write(NEWLINE);
+
+			out.close();
 		}
 
-		out.close();
 	}
-
 }
 
 /*

@@ -33,11 +33,11 @@ public class SourceFilter extends Filter {
 
 	protected final static String SOURCE_FIELD = "source";
 
-	protected String sourceId = null;
+	protected String filterValue = null;
 	protected String fieldName = SOURCE_FIELD;
 
-	public SourceFilter(String fieldName, String sourceId) {
-		this.sourceId = sourceId;
+	public SourceFilter(String fieldName, String fieldValue) {
+		this.filterValue = fieldValue;
 		if (fieldName != null){
 			this.fieldName = fieldName;
 		}
@@ -45,8 +45,8 @@ public class SourceFilter extends Filter {
 
 	public BitSet bits(IndexReader reader) throws IOException {
 		BitSet bits = new BitSet(reader.maxDoc());
-
-		TermDocs termDocs = reader.termDocs(new Term(fieldName, sourceId));
+		
+		TermDocs termDocs = reader.termDocs(new Term(fieldName, filterValue));
 
 		if (termDocs == null) {
 			return bits;
