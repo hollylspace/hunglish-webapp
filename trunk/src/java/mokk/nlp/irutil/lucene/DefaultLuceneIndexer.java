@@ -42,6 +42,7 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.store.SimpleFSDirectory;
 
 
 
@@ -138,7 +139,11 @@ public class DefaultLuceneIndexer implements Indexer, Component, LogEnabled,
 		// RAMDirectory ram = new RAMDirectory();
 
 		// indexWriter = new IndexWriter(indexDir, analyzer, true);
-		indexWriter = new IndexWriter(FSDirectory.open(new File(indexDir)),
+		//indexWriter = new IndexWriter(FSDirectory.open(new File(indexDir)),
+		//		analyzer, true, IndexWriter.MaxFieldLength.UNLIMITED);
+		// TODO
+		// http://code.google.com/p/hunglish-webapp/issues/detail?id=24
+		indexWriter = new IndexWriter(new SimpleFSDirectory(new File(indexDir)),
 				analyzer, true, IndexWriter.MaxFieldLength.UNLIMITED);
 		indexWriter.setMergeFactor(mergeFactor);
 

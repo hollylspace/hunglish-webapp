@@ -37,7 +37,7 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopDocs;
-import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.store.SimpleFSDirectory;
 
 /*
  * Az a komponens, ami egy BiSentence objektumot atalakit Lucene indexelhetove.
@@ -101,29 +101,50 @@ public class BisMapper implements Mapper, Component, LogEnabled, Configurable,
 
 	public void initialize() throws Exception {
 		sourceDb = (SourceDB) manager.lookup(SourceDB.ROLE);
-		String path = getContextualizedPath(indexDir);
-		logger.warn("Bismapper index dir:" + path);
-		// TODO it can be opened readonly in the webapp
-		// it should be opened readwrite when indexing
-		boolean readOnly = false;
-		try {
-			indexReader = IndexReader.open(FSDirectory.open(new File(path)),
-					readOnly);
-			searcher = new IndexSearcher(indexReader);
-			logger.info("indexReader opened in:" + indexDir);
-		} catch (Exception e) {
-			logger.warn("no indexer provided for the sentence2doc mapper");
+		String path = null;
+		if (indexDir != null) {
+			path = getContextualizedPath(indexDir);
+			logger.debug("Bismapper index dir:" + path);
+		} else {
+			logger.warn("Bismapper NO index dir");
 		}
-		logger.warn("create duplicateFilters");
+		if (path != null) {
+			// TODO it should not be opened in the webapp
+			// it should be opened readwrite when indexing
+			boolean readOnly = false;
+			try {
+				// TODO
+				// http://code.google.com/p/hunglish-webapp/issues/detail?id=24
+				// indexReader = IndexReader.open(FSDirectory.open(new
+				// File(path)),
+				// readOnly);
+				indexReader = IndexReader.open(new SimpleFSDirectory(new File(
+						path)), readOnly);
+				searcher = new IndexSearcher(indexReader);
+				logger.info("Bismapper, indexReader opened in:" + indexDir);
+			} catch (Exception e) {
+				logger.warn("Bismapper no indexer provided for the sentence2doc mapper");
+			}
+		}
 		duplicateFilters = new HashSet<Integer>();
 
 	}
 
+	/**
+	 * when used in seracher, only toResource(Document) us used, and there's no need for the index
+	 * but when used in indexer, index is used by toLucene(Document), looking for duplicates 
+	 */
 	public void configure(Configuration config) throws ConfigurationException {
-		indexDir = config.getChild("index-dir").getValue();
-		if (indexDir == null) { // this will not happen; avalon framework will
-			// throw exception on the line before
-			throw new ConfigurationException("no index-dir specified");
+		try {
+			indexDir = config.getChild("index-dir").getValue();
+			/*
+			 * if (indexDir == null) { // this will not happen; avalon framework
+			 * will // throw exception on the line before throw new
+			 * ConfigurationException("no index-dir specified"); }//
+			 */
+		} catch (Exception e) {
+			// TODO: handle exception
+			indexDir = null;
 		}
 	}
 
@@ -172,7 +193,7 @@ public class BisMapper implements Mapper, Component, LogEnabled, Configurable,
 				}
 			}
 		}
-		//reduce spaces
+		// reduce spaces
 		return sb.toString().replaceAll(" +", " ").trim();
 	}
 
@@ -188,43 +209,41 @@ public class BisMapper implements Mapper, Component, LogEnabled, Configurable,
 	public static String BOTH = "B";
 	public static String NO = "N";
 
-	
-	
-	
-	private boolean isDuplicate(HashSet<Integer> dupCache, String dupFieldName, Integer duplicateFilter) throws SearchException{
+	private boolean isDuplicate(HashSet<Integer> dupCache, String dupFieldName,
+			Integer duplicateFilter) throws SearchException {
 		boolean result = false;
 
 		boolean inCache = checkCache(dupCache, duplicateFilter);
-		if (inCache){
-			//logger.debug("<<<<< found in cache! "+dupFieldName+" duplicateFilter:"+duplicateFilter);
+		if (inCache) {
+			// logger.debug("<<<<< found in cache! "+dupFieldName+" duplicateFilter:"+duplicateFilter);
 			result = true;
 		} else {
 			boolean inIndex = alreadyInIndex(dupFieldName, duplicateFilter);
-			if (inIndex){
-				//logger.debug("<<<<< found in INDEX! "+dupFieldName+" duplicateFilter:"+duplicateFilter);
+			if (inIndex) {
+				// logger.debug("<<<<< found in INDEX! "+dupFieldName+" duplicateFilter:"+duplicateFilter);
 				result = true;
 			}
 		}
-		
+
 		return result;
 	}
-	
+
 	/**
-	 * Duplicate will be searched in the currently processed file (using the cache)
-	 * and also in the index (actually in a copy)
+	 * Duplicate will be searched in the currently processed file (using the
+	 * cache) and also in the index (actually in a copy)
+	 * 
 	 * @param d
 	 * @param bis
 	 * @param side
 	 * @throws SearchException
 	 */
 	private void addDuplicateFilterField(Document d, BiSentence bis)
-			throws SearchException {//System.out.printlnrintln("++++++addDuplicateFilterField Bis:"+bis);
+			throws SearchException {// System.out.printlnrintln("++++++addDuplicateFilterField Bis:"+bis);
 
-		
 		// Add a field for both sentence to support duplicate filtering.
 		// First clean punctuation,
 		// then get a hash of the punctuation free sentence.
-		
+
 		// Now a search will be done to check whether this sen has already been
 		// added to the index.
 		// http://wiki.apache.org/lucene-java/LuceneFAQ#Searching
@@ -237,40 +256,39 @@ public class BisMapper implements Mapper, Component, LogEnabled, Configurable,
 		// method allows you to test whether any updates have occurred to the
 		// index since your IndexReader was opened.
 
-		
-		String noPunct = stripPunctuation(bis.getLeftSentence()+" "+bis.getRightSentence());
+		String noPunct = stripPunctuation(bis.getLeftSentence() + " "
+				+ bis.getRightSentence());
 		Integer dupFilter = new Integer(noPunct.hashCode());
-		//System.out.println.println("-----NoPunct:"+noPunct+";filter:"+dupFilter);
-		
+		// System.out.println.println("-----NoPunct:"+noPunct+";filter:"+dupFilter);
+
 		String isDuplicateValue = NO;
-		if (isDuplicate(duplicateFilters, duplicateFilterName, dupFilter)){
+		if (isDuplicate(duplicateFilters, duplicateFilterName, dupFilter)) {
 			isDuplicateValue = YES;
 		}
-		
+
 		// add is_duplicate filed to the document
 		d.add(new Field(isDuplicateName, isDuplicateValue, Field.Store.YES,
 				Field.Index.NOT_ANALYZED, Field.TermVector.NO));
 
 		// Finally add duplicate filter field to the document
-		d.add(new Field(duplicateFilterName, dupFilter.toString(), Field.Store.YES,
-				Field.Index.NOT_ANALYZED, Field.TermVector.NO));
-		
+		d
+				.add(new Field(duplicateFilterName, dupFilter.toString(),
+						Field.Store.YES, Field.Index.NOT_ANALYZED,
+						Field.TermVector.NO));
 
 	}
 
 	/*
-	private static void addCache(HashSet<String> cache, String word) {
-		synchronized (cache) {
-			cache.add(word);
-		}
-	}*/
+	 * private static void addCache(HashSet<String> cache, String word) {
+	 * synchronized (cache) { cache.add(word); } }
+	 */
 
 	private static boolean checkCache(HashSet<Integer> cache, Integer word) {
 		boolean result = false;
 		synchronized (cache) {
 			result = cache.contains(word);
-			if (!result){
-				//System.out.printlnut.println(">>>>>> add to cahce!:"+word);
+			if (!result) {
+				// System.out.printlnut.println(">>>>>> add to cahce!:"+word);
 				cache.add(word);
 			}
 		}
@@ -291,7 +309,8 @@ public class BisMapper implements Mapper, Component, LogEnabled, Configurable,
 			}
 			if (topDocs.totalHits > 0) {
 				res = true;
-			}//System.out.println.out.println("????? index check !!!!! fieldName:"+fieldName+"; duplicateFilter:"+duplicateFilter.toString()+"; res:"+Boolean.toString(res));
+			}
+			// System.out.println.out.println("????? index check !!!!! fieldName:"+fieldName+"; duplicateFilter:"+duplicateFilter.toString()+"; res:"+Boolean.toString(res));
 		}
 		return res;
 	}
@@ -306,9 +325,9 @@ public class BisMapper implements Mapper, Component, LogEnabled, Configurable,
 		 * String name, String string, boolean store, boolean index, boolean
 		 * token
 		 */
-		d.add(new Field(leftFieldName, bis.getLeftSentence(), 
-		// Field.Index.TOKENIZED, Field.TermVector.WITH_OFFSETS));
-				Field.Store.YES, Field.Index.ANALYZED, 
+		d.add(new Field(leftFieldName, bis.getLeftSentence(),
+				// Field.Index.TOKENIZED, Field.TermVector.WITH_OFFSETS));
+				Field.Store.YES, Field.Index.ANALYZED,
 				Field.TermVector.WITH_POSITIONS_OFFSETS));
 		d.add(new Field(leftStemmedFieldName, bis.getLeftSentence(),
 				// Field.Store.NO, Field.Index.TOKENIZED,
@@ -355,11 +374,12 @@ public class BisMapper implements Mapper, Component, LogEnabled, Configurable,
 			source = Source.UNKNOWN_SOURCE;
 		} else {
 
-			for (int i = 0; i < sources.length; i++){
-			//System.out.printlnem.out.println(sources[i]);
+			for (int i = 0; i < sources.length; i++) {
+				// System.out.printlnem.out.println(sources[i]);
 				Source s = sourceDb.get(sources[i]);
-				if (s != null){
-					//System.out.printlnstem.out.println(s.getId() + " " + s.getLevel());
+				if (s != null) {
+					// System.out.printlnstem.out.println(s.getId() + " " +
+					// s.getLevel());
 					if (s.getLevel() > deepeth) {
 						source = s;
 						deepeth = s.getLevel();
@@ -377,7 +397,7 @@ public class BisMapper implements Mapper, Component, LogEnabled, Configurable,
 	}
 
 	public void close() throws IOException {
-		if (searcher != null){
+		if (searcher != null) {
 			searcher.close();
 		}
 	}
