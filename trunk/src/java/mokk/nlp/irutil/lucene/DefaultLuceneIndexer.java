@@ -84,7 +84,7 @@ public class DefaultLuceneIndexer implements Indexer, Component, LogEnabled,
 
 				try {
 					indexWriter.addDocument(mapper.toLucene(d));
-					// System.out.println(d.getText());
+					// //System.out.printlnln(d.getText());
 				} catch (Exception e) { // IOException, SearchException
 					throw new ProcessingException(
 							"can't index:" + d.getDocId(), e);

@@ -130,7 +130,7 @@ public class OcamorphStemmer {
 	}
 	private void debug(String val){
 		if (debug){
-			System.out.println(val);
+			//System.out.printlnln(val);
 		}
 	}
 

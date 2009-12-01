@@ -21,7 +21,7 @@ public class HunglishQueryParser {
 
     public static void main(String args[]) throws ParseException {
         HunglishQueryParser qp = new HunglishQueryParser();
-        System.out.println(qp.parse("-<ablak> \"ajto ablak\"", "-<don't know>"));
+        //System.out.printlnln(qp.parse("-<ablak> \"ajto ablak\"", "-<don't know>"));
     }
     public QueryStructure parse(String left, String right) throws ParseException {
         QueryStructure qs = new QueryStructure();

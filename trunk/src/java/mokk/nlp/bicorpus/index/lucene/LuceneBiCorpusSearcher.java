@@ -318,6 +318,7 @@ Component, LogEnabled, Configurable, Initializable, Serviceable, Disposable,
 					e.printStackTrace();
 				} catch (IllegalArgumentException e){
 					// TODO do nothing
+					e.printStackTrace();
 				}
 			}
 
@@ -338,6 +339,9 @@ Component, LogEnabled, Configurable, Initializable, Serviceable, Disposable,
 					e.printStackTrace();
 				} catch (InvalidTokenOffsetsException e) {
 					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalArgumentException e){
+					// TODO do nothing
 					e.printStackTrace();
 				}
 			} // */

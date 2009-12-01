@@ -89,8 +89,7 @@ public class BisMapper implements Mapper, Component, LogEnabled, Configurable,
 	private IndexSearcher searcher = null;
 	private IndexReader indexReader = null;
 	private File contextDirectory;
-	private HashSet<String> leftDuplicateFilters;
-	private HashSet<String> rightDuplicateFilters;
+	private HashSet<Integer> duplicateFilters;
 
 	/**
 	 * @avalon.dependency type="mokk.nlp.bicorpus.SourceDB"
@@ -115,8 +114,8 @@ public class BisMapper implements Mapper, Component, LogEnabled, Configurable,
 		} catch (Exception e) {
 			logger.warn("no indexer provided for the sentence2doc mapper");
 		}
-		leftDuplicateFilters = new HashSet<String>();
-		rightDuplicateFilters = new HashSet<String>();
+		logger.warn("create duplicateFilters");
+		duplicateFilters = new HashSet<Integer>();
 
 	}
 
@@ -169,10 +168,11 @@ public class BisMapper implements Mapper, Component, LogEnabled, Configurable,
 			for (int i = 0; i < s.length(); i++) {
 				char c = s.charAt(i);
 				if (c == 0x20 || Character.isLetterOrDigit(c)) {
-					sb = sb.append(s.charAt(i));
+					sb = sb.append(Character.toLowerCase(s.charAt(i)));
 				}
 			}
 		}
+		//reduce spaces
 		return sb.toString().replaceAll(" +", " ").trim();
 	}
 
@@ -180,12 +180,35 @@ public class BisMapper implements Mapper, Component, LogEnabled, Configurable,
 		LEFT, RIGHT
 	}
 
-	public static String leftDuplicateFilterName = "leftDuplicateFilter";
-	public static String rightDuplicateFilterName = "rightDuplicateFilter";
+	public static String duplicateFilterName = "duplicateFilter";
 	public static String isDuplicateName = "isDuplicate";
+	public static String RIGHT = "R";
+	public static String LEFT = "L";
 	public static String YES = "Y";
+	public static String BOTH = "B";
 	public static String NO = "N";
 
+	
+	
+	
+	private boolean isDuplicate(HashSet<Integer> dupCache, String dupFieldName, Integer duplicateFilter) throws SearchException{
+		boolean result = false;
+
+		boolean inCache = checkCache(dupCache, duplicateFilter);
+		if (inCache){
+			//logger.debug("<<<<< found in cache! "+dupFieldName+" duplicateFilter:"+duplicateFilter);
+			result = true;
+		} else {
+			boolean inIndex = alreadyInIndex(dupFieldName, duplicateFilter);
+			if (inIndex){
+				//logger.debug("<<<<< found in INDEX! "+dupFieldName+" duplicateFilter:"+duplicateFilter);
+				result = true;
+			}
+		}
+		
+		return result;
+	}
+	
 	/**
 	 * Duplicate will be searched in the currently processed file (using the cache)
 	 * and also in the index (actually in a copy)
@@ -194,29 +217,14 @@ public class BisMapper implements Mapper, Component, LogEnabled, Configurable,
 	 * @param side
 	 * @throws SearchException
 	 */
-	private void addDuplicateFilterField(Document d, BiSentence bis, Side side)
-			throws SearchException {
+	private void addDuplicateFilterField(Document d, BiSentence bis)
+			throws SearchException {//System.out.printlnrintln("++++++addDuplicateFilterField Bis:"+bis);
 
+		
 		// Add a field for both sentence to support duplicate filtering.
 		// First clean punctuation,
 		// then get a hash of the punctuation free sentence.
-		String duplicateFilter = null;
-		String fieldName = null;
-		HashSet<String> unIndexedDuplicateFilters = null;
-		switch (side) {
-		case LEFT: {
-			duplicateFilter = stripPunctuation(bis.getLeftSentence());
-			fieldName = leftDuplicateFilterName;
-			unIndexedDuplicateFilters = leftDuplicateFilters;
-		}
-		case RIGHT: {
-			duplicateFilter = stripPunctuation(bis.getRightSentence());
-			fieldName = rightDuplicateFilterName;
-			unIndexedDuplicateFilters = rightDuplicateFilters;
-		}
-		}
-		duplicateFilter = new Integer(duplicateFilter.hashCode()).toString();
-
+		
 		// Now a search will be done to check whether this sen has already been
 		// added to the index.
 		// http://wiki.apache.org/lucene-java/LuceneFAQ#Searching
@@ -228,42 +236,52 @@ public class BisMapper implements Mapper, Component, LogEnabled, Configurable,
 		// IndexReaders to see the latest updates. The IndexReader.isCurrent()
 		// method allows you to test whether any updates have occurred to the
 		// index since your IndexReader was opened.
+
+		
+		String noPunct = stripPunctuation(bis.getLeftSentence()+" "+bis.getRightSentence());
+		Integer dupFilter = new Integer(noPunct.hashCode());
+		//System.out.println.println("-----NoPunct:"+noPunct+";filter:"+dupFilter);
+		
 		String isDuplicateValue = NO;
-		if (checkCache(unIndexedDuplicateFilters, duplicateFilter)
-				|| alreadyInIndex(fieldName, duplicateFilter)) {
+		if (isDuplicate(duplicateFilters, duplicateFilterName, dupFilter)){
 			isDuplicateValue = YES;
 		}
+		
 		// add is_duplicate filed to the document
 		d.add(new Field(isDuplicateName, isDuplicateValue, Field.Store.YES,
 				Field.Index.NOT_ANALYZED, Field.TermVector.NO));
 
 		// Finally add duplicate filter field to the document
-		d.add(new Field(fieldName, duplicateFilter, Field.Store.YES,
+		d.add(new Field(duplicateFilterName, dupFilter.toString(), Field.Store.YES,
 				Field.Index.NOT_ANALYZED, Field.TermVector.NO));
-		// and also add it to the HashSet for unindexed Documents
-		addCache(unIndexedDuplicateFilters, duplicateFilter);
+		
 
 	}
 
+	/*
 	private static void addCache(HashSet<String> cache, String word) {
 		synchronized (cache) {
 			cache.add(word);
 		}
-	}
+	}*/
 
-	private static boolean checkCache(HashSet<String> cache, String word) {
+	private static boolean checkCache(HashSet<Integer> cache, Integer word) {
 		boolean result = false;
 		synchronized (cache) {
 			result = cache.contains(word);
+			if (!result){
+				//System.out.printlnut.println(">>>>>> add to cahce!:"+word);
+				cache.add(word);
+			}
 		}
 		return result;
 	}
 
-	private boolean alreadyInIndex(String fieldName, String duplicateFilter)
+	private boolean alreadyInIndex(String fieldName, Integer duplicateFilter)
 			throws SearchException {
 		boolean res = false;
 		if (searcher != null) {
-			Term term = new Term(fieldName, duplicateFilter);
+			Term term = new Term(fieldName, duplicateFilter.toString());
 			Query query = new TermQuery(term);
 			TopDocs topDocs = null;
 			try {
@@ -273,7 +291,7 @@ public class BisMapper implements Mapper, Component, LogEnabled, Configurable,
 			}
 			if (topDocs.totalHits > 0) {
 				res = true;
-			}
+			}//System.out.println.out.println("????? index check !!!!! fieldName:"+fieldName+"; duplicateFilter:"+duplicateFilter.toString()+"; res:"+Boolean.toString(res));
 		}
 		return res;
 	}
@@ -288,21 +306,22 @@ public class BisMapper implements Mapper, Component, LogEnabled, Configurable,
 		 * String name, String string, boolean store, boolean index, boolean
 		 * token
 		 */
-		d.add(new Field(leftFieldName, bis.getLeftSentence(), Field.Store.YES,
+		d.add(new Field(leftFieldName, bis.getLeftSentence(), 
 		// Field.Index.TOKENIZED, Field.TermVector.WITH_OFFSETS));
-				Field.Index.ANALYZED, Field.TermVector.WITH_OFFSETS));
+				Field.Store.YES, Field.Index.ANALYZED, 
+				Field.TermVector.WITH_POSITIONS_OFFSETS));
 		d.add(new Field(leftStemmedFieldName, bis.getLeftSentence(),
 				// Field.Store.NO, Field.Index.TOKENIZED,
 				Field.Store.NO, Field.Index.ANALYZED,
-				Field.TermVector.WITH_OFFSETS));
+				Field.TermVector.WITH_POSITIONS_OFFSETS));
 		d.add(new Field(rightFieldName, bis.getRightSentence(),
 				// Field.Store.YES, Field.Index.TOKENIZED,
 				Field.Store.YES, Field.Index.ANALYZED,
-				Field.TermVector.WITH_OFFSETS));
+				Field.TermVector.WITH_POSITIONS_OFFSETS));
 		d.add(new Field(rightStemmedFieldName, bis.getRightSentence(),
 				// Field.Store.NO, Field.Index.TOKENIZED,
 				Field.Store.NO, Field.Index.ANALYZED,
-				Field.TermVector.WITH_OFFSETS));
+				Field.TermVector.WITH_POSITIONS_OFFSETS));
 
 		Source source;
 
@@ -316,8 +335,7 @@ public class BisMapper implements Mapper, Component, LogEnabled, Configurable,
 		d.add(new Field("sen", bis.getSenId(), Field.Store.YES, Field.Index.NO,
 				Field.TermVector.NO));
 
-		addDuplicateFilterField(d, bis, Side.LEFT);
-		addDuplicateFilterField(d, bis, Side.RIGHT);
+		addDuplicateFilterField(d, bis);
 
 		return d;
 	}
@@ -337,11 +355,11 @@ public class BisMapper implements Mapper, Component, LogEnabled, Configurable,
 			source = Source.UNKNOWN_SOURCE;
 		} else {
 
-			for (int i = 0; i < sources.length; i++) {
-				// System.out.println(sources[i]);
+			for (int i = 0; i < sources.length; i++){
+			//System.out.printlnem.out.println(sources[i]);
 				Source s = sourceDb.get(sources[i]);
-				if (s != null) {
-					// System.out.println(s.getId() + " " + s.getLevel());
+				if (s != null){
+					//System.out.printlnstem.out.println(s.getId() + " " + s.getLevel());
 					if (s.getLevel() > deepeth) {
 						source = s;
 						deepeth = s.getLevel();

@@ -39,7 +39,7 @@ public class DaemonClient {
 			try {
 				while ((userInput = stdIn.readLine()) != null) {
 					out.println(userInput);
-					System.out.println("echo: " + in.readLine());
+					//System.out.printlnln("echo: " + in.readLine());
 				}
 			} finally {
 				out.close();

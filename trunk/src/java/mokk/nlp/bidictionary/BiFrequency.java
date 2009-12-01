@@ -26,16 +26,16 @@ public class BiFrequency {
 			
 			List trans = bidict.getRightTranslation(line);
 			if(trans == null) {
-				System.out.println(line + "nincs a sz?t?rban");
+				//System.out.printlnln(line + "nincs a sz?t?rban");
 				continue;
 			}
-			System.out.println("sz?t?rban tal?ltam:");
+	//System.out.printlnntln("sz?t?rban tal?ltam:");
 			
 			Iterator it = trans.iterator();
 			while(it.hasNext()) {
 				String h = (String) it.next();
 				List result = null; // searcher.search(h, line, 20); 
-				System.out.println(line + "\t" + h + "\t" + result.size());
+//System.out.printlnrintln(line + "\t" + h + "\t" + result.size());
 			}
 		}
     	searcher.close();

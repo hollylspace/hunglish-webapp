@@ -140,8 +140,8 @@ public class MainServlet extends VelocityServlet {
 
     if (path == null)
     {
-        System.out.println(" SampleServlet.loadConfiguration() : unable to " 
-                           + "get the current webapp root.  Using '/'. Please fix.");
+        //System.out.printlnln(" SampleServlet.loadConfiguration() : unable to " 
+                           //+ "get the current webapp root.  Using '/'. Please fix.");
 
         path = "/";
     }
