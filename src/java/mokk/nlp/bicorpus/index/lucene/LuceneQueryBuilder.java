@@ -43,10 +43,6 @@ public class LuceneQueryBuilder {
 
     public Query parseRequest(SearchRequest request) throws  ParseException {
         
-    		//String leftField = "left";
-    		//String rightField = "right";
-    		
-    		
     //		if(request.getCommonQuery() != null ) {
     	//	    QueryParser qp = new QueryParser("nodefault", )
     	//	}
