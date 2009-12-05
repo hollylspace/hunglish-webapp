@@ -9,12 +9,8 @@ package mokk.nlp.jmorph;
 import java.io.File;
 import java.util.List;
 
-import net.sf.jhunlang.jmorph.Dictionaries;
-import net.sf.jhunlang.jmorph.Rules;
 import net.sf.jhunlang.jmorph.analysis.AnalyserContext;
 import net.sf.jhunlang.jmorph.analysis.AnalyserControl;
-import net.sf.jhunlang.jmorph.analysis.IStem;
-import net.sf.jhunlang.jmorph.analysis.consumer.AnalysisConsumer;
 import net.sf.jhunlang.jmorph.factory.Definition;
 import net.sf.jhunlang.jmorph.factory.JMorphFactory;
 import net.sf.jhunlang.jmorph.lemma.Lemma;

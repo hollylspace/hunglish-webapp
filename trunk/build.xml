@@ -138,6 +138,8 @@
 		<copy todir="${build.webapp}/WEB-INF/lib">
 			<fileset dir="${build.dir}">
 				<include name="*.jar" />
+				<exclude name="servlet.jar"/>
+				<exclude name="servlet-api.jar"/>
 			</fileset>
 		</copy>
 		<copy todir="${build.webapp}/data/jmorph">

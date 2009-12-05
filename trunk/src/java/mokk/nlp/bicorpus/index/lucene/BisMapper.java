@@ -75,10 +75,10 @@ public class BisMapper implements Mapper, Component, LogEnabled, Configurable,
 	/*
 	 * TODO: configuracioba vele
 	 */
-	private static String leftFieldName = "left";
-	private static String leftStemmedFieldName = "left_stemmed";
-	private static String rightFieldName = "right";
-	private static String rightStemmedFieldName = "right_stemmed";
+	public static String leftFieldName = "left";
+	public static String leftStemmedFieldName = "left_stemmed";
+	public static String rightFieldName = "right";
+	public static String rightStemmedFieldName = "right_stemmed";
 
 	ServiceManager manager = null;
 
@@ -123,7 +123,8 @@ public class BisMapper implements Mapper, Component, LogEnabled, Configurable,
 				searcher = new IndexSearcher(indexReader);
 				logger.info("Bismapper, indexReader opened in:" + indexDir);
 			} catch (Exception e) {
-				logger.warn("Bismapper no indexer provided for the sentence2doc mapper");
+				logger
+						.warn("Bismapper no indexer provided for the sentence2doc mapper");
 			}
 		}
 		duplicateFilters = new HashSet<Integer>();
@@ -131,8 +132,9 @@ public class BisMapper implements Mapper, Component, LogEnabled, Configurable,
 	}
 
 	/**
-	 * when used in seracher, only toResource(Document) us used, and there's no need for the index
-	 * but when used in indexer, index is used by toLucene(Document), looking for duplicates 
+	 * when used in seracher, only toResource(Document) us used, and there's no
+	 * need for the index but when used in indexer, index is used by
+	 * toLucene(Document), looking for duplicates
 	 */
 	public void configure(Configuration config) throws ConfigurationException {
 		try {
@@ -271,11 +273,9 @@ public class BisMapper implements Mapper, Component, LogEnabled, Configurable,
 				Field.Index.NOT_ANALYZED, Field.TermVector.NO));
 
 		// Finally add duplicate filter field to the document
-		d
-				.add(new Field(duplicateFilterName, dupFilter.toString(),
-						Field.Store.YES, Field.Index.NOT_ANALYZED,
-						Field.TermVector.NO));
-
+		d.add(new Field(duplicateFilterName, dupFilter.toString(),
+				Field.Store.YES, Field.Index.NOT_ANALYZED,
+				Field.TermVector.NO));
 	}
 
 	/*
