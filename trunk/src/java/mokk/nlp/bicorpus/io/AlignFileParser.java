@@ -123,15 +123,15 @@ public class AlignFileParser implements FileDocumentSource, Component,
 		BiSentence bis = null;
 		try {
 			String[] fields = line.split("\\t");
-			String left = fields[1];
-			String right = fields[2];
+			String left = fields[0];
+			String right = fields[1];
 			bis = new BiSentence(source, "" + lineNumber, left,
 					right);
 		} catch (Exception e) {
 			bis = null;
 			//throw new ProcessingException(e.getMessage() + ";line number:"
 			//		+ lineNumber);
-			logger.warn("cant parse line, source:"+source+"; line:"+line);
+			logger.warn("cant parse line, source:"+source+"; line:\n"+line);
 			e.printStackTrace();
 		}
 		return bis;
