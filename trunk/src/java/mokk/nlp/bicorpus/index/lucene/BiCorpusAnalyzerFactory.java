@@ -127,12 +127,13 @@ public class BiCorpusAnalyzerFactory
 	public void configure(Configuration config) throws ConfigurationException {
 	    
 	    Configuration leftLemmaConfig = config.getChild("left").getChild("lemmatization", false);
+    	returnOrig = config.getChild("return-orig").getValueAsBoolean(true);
+	    logger.debug(">>> BiCorpusAnalyzerFactory returnOrig="+Boolean.toString(returnOrig));
 	    if (leftLemmaConfig != null) {
 	        leftAnalyserId = leftLemmaConfig.getChild("morph-analyzer").getValue();
 	        leftStripDerivates = leftLemmaConfig.getChild("strip-derivates").getValueAsBoolean(false);
 	        leftReturnOOVs = leftLemmaConfig.getChild("index-oovs-as-stem").getValueAsBoolean(false);
 	        leftReturnPOS = leftLemmaConfig.getChild("append-pos").getValueAsBoolean(false);
-	    	
 	     
 	        String depth = leftLemmaConfig.getChild("depth").getValue("");
 	        leftDepth = 0;

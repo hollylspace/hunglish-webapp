@@ -68,8 +68,8 @@ public class CompoundStemmerTokenFilter extends CompoundWordTokenFilterBase {
 		if (token.termLength() < this.MIN_WORD_SIZE) {
 			return;
 		}
-
-		List<Lemma> lemmas = lemmatizer.lemmatize(new String(token.termBuffer()));		
+		String origWord = new String(token.termBuffer());
+		List<Lemma> lemmas = lemmatizer.lemmatize(origWord);		
 		// az eredeti tokent csak akkor adjuk vissza, ha a szo ismeretlen
 		// es kertek
 		if ((lemmas.size() == 0) 
@@ -82,13 +82,13 @@ public class CompoundStemmerTokenFilter extends CompoundWordTokenFilterBase {
 			boolean isFirst = true;
 			for (Lemma lemma : lemmas){
 				Token stemToken = null;
-				String text;
+				String stemmedText;
 				if(returnPOS) {
-				    text = lemma.getWord() + "/" + lemma.getPOS(); 
+				    stemmedText = lemma.getWord() + "/" + lemma.getPOS(); 
 				} else {
-					text = lemma.getWord();
+					stemmedText = lemma.getWord();
 				}
-			    stemToken = new Token(text, 
+			    stemToken = new Token(stemmedText, 
 						   token.startOffset(), 
 						   token.endOffset(), 
 						   token.type());
@@ -98,7 +98,12 @@ public class CompoundStemmerTokenFilter extends CompoundWordTokenFilterBase {
 				if(returnOrig || !isFirst) {
 				    stemToken.setPositionIncrement(0);
 				}
-				tokens.add(stemToken);
+				// if the original token is the same as the stemmed text
+				// and the origian token was returned as well
+				// then no need to return the stemmed token
+				if (!(returnOrig && origWord.toLowerCase().equals(stemmedText.toLowerCase()))){
+					tokens.add(stemToken);
+				} 
 				isFirst = false;
 			}
 		}
