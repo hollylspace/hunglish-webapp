@@ -15,6 +15,7 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.store.SimpleFSDirectory;
 import org.apache.lucene.util.Version;
 
 public class TestIndexer {
@@ -27,7 +28,7 @@ public class TestIndexer {
 	 */
 	public static void main(String[] args) throws IOException, ParseException {
 		Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_CURRENT);
-		Directory directory = FSDirectory.open(new File(args[0]));
+		Directory directory = SimpleFSDirectory.open(new File(args[0]));
 		System.out.println("directory opened:"+args[0]);
 		IndexWriter iwriter = new IndexWriter(directory, analyzer, true,
 				new IndexWriter.MaxFieldLength(25000));
