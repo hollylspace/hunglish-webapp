@@ -19,12 +19,19 @@ import org.apache.lucene.util.Version;
 
 public class TestIndexer {
 
+	/**
+	 * http://hudson.zones.apache.org/hudson/job/Lucene-trunk/javadoc/core/index.html
+	 * @param args
+	 * @throws IOException
+	 * @throws ParseException
+	 */
 	public static void main(String[] args) throws IOException, ParseException {
 		Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_CURRENT);
 		Directory directory = FSDirectory.open(new File(args[0]));
-
+		System.out.println("directory opened:"+args[0]);
 		IndexWriter iwriter = new IndexWriter(directory, analyzer, true,
 				new IndexWriter.MaxFieldLength(25000));
+		System.out.println("indexwriter opened");
 		Document doc = new Document();
 		String text = "This is the text to be indexed.";
 		doc.add(new Field("fieldname", text, Field.Store.YES,
