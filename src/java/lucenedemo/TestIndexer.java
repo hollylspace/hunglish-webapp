@@ -21,7 +21,7 @@ public class TestIndexer {
 
 	public static void main(String[] args) throws IOException, ParseException {
 		Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_CURRENT);
-		Directory directory = FSDirectory.open(new File("/tmp/testindex"));
+		Directory directory = FSDirectory.open(new File(args[0]));
 
 		IndexWriter iwriter = new IndexWriter(directory, analyzer, true,
 				new IndexWriter.MaxFieldLength(25000));
