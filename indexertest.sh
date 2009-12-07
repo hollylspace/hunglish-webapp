@@ -1,4 +1,4 @@
-CLASSPATH="output/hunglishdict-1.0.jar:lib/lucene-core-3.0-dev.jar"
+CLASSPATH="output/hunglishdict-1.0.jar:lib-lucene/lucene-core-3.0.0.jar"
 
 #for jar in lib/*.jar
 #do
