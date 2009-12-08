@@ -13,6 +13,8 @@
 
 package mokk.nlp.jmorph;
 
+//import net.sf.jhunlang.jmorph.factory.Definition;
+
 
 
 /**
@@ -22,5 +24,7 @@ package mokk.nlp.jmorph;
 public interface Analyser extends net.sf.jhunlang.jmorph.analysis.Analyser {
     public String ROLE=Analyser.class.getName();
     
+//    public void setAffixDef(Definition affixDef);
+//    public void setDicDef(Definition dicDef);
 
 }

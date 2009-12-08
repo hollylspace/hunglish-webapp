@@ -128,7 +128,7 @@ public class BiCorpusAnalyzerFactory
 	    
 	    Configuration leftLemmaConfig = config.getChild("left").getChild("lemmatization", false);
     	returnOrig = config.getChild("return-orig").getValueAsBoolean(true);
-	    logger.debug(">>> BiCorpusAnalyzerFactory returnOrig="+Boolean.toString(returnOrig));
+	    //logger.debug(">>> BiCorpusAnalyzerFactory returnOrig="+Boolean.toString(returnOrig));
 	    if (leftLemmaConfig != null) {
 	        leftAnalyserId = leftLemmaConfig.getChild("morph-analyzer").getValue();
 	        leftStripDerivates = leftLemmaConfig.getChild("strip-derivates").getValueAsBoolean(false);
@@ -205,8 +205,6 @@ public class BiCorpusAnalyzerFactory
 		    rightLemmatizer = null;
 			logger.info("using no right lemmatizer");
 		}
-		
-	
 	}
 	
 	/**
@@ -214,7 +212,6 @@ public class BiCorpusAnalyzerFactory
 	 */
 	public void service(ServiceManager manager) throws ServiceException {
 		this.manager = manager;
-
 	}
 	
 	
@@ -222,20 +219,12 @@ public class BiCorpusAnalyzerFactory
       if (leftAnalyser != null)
       { 
           manager.release(leftAnalyser);
-          
       }
-      
       if (rightAnalyser != null)
       { 
           manager.release(rightAnalyser);
-          
       }
-        
     }
-	
-
-
-	
 	 
 	
 
@@ -246,8 +235,6 @@ public class BiCorpusAnalyzerFactory
 	 */
 	public Analyzer getAnalyzer() {
 		return new AnalyzerStub ();
-			
-
 	}
 	/*
 	 * Szerintem itt is el van a lucene baszva. Ha sourceId-t indexelem, akkor
@@ -256,8 +243,6 @@ public class BiCorpusAnalyzerFactory
 	 * Na jo, mi ezzel nem foglalkozunk itt.
 	 * 
 	 * @author hp
-	 *
-
 	 */
 	public  class AnalyzerStub extends Analyzer {
 	    
@@ -267,14 +252,14 @@ public class BiCorpusAnalyzerFactory
 			 TokenStream result = new StandardTokenizer(Version.LUCENE_CURRENT, reader);
 			
 	
-			 if(field.equals("left_stemmed") && leftLemmatizer != null) 
+			 if(field.equals(BisMapper.leftStemmedFieldName) && leftLemmatizer != null) 
 			 {
 			 	
 			 	 //bpgergo forget old StemmerTokenFilter
 				 //result = new StemmerTokenFilter(leftLemmatizer, leftReturnOOVs, leftReturnPOS, result);
 				result = new CompoundStemmerTokenFilter(result, leftLemmatizer, returnOrig, leftReturnOOVs, leftReturnPOS);
 			
-			 } else if ( field.equals("right_stemmed" ) && rightLemmatizer != null)
+			 } else if ( field.equals(BisMapper.rightStemmedFieldName) && rightLemmatizer != null)
 			 { 
 			 	
 			     //result = new StemmerTokenFilter(rightLemmatizer, rightReturnOOVs, rightReturnPOS, result);
@@ -286,6 +271,146 @@ public class BiCorpusAnalyzerFactory
 			 return result;
 		}
 
+	}
+	
+	/*
+	 * getters and setters
+	 */
+	
+	public Lemmatizer getLeftLemmatizer() {
+		return leftLemmatizer;
+	}
+
+	public void setLeftLemmatizer(Lemmatizer leftLemmatizer) {
+		this.leftLemmatizer = leftLemmatizer;
+	}
+
+	public String getLeftAnalyserId() {
+		return leftAnalyserId;
+	}
+
+	public void setLeftAnalyserId(String leftAnalyserId) {
+		this.leftAnalyserId = leftAnalyserId;
+	}
+
+	public boolean isReturnOrig() {
+		return returnOrig;
+	}
+
+	public void setReturnOrig(boolean returnOrig) {
+		this.returnOrig = returnOrig;
+	}
+
+	public boolean isLeftReturnOOVs() {
+		return leftReturnOOVs;
+	}
+
+	public void setLeftReturnOOVs(boolean leftReturnOOVs) {
+		this.leftReturnOOVs = leftReturnOOVs;
+	}
+
+	public boolean isLeftReturnPOS() {
+		return leftReturnPOS;
+	}
+
+	public void setLeftReturnPOS(boolean leftReturnPOS) {
+		this.leftReturnPOS = leftReturnPOS;
+	}
+
+	public boolean isLeftStripDerivates() {
+		return leftStripDerivates;
+	}
+
+	public void setLeftStripDerivates(boolean leftStripDerivates) {
+		this.leftStripDerivates = leftStripDerivates;
+	}
+
+	public int getLeftDepth() {
+		return leftDepth;
+	}
+
+	public void setLeftDepth(int leftDepth) {
+		this.leftDepth = leftDepth;
+	}
+
+	public Analyser getLeftAnalyser() {
+		return leftAnalyser;
+	}
+
+	public void setLeftAnalyser(Analyser leftAnalyser) {
+		this.leftAnalyser = leftAnalyser;
+	}
+
+	public String getRightAnalyserId() {
+		return rightAnalyserId;
+	}
+
+	public void setRightAnalyserId(String rightAnalyserId) {
+		this.rightAnalyserId = rightAnalyserId;
+	}
+
+	public boolean isRightReturnOOVs() {
+		return rightReturnOOVs;
+	}
+
+	public void setRightReturnOOVs(boolean rightReturnOOVs) {
+		this.rightReturnOOVs = rightReturnOOVs;
+	}
+
+	public boolean isRightReturnPOS() {
+		return rightReturnPOS;
+	}
+
+	public void setRightReturnPOS(boolean rightReturnPOS) {
+		this.rightReturnPOS = rightReturnPOS;
+	}
+
+	public boolean isRightStripDerivates() {
+		return rightStripDerivates;
+	}
+
+	public void setRightStripDerivates(boolean rightStripDerivates) {
+		this.rightStripDerivates = rightStripDerivates;
+	}
+
+	public int getRightDepth() {
+		return rightDepth;
+	}
+
+	public void setRightDepth(int rightDepth) {
+		this.rightDepth = rightDepth;
+	}
+
+	public Analyser getRightAnalyser() {
+		return rightAnalyser;
+	}
+
+	public void setRightAnalyser(Analyser rightAnalyser) {
+		this.rightAnalyser = rightAnalyser;
+	}
+
+	public Lemmatizer getRightLemmatizer() {
+		return rightLemmatizer;
+	}
+
+	public void setRightLemmatizer(Lemmatizer rightLemmatizer) {
+		this.rightLemmatizer = rightLemmatizer;
+	}
+
+	public boolean isLeftReturnOrig() {
+		return leftReturnOrig;
+	}
+
+	public void setLeftReturnOrig(boolean leftReturnOrig) {
+		this.leftReturnOrig = leftReturnOrig;
+	}
+
+	public boolean isRightReturnOrig() {
+		return rightReturnOrig;
+	}
+
+	public void setRightReturnOrig(boolean rightReturnOrig) {
+		this.rightReturnOrig = rightReturnOrig;
 	}
    
 
