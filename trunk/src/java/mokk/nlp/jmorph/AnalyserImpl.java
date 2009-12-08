@@ -238,4 +238,21 @@ public class AnalyserImpl 	implements
     public Dictionaries getDictionaries() {
         return m_worker.getDictionaries();
     }
+/*
+	public Definition getAffixDef() {
+		return affixDef;
+	}
+
+	public void setAffixDef(Definition affixDef) {
+		this.affixDef = affixDef;
+	}
+
+	public Definition getDicDef() {
+		return dicDef;
+	}
+
+	public void setDicDef(Definition dicDef) {
+		this.dicDef = dicDef;
+	}
+*/
 }

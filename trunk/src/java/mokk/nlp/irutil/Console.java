@@ -37,9 +37,6 @@ public class Console {
 			
 			System.exit(-1);
 		}
-    	
-    		
-    		
     		
         FortressConfig config = new FortressConfig();
         config.setContainerClass( DefaultContainer.class );

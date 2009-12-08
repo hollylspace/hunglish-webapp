@@ -60,7 +60,7 @@ public class TestIndexerConsole {
 	/**
 	 * Whether the tokenfilter should return original word 
 	 */
-	private boolean returnOrig = false;
+	//private boolean returnOrig = false;
 	
 	/**
 	 * Whether the tokenfilter should return OOV words 
@@ -121,14 +121,17 @@ public class TestIndexerConsole {
 	}
 
 	private void configureAnalizer() {
-		setReturnOrig(true);
+		//setReturnOrig(true);
+		
 		setLeftStripDerivates(false);
 		setLeftReturnOOVs(true);
+		setLeftReturnOrig(true);
 		setLeftReturnPOS(false);
 		setLeftDepth(AnalyserControl.ALL_COMPOUNDS);
 
 		setRightStripDerivates(false);
 		setRightReturnOOVs(true);
+		setRightReturnOrig(true);
 		setRightReturnPOS(false);
 		setRightDepth(AnalyserControl.ALL_COMPOUNDS);
 	}
@@ -166,6 +169,7 @@ public class TestIndexerConsole {
 	}
 
 	private void initLemmatizer() throws IOException, IllegalAccessException, InstantiationException, ParseException{
+		configureAnalizer();
 		initHuAnalyser();
 		initEnAnalyser();
 		AnalyserControl acLeft = new AnalyserControl(getLeftDepth());
@@ -239,9 +243,8 @@ public class TestIndexerConsole {
 		
 		initLemmatizer();
 		
-		
-		//Analyzer analyzer = new StemmerAnalyzer(Version.LUCENE_CURRENT, lemmatizerMap);
-		Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_CURRENT);
+		Analyzer analyzer = new StemmerAnalyzer(Version.LUCENE_CURRENT, lemmatizerMap);
+		//Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_CURRENT);
 		Directory directory = SimpleFSDirectory.open(new File(indexDir));
 		System.out.println("directory opened:" + indexDir);
 		IndexWriter iwriter = new IndexWriter(directory, analyzer, true,
@@ -252,9 +255,9 @@ public class TestIndexerConsole {
 		String texthu = "Ezeket a szavakat elmentjük az adatbázisba. Nem ismerjük a magyar nyelvet.";
 		addDoc(iwriter, texten, texthu);
 
-		texten = "The Hungarian language is so nice.";
-		texthu = "Nincs rá szó, nincs rá fogalom. A magyar nyelv ezt nem tudja kezelni.";
-		addDoc(iwriter, texten, texthu);
+		//texten = "The Hungarian language is so nice.";
+		//texthu = "Nincs rá szó, nincs rá fogalom. A magyar nyelv ezt nem tudja kezelni.";
+		//addDoc(iwriter, texten, texthu);
 
 		iwriter.close();
 		System.out.println("indexwriter closed");
@@ -296,13 +299,13 @@ public class TestIndexerConsole {
 		this.leftLemmatizer = leftLemmatizer;
 	}
 
-	public boolean isReturnOrig() {
-		return returnOrig;
-	}
+	//public boolean isReturnOrig() {
+	//	return returnOrig;
+	//}
 
-	public void setReturnOrig(boolean returnOrig) {
-		this.returnOrig = returnOrig;
-	}
+	//public void setReturnOrig(boolean returnOrig) {
+	//	this.returnOrig = returnOrig;
+	//}
 
 	public boolean isLeftReturnOOVs() {
 		return leftReturnOOVs;

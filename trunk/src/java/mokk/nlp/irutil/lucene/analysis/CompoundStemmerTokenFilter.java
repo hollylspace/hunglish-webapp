@@ -22,6 +22,7 @@ import java.util.List;
 import net.sf.jhunlang.jmorph.lemma.Lemma;
 import net.sf.jhunlang.jmorph.lemma.Lemmatizer;
 
+import org.apache.commons.collections.set.CompositeSet.SetMutator;
 import org.apache.lucene.analysis.Token;
 import org.apache.lucene.analysis.TokenFilter;
 import org.apache.lucene.analysis.TokenStream;
@@ -62,22 +63,34 @@ public class CompoundStemmerTokenFilter extends CompoundWordTokenFilterBase {
 
 	}
 
+	private void add(Object token){
+//System.out.println("#token:"+token.toString());
+		tokens.add(token);
+	}
+	
 	@Override
 	protected void decomposeInternal(final Token token) {
+//System.out.println("### incoming token:"+token.toString());
+		
 		// TODO FIXME Only words longer than minWordSize get processed ?
 		if (token.termLength() < this.MIN_WORD_SIZE) {
 			return;
 		}
-		String origWord = new String(token.termBuffer());
-		List<Lemma> lemmas = lemmatizer.lemmatize(origWord);		
+		//this was a nasty bug: token.termBuffer()
+		String origWord = new String(token.term());
+//System.out.println("### incoming origWord:"+origWord);
+		List<Lemma> lemmas = lemmatizer.lemmatize(origWord);
 		// az eredeti tokent csak akkor adjuk vissza, ha a szo ismeretlen
 		// es kertek
-		if ((lemmas.size() == 0) 
-		    && (returnOOVOrig || returnOrig)) {
-		        tokens.add(token.clone());
+		if ((lemmas.size() == 0)){
+//System.out.println("%%%%%% lemma size == 0 origWord:"+origWord);		    
+			if (returnOOVOrig || returnOrig){
+		        add(token.clone());
+		    }
 		} else {
+//System.out.println("YYYYYY lemma size > 0 origWord:"+origWord);			
 			if (returnOrig){
-				tokens.add(token.clone());
+				add(token.clone());
 			}
 			boolean isFirst = true;
 			for (Lemma lemma : lemmas){
@@ -88,6 +101,7 @@ public class CompoundStemmerTokenFilter extends CompoundWordTokenFilterBase {
 				} else {
 					stemmedText = lemma.getWord();
 				}
+//System.out.println("$$$temmed:"+stemmedText);				
 			    stemToken = new Token(stemmedText, 
 						   token.startOffset(), 
 						   token.endOffset(), 
@@ -102,7 +116,7 @@ public class CompoundStemmerTokenFilter extends CompoundWordTokenFilterBase {
 				// and the origian token was returned as well
 				// then no need to return the stemmed token
 				if (!(returnOrig && origWord.toLowerCase().equals(stemmedText.toLowerCase()))){
-					tokens.add(stemToken);
+					add(stemToken);
 				} 
 				isFirst = false;
 			}
