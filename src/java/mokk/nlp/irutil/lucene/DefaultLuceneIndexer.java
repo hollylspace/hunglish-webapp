@@ -18,7 +18,6 @@ import java.io.IOException;
 
 import mokk.nlp.irutil.Document;
 import mokk.nlp.irutil.Indexer;
-import mokk.nlp.irutil.SearchException;
 import mokk.nlp.irutil.io.DocumentHandler;
 import mokk.nlp.irutil.io.DocumentSource;
 import mokk.nlp.irutil.io.ProcessingException;
@@ -41,7 +40,6 @@ import org.apache.avalon.framework.service.Serviceable;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.SimpleFSDirectory;
 
 
