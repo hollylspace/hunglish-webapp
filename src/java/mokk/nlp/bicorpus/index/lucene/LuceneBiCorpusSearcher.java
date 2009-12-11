@@ -23,6 +23,7 @@ import mokk.nlp.bicorpus.index.query.ParseException;
 import mokk.nlp.irutil.SearchException;
 import mokk.nlp.irutil.SearchResult;
 import mokk.nlp.irutil.lucene.Mapper;
+import mokk.nlp.irutil.lucene.analysis.AnalyzerFactory;
 import mokk.nlp.jmorph.Lemmatizer;
 
 import org.apache.avalon.fortress.util.ContextManagerConstants;
@@ -82,8 +83,8 @@ Component, LogEnabled, Configurable, Initializable, Serviceable, Disposable,
 
 	private IndexReader indexReader = null;
 
-	private String leftLemmatizerId;
-	private String rightLemmatizerId;
+	//private String leftLemmatizerId;
+	//private String rightLemmatizerId;
 
 	private String m_mapperId;
 
@@ -91,13 +92,16 @@ Component, LogEnabled, Configurable, Initializable, Serviceable, Disposable,
 
 	private Mapper m_mapper = null;
 
-	private Lemmatizer leftLemmatizer;
-	private Lemmatizer rightLemmatizer;
+	//private Lemmatizer leftLemmatizer;
+	//private Lemmatizer rightLemmatizer;
 
 	// private Highlighter m_highlighter;
 
 	private File contextDirectory;
 
+	private String analyzerId;
+	private AnalyzerFactory analyzerFactory;
+	
 	private LuceneQueryBuilder queryBuilder;
 
 	/*
@@ -116,13 +120,15 @@ Component, LogEnabled, Configurable, Initializable, Serviceable, Disposable,
 			}
 		}
 
-		if (leftLemmatizer != null) {
-			manager.release(leftLemmatizer);
+		if (analyzerFactory != null){
+			manager.release(analyzerFactory);
 		}
-
-		if (rightLemmatizer != null) {
-			manager.release(rightLemmatizer);
-		}
+		//if (leftLemmatizer != null) {
+		//	manager.release(leftLemmatizer);
+		//}
+		//if (rightLemmatizer != null) {
+		//	manager.release(rightLemmatizer);
+		//}
 
 		if (m_mapper != null) {
 			manager.release(m_mapper);
@@ -182,11 +188,13 @@ Component, LogEnabled, Configurable, Initializable, Serviceable, Disposable,
 		}
 		logger.info("index searched in directory: " + indexDir);
 
-		leftLemmatizerId = config.getChild("left-lemmatizer").getValue();
-		logger.info("using left lemmatizer: " + leftLemmatizerId);
-
-		rightLemmatizerId = config.getChild("right-lemmatizer").getValue();
-		logger.info("using right lemmatizer: " + rightLemmatizerId);
+		analyzerId = config.getChild("analyzer").getValue();
+		logger.info("using analyzer:" + analyzerId);
+		
+		//leftLemmatizerId = config.getChild("left-lemmatizer").getValue();
+		//logger.info("using left lemmatizer: " + leftLemmatizerId);
+		//rightLemmatizerId = config.getChild("right-lemmatizer").getValue();
+		//logger.info("using right lemmatizer: " + rightLemmatizerId);
 
 		m_mapperId = config.getChild("mapper").getValue();
 		logger.info("using mapper to recontstruct bisentence objects: "
@@ -201,10 +209,14 @@ Component, LogEnabled, Configurable, Initializable, Serviceable, Disposable,
 	 */
 	public void initialize() throws Exception {
 
-		leftLemmatizer = (Lemmatizer) manager.lookup(Lemmatizer.ROLE + "/"
-				+ leftLemmatizerId);
-		rightLemmatizer = (Lemmatizer) manager.lookup(Lemmatizer.ROLE + "/"
-				+ rightLemmatizerId);
+		AnalyzerFactory a = (AnalyzerFactory) manager
+		.lookup(AnalyzerFactory.ROLE + "/" + analyzerId);
+		
+		//leftLemmatizer = (Lemmatizer) manager.lookup(Lemmatizer.ROLE + "/"
+		//		+ leftLemmatizerId);
+		//rightLemmatizer = (Lemmatizer) manager.lookup(Lemmatizer.ROLE + "/"
+		//		+ rightLemmatizerId);
+		
 		m_mapper = (Mapper) manager.lookup(Mapper.ROLE + "/" + m_mapperId);
 
 		String path = getContextualizedPath(indexDir);
@@ -221,9 +233,10 @@ Component, LogEnabled, Configurable, Initializable, Serviceable, Disposable,
 
 		// m_highlighter = (Highlighter) manager.lookup(Highlighter.ROLE + "/" +
 		// m_highlighterId);
-		queryBuilder = new LuceneQueryBuilder(
-				new mokk.nlp.bicorpus.index.lucene.QueryParser(leftLemmatizer,
-						rightLemmatizer));
+		
+		queryBuilder = new LuceneQueryBuilder(analyzerFactory);
+				//new mokk.nlp.bicorpus.index.lucene.QueryParser(leftLemmatizer,
+				//		rightLemmatizer));
 
 	}
 
