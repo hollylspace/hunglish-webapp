@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Set;
 
 import mokk.nlp.bicorpus.index.lucene.BisMapper;
+import mokk.nlp.irutil.lucene.analysis.LemmatizerWrapper;
+import mokk.nlp.irutil.lucene.analysis.StemmerAnalyzer;
 import net.sf.jhunlang.jmorph.analysis.Analyser;
 import net.sf.jhunlang.jmorph.analysis.AnalyserContext;
 import net.sf.jhunlang.jmorph.analysis.AnalyserControl;
@@ -107,6 +109,7 @@ public class TestIndexerConsole {
 	 * The analyser component used be the left lemmatization
 	 */
 	private Analyser rightAnalyser;
+	
 	/**
 	 * The right lemmatizer
 	 */
@@ -172,16 +175,16 @@ public class TestIndexerConsole {
 		configureAnalizer();
 		initHuAnalyser();
 		initEnAnalyser();
-		AnalyserControl acLeft = new AnalyserControl(getLeftDepth());
+		AnalyserControl acLeft = new AnalyserControl(leftDepth);
 		AnalyserContext analyserContextLeft = new AnalyserContext(acLeft);
 		setLeftLemmatizer(new net.sf.jhunlang.jmorph.lemma.LemmatizerImpl(
-				leftAnalyser, isLeftStripDerivates(),
+				leftAnalyser, leftStripDerivates,
 				analyserContextLeft));
 		
-		AnalyserControl acRight = new AnalyserControl(getRightDepth());
+		AnalyserControl acRight = new AnalyserControl(rightDepth);
 		AnalyserContext analyserContextRight = new AnalyserContext(acRight);
 		setRightLemmatizer(new net.sf.jhunlang.jmorph.lemma.LemmatizerImpl(
-						rightAnalyser, isRightStripDerivates(),
+						rightAnalyser, rightStripDerivates,
 						analyserContextRight));
 	
 		lemmatizerMap = new HashMap<String, LemmatizerWrapper>();
@@ -228,8 +231,7 @@ public class TestIndexerConsole {
 		for (int i = 0; i < hits.length; i++) {
 			Document hitDoc = isearcher.doc(hits[i].doc);
 			System.out.println("hitDoc==" + hitDoc.get(BisMapper.leftFieldName) + "~~" + hitDoc.get(BisMapper.rightFieldName));
-		}
-		
+		}		
 	}
 	
 	/**

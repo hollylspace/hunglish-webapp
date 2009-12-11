@@ -1,4 +1,4 @@
-package lucenedemo;
+package mokk.nlp.irutil.lucene.analysis;
 
 import net.sf.jhunlang.jmorph.lemma.Lemmatizer;
 

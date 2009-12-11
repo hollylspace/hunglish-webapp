@@ -8,10 +8,11 @@ package mokk.nlp.bicorpus.index.lucene;
 
 
 
-import java.io.Reader;
+import java.util.HashMap;
+import java.util.Map;
 
 import mokk.nlp.irutil.lucene.analysis.AnalyzerFactory;
-import mokk.nlp.irutil.lucene.analysis.CompoundStemmerTokenFilter;
+import mokk.nlp.irutil.lucene.analysis.StemmerAnalyzer;
 import mokk.nlp.jmorph.Analyser;
 import net.sf.jhunlang.jmorph.analysis.AnalyserContext;
 import net.sf.jhunlang.jmorph.analysis.AnalyserControl;
@@ -29,9 +30,6 @@ import org.apache.avalon.framework.service.ServiceException;
 import org.apache.avalon.framework.service.ServiceManager;
 import org.apache.avalon.framework.service.Serviceable;
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.LowerCaseFilter;
-import org.apache.lucene.analysis.TokenStream;
-import org.apache.lucene.analysis.standard.StandardTokenizer;
 import org.apache.lucene.util.Version;
 
 /**
@@ -116,6 +114,8 @@ public class BiCorpusAnalyzerFactory
 	 * The right lemmatizer
 	 */
 	private Lemmatizer rightLemmatizer;
+	
+	private Map<String, LemmatizerWrapper> lemmatizerMap;
 
 	private boolean leftReturnOrig, rightReturnOrig;
 	
@@ -205,6 +205,22 @@ public class BiCorpusAnalyzerFactory
 		    rightLemmatizer = null;
 			logger.info("using no right lemmatizer");
 		}
+		
+		lemmatizerMap = new HashMap<String, LemmatizerWrapper>();
+		LemmatizerWrapper leftLemmatizerWrapper = new LemmatizerWrapper();
+		leftLemmatizerWrapper.setLemmatizer(leftLemmatizer);
+		leftLemmatizerWrapper.setReturnOOVOrig(leftReturnOOVs);
+		leftLemmatizerWrapper.setReturnOrig(leftReturnOrig);
+		leftLemmatizerWrapper.setReturnPOS(leftReturnPOS);
+		lemmatizerMap.put(BisMapper.leftStemmedFieldName, leftLemmatizerWrapper);
+
+		LemmatizerWrapper rightLemmatizerWrapper = new LemmatizerWrapper();
+		rightLemmatizerWrapper.setLemmatizer(rightLemmatizer);
+		rightLemmatizerWrapper.setReturnOOVOrig(rightReturnOOVs);
+		rightLemmatizerWrapper.setReturnOrig(rightReturnOrig);
+		rightLemmatizerWrapper.setReturnPOS(rightReturnPOS);
+		lemmatizerMap.put(BisMapper.rightStemmedFieldName, rightLemmatizerWrapper);
+		
 	}
 	
 	/**
@@ -229,50 +245,13 @@ public class BiCorpusAnalyzerFactory
 	
 
 	/**
-	 *  A StandardTokenizer utan LowerCaseFilter, majd a bal oldali
-	 * mezohoz a bal, jobb oldali mezohoz a jobb stemmert hasznalja.
-	 * Minden mas mezot nem szotovez.
+	 * TODO is it necessary to always create a new instance of this?
 	 */
 	public Analyzer getAnalyzer() {
-		return new AnalyzerStub ();
+		Analyzer result = new StemmerAnalyzer(Version.LUCENE_CURRENT, lemmatizerMap);
+		return result;
 	}
-	/*
-	 * Szerintem itt is el van a lucene baszva. Ha sourceId-t indexelem, akkor
-	 * a Document.addField metodusaban megadtam, hogy nem kell tokenizalni.
-	 * Viszont kereseskor ezt nem tudja, ezert a QueryParser megprobalja tokenizalni.
-	 * Na jo, mi ezzel nem foglalkozunk itt.
-	 * 
-	 * @author hp
-	 */
-	public  class AnalyzerStub extends Analyzer {
-	    
-		public TokenStream tokenStream(String field, Reader reader) {
-			 //  TokenStream result = new LetterTokenizer(reader);
-			//TODO FIXME VERSION
-			 TokenStream result = new StandardTokenizer(Version.LUCENE_CURRENT, reader);
-			
-	
-			 if(field.equals(BisMapper.leftStemmedFieldName) && leftLemmatizer != null) 
-			 {
-			 	
-			 	 //bpgergo forget old StemmerTokenFilter
-				 //result = new StemmerTokenFilter(leftLemmatizer, leftReturnOOVs, leftReturnPOS, result);
-				result = new CompoundStemmerTokenFilter(result, leftLemmatizer, returnOrig, leftReturnOOVs, leftReturnPOS);
-			
-			 } else if ( field.equals(BisMapper.rightStemmedFieldName) && rightLemmatizer != null)
-			 { 
-			 	
-			     //result = new StemmerTokenFilter(rightLemmatizer, rightReturnOOVs, rightReturnPOS, result);
-				 result = new CompoundStemmerTokenFilter(result, leftLemmatizer, returnOrig, leftReturnOOVs, leftReturnPOS);
-			 
-			 } 
-			    result = new LowerCaseFilter(result);
-			 //   result = new StopFilter(result, {"a","az"});
-			 return result;
-		}
 
-	}
-	
 	/*
 	 * getters and setters
 	 */
