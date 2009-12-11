@@ -304,13 +304,13 @@ Component, LogEnabled, Configurable, Initializable, Serviceable, Disposable,
 
 					TokenStream leftTokens = TokenSources.getTokenStream(
 					// indexReader, h.id(i), "left_stemmed");
-							indexReader, docId, "left_stemmed");
+							indexReader, docId, BisMapper.leftStemmedFieldName);
 					/*
 					 * bis.setLeftSentence(highlighter.highlight(bis
 					 * .getLeftSentence(), leftTokens, queryTerms));
 					 */
 					bis.setLeftSentence(highlightField(leftTokens, query,
-							"left_stemmed", bis.getLeftSentence()));
+							BisMapper.leftStemmedFieldName, bis.getLeftSentence()));
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -329,11 +329,11 @@ Component, LogEnabled, Configurable, Initializable, Serviceable, Disposable,
 					// rightTokens = TokenSources.getTokenStream(indexReader,
 					// h.id(i), "right_stemmed");
 					rightTokens = TokenSources.getTokenStream(indexReader,
-							docId, "right_stemmed");
+							docId, BisMapper.rightStemmedFieldName);
 					// bis.setRightSentence(highlighter.highlight(bis
 					// .getRightSentence(), rightTokens, queryTerms));
 					bis.setRightSentence(highlightField(rightTokens, query,
-							"right_stemmed", bis.getRightSentence()));
+							BisMapper.rightStemmedFieldName, bis.getRightSentence()));
 
 				} catch (IOException e) {
 					// TODO Auto-generated catch block

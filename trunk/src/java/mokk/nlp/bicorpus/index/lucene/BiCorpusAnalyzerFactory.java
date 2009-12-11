@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import mokk.nlp.irutil.lucene.analysis.AnalyzerFactory;
+import mokk.nlp.irutil.lucene.analysis.LemmatizerWrapper;
 import mokk.nlp.irutil.lucene.analysis.StemmerAnalyzer;
 import mokk.nlp.jmorph.Analyser;
 import net.sf.jhunlang.jmorph.analysis.AnalyserContext;
