@@ -56,7 +56,7 @@ public class LuceneQueryBuilder {
 				Query leftQuery = new QueryParser(Version.LUCENE_CURRENT,
 						BisMapper.leftStemmedFieldName, af.getAnalyzer())
 						.parse(request.getLeftQuery());
-				result.add(leftQuery, Occur.MUST);
+				result.add(leftQuery, Occur.SHOULD);
 			}
 			
 		} catch (org.apache.lucene.queryParser.ParseException e) {
@@ -68,7 +68,7 @@ public class LuceneQueryBuilder {
 				Query rightQuery = new QueryParser(Version.LUCENE_CURRENT,
 						BisMapper.rightStemmedFieldName, af.getAnalyzer())
 						.parse(request.getRightQuery());
-				result.add(rightQuery, Occur.MUST);
+				result.add(rightQuery, Occur.SHOULD);
 			}
 		} catch (org.apache.lucene.queryParser.ParseException e) {
 			throw new ParseException("right query couldn't be parsed", e);
