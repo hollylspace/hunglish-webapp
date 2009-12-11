@@ -16,7 +16,20 @@
       <param-name>logger-config</param-name>
       <param-value>/WEB-INF/logger.xconf</param-value>
     </init-param>
+  </servlet>
 
+  <servlet>
+    <servlet-name>UploadServlet</servlet-name>
+    <servlet-class>mokk.nlp.dictweb.UploadServlet</servlet-class>
+    <init-param>
+      <param-name>component-config</param-name>
+      <param-value>/WEB-INF/uploader.conf</param-value>
+    </init-param>
+
+    <init-param>
+      <param-name>logger-config</param-name>
+      <param-value>/WEB-INF/logger.xconf</param-value>
+    </init-param>
   </servlet>
 
 
