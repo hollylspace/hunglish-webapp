@@ -20,7 +20,6 @@ import net.sf.jhunlang.jmorph.lemma.Lemma;
 import mokk.nlp.jmorph.Lemmatizer;
 
 import org.apache.lucene.index.Term;
-import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.*;
 
 import mokk.nlp.bicorpus.index.query.HunglishQueryParser;
@@ -181,8 +180,18 @@ public class QueryParser {
     }
 
     private Term[] stemTerm(Term t) {
-        String luceneField = t.field() + "_stemmed";
-        Lemmatizer lemmatizer = t.field().equals("left") ? leftLemmatizer : rightLemmatizer;
+        
+    	String luceneField = null; 
+        Lemmatizer lemmatizer = null;
+        
+        if (t.field().equals(BisMapper.leftFieldName)){
+        	lemmatizer = leftLemmatizer;
+        	luceneField = BisMapper.leftStemmedFieldName;
+        } else {
+        	lemmatizer = rightLemmatizer;
+        	luceneField = BisMapper.rightStemmedFieldName;
+        	
+        }
         
         Term[] terms;
         List lemmas = lemmatizer.lemmatize(t.text());
@@ -215,10 +224,10 @@ public class QueryParser {
     }*/
 
     private Query termsToQuery(QueryPhrase.Field field, String[] terms) {
-        String luceneField = "left";
+        String luceneField = BisMapper.leftFieldName;
 
         if (field == QueryPhrase.Field.RIGHT) {
-            luceneField = "right";
+            luceneField = BisMapper.rightFieldName;
         }
 
         if (terms.length == 0) {
