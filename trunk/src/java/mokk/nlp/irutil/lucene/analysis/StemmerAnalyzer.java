@@ -1,14 +1,11 @@
-package lucenedemo;
+package mokk.nlp.irutil.lucene.analysis;
 
-//import mokk.nlp.irutil.lucene.analysis.CompoundStemmerTokenFilter;
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.Map;
 import java.util.Set;
 
-import mokk.nlp.irutil.lucene.analysis.CompoundStemmerTokenFilter;
-import net.sf.jhunlang.jmorph.lemma.Lemmatizer;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.LowerCaseFilter;
@@ -22,9 +19,11 @@ import org.apache.lucene.analysis.standard.StandardTokenizer;
 import org.apache.lucene.util.Version;
 
 /**
- * Filters {@link StandardTokenizer} with {@link StandardFilter},
- * {@link LowerCaseFilter} and {@link StopFilter}, using a list of English stop
- * words.
+ * This class is created from Lucene {@link StandardAnalyzer}. It filters
+ * {@link StandardTokenizer} with {@link CompoundStemmerTokenFilter},
+ * {@link LowerCaseFilter} and {@link StopFilter}, using a list of stop words
+ * provided.
+ * 
  * 
  * <a name="version"/>
  * <p>
@@ -36,7 +35,6 @@ import org.apache.lucene.util.Version;
  * <a href="https://issues.apache.org/jira/browse/LUCENE-1068">LUCENE-1608</a>
  * </ul>
  */
-
 public class StemmerAnalyzer extends Analyzer {
 
 	/**
@@ -44,7 +42,7 @@ public class StemmerAnalyzer extends Analyzer {
 	 */
 	protected Map<String, LemmatizerWrapper> lemmatizers = null;
 
-	private Set<?> stopSet;
+	private Set<?> stopSet = null;
 
 	/**
 	 * Specifies whether deprecated acronyms should be replaced with HOST type.
@@ -150,7 +148,10 @@ public class StemmerAnalyzer extends Analyzer {
 			result = new StandardFilter(tokenStream);
 		}
 		result = new LowerCaseFilter(result);
-		result = new StopFilter(enableStopPositionIncrements, result, stopSet);
+		if (stopSet != null) {
+			result = new StopFilter(enableStopPositionIncrements, result,
+					stopSet);
+		}
 		return result;
 	}
 
@@ -197,18 +198,21 @@ public class StemmerAnalyzer extends Analyzer {
 			LemmatizerWrapper lemmatizer = getLemmatizer(fieldName);
 			if (lemmatizer != null) {
 				streams.filteredTokenStream = new CompoundStemmerTokenFilter(
-						streams.tokenStream, lemmatizer
-						.getLemmatizer(), lemmatizer.isReturnOrig(), lemmatizer
-						.isReturnOOVOrig(), lemmatizer.isReturnPOS());
+						streams.tokenStream, lemmatizer.getLemmatizer(),
+						lemmatizer.isReturnOrig(),
+						lemmatizer.isReturnOOVOrig(), lemmatizer.isReturnPOS());
 			} else {
 				streams.filteredTokenStream = new StandardFilter(
 						streams.tokenStream);
 			}
 			streams.filteredTokenStream = new LowerCaseFilter(
 					streams.filteredTokenStream);
-			streams.filteredTokenStream = new StopFilter(
-					enableStopPositionIncrements, streams.filteredTokenStream,
-					stopSet);
+
+			if (stopSet != null) {
+				streams.filteredTokenStream = new StopFilter(
+						enableStopPositionIncrements,
+						streams.filteredTokenStream, stopSet);
+			}
 		} else {
 			streams.tokenStream.reset(reader);
 		}
