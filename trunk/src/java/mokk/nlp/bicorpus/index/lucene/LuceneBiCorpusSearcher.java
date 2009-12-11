@@ -83,8 +83,8 @@ Component, LogEnabled, Configurable, Initializable, Serviceable, Disposable,
 
 	private IndexReader indexReader = null;
 
-	//private String leftLemmatizerId;
-	//private String rightLemmatizerId;
+	// private String leftLemmatizerId;
+	// private String rightLemmatizerId;
 
 	private String m_mapperId;
 
@@ -92,8 +92,8 @@ Component, LogEnabled, Configurable, Initializable, Serviceable, Disposable,
 
 	private Mapper m_mapper = null;
 
-	//private Lemmatizer leftLemmatizer;
-	//private Lemmatizer rightLemmatizer;
+	// private Lemmatizer leftLemmatizer;
+	// private Lemmatizer rightLemmatizer;
 
 	// private Highlighter m_highlighter;
 
@@ -101,7 +101,7 @@ Component, LogEnabled, Configurable, Initializable, Serviceable, Disposable,
 
 	private String analyzerId;
 	private AnalyzerFactory analyzerFactory;
-	
+
 	private LuceneQueryBuilder queryBuilder;
 
 	/*
@@ -120,15 +120,15 @@ Component, LogEnabled, Configurable, Initializable, Serviceable, Disposable,
 			}
 		}
 
-		if (analyzerFactory != null){
+		if (analyzerFactory != null) {
 			manager.release(analyzerFactory);
 		}
-		//if (leftLemmatizer != null) {
-		//	manager.release(leftLemmatizer);
-		//}
-		//if (rightLemmatizer != null) {
-		//	manager.release(rightLemmatizer);
-		//}
+		// if (leftLemmatizer != null) {
+		// manager.release(leftLemmatizer);
+		// }
+		// if (rightLemmatizer != null) {
+		// manager.release(rightLemmatizer);
+		// }
 
 		if (m_mapper != null) {
 			manager.release(m_mapper);
@@ -190,11 +190,11 @@ Component, LogEnabled, Configurable, Initializable, Serviceable, Disposable,
 
 		analyzerId = config.getChild("analyzer").getValue();
 		logger.info("using analyzer:" + analyzerId);
-		
-		//leftLemmatizerId = config.getChild("left-lemmatizer").getValue();
-		//logger.info("using left lemmatizer: " + leftLemmatizerId);
-		//rightLemmatizerId = config.getChild("right-lemmatizer").getValue();
-		//logger.info("using right lemmatizer: " + rightLemmatizerId);
+
+		// leftLemmatizerId = config.getChild("left-lemmatizer").getValue();
+		// logger.info("using left lemmatizer: " + leftLemmatizerId);
+		// rightLemmatizerId = config.getChild("right-lemmatizer").getValue();
+		// logger.info("using right lemmatizer: " + rightLemmatizerId);
 
 		m_mapperId = config.getChild("mapper").getValue();
 		logger.info("using mapper to recontstruct bisentence objects: "
@@ -209,21 +209,21 @@ Component, LogEnabled, Configurable, Initializable, Serviceable, Disposable,
 	 */
 	public void initialize() throws Exception {
 
-		AnalyzerFactory a = (AnalyzerFactory) manager
-		.lookup(AnalyzerFactory.ROLE + "/" + analyzerId);
-		
-		//leftLemmatizer = (Lemmatizer) manager.lookup(Lemmatizer.ROLE + "/"
-		//		+ leftLemmatizerId);
-		//rightLemmatizer = (Lemmatizer) manager.lookup(Lemmatizer.ROLE + "/"
-		//		+ rightLemmatizerId);
-		
+		AnalyzerFactory analyzerFactory = (AnalyzerFactory) manager
+				.lookup(AnalyzerFactory.ROLE + "/" + analyzerId);
+
+		// leftLemmatizer = (Lemmatizer) manager.lookup(Lemmatizer.ROLE + "/"
+		// + leftLemmatizerId);
+		// rightLemmatizer = (Lemmatizer) manager.lookup(Lemmatizer.ROLE + "/"
+		// + rightLemmatizerId);
+
 		m_mapper = (Mapper) manager.lookup(Mapper.ROLE + "/" + m_mapperId);
 
 		String path = getContextualizedPath(indexDir);
 		boolean readOnly = true;
 		// indexReader = IndexReader.open(getContextualizedPath(indexDir));
-		//indexReader = IndexReader.open(FSDirectory.open(new File(path)),
-		//		readOnly);
+		// indexReader = IndexReader.open(FSDirectory.open(new File(path)),
+		// readOnly);
 		// TODO
 		// http://code.google.com/p/hunglish-webapp/issues/detail?id=24
 		indexReader = IndexReader.open(new SimpleFSDirectory(new File(path)),
@@ -233,10 +233,10 @@ Component, LogEnabled, Configurable, Initializable, Serviceable, Disposable,
 
 		// m_highlighter = (Highlighter) manager.lookup(Highlighter.ROLE + "/" +
 		// m_highlighterId);
-		
+
 		queryBuilder = new LuceneQueryBuilder(analyzerFactory);
-				//new mokk.nlp.bicorpus.index.lucene.QueryParser(leftLemmatizer,
-				//		rightLemmatizer));
+		// new mokk.nlp.bicorpus.index.lucene.QueryParser(leftLemmatizer,
+		// rightLemmatizer));
 
 	}
 
@@ -323,14 +323,15 @@ Component, LogEnabled, Configurable, Initializable, Serviceable, Disposable,
 					 * .getLeftSentence(), leftTokens, queryTerms));
 					 */
 					bis.setLeftSentence(highlightField(leftTokens, query,
-							BisMapper.leftStemmedFieldName, bis.getLeftSentence()));
+							BisMapper.leftStemmedFieldName, bis
+									.getLeftSentence()));
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (InvalidTokenOffsetsException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-				} catch (IllegalArgumentException e){
+				} catch (IllegalArgumentException e) {
 					// TODO do nothing
 					e.printStackTrace();
 				}
@@ -346,7 +347,8 @@ Component, LogEnabled, Configurable, Initializable, Serviceable, Disposable,
 					// bis.setRightSentence(highlighter.highlight(bis
 					// .getRightSentence(), rightTokens, queryTerms));
 					bis.setRightSentence(highlightField(rightTokens, query,
-							BisMapper.rightStemmedFieldName, bis.getRightSentence()));
+							BisMapper.rightStemmedFieldName, bis
+									.getRightSentence()));
 
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
@@ -354,7 +356,7 @@ Component, LogEnabled, Configurable, Initializable, Serviceable, Disposable,
 				} catch (InvalidTokenOffsetsException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-				} catch (IllegalArgumentException e){
+				} catch (IllegalArgumentException e) {
 					// TODO do nothing
 					e.printStackTrace();
 				}
