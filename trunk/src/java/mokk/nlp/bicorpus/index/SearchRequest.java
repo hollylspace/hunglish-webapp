@@ -37,12 +37,12 @@ public class SearchRequest {
     /**
      * Kell-e tovezni a baloldali keresest
      */
-    protected boolean stemLeftQuery = false;
+    protected boolean stemLeftQuery = true;
     
     /**
      * Kell-e tovezni a jobboldali keresest
      */
-    protected boolean stemRightQuery = false;
+    protected boolean stemRightQuery = true;
     
     /**
      * The first returned bisentence (used to implement a pager)
