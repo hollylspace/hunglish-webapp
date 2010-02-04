@@ -80,7 +80,6 @@ public class DefaultLuceneIndexer implements Indexer, Component, LogEnabled,
 		}
 		source.setHandler(new DocumentHandler() {
 			public void processDocument(Document d) throws ProcessingException {
-
 				try {
 					indexWriter.addDocument(mapper.toLucene(d));
 					// //System.out.printlnln(d.getText());
