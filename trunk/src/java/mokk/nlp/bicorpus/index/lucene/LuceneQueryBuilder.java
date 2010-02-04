@@ -22,7 +22,6 @@ import mokk.nlp.irutil.lucene.analysis.AnalyzerFactory;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.FilteredQuery;
-import org.apache.lucene.search.PhraseQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.util.Version;
@@ -47,19 +46,46 @@ public class LuceneQueryBuilder {
 
 	}
 
+	public static void printBytes(byte[] array, String name) {
+		for (int k = 0; k < array.length; k++) {
+			System.out.println(name + "[" + k + "] = " + "0x" + byteToHex(array[k]));
+		}
+}
+
+static public String byteToHex(byte b) {
+	// Returns hex String representation of byte b
+	char hexDigit[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+			'a', 'b', 'c', 'd', 'e', 'f' };
+	char[] array = { hexDigit[(b >> 4) & 0x0f], hexDigit[b & 0x0f] };
+	return new String(array);
+}
+
 	private Query parseSearchRequest(SearchRequest request)
 			throws ParseException {
 		BooleanQuery result = new BooleanQuery();
 		try {
-			if (request.getLeftQuery() != null
-					&& request.getLeftQuery().length() > 0) {
+//System.out.println("request.getLeftQuery():"+request.getLeftQuery());			
+			String leftRequest; // = new String(request.getLeftQuery().getBytes("utf-8"));
+//System.out.println("getBytes(\"utf-8\"):"+request.getLeftQuery());
+//			leftRequest = new String(request.getLeftQuery().getBytes("utf-8"));  //iso-8859-2"));
+//System.out.println("getBytes(\"utf-8\"):"+request.getLeftQuery());			
+
+//System.out.println("utf8:::");
+//printBytes(request.getLeftQuery().getBytes("utf-8"), request.getLeftQuery());
+//System.out.println("iso:::");
+//printBytes(request.getLeftQuery().getBytes("iso-8859-2"), request.getLeftQuery());
+
+			leftRequest = request.getLeftQuery();
+			//leftRequest = "idő";
+			if (leftRequest != null
+					&& leftRequest.length() > 0) {
 				Query leftQuery = new QueryParser(Version.LUCENE_CURRENT,
 						BisMapper.leftStemmedFieldName, af.getAnalyzer())
-						.parse(request.getLeftQuery());
+						.parse(leftRequest);
 				result.add(leftQuery, Occur.SHOULD);
 			}
 			
-		} catch (org.apache.lucene.queryParser.ParseException e) {
+		} catch (Exception e) {
 			throw new ParseException("left query couldn't be parsed", e);
 		}
 		try {
