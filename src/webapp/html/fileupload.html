@@ -5,10 +5,20 @@
 <title>Hunglish file upload</title>
 </head>
 <body>
-<FORM name="filesForm" action="ProcessFileUpload.jsp" method="post"
-	enctype="multipart/form-data"><br />
-Magyar File:<input type="file" name="filehu" /><br />
-English File 2:<input type="file" name="fileen" /><br />
+<FORM name="filesForm" action="../jsp/ProcessFileUpload.jsp" method="post"
+	enctype="multipart/form-data"><br/>
+Szerző:<input type="text" name="author" /><br/>
+Cím:<input type="text" name="title" /><br/>
+
+<SELECT NAME="source">
+<option value="all">all
+#foreach( $s in $sources)
+<option value="$s.id" #if($source.id == $s.id) selected #end > $s.title
+#end
+</SELECT>
+
+Magyar File:<input type="file" name="filehu" /><br/>
+English File 2:<input type="file" name="fileen" /><br/>
 <input type="submit" name="Submit" value="Upload Files" /></FORM>
 </body>
 </html>
