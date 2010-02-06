@@ -46,14 +46,14 @@ public class MainServlet extends VelocityServlet {
     private ContainerManager m_containerManager;
     private DefaultContainer m_container;
     private RequestDispatcher m_dispatcher = null;
-   
+    public static String encoding = "iso-8859-2";
     
     
     protected Template handleRequest(HttpServletRequest request,
             HttpServletResponse response, Context context) throws Exception {
         
-        request.setCharacterEncoding("ISO-8859-2");
-        response.setContentType("text/html; charset=iso-8859-2");
+        request.setCharacterEncoding(encoding);
+        response.setContentType("text/html; charset="+encoding);
         
         RequestHandler handler = m_dispatcher.dispatch(request);
         

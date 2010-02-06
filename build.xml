@@ -158,6 +158,7 @@
 				<exclude name="*svn"/>
 			</fileset>
 		</copy>
+		<mkdir dir="${build.webapp}/fileupload"/>
 	</target>
 
 	<!-- =================================================================== -->

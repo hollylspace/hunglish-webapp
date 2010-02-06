@@ -198,8 +198,6 @@ public class BiCorpusSearchHandler implements RequestHandler, Component,
 		return pager;
 	}
 
-	public String requestCharacterEncoding = "ISO-8859-2";
-
 	public SearchRequest parseParameters(HttpServletRequest request) {
 
 		SearchRequest searchRequest = new SearchRequest();
