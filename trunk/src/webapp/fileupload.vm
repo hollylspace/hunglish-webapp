@@ -1,14 +1,14 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Type" content="text/html; charset=$encoding">
 <title>Hunglish file upload</title>
 </head>
 <body>
-<FORM name="filesForm" action="../jsp/ProcessFileUpload.jsp" method="post"
+<FORM name="filesForm" action="./upload" method="post"
 	enctype="multipart/form-data"><br/>
-Szerz≈ë:<input type="text" name="author" /><br/>
-C√≠m:<input type="text" name="title" /><br/>
+Szerzı:<input type="text" name="author" /><br/>
+CÌm:<input type="text" name="title" /><br/>
 
 <SELECT NAME="source">
 <option value="all">all
@@ -17,8 +17,10 @@ C√≠m:<input type="text" name="title" /><br/>
 #end
 </SELECT>
 
-Magyar File:<input type="file" name="filehu" /><br/>
-English File 2:<input type="file" name="fileen" /><br/>
+Magyar File:<input type="file" name="huFile" /><br/>
+English File 2:<input type="file" name="enFile" /><br/>
 <input type="submit" name="Submit" value="Upload Files" /></FORM>
+<br/>
+$result
 </body>
 </html>

@@ -51,9 +51,6 @@ Disposable {
     private Logger m_logger;
     private ServiceManager m_manager;
 
-	private RequestHandler handler1;
-	private RequestHandler jmorphHandler;
-	private RequestHandler textAnalyzerHandler;
 	
 	private String[] m_requestHandlerPaths;
 	private String[] m_requestHandlerIds;
