@@ -4,8 +4,9 @@ DROP TABLE IF EXISTS `source`;
 CREATE TABLE  `source` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
+  `description` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `source_i_name` (`name`)
+  UNIQUE KEY `source_i_name` (`name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 
