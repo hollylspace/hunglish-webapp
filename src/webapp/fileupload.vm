@@ -14,7 +14,7 @@ Cím:<input type="text" name="title" /><br/>
 #foreach( $s in $sources)
 <option value="$s.id" #if($source.id == $s.id) selected #end > $s.title
 #end
-</SELECT>
+</SELECT><br/>
 
 Magyar File:<input type="file" name="huFile" /><br/>
 English File 2:<input type="file" name="enFile" /><br/>
