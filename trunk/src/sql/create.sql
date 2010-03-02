@@ -1,4 +1,5 @@
-﻿DROP TABLE IF EXISTS `upload`;
+
+DROP TABLE IF EXISTS `upload`;
 DROP TABLE IF EXISTS `source`;
 CREATE TABLE  `source` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
