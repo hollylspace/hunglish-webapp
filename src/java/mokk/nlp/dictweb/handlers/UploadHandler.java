@@ -64,7 +64,7 @@ public class UploadHandler implements RequestHandler, Component,
 		LogEnabled, Configurable, Initializable, Serviceable, Disposable {
 
 	
-	public static String encoding = "UTF-8";//"iso-8859-2";
+	public static String encoding = "iso-8859-2"; //"UTF-8";
 	private ServiceManager manager;
 
     private String uploadDir;
