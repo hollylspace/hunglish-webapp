@@ -146,7 +146,7 @@ public class UploadHandler implements RequestHandler, Component,
 			HttpServletResponse response, Context context) throws Exception {
 		String result =  "fileupload.vm";
 
-logger.debug("+++++3uploader handleRequest+++++++++++++++++++++++++++++++++++++++++");
+//logger.debug("+++++3uploader handleRequest+++++++++++++++++++++++++++++++++++++++++");
 
 		request.setCharacterEncoding(encoding);
 		response.setContentType("text/html; charset="+encoding);
@@ -169,8 +169,6 @@ logger.debug("+++++3uploader handleRequest++++++++++++++++++++++++++++++++++++++
 	    context.put("result", templateResult);
 		context.put("sources", availableSources);
 		context.put("source", sourceDb.get(uploadRequest.getSource()));
-		
-		
 		
 		return result;
 
@@ -235,8 +233,6 @@ logger.debug("+++++3uploader handleRequest++++++++++++++++++++++++++++++++++++++
 				result.setAuthor(fi.getString());
 			} else if (fieldName.equals("title")){
 				result.setTitle(fi.getString());
-			} else if (fieldName.equals("title")){
-				result.setTitle(fi.getString());
 			} else if (fieldName.equals("source")){
 				result.setSource(fi.getString());
 			}
@@ -250,27 +246,26 @@ logger.debug("+++++3uploader handleRequest++++++++++++++++++++++++++++++++++++++
 
 		UploadRequest uploadRequest = new UploadRequest();
 		
-		//TODO remove this sourceId: "all"
 		uploadRequest.setSource(request.getParameter("source"));
 		uploadRequest.setAuthor(request.getParameter("author"));
 		uploadRequest.setAuthor(request.getParameter("title"));
 
 
-		String params = "::: Request Parameters :::\n";
+//String params = "::: Request Parameters :::\n";
 		Enumeration<String> names = request.getParameterNames();
 		while (names.hasMoreElements()){
 			String name = names.nextElement();
-			params += name +":::"+request.getParameterValues(name)+"\n";
+//params += name +":::"+request.getParameterValues(name)+"\n";
 		}
-logger.debug(params);
+//logger.debug(params);
 		
-		String ats = "::: Request attribs :::\n";
+//String ats = "::: Request attribs :::\n";
 		Enumeration<String> attribs = request.getAttributeNames();
 		while (attribs.hasMoreElements()){
 			String attrib = attribs.nextElement();
-			ats += attrib +":::"+request.getParameterValues(attrib)+"\n";
+//ats += attrib +":::"+request.getParameterValues(attrib)+"\n";
 		}
-logger.debug(ats);		
+//logger.debug(ats);		
 
 		
 		return uploadRequest;
