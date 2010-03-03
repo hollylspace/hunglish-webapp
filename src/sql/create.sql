@@ -3,16 +3,16 @@ DROP TABLE IF EXISTS `bisen`;
 DROP TABLE IF EXISTS `upload`;
 DROP TABLE IF EXISTS `doc`;
 
-DROP TABLE IF EXISTS `source`;
+DROP TABLE IF EXISTS `genre`;
 DROP TABLE IF EXISTS `author`;
 
 
-CREATE TABLE  `source` (
+CREATE TABLE  `genre` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   `description` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `source_i_name` (`name`)
+  UNIQUE KEY `genre_i_name` (`name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 CREATE TABLE  `author` (
@@ -27,7 +27,7 @@ CREATE TABLE  `author` (
 
 CREATE TABLE  `upload` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `source_id` bigint(20) NOT NULL,
+  `genre_id` bigint(20) NOT NULL,
   `author_id` bigint(20) NOT NULL,
   `is_processed` varchar(1) default 'N',
   `title` varchar(255) NOT NULL,
@@ -36,26 +36,26 @@ CREATE TABLE  `upload` (
   `hu_sentence` varchar(4000) default NULL,
   `en_sentence` varchar(4000) default NULL,
   PRIMARY KEY (`id`),
-  KEY `upload_fk_source` (`source_id`),
+  KEY `upload_fk_genre` (`genre_id`),
   KEY `upload_fk_author` (`author_id`),
   KEY `upload_i_is_processed` (`is_processed`),
-  CONSTRAINT `upload_fki_source` FOREIGN KEY (`source_id`) REFERENCES `source` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `upload_fki_genre` FOREIGN KEY (`genre_id`) REFERENCES `genre` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `upload_fki_author` FOREIGN KEY (`author_id`) REFERENCES `author` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE  `doc` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `source_id` bigint(20) NOT NULL,
+  `genre_id` bigint(20) NOT NULL,
   `author_id` bigint(20) NOT NULL,
   `title` varchar(255) NOT NULL,
   `hu_raw_file_path` varchar(255) default NULL,
   `en_raw_file_path` varchar(255) default NULL,
   `aligned_file_path` varchar(255) default NULL,
   PRIMARY KEY (`id`),
-  KEY `doc_fk_source` (`source_id`),
+  KEY `doc_fk_genre` (`genre_id`),
   KEY `doc_fk_author` (`author_id`),
-  CONSTRAINT `doc_fki_source` FOREIGN KEY (`source_id`) REFERENCES `source` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `doc_fki_genre` FOREIGN KEY (`genre_id`) REFERENCES `genre` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `doc_fki_author` FOREIGN KEY (`author_id`) REFERENCES `author` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 

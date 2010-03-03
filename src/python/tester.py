@@ -2,6 +2,7 @@
 
 # import MySQL module
 import MySQLdb
+import sys
 
 '''file -> array holding the lines of the file'''
 def readfile(name):
@@ -32,6 +33,7 @@ def main() :
         username = sys.argv[1]
         password = sys.argv[2]
         database = sys.argv[3]
+        testDBConn(username, password, database)
     else:
         print 'usage: ***.py [username] [passwd] [db]'
         sys.exit(-1)
