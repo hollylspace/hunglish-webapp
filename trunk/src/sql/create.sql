@@ -1,4 +1,4 @@
-﻿DROP TABLE IF EXISTS `bisen`;
+DROP TABLE IF EXISTS `bisen`;
 
 DROP TABLE IF EXISTS `upload`;
 DROP TABLE IF EXISTS `doc`;
@@ -30,7 +30,8 @@ CREATE TABLE  `upload` (
   `genre_id` bigint(20) NOT NULL,
   `author_id` bigint(20) NOT NULL,
   `is_processed` varchar(1) default 'N',
-  `title` varchar(255) NOT NULL,
+  `hu_title` varchar(255) NOT NULL,
+  `en_title` varchar(255) default NULL,
   `hu_file_path` varchar(255) default NULL,
   `en_file_path` varchar(255) default NULL,
   `hu_sentence` varchar(4000) default NULL,
@@ -46,9 +47,11 @@ CREATE TABLE  `upload` (
 
 CREATE TABLE  `doc` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `old_docid` varchar(255) default NULL,
   `genre_id` bigint(20) NOT NULL,
   `author_id` bigint(20) NOT NULL,
-  `title` varchar(255) NOT NULL,
+  `en_title` varchar(255) NOT NULL,
+  `hu_title` varchar(255) default NULL,
   `is_open_content` varchar(1) default 'N',
   `hu_raw_file_path` varchar(255) default NULL,
   `en_raw_file_path` varchar(255) default NULL,
@@ -61,10 +64,13 @@ CREATE TABLE  `doc` (
   CONSTRAINT `doc_fki_author` FOREIGN KEY (`author_id`) REFERENCES `author` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
-CREATE TABLE  `bisen` (
+-- when indexing, the id of the bisentence will be added to the lucene index
+-- http://wiki.apache.org/lucene-java/LuceneFAQ#When_is_it_possible_for_document_IDs_to_change.3F
+
+CREATE TABLE `bisen` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `is_indexed` varchar(1) default 'N',
-  `doc_id` bigint(20) NOT NULL,
+  `doc_id` bigint(20) default NULL,
   `line_number` bigint(20) NOT NULL,
   `upvotes` bigint(20) default 0,
   `downvotes` bigint(20) default 0,
