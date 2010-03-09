@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS `bisen`;
+﻿DROP TABLE IF EXISTS `bisen`;
 
 DROP TABLE IF EXISTS `upload`;
 DROP TABLE IF EXISTS `doc`;
@@ -49,18 +49,21 @@ CREATE TABLE  `doc` (
   `genre_id` bigint(20) NOT NULL,
   `author_id` bigint(20) NOT NULL,
   `title` varchar(255) NOT NULL,
+  `is_open_content` varchar(1) default 'N',
   `hu_raw_file_path` varchar(255) default NULL,
   `en_raw_file_path` varchar(255) default NULL,
   `aligned_file_path` varchar(255) default NULL,
   PRIMARY KEY (`id`),
   KEY `doc_fk_genre` (`genre_id`),
   KEY `doc_fk_author` (`author_id`),
+  UNIQUE KEY `doc_i_aligned_file_path` (`aligned_file_path`),
   CONSTRAINT `doc_fki_genre` FOREIGN KEY (`genre_id`) REFERENCES `genre` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `doc_fki_author` FOREIGN KEY (`author_id`) REFERENCES `author` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 CREATE TABLE  `bisen` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `is_indexed` varchar(1) default 'N',
   `doc_id` bigint(20) NOT NULL,
   `line_number` bigint(20) NOT NULL,
   `upvotes` bigint(20) default 0,
@@ -71,5 +74,4 @@ CREATE TABLE  `bisen` (
   KEY `bisen_fk_doc` (`doc_id`),
   CONSTRAINT `bisen_fki_doc` FOREIGN KEY (`doc_id`) REFERENCES `doc` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
-
 
