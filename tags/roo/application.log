@@ -1,0 +1,18 @@
+DEBUG btpool0-16 org.springframework.security.web.access.expression.ExpressionBasedFilterInvocationSecurityMetadataSource - Candidate is: '/resources/dojo/resources/blank.gif'; pattern is /bisen/**; matched=false
+DEBUG btpool0-16 org.springframework.security.web.access.expression.ExpressionBasedFilterInvocationSecurityMetadataSource - Candidate is: '/resources/dojo/resources/blank.gif'; pattern is /author/**; matched=false
+DEBUG btpool0-16 org.springframework.security.web.access.expression.ExpressionBasedFilterInvocationSecurityMetadataSource - Candidate is: '/resources/dojo/resources/blank.gif'; pattern is /doc/**; matched=false
+DEBUG btpool0-16 org.springframework.security.web.access.expression.ExpressionBasedFilterInvocationSecurityMetadataSource - Candidate is: '/resources/dojo/resources/blank.gif'; pattern is /genre/**; matched=false
+DEBUG btpool0-16 org.springframework.security.web.access.expression.ExpressionBasedFilterInvocationSecurityMetadataSource - Candidate is: '/resources/dojo/resources/blank.gif'; pattern is /resources/**; matched=true
+DEBUG btpool0-16 org.springframework.security.web.access.intercept.FilterSecurityInterceptor - Secure object: FilterInvocation: URL: /resources/dojo/resources/blank.gif; Attributes: [permitAll]
+DEBUG btpool0-16 org.springframework.security.web.access.intercept.FilterSecurityInterceptor - Previously Authenticated: org.springframework.security.authentication.UsernamePasswordAuthenticationToken@b56617c4: Principal: org.springframework.security.core.userdetails.User@f14ac400: Username: user; Password: [PROTECTED]; Enabled: true; AccountNonExpired: true; credentialsNonExpired: true; AccountNonLocked: true; Granted Authorities: ROLE_USER; Password: [PROTECTED]; Authenticated: true; Details: org.springframework.security.web.authentication.WebAuthenticationDetails@2eb76: RemoteIpAddress: 127.0.0.1; SessionId: eh6oeace0i8v; Granted Authorities: ROLE_USER
+DEBUG btpool0-16 org.springframework.security.access.vote.AffirmativeBased - Voter: org.springframework.security.web.access.expression.WebExpressionVoter@1672313, returned: 1
+DEBUG btpool0-16 org.springframework.security.web.access.intercept.FilterSecurityInterceptor - Authorization successful
+DEBUG btpool0-16 org.springframework.security.web.access.intercept.FilterSecurityInterceptor - RunAsManager did not change Authentication object
+DEBUG btpool0-16 org.springframework.security.web.FilterChainProxy - /resources/dojo/resources/blank.gif reached end of additional filter chain; proceeding with original chain
+DEBUG btpool0-16 org.springframework.js.resource.ResourceServlet - Checking last modified of resource: /dojo/resources/blank.gif
+DEBUG btpool0-16 org.springframework.js.resource.ResourceServlet - Searching classpath for resource: META-INF/dojo/resources/blank.gif
+DEBUG btpool0-16 org.springframework.security.web.access.ExceptionTranslationFilter - Chain processed normally
+DEBUG btpool0-16 org.springframework.security.web.context.SecurityContextPersistenceFilter - SecurityContextHolder now cleared, as request processing completed
+DEBUG btpool0-16 org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter - Closing JPA EntityManager in OpenEntityManagerInViewFilter
+DEBUG btpool0-16 org.springframework.orm.jpa.EntityManagerFactoryUtils - Closing JPA EntityManager
+DEBUG btpool0-16 org.hibernate.impl.SessionImpl - opened session at timestamp: 12683159887
