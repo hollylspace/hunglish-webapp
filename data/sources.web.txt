@@ -1,6 +1,0 @@
-lit	Literature
-lit/Arthur_C_Clarke	Books of Arthur C. Clark
-mag	Magazines and news
-film	Movie subtitles
-eulaw	Legal texts
-sw	Software documentation
