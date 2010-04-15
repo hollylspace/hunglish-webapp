@@ -79,18 +79,17 @@ public class AuthorIntegrationTest {
 	@Test
     @Transactional
     public void testMerge() {
-		/*
         org.junit.Assert.assertNotNull("Data on demand for 'Author' failed to initialize correctly", dod.getRandomAuthor());
-        java.lang.Long id = dod.getRandomAuthor().getId();
+        java.lang.Long id = new Long(2);//dod.getRandomAuthor().getId();
         org.junit.Assert.assertNotNull("Data on demand for 'Author' failed to provide an identifier", id);
         hu.mokk.hunglish.domain.Author obj = hu.mokk.hunglish.domain.Author.findAuthor(id);
         org.junit.Assert.assertNotNull("Find method for 'Author' illegally returned null for id '" + id + "'", obj);
-        boolean modified =  dod.modifyAuthor(obj);
+        //boolean modified =  dod.modifyAuthor(obj);
+        obj.setDescription("description hhehe");
         java.lang.Integer currentVersion = obj.getVersion();
         obj.merge();
         obj.flush();
-        org.junit.Assert.assertTrue("Version for 'Author' failed to increment on merge and flush directive", obj.getVersion() > currentVersion || !modified);
-        */
+        //org.junit.Assert.assertTrue("Version for 'Author' failed to increment on merge and flush directive", obj.getVersion() > currentVersion || !modified);
     }
 
 	@Test

@@ -278,6 +278,7 @@
 			<version>3.0.0.RELEASE</version>
 		</dependency>
 		
+		<!-- http://stackoverflow.com/questions/396245/add-a-dependency-in-maven -->
 		<dependency>
 			<groupId>net.sf.jhunlang</groupId>
 			<artifactId>jmorph</artifactId>
@@ -286,17 +287,17 @@
             <systemPath>${basedir}/lib/net/sf/jhunlang/jmorph/1.0/jmorph-1.0.jar</systemPath>			
 		</dependency>
 
-<dependency>
-    <groupId>org.apache.lucene</groupId>
-    <artifactId>lucene-core</artifactId>
-    <version>3.0.1</version>
-</dependency>
-
-<dependency>
-    <groupId>org.apache.lucene</groupId>
-    <artifactId>lucene-highlighter</artifactId>
-    <version>3.0.1</version>
-</dependency>
+		<dependency>
+		    <groupId>org.apache.lucene</groupId>
+		    <artifactId>lucene-core</artifactId>
+		    <version>3.0.1</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>org.apache.lucene</groupId>
+		    <artifactId>lucene-highlighter</artifactId>
+		    <version>3.0.1</version>
+		</dependency>
 		
 		
 	</dependencies>

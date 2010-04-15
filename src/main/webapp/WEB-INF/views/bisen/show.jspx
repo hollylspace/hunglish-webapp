@@ -55,6 +55,20 @@
                 </div>
             </div>
             <br/>
+            <div id="roo_bisen_enSentenceHash">
+                <label for="_enSentenceHash_id">En hash:</label>
+                <div class="box" id="_enSentenceHash_id">
+                    <c:out value="${bisen.enSentenceHash}"/>
+                </div>
+            </div>
+            <br/>
+            <div id="roo_bisen_huSentenceHash">
+                <label for="_huSentenceHash_id">Hu hash:</label>
+                <div class="box" id="_huSentenceHash_id">
+                    <c:out value="${bisen.huSentenceHash}"/>
+                </div>
+            </div>
+            <br/>
         </c:if>
         <c:if test="${empty bisen}">
             <spring:message arguments="${entity_label}" code="entity.not.found.single"/>
