@@ -47,7 +47,12 @@ public class Bisen {
     @Size(max = 4000)
     private String enSentence;
 
-	public Doc getDoc() {
+    private Long huSentenceHash;
+    
+    private Long enSentenceHash;
+	
+    
+    public Doc getDoc() {
         return this.doc;
     }
 
@@ -103,6 +108,24 @@ public class Bisen {
         this.enSentence = enSentence;
     }
 
+	public Long getHuSentenceHash() {
+		return huSentenceHash;
+	}
+
+	public void setHuSentenceHash(Long huSentenceHash) {
+		this.huSentenceHash = huSentenceHash;
+	}
+
+	public Long getEnSentenceHash() {
+		return enSentenceHash;
+	}
+
+	public void setEnSentenceHash(Long enSentenceHash) {
+		this.enSentenceHash = enSentenceHash;
+	}
+
+
+
 	@PersistenceContext
     transient EntityManager entityManager;
 
@@ -156,12 +179,22 @@ public class Bisen {
 
 	@Transactional
     public void merge() {
-        if (this.entityManager == null) this.entityManager = entityManager();
+        //merge(this);
+		if (this.entityManager == null) this.entityManager = entityManager();
         Bisen merged = this.entityManager.merge(this);
         this.entityManager.flush();
-        this.id = merged.getId();
+        this.id = merged.getId(); //*/
     }
 
+	@Transactional
+    public static void merge(Bisen bisen) {
+        if (bisen.entityManager == null) bisen.entityManager = entityManager();
+        Bisen merged = bisen.entityManager.merge(bisen);
+        bisen.entityManager.flush();
+        bisen.id = merged.getId();
+    }
+	
+	
 	public static final EntityManager entityManager() {
         EntityManager em = new Bisen().entityManager;
         if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
@@ -193,6 +226,20 @@ public class Bisen {
         return entityManager().createQuery("select o from Bisen o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 
+	public static void updateHashCode(Bisen bisen){
+		bisen.setHuSentenceHash(new Long(stripPunctuation(bisen.getHuSentence()).hashCode()));
+		bisen.setHuSentenceHash(new Long(stripPunctuation(bisen.getHuSentence()).hashCode()));
+	}
+	
+	public static void updateHashCodes(){
+		//List<Bisen> bisens = entityManager().createQuery("select o from Bisen o").getResultList();
+		List<Bisen> bisens = entityManager().createNativeQuery("select * from bisen where doc = 2", Bisen.class).getResultList();
+		for (Bisen bisen : bisens){
+			updateHashCode(bisen);
+			merge(bisen);
+		}
+	}
+	
 	public String toString() {
         StringBuilder sb = new StringBuilder();
         //sb.append("Id: ").append(getId()).append(", ");
@@ -206,4 +253,19 @@ public class Bisen {
         //sb.append("EnSentence: ").append(getEnSentence());
         return sb.toString();
     }
+	
+	private static String stripPunctuation(String s) {
+		StringBuffer sb = new StringBuffer();
+		if (s.length() > 0) {
+			for (int i = 0; i < s.length(); i++) {
+				char c = s.charAt(i);
+				if (c == 0x20 || Character.isLetterOrDigit(c)) {
+					sb = sb.append(Character.toLowerCase(s.charAt(i)));
+				}
+			}
+		}
+		// reduce spaces
+		return sb.toString().replaceAll(" +", " ").trim();
+	}
+	
 }

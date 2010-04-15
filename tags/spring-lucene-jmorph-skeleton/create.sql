@@ -49,10 +49,14 @@ CREATE TABLE `bisen` (
   `line_number` int(11) DEFAULT NULL,
   `upvotes` bigint(20) DEFAULT NULL,
   `doc` bigint(20) DEFAULT NULL,
+  `en_sentence_hash` bigint(20) DEFAULT NULL,
+  `hu_sentence_hash` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `FK59676B58E07D111` (`doc`),
+  KEY `fk_bisen_doc` (`doc`),
+  KEY `bisen_en_hash` (`en_sentence_hash`),
+  KEY `bisen_hu_hash` (`hu_sentence_hash`),
   UNIQUE KEY `i_bisen_uniq` (`doc`, `line_number`),
-  CONSTRAINT `FK59676B58E07D111` FOREIGN KEY (`doc`) REFERENCES `doc` (`id`)
+  CONSTRAINT `fk_bisen_doc` FOREIGN KEY (`doc`) REFERENCES `doc` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -76,11 +80,11 @@ CREATE TABLE `doc` (
   `author` bigint(20) not NULL,
   `genre` bigint(20) not NULL,
   PRIMARY KEY (`id`),
-  KEY `FK185382BA3B567` (`genre`),
-  KEY `FK185383620ECD5` (`author`),
+  KEY `fk_doc_genre` (`genre`),
+  KEY `fk_doc_author` (`author`),
   UNIQUE KEY `doc_i_aligned_file_path` (`aligned_file_path`),
-  CONSTRAINT `FK185383620ECD5` FOREIGN KEY (`author`) REFERENCES `author` (`id`),
-  CONSTRAINT `FK185382BA3B567` FOREIGN KEY (`genre`) REFERENCES `genre` (`id`)
+  CONSTRAINT `fk_doc_author` FOREIGN KEY (`author`) REFERENCES `author` (`id`),
+  CONSTRAINT `fk_doc_genre` FOREIGN KEY (`genre`) REFERENCES `genre` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -122,11 +126,11 @@ CREATE TABLE `upload` (
   `author` bigint(20) not NULL,
   `genre` bigint(20) not NULL,
   PRIMARY KEY (`id`),
-  KEY `FKCE040E012BA3B567` (`genre`),
-  KEY `FKCE040E013620ECD5` (`author`),
+  KEY `fk_upload_genre` (`genre`),
+  KEY `fk_upload_author` (`author`),
   KEY `upload_i_is_processed` (`is_processed`),
-  CONSTRAINT `FKCE040E013620ECD5` FOREIGN KEY (`author`) REFERENCES `author` (`id`),
-  CONSTRAINT `FKCE040E012BA3B567` FOREIGN KEY (`genre`) REFERENCES `genre` (`id`)
+  CONSTRAINT `fk_upload_author` FOREIGN KEY (`author`) REFERENCES `author` (`id`),
+  CONSTRAINT `fk_upload_genre` FOREIGN KEY (`genre`) REFERENCES `genre` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;

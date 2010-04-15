@@ -10,7 +10,7 @@
             <table width="300px">
                 <thead>
                     <tr>
-                        <th>Id éáűőúüóí</th>
+                        <th>Id</th>
                         <th>Doc</th>
                         <!--th>Is Indexed</th -->
                         <th>Line Number</th>
