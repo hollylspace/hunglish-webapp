@@ -24,6 +24,12 @@ public class BisenIntegrationTest {
     private BisenDataOnDemand dod;
 
 	@Test
+    public void testHash() {
+		hu.mokk.hunglish.domain.Bisen.updateHashCodes();
+    }
+	
+	
+	@Test
     public void testCountBisens() {
         org.junit.Assert.assertNotNull("Data on demand for 'Bisen' failed to initialize correctly", dod.getRandomBisen());
         long count = hu.mokk.hunglish.domain.Bisen.countBisens();
