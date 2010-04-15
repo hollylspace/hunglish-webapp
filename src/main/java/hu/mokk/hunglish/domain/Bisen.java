@@ -246,7 +246,7 @@ public class Bisen {
 		// List<Bisen> bisens =
 		// entityManager().createQuery("select o from Bisen o").getResultList();
 		List<Bisen> bisens = entityManager().createQuery(
-				"from Bisen o where o.doc.id = 2")
+				"from Bisen o") // where o.doc.id = 2
 				.getResultList();
 		for (Bisen bisen : bisens) {
 			bisen.updateHashCode();
