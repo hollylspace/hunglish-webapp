@@ -51,6 +51,7 @@ CREATE TABLE `bisen` (
   `doc` bigint(20) DEFAULT NULL,
   `en_sentence_hash` bigint(20) DEFAULT NULL,
   `hu_sentence_hash` bigint(20) DEFAULT NULL,
+  `is_duplicate` bit(1) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_bisen_doc` (`doc`),
   KEY `bisen_en_hash` (`en_sentence_hash`),

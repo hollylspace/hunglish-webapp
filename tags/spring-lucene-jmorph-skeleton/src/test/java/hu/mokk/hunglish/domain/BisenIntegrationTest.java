@@ -1,5 +1,8 @@
 package hu.mokk.hunglish.domain;
 
+import java.io.File;
+import java.io.IOException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.roo.addon.test.RooIntegrationTest;
@@ -7,6 +10,14 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 import hu.mokk.hunglish.domain.Bisen;
+import hu.mokk.hunglish.lucene.BasicsTester;
+import hu.mokk.hunglish.lucene.analysis.StemmerAnalyzer;
+
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.queryParser.ParseException;
+import org.apache.lucene.store.SimpleFSDirectory;
+import org.apache.lucene.util.Version;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -27,7 +38,26 @@ public class BisenIntegrationTest {
     public void testHash() {
 		hu.mokk.hunglish.domain.Bisen.updateHashCodes();
     }
+
 	
+	
+	@Test
+    public void testIndex() throws IOException, IllegalAccessException, InstantiationException, ParseException, net.sf.jhunlang.jmorph.parser.ParseException {
+		String indexDir = "C:\\temp\\hunglishindex";
+		int mergeFactor = 100;
+		int maxBufferedDocs = 1000;
+		
+		BasicsTester lemmatizerProvider = new BasicsTester();
+		lemmatizerProvider.initLemmatizer();
+		Analyzer analyzer = new StemmerAnalyzer(Version.LUCENE_CURRENT, lemmatizerProvider.getLemmatizerMap());;
+		
+		IndexWriter indexWriter = new IndexWriter(new SimpleFSDirectory(new File(indexDir)),
+				analyzer, true, IndexWriter.MaxFieldLength.UNLIMITED);
+		indexWriter.setMergeFactor(mergeFactor);
+		indexWriter.setMaxBufferedDocs(maxBufferedDocs);
+		
+		hu.mokk.hunglish.domain.Bisen.indexAll(indexWriter);
+    }
 	
 	@Test
     public void testCountBisens() {
