@@ -59,79 +59,6 @@ public class Bisen {
 	private Long enSentenceHash;
 
 	private Boolean isDuplicate;
-	
-	
-	public Doc getDoc() {
-		return this.doc;
-	}
-
-	public void setDoc(Doc doc) {
-		this.doc = doc;
-	}
-
-	public Boolean getIsIndexed() {
-		return this.isIndexed;
-	}
-
-	public void setIsIndexed(Boolean isIndexed) {
-		this.isIndexed = isIndexed;
-	}
-
-	public Integer getLineNumber() {
-		return this.lineNumber;
-	}
-
-	public void setLineNumber(Integer lineNumber) {
-		this.lineNumber = lineNumber;
-	}
-
-	public Long getUpvotes() {
-		return this.upvotes;
-	}
-
-	public void setUpvotes(Long upvotes) {
-		this.upvotes = upvotes;
-	}
-
-	public Long getDownvotes() {
-		return this.downvotes;
-	}
-
-	public void setDownvotes(Long downvotes) {
-		this.downvotes = downvotes;
-	}
-
-	public String getHuSentence() {
-		return this.huSentence;
-	}
-
-	public void setHuSentence(String huSentence) {
-		this.huSentence = huSentence;
-	}
-
-	public String getEnSentence() {
-		return this.enSentence;
-	}
-
-	public void setEnSentence(String enSentence) {
-		this.enSentence = enSentence;
-	}
-
-	public Long getHuSentenceHash() {
-		return huSentenceHash;
-	}
-
-	public void setHuSentenceHash(Long huSentenceHash) {
-		this.huSentenceHash = huSentenceHash;
-	}
-
-	public Long getEnSentenceHash() {
-		return enSentenceHash;
-	}
-
-	public void setEnSentenceHash(Long enSentenceHash) {
-		this.enSentenceHash = enSentenceHash;
-	}
 
 	@PersistenceContext
 	transient EntityManager entityManager;
@@ -161,17 +88,20 @@ public class Bisen {
 		this.version = version;
 	}
 
-	@Transactional
-	public void persist() {
+	private void getEntityManager() {
 		if (this.entityManager == null)
 			this.entityManager = entityManager();
+	}
+
+	@Transactional
+	public void persist() {
+		getEntityManager();
 		this.entityManager.persist(this);
 	}
 
 	@Transactional
 	public void remove() {
-		if (this.entityManager == null)
-			this.entityManager = entityManager();
+		getEntityManager();
 		if (this.entityManager.contains(this)) {
 			this.entityManager.remove(this);
 		} else {
@@ -182,15 +112,13 @@ public class Bisen {
 
 	@Transactional
 	public void flush() {
-		if (this.entityManager == null)
-			this.entityManager = entityManager();
+		getEntityManager();
 		this.entityManager.flush();
 	}
 
 	@Transactional
 	public void merge() {
-		if (this.entityManager == null)
-			this.entityManager = entityManager();
+		getEntityManager();
 		Bisen merged = this.entityManager.merge(this);
 		this.entityManager.flush();
 		this.id = merged.getId(); // */
@@ -207,6 +135,13 @@ public class Bisen {
 	public static long countBisens() {
 		return (Long) entityManager().createQuery(
 				"select count(o) from Bisen o").getSingleResult();
+	}
+
+	public long countDuplicates() {
+		return (Long) entityManager().createQuery(
+						"select count(o) from Bisen o where o.huSentenceHash = ? and o.enSentenceHash = ?")
+				.setParameter(1, this.huSentenceHash).setParameter(2,
+						this.enSentenceHash).getSingleResult();
 	}
 
 	public static List<Bisen> findAllBisens() {
@@ -253,9 +188,10 @@ public class Bisen {
 	@Transactional
 	public void updateIsIndexed(Boolean value) {
 		Query update = entityManager().createQuery(
-				"update Bisen set isIndexed = ? where id  = ?");
+				"update Bisen set isIndexed=? , isDuplicate=? where id=?");
 		update.setParameter(1, value);
-		update.setParameter(2, this.getId());
+		update.setParameter(2, !value);
+		update.setParameter(3, this.getId());
 		update.executeUpdate();
 	}
 
@@ -269,12 +205,19 @@ public class Bisen {
 
 	public static void indexAll(IndexWriter iwriter) {
 		List<Bisen> bisens = entityManager().createQuery(
-				"from Bisen o where o.doc.id = 2")//.setParameter(1, new Long(2))
+				"from Bisen o where o.doc.id = 2")// .setParameter(1, new
+													// Long(2))
 				.getResultList();
 		for (Bisen bisen : bisens) {
 			try {
-				iwriter.addDocument(bisen.toLucene());
-				bisen.updateIsIndexed(true);
+				if (bisen.countDuplicates() > 0){
+					iwriter.addDocument(bisen.toLucene());
+					bisen.updateIsIndexed(true);
+				} else {
+					bisen.updateIsIndexed(false);
+				}
+				
+				
 			} catch (CorruptIndexException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -351,6 +294,80 @@ public class Bisen {
 
 		return result;
 
+	}
+
+	// getter ans setters
+
+	public Doc getDoc() {
+		return this.doc;
+	}
+
+	public void setDoc(Doc doc) {
+		this.doc = doc;
+	}
+
+	public Boolean getIsIndexed() {
+		return this.isIndexed;
+	}
+
+	public void setIsIndexed(Boolean isIndexed) {
+		this.isIndexed = isIndexed;
+	}
+
+	public Integer getLineNumber() {
+		return this.lineNumber;
+	}
+
+	public void setLineNumber(Integer lineNumber) {
+		this.lineNumber = lineNumber;
+	}
+
+	public Long getUpvotes() {
+		return this.upvotes;
+	}
+
+	public void setUpvotes(Long upvotes) {
+		this.upvotes = upvotes;
+	}
+
+	public Long getDownvotes() {
+		return this.downvotes;
+	}
+
+	public void setDownvotes(Long downvotes) {
+		this.downvotes = downvotes;
+	}
+
+	public String getHuSentence() {
+		return this.huSentence;
+	}
+
+	public void setHuSentence(String huSentence) {
+		this.huSentence = huSentence;
+	}
+
+	public String getEnSentence() {
+		return this.enSentence;
+	}
+
+	public void setEnSentence(String enSentence) {
+		this.enSentence = enSentence;
+	}
+
+	public Long getHuSentenceHash() {
+		return huSentenceHash;
+	}
+
+	public void setHuSentenceHash(Long huSentenceHash) {
+		this.huSentenceHash = huSentenceHash;
+	}
+
+	public Long getEnSentenceHash() {
+		return enSentenceHash;
+	}
+
+	public void setEnSentenceHash(Long enSentenceHash) {
+		this.enSentenceHash = enSentenceHash;
 	}
 
 	public Boolean getIsDuplicate() {

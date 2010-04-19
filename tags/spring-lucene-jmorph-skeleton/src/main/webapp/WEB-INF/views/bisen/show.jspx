@@ -69,6 +69,14 @@
                 </div>
             </div>
             <br/>
+            <div id="roo_bisen_isDuplicate">
+                <label for="_isDuplicate_id">Is Duplicate:</label>
+                <div class="box" id="_isDuplicate_id">
+                    <c:out value="${bisen.isDuplicate}"/>
+                </div>
+            </div>
+            <br/>
+            
         </c:if>
         <c:if test="${empty bisen}">
             <spring:message arguments="${entity_label}" code="entity.not.found.single"/>
