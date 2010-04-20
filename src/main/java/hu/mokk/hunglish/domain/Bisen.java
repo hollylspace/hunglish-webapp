@@ -205,8 +205,8 @@ public class Bisen {
 
 	public static void indexAll(IndexWriter iwriter) {
 		List<Bisen> bisens = entityManager().createQuery(
-				"from Bisen o where o.doc.id = 2")// .setParameter(1, new
-													// Long(2))
+				"from Bisen o where o.isIndexed = ? or o.isIndexed is null").setParameter(1, Boolean.FALSE)
+				// where o.doc.id = 2 -- .setParameter(1, new Long(2))
 				.getResultList();
 		for (Bisen bisen : bisens) {
 			try {
