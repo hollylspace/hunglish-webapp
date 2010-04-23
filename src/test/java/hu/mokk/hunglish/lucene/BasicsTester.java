@@ -126,7 +126,8 @@ public class BasicsTester {
 		System.out.println("------indexing done---------------");
 
 		// Now search the index:
-		isearcher = new IndexSearcher(directory, true); // read-only=true
+		//isearcher = new IndexSearcher(directory, true); // read-only=true
+		createSearcher(directory);
 
 		query(enFieldName, "indexed");
 		query(enFieldName, "index");
@@ -140,7 +141,11 @@ public class BasicsTester {
 
 	}
 
-	private void query(String fieldName, String term) throws ParseException,
+	public void createSearcher(Directory dir) throws CorruptIndexException, IOException{
+		isearcher = new IndexSearcher(dir, true); // read-only=true
+	}
+	
+	public void query(String fieldName, String term) throws ParseException,
 			IOException {
 		QueryParser parser = new QueryParser(Version.LUCENE_30, fieldName,
 				analyzer);
