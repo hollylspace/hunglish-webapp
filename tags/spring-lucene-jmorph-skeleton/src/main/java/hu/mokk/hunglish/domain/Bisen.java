@@ -139,7 +139,7 @@ public class Bisen {
 
 	public long countDuplicates() {
 		return (Long) entityManager().createQuery(
-						"select count(o) from Bisen o where o.huSentenceHash = ? and o.enSentenceHash = ?")
+						"select count(o) from Bisen o where o.isIndexed = true and o.huSentenceHash = ? and o.enSentenceHash = ?")
 				.setParameter(1, this.huSentenceHash).setParameter(2,
 						this.enSentenceHash).getSingleResult();
 	}

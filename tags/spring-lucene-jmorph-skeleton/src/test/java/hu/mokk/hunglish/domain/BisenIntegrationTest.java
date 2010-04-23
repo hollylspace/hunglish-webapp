@@ -39,6 +39,23 @@ public class BisenIntegrationTest {
 		hu.mokk.hunglish.domain.Bisen.updateHashCodes();
     }
 
+	@Test
+    public void testFindBisen2() {
+		hu.mokk.hunglish.domain.Bisen bisen = hu.mokk.hunglish.domain.Bisen.findBisen(new Long(23324));
+		System.out.println(bisen);
+		System.out.println("countDuplicates:"+bisen.countDuplicates());
+    }
+	
+
+	@Test
+    public void testSearch() {
+		BasicsTester searcher = new BasicsTester();
+		
+		
+		//hu.mokk.hunglish.domain.Bisen bisen = hu.mokk.hunglish.domain.Bisen.findBisen(new Long(23324));
+		//System.out.println(bisen);
+		//System.out.println("countDuplicates:"+bisen.countDuplicates());
+    }
 	
 	
 	@Test
@@ -76,7 +93,7 @@ public class BisenIntegrationTest {
         org.junit.Assert.assertNotNull("Find method for 'Bisen' illegally returned null for id '" + id + "'", obj);
         org.junit.Assert.assertEquals("Find method for 'Bisen' returned the incorrect identifier", id, obj.getId());
     }
-
+	
 	@Test
     public void testFindAllBisens() {
         //org.junit.Assert.assertNotNull("Data on demand for 'Bisen' failed to initialize correctly", dod.getRandomBisen());
