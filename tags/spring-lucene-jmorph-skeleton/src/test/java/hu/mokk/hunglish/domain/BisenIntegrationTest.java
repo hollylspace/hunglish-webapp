@@ -10,7 +10,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 import hu.mokk.hunglish.domain.Bisen;
-import hu.mokk.hunglish.lucene.BasicsTester;
+import hu.mokk.hunglish.lucene.HungarianLuceneTester;
 import hu.mokk.hunglish.lucene.analysis.StemmerAnalyzer;
 
 import org.apache.lucene.analysis.Analyzer;
@@ -49,7 +49,7 @@ public class BisenIntegrationTest {
 
 	@Test
     public void testSearch() {
-		BasicsTester searcher = new BasicsTester();
+		HungarianLuceneTester searcher = new HungarianLuceneTester();
 		
 		
 		//hu.mokk.hunglish.domain.Bisen bisen = hu.mokk.hunglish.domain.Bisen.findBisen(new Long(23324));
@@ -64,7 +64,7 @@ public class BisenIntegrationTest {
 		int mergeFactor = 100;
 		int maxBufferedDocs = 1000;
 		
-		BasicsTester lemmatizerProvider = new BasicsTester();
+		HungarianLuceneTester lemmatizerProvider = new HungarianLuceneTester();
 		lemmatizerProvider.initLemmatizer();
 		Analyzer analyzer = new StemmerAnalyzer(Version.LUCENE_CURRENT, lemmatizerProvider.getLemmatizerMap());;
 		
