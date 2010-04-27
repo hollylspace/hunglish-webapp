@@ -138,10 +138,11 @@ public class Bisen {
 	}
 
 	public long countDuplicates() {
-		return (Long) entityManager().createQuery(
-						"select count(o) from Bisen o where o.isIndexed = true and o.huSentenceHash = ? and o.enSentenceHash = ?")
-				.setParameter(1, this.huSentenceHash).setParameter(2,
-						this.enSentenceHash).getSingleResult();
+		return (Long) entityManager()
+				.createQuery(
+						"select count(o) from Bisen o where o.isIndexed = true and o.huSentenceHash = :huhash and o.enSentenceHash = :enhash and o.id != :id")
+				.setParameter("huhash", this.huSentenceHash).setParameter(
+						"enhash", this.enSentenceHash).setParameter("id", this.id) .getSingleResult();
 	}
 
 	public static List<Bisen> findAllBisens() {
@@ -205,19 +206,21 @@ public class Bisen {
 
 	public static void indexAll(IndexWriter iwriter) {
 		List<Bisen> bisens = entityManager().createQuery(
-				"from Bisen o where o.isIndexed = ? or o.isIndexed is null").setParameter(1, Boolean.FALSE)
-				// where o.doc.id = 2 -- .setParameter(1, new Long(2))
+				"from Bisen o where o.isIndexed is null")
+		// where o.doc.id = 2 -- .setParameter(1, new Long(2))
 				.getResultList();
 		for (Bisen bisen : bisens) {
+System.out.println("bisen:"+bisen.huSentence);			
 			try {
-				if (bisen.countDuplicates() > 0){
+				if (bisen.countDuplicates() > 0) {
+System.out.println("bisen:duplicate");					
+					bisen.updateIsIndexed(false);
+				} else {
+System.out.println("bisen:OK");
 					iwriter.addDocument(bisen.toLucene());
 					bisen.updateIsIndexed(true);
-				} else {
-					bisen.updateIsIndexed(false);
 				}
-				
-				
+
 			} catch (CorruptIndexException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
