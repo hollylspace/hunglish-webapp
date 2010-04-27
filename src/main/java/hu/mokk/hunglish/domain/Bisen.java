@@ -210,13 +210,10 @@ public class Bisen {
 		// where o.doc.id = 2 -- .setParameter(1, new Long(2))
 				.getResultList();
 		for (Bisen bisen : bisens) {
-System.out.println("bisen:"+bisen.huSentence);			
 			try {
 				if (bisen.countDuplicates() > 0) {
-System.out.println("bisen:duplicate");					
 					bisen.updateIsIndexed(false);
 				} else {
-System.out.println("bisen:OK");
 					iwriter.addDocument(bisen.toLucene());
 					bisen.updateIsIndexed(true);
 				}
