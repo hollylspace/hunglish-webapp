@@ -75,7 +75,7 @@ public class HungarianLuceneTester {
 	// "/Users/daniel/experiments/hunglish-webapp/spring-lucene-jmorph-skeleton/resources-lang/test-data.txt";
 	private static String testDataQueryHu = "C:\\work\\hunmorph\\root-test\\resources-lang\\test-data.txt";
 	public static String testDataEncodingHu = "UTF-8";
-	List<String> huQueries;
+	List<String> huQueries ;
 
 	private Analyzer analyzer;
 	private Directory directory;
@@ -157,7 +157,7 @@ public class HungarianLuceneTester {
 
 	}
 
-	private void query(String fieldName, String term) throws ParseException,
+	public void query(String fieldName, String term) throws ParseException,
 			IOException {
 		QueryParser parser = new QueryParser(Version.LUCENE_30, fieldName,
 				analyzer);
@@ -173,7 +173,6 @@ public class HungarianLuceneTester {
 			// org.junit.Assert.assertEquals(enText,
 			// hitDoc.get(enFieldName));
 		}
-
 	}
 
 	private void initHuAnalyser() throws IOException, IllegalAccessException,
