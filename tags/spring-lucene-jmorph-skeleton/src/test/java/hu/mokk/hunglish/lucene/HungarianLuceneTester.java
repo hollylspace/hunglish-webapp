@@ -184,7 +184,7 @@ System.out.println("searchd:"+term+";hits.length:" + hits.length);
 		enAnalyser = jf.build(new Definition[] { affixDef, dicDef });
 	}
 
-	private void initLemmatizer() throws IOException, IllegalAccessException, InstantiationException, ParseException, net.sf.jhunlang.jmorph.parser.ParseException{
+	public void initLemmatizer() throws IOException, IllegalAccessException, InstantiationException, ParseException, net.sf.jhunlang.jmorph.parser.ParseException{
 		initHuAnalyser();
 		initEnAnalyser();
 		AnalyserControl acHu = new AnalyserControl(AnalyserControl.ALL_COMPOUNDS);
@@ -252,6 +252,16 @@ System.out.println("searchd:"+term+";hits.length:" + hits.length);
 	      scanner.close();
 	    }
 	    return result;
+	}
+
+
+	public Map<String, LemmatizerWrapper> getLemmatizerMap() {
+		return lemmatizerMap;
+	}
+
+
+	public void setLemmatizerMap(Map<String, LemmatizerWrapper> lemmatizerMap) {
+		this.lemmatizerMap = lemmatizerMap;
 	}
 	
 }
