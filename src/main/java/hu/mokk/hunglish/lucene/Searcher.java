@@ -25,11 +25,13 @@ import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
 import org.apache.lucene.search.highlight.TokenSources;
 import org.apache.lucene.store.SimpleFSDirectory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 
 /**
  * @author bpgergo
  * 
  */
+@Configurable
 public class Searcher {
 
 	@Autowired

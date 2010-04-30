@@ -13,10 +13,12 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.util.Version;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 
 /**
  * SearchRequest objektumbol csinal lucene szamara ertheto Queryt
  */
+@Configurable
 public class LuceneQueryBuilder {
 
 	private HashMap<String, SourceFilter> sourceFilterCache  = new HashMap<String, SourceFilter>();
