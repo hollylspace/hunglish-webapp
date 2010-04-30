@@ -49,21 +49,23 @@ public class Searcher {
 			try {
 				indexReader = IndexReader.open(new SimpleFSDirectory(new File(
 						indexDir)), readOnly);
+				searcher = new IndexSearcher(indexReader);
+				luceneQueryBuilder = new LuceneQueryBuilder();
 			} catch (CorruptIndexException e) {
 				throw new RuntimeException("Cannot open index directory.", e);
 			} catch (IOException e) {
-				throw new RuntimeException("Cannot open index directory.", e);
+				//throw new RuntimeException("Cannot open index directory.", e);
+				indexReader =null;
 			}
-			searcher = new IndexSearcher(indexReader);
-		}
-		if (searcher == null){
-			searcher = new IndexSearcher(indexReader);
-		}
-		if (luceneQueryBuilder == null){
-			luceneQueryBuilder = new LuceneQueryBuilder();
 		}
 	}
 
+	private void checkState(){
+		if (indexReader == null || searcher == null || luceneQueryBuilder == null){
+			throw new IllegalStateException("can not search. Initialize searcher first.");
+		}
+	}
+	
 	
 	private static String highlightField(TokenStream tokenStream, Query query,
 			String fieldName, String text) throws IOException,
@@ -77,6 +79,7 @@ public class Searcher {
 	}
 
 	public SearchResult search(SearchRequest request){
+		checkState();
 		Query query = null;
 		try {
 			query = luceneQueryBuilder.parseRequest(request);
