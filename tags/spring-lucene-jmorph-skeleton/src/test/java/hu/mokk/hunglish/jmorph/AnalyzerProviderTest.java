@@ -2,6 +2,8 @@ package hu.mokk.hunglish.jmorph;
 
 import hu.mokk.hunglish.domain.Bisen;
 
+import java.util.List;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,11 +17,15 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class AnalyzerProviderTest {
 
 	@Autowired
-	private AnalyzerProvider analyzerProvider; 
-	
+	private AnalyzerProvider analyzerProvider;
+
 	@Test
-	public void testLemmatizerMap(){
-		analyzerProvider.getLemmatizerMap().get(Bisen.huSentenceFieldName).lemmatizer.lemmatize("");
+	public void testLemmatizerMap() {
+		List list = analyzerProvider.getLemmatizerMap().get(
+				Bisen.huSentenceFieldName).lemmatizer.lemmatize("embereinket");
+		for (Object o : list){
+			System.out.println(o);
+		}
 	}
-	
+
 }
