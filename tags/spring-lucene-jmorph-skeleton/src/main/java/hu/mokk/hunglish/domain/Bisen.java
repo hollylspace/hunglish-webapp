@@ -264,33 +264,36 @@ public class Bisen {
 		return sb.toString().replaceAll(" +", " ").trim();
 	}
 
+	
+	public static String idFieldName = "id";
+	public static String genreFieldName = "doc.genre.id";
+	public static String huSentenceFieldName = "huSentence";
+	public static String enSentenceFieldName = "huSentence"; 
+	public static String huSentenceStemmedFieldName = "huSentenceStemmed";
+	public static String enSentenceStemmedFieldName = "enSentenceStemmed";
+	
 	public Document toLucene() {
 		Document result = new Document();
 
-		result.add(new Field("id", this.getId().toString(), Field.Store.YES,
+		result.add(new Field(idFieldName, this.getId().toString(), Field.Store.YES,
 				Field.Index.NOT_ANALYZED, Field.TermVector.NO));
 
-		result.add(new Field("doc.genre.id", this.doc.getGenre().getId()
+		result.add(new Field(genreFieldName, this.doc.getGenre().getId()
 				.toString(), Field.Store.YES,
-		// Field.Index.UN_TOKENIZED, Field.TermVector.NO));
 				Field.Index.NOT_ANALYZED, Field.TermVector.NO));
 
-		result.add(new Field("huSentence", this.huSentence,
-				// Field.Index.TOKENIZED, Field.TermVector.WITH_OFFSETS));
+		result.add(new Field(huSentenceFieldName, this.huSentence,
 				Field.Store.YES, Field.Index.ANALYZED,
 				Field.TermVector.WITH_POSITIONS_OFFSETS));
-		result.add(new Field("huSentenceStemmed", this.huSentence,
-				// Field.Store.NO, Field.Index.TOKENIZED,
-				Field.Store.NO, Field.Index.ANALYZED,
-				Field.TermVector.WITH_POSITIONS_OFFSETS));
-		result.add(new Field("huSentence", this.enSentence,
-				// Field.Store.YES, Field.Index.TOKENIZED,
+		//result.add(new Field(huSentenceStemmedFieldName, this.huSentence,
+		//		Field.Store.NO, Field.Index.ANALYZED,
+		//		Field.TermVector.WITH_POSITIONS_OFFSETS));
+		result.add(new Field(enSentenceFieldName, this.enSentence,
 				Field.Store.YES, Field.Index.ANALYZED,
 				Field.TermVector.WITH_POSITIONS_OFFSETS));
-		result.add(new Field("enSentenceStemmed", this.enSentence,
-				// Field.Store.NO, Field.Index.TOKENIZED,
-				Field.Store.NO, Field.Index.ANALYZED,
-				Field.TermVector.WITH_POSITIONS_OFFSETS));
+		//result.add(new Field(enSentenceStemmedFieldName, this.enSentence,
+		//		Field.Store.NO, Field.Index.ANALYZED,
+		//		Field.TermVector.WITH_POSITIONS_OFFSETS));
 
 		return result;
 

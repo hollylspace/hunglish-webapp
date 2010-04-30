@@ -63,7 +63,9 @@ public class Indexer {
 		} catch (IOException e) {
 			throw new RuntimeException("Cannot open index directory.", e);
 		}
-		indexWriter.setMergeFactor(mergeFactor);
+		if (mergeFactor != null){
+			indexWriter.setMergeFactor(mergeFactor);
+		}
 		indexWriter.setMaxBufferedDocs(maxBufferedDocs);
 
 	}
