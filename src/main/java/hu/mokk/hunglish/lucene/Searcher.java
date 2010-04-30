@@ -43,7 +43,7 @@ public class Searcher {
 	private IndexReader indexReader;
 	
 	@Autowired
-	private LuceneQueryBuilder queryBuilder;
+	private LuceneQueryBuilder luceneQueryBuilder;
 	
 	synchronized public void initSearcher() {
 		boolean readOnly = true;
@@ -61,8 +61,8 @@ public class Searcher {
 		if (searcher == null){
 			searcher = new IndexSearcher(indexReader);
 		}
-		if (queryBuilder == null){
-			queryBuilder = new LuceneQueryBuilder();
+		if (luceneQueryBuilder == null){
+			luceneQueryBuilder = new LuceneQueryBuilder();
 		}
 	}
 
@@ -83,7 +83,7 @@ public class Searcher {
 		initSearcher();
 		Query query = null;
 		try {
-			query = queryBuilder.parseRequest(request);
+			query = luceneQueryBuilder.parseRequest(request);
 		} catch (ParseException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -164,8 +164,10 @@ public class Searcher {
 		this.searcher = searcher;
 	}
 
-	public void setIndexReader(IndexReader indexReader) {
-		this.indexReader = indexReader;
+
+	public void setLuceneQueryBuilder(LuceneQueryBuilder luceneQueryBuilder) {
+		this.luceneQueryBuilder = luceneQueryBuilder;
 	}
+
 
 }
