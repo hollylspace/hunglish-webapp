@@ -59,7 +59,7 @@ public class AnalyzerProvider {
 	private Analyser enAnalyser;
 
 	/*******************************************/
-	Map<String, LemmatizerWrapper> lemmatizerMap = new HashMap<String, LemmatizerWrapper>();
+	Map<String, LemmatizerWrapper> lemmatizerMap;
 	Analyzer analyzer;
 
 	/*******************************************/
@@ -92,6 +92,9 @@ public class AnalyzerProvider {
 
 	public void initLemmatizer() throws IOException, IllegalAccessException,
 			InstantiationException, ParseException {
+		
+		lemmatizerMap = new HashMap<String, LemmatizerWrapper>();
+		
 		initHuAnalyser();
 		initEnAnalyser();
 		AnalyserControl acHu = new AnalyserControl(
@@ -124,25 +127,19 @@ public class AnalyzerProvider {
 	}
 
 	/*******************************************/
-	public Map<String, LemmatizerWrapper> getLemmatizerMap()
+	private void getLemmatizerMap()
 			throws IOException, IllegalAccessException, InstantiationException,
 			ParseException {
-		synchronized (lemmatizerMap) {
-			if (!lemmatizerMap.isEmpty()) {
-				initLemmatizer();
-			}
+		if (lemmatizerMap== null || lemmatizerMap.isEmpty()) {
+			initLemmatizer();
 		}
-		return lemmatizerMap;
 	}
 
-	public Analyzer getAnalyzer() throws IOException, IllegalAccessException,
-			InstantiationException, ParseException {
+	synchronized public Analyzer getAnalyzer() throws IOException,
+			IllegalAccessException, InstantiationException, ParseException {
 		getLemmatizerMap();
-		synchronized (this) {
-			if (analyzer == null) {
-				analyzer = new StemmerAnalyzer(Version.LUCENE_30,
-						lemmatizerMap);
-			}
+		if (analyzer == null) {
+			analyzer = new StemmerAnalyzer(Version.LUCENE_30, lemmatizerMap);
 		}
 		return analyzer;
 	}
