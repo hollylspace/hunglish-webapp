@@ -135,9 +135,18 @@ public class AnalyzerProvider {
 		}
 	}
 
-	synchronized public Analyzer getAnalyzer() throws IOException,
-			IllegalAccessException, InstantiationException, ParseException {
-		getLemmatizerMap();
+	synchronized public Analyzer getAnalyzer() {
+		try {
+			getLemmatizerMap();
+		} catch (IOException e) {
+			throw new RuntimeException("Cannot initialize jmorph stemmer.", e);
+		} catch (IllegalAccessException e) {
+			throw new RuntimeException("Cannot initialize jmorph stemmer.", e);
+		} catch (InstantiationException e) {
+			throw new RuntimeException("Cannot initialize jmorph stemmer.", e);
+		} catch (ParseException e) {
+			throw new RuntimeException("Cannot initialize jmorph stemmer.", e);
+		}
 		if (analyzer == null) {
 			analyzer = new StemmerAnalyzer(Version.LUCENE_30, lemmatizerMap);
 		}

@@ -41,10 +41,7 @@ public class Indexer {
 	private String tmpIndexDir;
 	private IndexWriter indexWriter;
 
-	private void initIndexWriter(CreateOrAppend createOrAppend)
-			throws CorruptIndexException, LockObtainFailedException,
-			IOException, IllegalAccessException, InstantiationException,
-			ParseException {
+	private void initIndexWriter(CreateOrAppend createOrAppend) {
 		if (analyzerProvider == null) {
 			throw new IllegalStateException(
 					"Cannot create indexWriter. The analyzerProvider is null.");
@@ -55,9 +52,17 @@ public class Indexer {
 			throw new IllegalStateException(
 					"Cannot create indexWriter. The directory is null.");
 		}
-		indexWriter = new IndexWriter(new SimpleFSDirectory(
-				new File(dir)), analyzerProvider.getAnalyzer(), create,
-				IndexWriter.MaxFieldLength.UNLIMITED);
+		try {
+			indexWriter = new IndexWriter(new SimpleFSDirectory(new File(dir)),
+					analyzerProvider.getAnalyzer(), create,
+					IndexWriter.MaxFieldLength.UNLIMITED);
+		} catch (CorruptIndexException e) {
+			throw new RuntimeException("Cannot open index directory.", e);
+		} catch (LockObtainFailedException e) {
+			throw new RuntimeException("Cannot open index directory.", e);
+		} catch (IOException e) {
+			throw new RuntimeException("Cannot open index directory.", e);
+		}
 		indexWriter.setMergeFactor(mergeFactor);
 		indexWriter.setMaxBufferedDocs(maxBufferedDocs);
 
