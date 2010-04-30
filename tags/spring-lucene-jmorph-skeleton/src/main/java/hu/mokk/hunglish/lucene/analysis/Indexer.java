@@ -41,7 +41,7 @@ public class Indexer {
 	private String tmpIndexDir;
 	private IndexWriter indexWriter;
 
-	synchronized public void initIndexWriter(CreateOrAppend createOrAppend)
+	private void initIndexWriter(CreateOrAppend createOrAppend)
 			throws CorruptIndexException, LockObtainFailedException,
 			IOException, IllegalAccessException, InstantiationException,
 			ParseException {
@@ -63,7 +63,7 @@ public class Indexer {
 
 	}
 
-	public void indexAll(CreateOrAppend createOrAppend)
+	synchronized public void indexAll(CreateOrAppend createOrAppend)
 			throws CorruptIndexException, LockObtainFailedException,
 			IOException, IllegalAccessException, InstantiationException,
 			ParseException {
@@ -73,6 +73,22 @@ public class Indexer {
 
 	public void setAnalyzerProvider(AnalyzerProvider analyzerProvider) {
 		this.analyzerProvider = analyzerProvider;
+	}
+
+	public void setMergeFactor(Integer mergeFactor) {
+		this.mergeFactor = mergeFactor;
+	}
+
+	public void setMaxBufferedDocs(Integer maxBufferedDocs) {
+		this.maxBufferedDocs = maxBufferedDocs;
+	}
+
+	public void setIndexDir(String indexDir) {
+		this.indexDir = indexDir;
+	}
+
+	public void setTmpIndexDir(String tmpIndexDir) {
+		this.tmpIndexDir = tmpIndexDir;
 	}
 
 }
