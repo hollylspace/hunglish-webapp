@@ -69,14 +69,14 @@
 <!-- =================================================== -->
 	
     <bean class="hu.mokk.hunglish.jmorph.AnalyzerProvider" id="analyzerProvider" init-method="initAnalyzerProvider">
-        <property name="resouceEncodingHu" value="${stemmer.resouceEncodingHu}"/>
+        <property name="resourceEncodingHu" value="${stemmer.resourceEncodingHu}"/>
         <property name="huAff" value="${stemmer.huAff}"/>
         <property name="huDic" value="${stemmer.huDic}"/>
         <property name="huDerivatives" value="${stemmer.huDerivatives}"/>
         <property name="huCompounds" value="${stemmer.huCompounds}"/>
         <property name="huRecursionDepth" value="${stemmer.huRecursionDepth}"/>
 
-        <property name="resouceEncodingEn" value="${stemmer.resouceEncodingEn}"/>
+        <property name="resourceEncodingEn" value="${stemmer.resourceEncodingEn}"/>
         <property name="enAff" value="${stemmer.enAff}"/>
         <property name="enDic" value="${stemmer.enDic}"/>
         <property name="enRecursionDepth" value="${stemmer.enRecursionDepth}"/>
