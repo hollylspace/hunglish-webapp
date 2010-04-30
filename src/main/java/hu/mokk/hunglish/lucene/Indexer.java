@@ -40,13 +40,10 @@ public class Indexer {
 
 	@Autowired
 	private AnalyzerProvider analyzerProvider;
-	@Autowired
+	
 	private Integer mergeFactor = 100;
-	@Autowired
 	private Integer maxBufferedDocs = 1000;
-	@Autowired
 	private String indexDir;
-	@Autowired
 	private String tmpIndexDir;
 	
 	private IndexWriter indexWriter;
