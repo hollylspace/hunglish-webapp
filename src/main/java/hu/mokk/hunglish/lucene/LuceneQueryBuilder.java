@@ -18,8 +18,8 @@ import org.apache.lucene.util.Version;
  */
 public class LuceneQueryBuilder {
 
-	private HashMap sourceFilterCache  = new HashMap();
-	private AnalyzerProvider ap;
+	private HashMap<String, SourceFilter> sourceFilterCache  = new HashMap<String, SourceFilter>();
+	private AnalyzerProvider analyzerProvider;
 
 	public static void printBytes(byte[] array, String name) {
 		for (int k = 0; k < array.length; k++) {
@@ -43,7 +43,7 @@ static public String byteToHex(byte b) {
 			if (leftRequest != null
 					&& leftRequest.length() > 0) {
 				Query leftQuery = new QueryParser(Version.LUCENE_30,
-						Bisen.huSentenceFieldName, ap.getAnalyzer())
+						Bisen.huSentenceFieldName, analyzerProvider.getAnalyzer())
 						.parse(leftRequest);
 				result.add(leftQuery, Occur.SHOULD);
 			}
@@ -55,7 +55,7 @@ static public String byteToHex(byte b) {
 			if (request.getRightQuery() != null
 					&& request.getRightQuery().length() > 0) {
 				Query rightQuery = new QueryParser(Version.LUCENE_30,
-						Bisen.enSentenceFieldName, ap.getAnalyzer())
+						Bisen.enSentenceFieldName, analyzerProvider.getAnalyzer())
 						.parse(request.getRightQuery());
 				result.add(rightQuery, Occur.SHOULD);
 			}
@@ -99,6 +99,10 @@ static public String byteToHex(byte b) {
 
 		FilteredQuery qf = new FilteredQuery(q, filter);
 		return qf;
+	}
+
+	public void setAnalyzerProvider(AnalyzerProvider analyzerProvider) {
+		this.analyzerProvider = analyzerProvider;
 	}
 
 }
