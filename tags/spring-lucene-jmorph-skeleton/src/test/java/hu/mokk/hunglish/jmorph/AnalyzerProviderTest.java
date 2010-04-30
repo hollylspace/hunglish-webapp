@@ -1,5 +1,7 @@
 package hu.mokk.hunglish.jmorph;
 
+import hu.mokk.hunglish.domain.Bisen;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +19,7 @@ public class AnalyzerProviderTest {
 	
 	@Test
 	public void testLemmatizerMap(){
-		
+		analyzerProvider.getLemmatizerMap().get(Bisen.huSentenceFieldName).lemmatizer.lemmatize("");
 	}
 	
 }
