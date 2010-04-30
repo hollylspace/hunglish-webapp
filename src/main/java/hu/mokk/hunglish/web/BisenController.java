@@ -44,7 +44,9 @@ public class BisenController {
     }
 
 	@RequestMapping(value = "/bisen", method = RequestMethod.GET)
-    public String list(@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, ModelMap modelMap) {
+    public String list(
+    		@RequestParam(value = "page", required = false) Integer page, 
+    		@RequestParam(value = "size", required = false) Integer size, ModelMap modelMap) {
         int sizeNo = size == null ? 10 : size.intValue();
         int pageNo = page == null ? 0 : page.intValue();
         modelMap.addAttribute("bisens", Bisen.findBisenEntries((pageNo - 1) * sizeNo, sizeNo));

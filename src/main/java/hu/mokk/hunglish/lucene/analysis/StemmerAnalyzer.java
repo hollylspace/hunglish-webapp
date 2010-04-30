@@ -44,17 +44,17 @@ public class StemmerAnalyzer extends Analyzer {
 	 * assigns a stopset to a fieldName
 	 */
 	protected Map<String, Set<?>> stopsets = null;
-	
-	
-	//private Set<?> stopSetEn = null;
-	//private Set<?> stopSetHu = null;
+
+	// private Set<?> stopSetEn = null;
+	// private Set<?> stopSetHu = null;
 	/**
 	 * An unmodifiable set containing some common English words that are usually
 	 * not useful for searching.
 	 */
 	// TODO
-	//public static final Set<?> STOP_WORDS_SET_HU = null;
-	//public static final Set<?> STOP_WORDS_SET_EN = StopAnalyzer.ENGLISH_STOP_WORDS_SET;
+	// public static final Set<?> STOP_WORDS_SET_HU = null;
+	// public static final Set<?> STOP_WORDS_SET_EN =
+	// StopAnalyzer.ENGLISH_STOP_WORDS_SET;
 
 	/**
 	 * Specifies whether deprecated acronyms should be replaced with HOST type.
@@ -62,7 +62,6 @@ public class StemmerAnalyzer extends Analyzer {
 	 */
 	private final boolean replaceInvalidAcronym, enableStopPositionIncrements;
 
-	
 	private final Version matchVersion;
 
 	/**
@@ -87,7 +86,9 @@ public class StemmerAnalyzer extends Analyzer {
 	 *            stop words
 	 */
 	@SuppressWarnings("deprecation")
-	public StemmerAnalyzer(Version matchVersion, Map<String, LemmatizerWrapper> lemmatizers, Map<String, Set<?>> stopsets) {
+	public StemmerAnalyzer(Version matchVersion,
+			Map<String, LemmatizerWrapper> lemmatizers,
+			Map<String, Set<?>> stopsets) {
 		this.stopsets = stopsets;
 		// TODO Why
 		setOverridesTokenStreamMethod(StandardAnalyzer.class);
@@ -106,7 +107,7 @@ public class StemmerAnalyzer extends Analyzer {
 		}
 		return lemmatizer;
 	}
-	
+
 	private Set<?> getStopSet(String fieldName) {
 		Set<?> stopset = null;
 		if (stopsets != null) {
@@ -122,18 +123,16 @@ public class StemmerAnalyzer extends Analyzer {
 	 */
 	@Override
 	public TokenStream tokenStream(String fieldName, Reader reader) {
-//System.out.println("tokenStream, fieldname:"+fieldName);		
-		
+
 		StandardTokenizer tokenStream = new StandardTokenizer(matchVersion,
 				reader);
 		tokenStream.setMaxTokenLength(maxTokenLength);
 		LemmatizerWrapper lemmatizerWrapper = getLemmatizerWrapper(fieldName);
 		TokenStream result = null;
 		if (lemmatizerWrapper != null) {
-//System.out.println("tokenStream new CompoundStemmerTokenFilter:"+fieldName);			
-			result = new CompoundStemmerTokenFilter(tokenStream, lemmatizerWrapper);
+			result = new CompoundStemmerTokenFilter(tokenStream,
+					lemmatizerWrapper);
 		} else {
-//System.out.println("tokenStream FAKKEEEER:"+fieldName);			
 			result = new StandardFilter(tokenStream);
 		}
 		result = new LowerCaseFilter(result);
@@ -174,7 +173,7 @@ public class StemmerAnalyzer extends Analyzer {
 	@Override
 	public TokenStream reusableTokenStream(String fieldName, Reader reader)
 			throws IOException {
-//System.out.println("reusableTokenStream, fieldname:"+fieldName);		
+		// System.out.println("reusableTokenStream, fieldname:"+fieldName);
 		if (overridesTokenStreamMethod) {
 			// LUCENE-1678: force fallback to tokenStream() if we
 			// have been subclassed and that subclass overrides
@@ -188,11 +187,11 @@ public class StemmerAnalyzer extends Analyzer {
 			streams.tokenStream = new StandardTokenizer(matchVersion, reader);
 			LemmatizerWrapper lemmatizerWrapper = getLemmatizerWrapper(fieldName);
 			if (lemmatizerWrapper != null) {
-//System.out.println("reusableTokenStream new CompoundStemmerTokenFilter:"+fieldName);				
+				// System.out.println("reusableTokenStream new CompoundStemmerTokenFilter:"+fieldName);
 				streams.filteredTokenStream = new CompoundStemmerTokenFilter(
 						streams.tokenStream, lemmatizerWrapper);
 			} else {
-//System.out.println("reusableTokenStream FAKKEEEER:"+fieldName);				
+				// System.out.println("reusableTokenStream FAKKEEEER:"+fieldName);
 				streams.filteredTokenStream = new StandardFilter(
 						streams.tokenStream);
 			}
