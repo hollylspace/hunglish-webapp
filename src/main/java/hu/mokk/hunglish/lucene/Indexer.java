@@ -11,7 +11,9 @@ import java.io.IOException;
 
 import net.sf.jhunlang.jmorph.parser.ParseException;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.lucene.index.CorruptIndexException;
+import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.store.LockObtainFailedException;
 import org.apache.lucene.store.SimpleFSDirectory;
@@ -48,8 +50,9 @@ public class Indexer {
 	private String tmpIndexDir;
 	
 	private IndexWriter indexWriter;
-
-	public void initIndexer(CreateOrAppend createOrAppend) {
+	private CreateOrAppend createOrAppend = CreateOrAppend.Create;
+	
+	private void initIndexer() {
 		if (analyzerProvider == null) {
 			throw new IllegalStateException(
 					"Cannot create indexWriter. The analyzerProvider is null.");
@@ -61,6 +64,9 @@ public class Indexer {
 					"Cannot create indexWriter. The directory is null.");
 		}
 		try {
+			if (create){
+				deleteTmpDirectory();
+			}
 			indexWriter = new IndexWriter(new SimpleFSDirectory(new File(dir)),
 					analyzerProvider.getAnalyzer(), create,
 					IndexWriter.MaxFieldLength.UNLIMITED);
@@ -75,16 +81,40 @@ public class Indexer {
 			indexWriter.setMergeFactor(mergeFactor);
 		}
 		indexWriter.setMaxBufferedDocs(maxBufferedDocs);
-
 	}
 
+	public void deleteTmpDirectory() throws IOException{
+		FileUtils.deleteDirectory(new File(tmpIndexDir));
+	}
+	
 	synchronized public void indexAll(CreateOrAppend createOrAppend)
 			throws CorruptIndexException, LockObtainFailedException,
 			IOException, IllegalAccessException, InstantiationException,
 			ParseException {
 		Bisen.indexAll(indexWriter);
+		indexWriter.close();
 	}
 
+	synchronized public void mergeTmpIndex(){
+		boolean readOnly = true;
+		try {
+			IndexReader indexReader = IndexReader.open(new SimpleFSDirectory(new File(
+					tmpIndexDir)), readOnly);
+			createOrAppend = CreateOrAppend.Append;
+			initIndexer();
+			indexWriter.addIndexes(indexReader);
+			indexReader.close();
+			indexWriter.close();
+		} catch (CorruptIndexException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+	
 	public void setAnalyzerProvider(AnalyzerProvider analyzerProvider) {
 		this.analyzerProvider = analyzerProvider;
 	}
