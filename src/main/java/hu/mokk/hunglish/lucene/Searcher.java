@@ -79,6 +79,8 @@ public class Searcher {
 	}
 
 	public SearchResult search(SearchRequest request){
+		//TODO FIXME
+		initSearcher();
 		Query query = null;
 		try {
 			query = queryBuilder.parseRequest(request);
