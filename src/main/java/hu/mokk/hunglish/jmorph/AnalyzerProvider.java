@@ -3,6 +3,7 @@
  */
 package hu.mokk.hunglish.jmorph;
 
+import hu.mokk.hunglish.domain.Bisen;
 import hu.mokk.hunglish.lucene.analysis.StemmerAnalyzer;
 
 import java.io.IOException;
@@ -43,16 +44,6 @@ public class AnalyzerProvider {
 	private String enDic = "C:\\workspaces\\hunglish-webapp\\trunk\\data\\jmorph\\en.dic";
 	private int enRecursionDepth = 2;
 
-	/**
-	 * the name of the Hungarian sentence field in the index
-	 */
-	private String huFieldName = "left";
-	// public static String huStemmedFieldName = "left_stemmed";
-	/**
-	 * the name of the English sentence field in the index
-	 */
-	private String enFieldName = "right";
-	// public static String enStemmedFieldName = "right_stemmed";
 
 	/*******************************************/
 	private Analyser huAnalyser;
@@ -116,14 +107,14 @@ public class AnalyzerProvider {
 		huLemmatizerWrapper.setReturnOOVOrig(false);
 		huLemmatizerWrapper.setReturnOrig(true);
 		huLemmatizerWrapper.setReturnPOS(false);
-		lemmatizerMap.put(huFieldName, huLemmatizerWrapper);
+		lemmatizerMap.put(Bisen.huSentenceFieldName, huLemmatizerWrapper);
 
 		LemmatizerWrapper enLemmatizerWrapper = new LemmatizerWrapper();
 		enLemmatizerWrapper.setLemmatizer(enLemmatizer);
 		enLemmatizerWrapper.setReturnOOVOrig(false);
 		enLemmatizerWrapper.setReturnOrig(true);
 		enLemmatizerWrapper.setReturnPOS(false);
-		lemmatizerMap.put(enFieldName, enLemmatizerWrapper);
+		lemmatizerMap.put(Bisen.enSentenceFieldName, enLemmatizerWrapper);
 	}
 
 	/*******************************************/
@@ -192,14 +183,6 @@ public class AnalyzerProvider {
 
 	public void setEnRecursionDepth(int enRecursionDepth) {
 		this.enRecursionDepth = enRecursionDepth;
-	}
-
-	public void setHuFieldName(String huFieldName) {
-		this.huFieldName = huFieldName;
-	}
-
-	public void setEnFieldName(String enFieldName) {
-		this.enFieldName = enFieldName;
 	}
 
 }
