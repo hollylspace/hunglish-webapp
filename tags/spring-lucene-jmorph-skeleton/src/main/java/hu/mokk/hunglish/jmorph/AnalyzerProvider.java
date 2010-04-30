@@ -36,9 +36,9 @@ import net.sf.jhunlang.jmorph.sword.parser.SwordReader;
 public class AnalyzerProvider {
 
 	@Autowired
-	private String resouceEncodingEn = "ISO-8859-1";
+	private String resourceEncodingEn;
 	@Autowired
-	private String resouceEncodingHu = "ISO-8859-2";
+	private String resourceEncodingHu;
 	@Autowired
 	private String huAff = "C:\\workspaces\\hunglish-webapp\\trunk\\data\\jmorph\\mispellRC1.aff";
 	@Autowired
@@ -69,9 +69,9 @@ public class AnalyzerProvider {
 			InstantiationException,
 			net.sf.jhunlang.jmorph.parser.ParseException {
 		AnalyserConfig acHu = new AnalyserConfig();
-		Definition affixDef = acHu.createDefinition(huAff, resouceEncodingHu,
+		Definition affixDef = acHu.createDefinition(huAff, resourceEncodingHu,
 				SwordAffixReader.class);
-		Definition dicDef = acHu.createDefinition(huDic, resouceEncodingHu,
+		Definition dicDef = acHu.createDefinition(huDic, resourceEncodingHu,
 				SwordReader.class);
 		acHu.setDerivativeFile(affixDef, huDerivatives);
 		acHu.setRecursionDepth(affixDef, huRecursionDepth);
@@ -83,9 +83,9 @@ public class AnalyzerProvider {
 	private void initEnAnalyser() throws IOException, IllegalAccessException,
 			InstantiationException, ParseException {
 		AnalyserConfig acEn = new AnalyserConfig();
-		Definition affixDef = acEn.createDefinition(enAff, resouceEncodingEn,
+		Definition affixDef = acEn.createDefinition(enAff, resourceEncodingEn,
 				EnglishAffixReader.class);
-		Definition dicDef = acEn.createDefinition(enDic, resouceEncodingEn,
+		Definition dicDef = acEn.createDefinition(enDic, resourceEncodingEn,
 				EnglishReader.class);
 		acEn.setRecursionDepth(affixDef, enRecursionDepth);
 		JMorphFactory jf = new JMorphFactory();
@@ -152,11 +152,11 @@ public class AnalyzerProvider {
 
 	/*******************************************/
 	public void setResouceEncodingEn(String resouceEncodingEn) {
-		this.resouceEncodingEn = resouceEncodingEn;
+		this.resourceEncodingEn = resouceEncodingEn;
 	}
 
 	public void setResouceEncodingHu(String resouceEncodingHu) {
-		this.resouceEncodingHu = resouceEncodingHu;
+		this.resourceEncodingHu = resouceEncodingHu;
 	}
 
 	public void setHuAff(String huAff) {
