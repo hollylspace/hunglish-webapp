@@ -64,4 +64,11 @@
     <bean class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" id="entityManagerFactory">
         <property name="dataSource" ref="dataSource"/>
     </bean>
+<!-- =================================================== -->
+    
+    <bean class="hu.mokk.hunglish.jmorph.AnalyzerProvider" id="analyzerProvider">
+        <property name="resouceEncodingEn" value="${stemmer.resouceEncodingEn}"/>
+    </bean>
+    
+    
 </beans>
