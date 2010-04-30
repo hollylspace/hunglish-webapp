@@ -51,24 +51,44 @@
 		<context:exclude-filter expression="org.springframework.stereotype.Controller" type="annotation"/>
 	</context:component-scan>
 
-<bean class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" id="dataSource">
+	<bean class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" id="dataSource">
         <property name="driverClassName" value="${database.driverClassName}"/>
         <property name="url" value="${database.url}"/>
         <property name="username" value="${database.username}"/>
         <property name="password" value="${database.password}"/>
     </bean>
+
     <bean class="org.springframework.orm.jpa.JpaTransactionManager" id="transactionManager">
         <property name="entityManagerFactory" ref="entityManagerFactory"/>
     </bean>
     <tx:annotation-driven mode="aspectj" transaction-manager="transactionManager"/>
+
     <bean class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" id="entityManagerFactory">
         <property name="dataSource" ref="dataSource"/>
     </bean>
 <!-- =================================================== -->
-    
+	
     <bean class="hu.mokk.hunglish.jmorph.AnalyzerProvider" id="analyzerProvider">
+        <property name="resouceEncodingHu" value="${stemmer.resouceEncodingHu}"/>
+        <property name="huAff" value="${stemmer.huAff}"/>
+        <property name="huDic" value="${stemmer.huDic}"/>
+        <property name="huDerivatives" value="${stemmer.huDerivatives}"/>
+        <property name="huCompounds" value="${stemmer.huCompounds}"/>
+        <property name="huRecursionDepth" value="${stemmer.huRecursionDepth}"/>
+
         <property name="resouceEncodingEn" value="${stemmer.resouceEncodingEn}"/>
+        <property name="enAff" value="${stemmer.enAff}"/>
+        <property name="enDic" value="${stemmer.enDic}"/>
+        <property name="enRecursionDepth" value="${stemmer.enRecursionDepth}"/>
     </bean>
-    
-    
+
+    <bean class="hu.mokk.hunglish.lucene.Indexer" id="indexer">
+        <property name="analyzerProvider" ref="analyzerProvider"/>
+
+        <property name="mergeFactor" value="${indexer.mergeFactor}"/>
+        <property name="maxBufferedDocs" value="${indexer.maxBufferedDocs}"/>
+        <property name="indexDir" value="${indexer.indexDir}"/>
+        <property name="tmpIndexDir" value="${indexer.tmpIndexDir}"/>
+    </bean>
+
 </beans>
