@@ -68,7 +68,7 @@
     </bean>
 <!-- =================================================== -->
 	
-    <bean class="hu.mokk.hunglish.jmorph.AnalyzerProvider" id="analyzerProvider">
+    <bean class="hu.mokk.hunglish.jmorph.AnalyzerProvider" id="analyzerProvider" init-method="initAnalyzerProvider">
         <property name="resouceEncodingHu" value="${stemmer.resouceEncodingHu}"/>
         <property name="huAff" value="${stemmer.huAff}"/>
         <property name="huDic" value="${stemmer.huDic}"/>
@@ -82,7 +82,7 @@
         <property name="enRecursionDepth" value="${stemmer.enRecursionDepth}"/>
     </bean>
 
-    <bean class="hu.mokk.hunglish.lucene.Indexer" id="indexer">
+    <bean class="hu.mokk.hunglish.lucene.Indexer" id="indexer" init-method="initIndexer">
         <property name="analyzerProvider" ref="analyzerProvider"/>
 
         <property name="mergeFactor" value="${indexer.mergeFactor}"/>
@@ -91,7 +91,7 @@
         <property name="tmpIndexDir" value="${indexer.tmpIndexDir}"/>
     </bean>
 
-    <bean class="hu.mokk.hunglish.lucene.Searcher" id="searcher">
+    <bean class="hu.mokk.hunglish.lucene.Searcher" id="searcher" init-method="initSearcher">
         <property name="luceneQueryBuilder" ref="luceneQueryBuilder"/>
         <property name="indexDir" value="${indexer.indexDir}"/> <!-- ATTENTION, this is the same as indexer.indexDir -->
     </bean>

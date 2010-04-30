@@ -49,7 +49,7 @@ public class Indexer {
 	
 	private IndexWriter indexWriter;
 
-	private void initIndexWriter(CreateOrAppend createOrAppend) {
+	public void initIndexer(CreateOrAppend createOrAppend) {
 		if (analyzerProvider == null) {
 			throw new IllegalStateException(
 					"Cannot create indexWriter. The analyzerProvider is null.");
@@ -82,7 +82,6 @@ public class Indexer {
 			throws CorruptIndexException, LockObtainFailedException,
 			IOException, IllegalAccessException, InstantiationException,
 			ParseException {
-		initIndexWriter(createOrAppend);
 		Bisen.indexAll(indexWriter);
 	}
 
