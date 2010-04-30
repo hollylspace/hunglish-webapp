@@ -92,12 +92,12 @@
     </bean>
 
     <bean class="hu.mokk.hunglish.lucene.Searcher" id="searcher">
-        <property name="queryBuilder" ref="queryBuilder"/>
-
+        <property name="luceneQueryBuilder" ref="luceneQueryBuilder"/>
         <property name="indexDir" value="${indexer.indexDir}"/> <!-- ATTENTION, this is the same as indexer.indexDir -->
     </bean>
 
-    <bean class="hu.mokk.hunglish.lucene.QueryBuilder" id="queryBuilder">
+				 
+    <bean class="hu.mokk.hunglish.lucene.LuceneQueryBuilder" id="luceneQueryBuilder">
         <property name="analyzerProvider" ref="analyzerProvider"/>
     </bean>
 </beans>
