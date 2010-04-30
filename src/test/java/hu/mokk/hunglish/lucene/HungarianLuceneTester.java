@@ -45,7 +45,7 @@ public class HungarianLuceneTester {
 	public static String resouceEncodingEn = "ISO-8859-1";
 	public static String resouceEncodingHu = "ISO-8859-2";
 
-	/*
+	/* hehehe
 	 * private static String huAff =
 	 * "/Users/daniel/experiments/hunglish-webapp/spring-lucene-jmorph-skeleton/resources-lang/jmorph/mispellRC1.aff"
 	 * ; private static String huDic =
