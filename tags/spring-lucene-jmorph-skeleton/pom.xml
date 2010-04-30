@@ -260,22 +260,22 @@
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>org.springframework.security.core</artifactId>
-			<version>3.0.0.RELEASE</version>
+			<version>${springsecurity.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>org.springframework.security.config</artifactId>
-			<version>3.0.0.RELEASE</version>
+			<version>${springsecurity.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>org.springframework.security.web</artifactId>
-			<version>3.0.0.RELEASE</version>
+			<version>${springsecurity.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>org.springframework.security.taglibs</artifactId>
-			<version>3.0.0.RELEASE</version>
+			<version>${springsecurity.version}</version>
 		</dependency>
 		
 		<!-- http://stackoverflow.com/questions/396245/add-a-dependency-in-maven -->
@@ -441,6 +441,7 @@
 
 	<properties>
 		<spring.version>3.0.0.RELEASE</spring.version>
+		<springsecurity.version>3.0.2.RELEASE</springsecurity.version>
 		<aspectj.version>1.6.6.RELEASE</aspectj.version>
 	</properties>
 </project>
