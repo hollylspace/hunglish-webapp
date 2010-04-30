@@ -56,7 +56,6 @@ public class AnalyzerProvider {
 	@Autowired
 	private int enRecursionDepth = 2;
 
-
 	/*******************************************/
 	private Analyser huAnalyser;
 	private Analyser enAnalyser;
@@ -93,54 +92,44 @@ public class AnalyzerProvider {
 		enAnalyser = jf.build(new Definition[] { affixDef, dicDef });
 	}
 
+	//init-method
 	public void initLemmatizer() throws IOException, IllegalAccessException,
 			InstantiationException, ParseException {
-		
-		lemmatizerMap = new HashMap<String, LemmatizerWrapper>();
-		
-		initHuAnalyser();
-		initEnAnalyser();
-		AnalyserControl acHu = new AnalyserControl(
-				AnalyserControl.ALL_COMPOUNDS);
-		AnalyserContext analyserContextHu = new AnalyserContext(acHu);
-		boolean huStripDerivates = true;
-		Lemmatizer huLemmatizer = new net.sf.jhunlang.jmorph.lemma.LemmatizerImpl(
-				huAnalyser, huStripDerivates, analyserContextHu);
 
-		AnalyserControl acRight = new AnalyserControl(
-				AnalyserControl.ALL_COMPOUNDS);
-		AnalyserContext analyserContextRight = new AnalyserContext(acRight);
-		boolean enStripDerivates = true;
-		Lemmatizer enLemmatizer = new net.sf.jhunlang.jmorph.lemma.LemmatizerImpl(
-				enAnalyser, enStripDerivates, analyserContextRight);
-
-		LemmatizerWrapper huLemmatizerWrapper = new LemmatizerWrapper();
-		huLemmatizerWrapper.setLemmatizer(huLemmatizer);
-		huLemmatizerWrapper.setReturnOOVOrig(false);
-		huLemmatizerWrapper.setReturnOrig(true);
-		huLemmatizerWrapper.setReturnPOS(false);
-		lemmatizerMap.put(Bisen.huSentenceFieldName, huLemmatizerWrapper);
-
-		LemmatizerWrapper enLemmatizerWrapper = new LemmatizerWrapper();
-		enLemmatizerWrapper.setLemmatizer(enLemmatizer);
-		enLemmatizerWrapper.setReturnOOVOrig(false);
-		enLemmatizerWrapper.setReturnOrig(true);
-		enLemmatizerWrapper.setReturnPOS(false);
-		lemmatizerMap.put(Bisen.enSentenceFieldName, enLemmatizerWrapper);
-	}
-
-	/*******************************************/
-	private void getLemmatizerMap()
-			throws IOException, IllegalAccessException, InstantiationException,
-			ParseException {
-		if (lemmatizerMap== null || lemmatizerMap.isEmpty()) {
-			initLemmatizer();
-		}
-	}
-
-	synchronized public Analyzer getAnalyzer() {
 		try {
-			getLemmatizerMap();
+			lemmatizerMap = new HashMap<String, LemmatizerWrapper>();
+
+			initHuAnalyser();
+			initEnAnalyser();
+			AnalyserControl acHu = new AnalyserControl(
+					AnalyserControl.ALL_COMPOUNDS);
+			AnalyserContext analyserContextHu = new AnalyserContext(acHu);
+			boolean huStripDerivates = true;
+			Lemmatizer huLemmatizer = new net.sf.jhunlang.jmorph.lemma.LemmatizerImpl(
+					huAnalyser, huStripDerivates, analyserContextHu);
+
+			AnalyserControl acRight = new AnalyserControl(
+					AnalyserControl.ALL_COMPOUNDS);
+			AnalyserContext analyserContextRight = new AnalyserContext(acRight);
+			boolean enStripDerivates = true;
+			Lemmatizer enLemmatizer = new net.sf.jhunlang.jmorph.lemma.LemmatizerImpl(
+					enAnalyser, enStripDerivates, analyserContextRight);
+
+			LemmatizerWrapper huLemmatizerWrapper = new LemmatizerWrapper();
+			huLemmatizerWrapper.setLemmatizer(huLemmatizer);
+			huLemmatizerWrapper.setReturnOOVOrig(false);
+			huLemmatizerWrapper.setReturnOrig(true);
+			huLemmatizerWrapper.setReturnPOS(false);
+			lemmatizerMap.put(Bisen.huSentenceFieldName, huLemmatizerWrapper);
+
+			LemmatizerWrapper enLemmatizerWrapper = new LemmatizerWrapper();
+			enLemmatizerWrapper.setLemmatizer(enLemmatizer);
+			enLemmatizerWrapper.setReturnOOVOrig(false);
+			enLemmatizerWrapper.setReturnOrig(true);
+			enLemmatizerWrapper.setReturnPOS(false);
+			lemmatizerMap.put(Bisen.enSentenceFieldName, enLemmatizerWrapper);
+
+			analyzer = new StemmerAnalyzer(Version.LUCENE_30, lemmatizerMap);
 		} catch (IOException e) {
 			throw new RuntimeException("Cannot initialize jmorph stemmer.", e);
 		} catch (IllegalAccessException e) {
@@ -150,9 +139,11 @@ public class AnalyzerProvider {
 		} catch (ParseException e) {
 			throw new RuntimeException("Cannot initialize jmorph stemmer.", e);
 		}
-		if (analyzer == null) {
-			analyzer = new StemmerAnalyzer(Version.LUCENE_30, lemmatizerMap);
-		}
+
+	}
+
+	/*******************************************/
+	synchronized public Analyzer getAnalyzer() {
 		return analyzer;
 	}
 
