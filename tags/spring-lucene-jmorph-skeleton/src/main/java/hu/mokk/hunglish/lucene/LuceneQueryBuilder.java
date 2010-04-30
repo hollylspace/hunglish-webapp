@@ -21,39 +21,23 @@ import org.springframework.beans.factory.annotation.Configurable;
 @Configurable
 public class LuceneQueryBuilder {
 
-	private HashMap<String, SourceFilter> sourceFilterCache  = new HashMap<String, SourceFilter>();
-	
+	private HashMap<String, SourceFilter> sourceFilterCache = new HashMap<String, SourceFilter>();
+
 	@Autowired
 	private AnalyzerProvider analyzerProvider;
 
-
-	public static void printBytes(byte[] array, String name) {
-		for (int k = 0; k < array.length; k++) {
-			System.out.println(name + "[" + k + "] = " + "0x" + byteToHex(array[k]));
-		}
-}
-
-static public String byteToHex(byte b) {
-	// Returns hex String representation of byte b
-	char hexDigit[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-			'a', 'b', 'c', 'd', 'e', 'f' };
-	char[] array = { hexDigit[(b >> 4) & 0x0f], hexDigit[b & 0x0f] };
-	return new String(array);
-}
-
-	private Query parseSearchRequest(SearchRequest request){
+	private Query parseSearchRequest(SearchRequest request) {
 		BooleanQuery result = new BooleanQuery();
 		try {
-			String leftRequest; 
+			String leftRequest;
 			leftRequest = request.getLeftQuery();
-			if (leftRequest != null
-					&& leftRequest.length() > 0) {
+			if (leftRequest != null && leftRequest.length() > 0) {
 				Query leftQuery = new QueryParser(Version.LUCENE_30,
-						Bisen.huSentenceFieldName, analyzerProvider.getAnalyzer())
-						.parse(leftRequest);
+						Bisen.huSentenceFieldName, analyzerProvider
+								.getAnalyzer()).parse(leftRequest);
 				result.add(leftQuery, Occur.SHOULD);
 			}
-			
+
 		} catch (ParseException e) {
 			throw new RuntimeException("left query couldn't be parsed", e);
 		}
@@ -61,8 +45,8 @@ static public String byteToHex(byte b) {
 			if (request.getRightQuery() != null
 					&& request.getRightQuery().length() > 0) {
 				Query rightQuery = new QueryParser(Version.LUCENE_30,
-						Bisen.enSentenceFieldName, analyzerProvider.getAnalyzer())
-						.parse(request.getRightQuery());
+						Bisen.enSentenceFieldName, analyzerProvider
+								.getAnalyzer()).parse(request.getRightQuery());
 				result.add(rightQuery, Occur.SHOULD);
 			}
 		} catch (ParseException e) {
@@ -73,13 +57,12 @@ static public String byteToHex(byte b) {
 
 	public Query parseRequest(SearchRequest request) throws ParseException {
 		Query query = parseSearchRequest(request);
-		query = addSourceFilter(query, "source", request.getSourceId());
+		query = addSourceFilter(query, Bisen.genreFieldName, request.getSourceId());
 		return query;
 	}
 
 	private Query addSourceFilter(Query q, String fieldName, String sourceId) {
-		if (sourceId == null || sourceId == ""
-				|| (sourceId.equals("all") && fieldName.equals("source"))) {
+		if (sourceId == null || "".equals(sourceId)) {
 			return q;
 		}
 		SourceFilter filter = null;
@@ -103,4 +86,20 @@ static public String byteToHex(byte b) {
 		this.analyzerProvider = analyzerProvider;
 	}
 
+	public static void printBytes(byte[] array, String name) {
+		for (int k = 0; k < array.length; k++) {
+			System.out.println(name + "[" + k + "] = " + "0x"
+					+ byteToHex(array[k]));
+		}
+	}
+
+	static public String byteToHex(byte b) {
+		// Returns hex String representation of byte b
+		char hexDigit[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+				'a', 'b', 'c', 'd', 'e', 'f' };
+		char[] array = { hexDigit[(b >> 4) & 0x0f], hexDigit[b & 0x0f] };
+		return new String(array);
+	}
+
+	
 }

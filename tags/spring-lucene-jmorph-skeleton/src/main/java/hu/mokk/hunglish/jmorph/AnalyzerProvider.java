@@ -143,8 +143,11 @@ public class AnalyzerProvider {
 	}
 
 	/*******************************************/
-	synchronized public Analyzer getAnalyzer() {
+	public Analyzer getAnalyzer() {
 		return analyzer;
+	}
+	public Map<String, LemmatizerWrapper> getLemmatizerMap() {
+		return lemmatizerMap;
 	}
 
 	/*******************************************/

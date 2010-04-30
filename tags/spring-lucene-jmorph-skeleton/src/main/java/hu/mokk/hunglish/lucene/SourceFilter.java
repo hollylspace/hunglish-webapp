@@ -20,7 +20,7 @@ import org.apache.lucene.util.DocIdBitSet;
  * @author bpgergo
  * 
  * Users can provide a fieldName with the constructor.
- * If null, then a filter will be created on the "source" field
+ * If null, then a filter will be created on the Bisen.genreFieldName field
  */
 public class SourceFilter extends Filter {
 
