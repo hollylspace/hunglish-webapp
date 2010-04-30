@@ -63,6 +63,10 @@ public class Bisen {
 	@PersistenceContext
 	transient EntityManager entityManager;
 
+	transient String huSentenceView;
+	transient String enSentenceView;
+	
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "id")
@@ -272,6 +276,10 @@ public class Bisen {
 	public static String huSentenceStemmedFieldName = "huSentenceStemmed";
 	public static String enSentenceStemmedFieldName = "enSentenceStemmed";
 	
+	public static Bisen toBisen(Document document){
+		return findBisen(new Long(document.getField(idFieldName).stringValue()));
+	}
+	
 	public Document toLucene() {
 		Document result = new Document();
 
@@ -379,5 +387,21 @@ public class Bisen {
 
 	public void setIsDuplicate(Boolean isDuplicate) {
 		this.isDuplicate = isDuplicate;
+	}
+
+	public String getHuSentenceView() {
+		return huSentenceView;
+	}
+
+	public void setHuSentenceView(String huSentenceView) {
+		this.huSentenceView = huSentenceView;
+	}
+
+	public String getEnSentenceView() {
+		return enSentenceView;
+	}
+
+	public void setEnSentenceView(String enSentenceView) {
+		this.enSentenceView = enSentenceView;
 	}
 }

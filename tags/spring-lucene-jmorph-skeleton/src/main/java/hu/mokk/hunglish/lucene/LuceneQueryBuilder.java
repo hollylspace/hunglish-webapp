@@ -12,6 +12,7 @@ import org.apache.lucene.search.FilteredQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.util.Version;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * SearchRequest objektumbol csinal lucene szamara ertheto Queryt
@@ -19,8 +20,13 @@ import org.apache.lucene.util.Version;
 public class LuceneQueryBuilder {
 
 	private HashMap<String, SourceFilter> sourceFilterCache  = new HashMap<String, SourceFilter>();
+	
+	@Autowired
 	private AnalyzerProvider analyzerProvider;
 
+	
+	
+	
 	public static void printBytes(byte[] array, String name) {
 		for (int k = 0; k < array.length; k++) {
 			System.out.println(name + "[" + k + "] = " + "0x" + byteToHex(array[k]));
@@ -66,17 +72,9 @@ static public String byteToHex(byte b) {
 	}
 
 	public Query parseRequest(SearchRequest request) throws ParseException {
-
 		Query query = parseSearchRequest(request);
-		if (query == null) {
-			throw new ParseException("no query");
-		}
-
-
 		query = addSourceFilter(query, "source", request.getSourceId());
-
 		return query;
-
 	}
 
 	private Query addSourceFilter(Query q, String fieldName, String sourceId) {

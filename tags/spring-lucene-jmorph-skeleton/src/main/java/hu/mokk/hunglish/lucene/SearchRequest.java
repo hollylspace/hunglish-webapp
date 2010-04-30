@@ -51,13 +51,6 @@ public class SearchRequest {
     protected String sourceId = null;
     
     
-    /**
-     * filter out duplicate values,
-     * see http://code.google.com/p/hunglish-webapp/issues/detail?id=4	
-     */
-    protected boolean excludeDuplicates = false;
-    
-    
     public SearchRequest() {
        //TODO
     	// System.out.println("remove me from the source");
@@ -170,12 +163,4 @@ public class SearchRequest {
     }
 
 
-	public boolean isExcludeDuplicates() {
-		return excludeDuplicates;
-	}
-
-
-	public void setExcludeDuplicates(boolean excludeDuplicates) {
-		this.excludeDuplicates = excludeDuplicates;
-	}
 }
