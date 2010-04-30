@@ -15,6 +15,7 @@ import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.store.LockObtainFailedException;
 import org.apache.lucene.store.SimpleFSDirectory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author bpgergo
@@ -33,12 +34,17 @@ public class Indexer {
 		Create, Append
 	}
 
+	@Autowired
 	private AnalyzerProvider analyzerProvider;
-
+	@Autowired
 	private Integer mergeFactor = 100;
+	@Autowired
 	private Integer maxBufferedDocs = 1000;
+	@Autowired
 	private String indexDir;
+	@Autowired
 	private String tmpIndexDir;
+	
 	private IndexWriter indexWriter;
 
 	private void initIndexWriter(CreateOrAppend createOrAppend) {

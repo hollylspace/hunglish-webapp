@@ -12,6 +12,7 @@ import java.util.Map;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.util.Version;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import net.sf.jhunlang.jmorph.analysis.Analyser;
 import net.sf.jhunlang.jmorph.analysis.AnalyserContext;
@@ -32,16 +33,25 @@ import net.sf.jhunlang.jmorph.sword.parser.SwordReader;
  */
 public class AnalyzerProvider {
 
+	@Autowired
 	private String resouceEncodingEn = "ISO-8859-1";
+	@Autowired
 	private String resouceEncodingHu = "ISO-8859-2";
-
+	@Autowired
 	private String huAff = "C:\\workspaces\\hunglish-webapp\\trunk\\data\\jmorph\\mispellRC1.aff";
+	@Autowired
 	private String huDic = "C:\\workspaces\\hunglish-webapp\\trunk\\data\\jmorph\\mispellRC1.dic";
+	@Autowired
 	private String huDerivatives = "C:\\workspaces\\hunglish-webapp\\trunk\\data\\jmorph\\derivatives.lst";
+	@Autowired
 	private String huCompounds = "C:\\workspaces\\hunglish-webapp\\trunk\\data\\jmorph\\compound.lst";
+	@Autowired
 	private int huRecursionDepth = 4;
+	@Autowired
 	private String enAff = "C:\\workspaces\\hunglish-webapp\\trunk\\data\\jmorph\\en.aff";
+	@Autowired
 	private String enDic = "C:\\workspaces\\hunglish-webapp\\trunk\\data\\jmorph\\en.dic";
+	@Autowired
 	private int enRecursionDepth = 2;
 
 

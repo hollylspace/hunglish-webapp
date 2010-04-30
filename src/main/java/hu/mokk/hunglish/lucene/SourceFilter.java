@@ -4,6 +4,8 @@
 package hu.mokk.hunglish.lucene;
 
 
+import hu.mokk.hunglish.domain.Bisen;
+
 import java.io.IOException;
 import java.util.BitSet;
 
@@ -22,10 +24,8 @@ import org.apache.lucene.util.DocIdBitSet;
  */
 public class SourceFilter extends Filter {
 
-	protected final static String SOURCE_FIELD = "source";
-
 	protected String filterValue = null;
-	protected String fieldName = SOURCE_FIELD;
+	protected String fieldName = Bisen.genreFieldName;
 
 	public SourceFilter(String fieldName, String fieldValue) {
 		this.filterValue = fieldValue;

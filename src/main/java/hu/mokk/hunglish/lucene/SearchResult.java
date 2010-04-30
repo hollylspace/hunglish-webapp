@@ -1,4 +1,6 @@
 package hu.mokk.hunglish.lucene;
+import hu.mokk.hunglish.domain.Bisen;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,13 +15,13 @@ public class SearchResult {
 	
 	private int endOffset;
 	
-	private List hitList;
+	private List<Bisen> hitList;
 	
 	public SearchResult(int totalCount, int start, int end) {
 		this.totalCount = totalCount;
 		this.startOffset = start;
 		this.endOffset = end;
-		hitList = new ArrayList(end-start);
+		hitList = new ArrayList<Bisen>(end-start);
 		
 	}
 	
@@ -47,12 +49,12 @@ public class SearchResult {
 	/**
 	 * @param resultList The resultList to set.
 	 */
-	public void addToHits(Document doc) {
+	public void addToHits(Bisen doc) {
 		this.hitList.add(doc);
 	}
 	
-	public Document getHit(int i) {
-		return (Document) hitList.get(i);
+	public Bisen getHit(int i) {
+		return hitList.get(i);
 	}
 	/**
 	 * @return Returns the startOffset.
