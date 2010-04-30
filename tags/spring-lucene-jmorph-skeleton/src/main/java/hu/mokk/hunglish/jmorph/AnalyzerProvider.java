@@ -13,6 +13,7 @@ import java.util.Map;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.util.Version;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 
 import net.sf.jhunlang.jmorph.analysis.Analyser;
 import net.sf.jhunlang.jmorph.analysis.AnalyserContext;
@@ -31,6 +32,7 @@ import net.sf.jhunlang.jmorph.sword.parser.SwordReader;
  * @author bpgergo
  * 
  */
+@Configurable
 public class AnalyzerProvider {
 
 	@Autowired
