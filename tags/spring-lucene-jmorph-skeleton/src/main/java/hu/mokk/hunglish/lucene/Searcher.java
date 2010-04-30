@@ -20,7 +20,8 @@ public class Searcher {
 	private String indexDir;
 	private IndexSearcher searcher;
 	private IndexReader indexReader;
-
+	private LuceneQueryBuilder queryBuilder;
+	
 	synchronized public void initSearcher() {
 		boolean readOnly = true;
 		if (indexReader == null) {
@@ -37,7 +38,9 @@ public class Searcher {
 		if (searcher == null){
 			searcher = new IndexSearcher(indexReader);
 		}
-
+		if (queryBuilder == null){
+			queryBuilder = new LuceneQueryBuilder();
+		}
 	}
 
 	public void setIndexDir(String indexDir) {
