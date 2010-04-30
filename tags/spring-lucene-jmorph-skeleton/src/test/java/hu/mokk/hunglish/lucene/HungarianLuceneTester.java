@@ -87,8 +87,8 @@ public class HungarianLuceneTester {
 	public static String enFieldName = "right";
 	// public static String enStemmedFieldName = "right_stemmed";
 
-	Analyser huAnalyser;
-	Analyser enAnalyser;
+	private Analyser huAnalyser;
+	private Analyser enAnalyser;
 
 	Map<String, LemmatizerWrapper> lemmatizerMap;
 
