@@ -91,4 +91,13 @@
         <property name="tmpIndexDir" value="${indexer.tmpIndexDir}"/>
     </bean>
 
+    <bean class="hu.mokk.hunglish.lucene.Searcher" id="searcher">
+        <property name="queryBuilder" ref="queryBuilder"/>
+
+        <property name="indexDir" value="${indexer.indexDir}"/> <!-- ATTENTION, this is the same as indexer.indexDir -->
+    </bean>
+
+    <bean class="hu.mokk.hunglish.lucene.QueryBuilder" id="queryBuilder">
+        <property name="analyzerProvider" ref="analyzerProvider"/>
+    </bean>
 </beans>
