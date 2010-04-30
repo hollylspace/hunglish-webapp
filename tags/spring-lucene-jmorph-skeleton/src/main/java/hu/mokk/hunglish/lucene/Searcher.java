@@ -34,9 +34,7 @@ import org.springframework.beans.factory.annotation.Configurable;
 @Configurable
 public class Searcher {
 
-	@Autowired
 	private String indexDir;
-	@Autowired
 	private Integer maxDocumments = 1000;
 	
 	private IndexSearcher searcher;

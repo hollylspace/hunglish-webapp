@@ -10,11 +10,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.util.Version;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
-
 import net.sf.jhunlang.jmorph.analysis.Analyser;
 import net.sf.jhunlang.jmorph.analysis.AnalyserContext;
 import net.sf.jhunlang.jmorph.analysis.AnalyserControl;
@@ -28,6 +23,10 @@ import net.sf.jhunlang.jmorph.sword.parser.EnglishReader;
 import net.sf.jhunlang.jmorph.sword.parser.SwordAffixReader;
 import net.sf.jhunlang.jmorph.sword.parser.SwordReader;
 
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.util.Version;
+import org.springframework.beans.factory.annotation.Configurable;
+
 /**
  * @author bpgergo
  * 
@@ -35,26 +34,16 @@ import net.sf.jhunlang.jmorph.sword.parser.SwordReader;
 @Configurable
 public class AnalyzerProvider {
 
-	@Autowired
 	private String resourceEncodingEn;
-	@Autowired
 	private String resourceEncodingHu;
-	@Autowired
-	private String huAff = "C:\\workspaces\\hunglish-webapp\\trunk\\data\\jmorph\\mispellRC1.aff";
-	@Autowired
-	private String huDic = "C:\\workspaces\\hunglish-webapp\\trunk\\data\\jmorph\\mispellRC1.dic";
-	@Autowired
-	private String huDerivatives = "C:\\workspaces\\hunglish-webapp\\trunk\\data\\jmorph\\derivatives.lst";
-	@Autowired
-	private String huCompounds = "C:\\workspaces\\hunglish-webapp\\trunk\\data\\jmorph\\compound.lst";
-	@Autowired
-	private int huRecursionDepth = 4;
-	@Autowired
-	private String enAff = "C:\\workspaces\\hunglish-webapp\\trunk\\data\\jmorph\\en.aff";
-	@Autowired
-	private String enDic = "C:\\workspaces\\hunglish-webapp\\trunk\\data\\jmorph\\en.dic";
-	@Autowired
-	private int enRecursionDepth = 2;
+	private String huAff;
+	private String huDic;
+	private String huDerivatives;
+	private String huCompounds;
+	private int huRecursionDepth;
+	private String enAff;
+	private String enDic;
+	private int enRecursionDepth;
 
 	/*******************************************/
 	private Analyser huAnalyser;
@@ -151,14 +140,6 @@ public class AnalyzerProvider {
 	}
 
 	/*******************************************/
-	public void setResouceEncodingEn(String resouceEncodingEn) {
-		this.resourceEncodingEn = resouceEncodingEn;
-	}
-
-	public void setResouceEncodingHu(String resouceEncodingHu) {
-		this.resourceEncodingHu = resouceEncodingHu;
-	}
-
 	public void setHuAff(String huAff) {
 		this.huAff = huAff;
 	}
@@ -191,4 +172,14 @@ public class AnalyzerProvider {
 		this.enRecursionDepth = enRecursionDepth;
 	}
 
+	public void setResourceEncodingEn(String resourceEncodingEn) {
+		this.resourceEncodingEn = resourceEncodingEn;
+	}
+
+	public void setResourceEncodingHu(String resourceEncodingHu) {
+		this.resourceEncodingHu = resourceEncodingHu;
+	}
+
+	
+	
 }
