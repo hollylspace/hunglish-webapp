@@ -1,7 +1,7 @@
 /**
  * 
  */
-package hu.mokk.hunglish.lucene.analysis;
+package hu.mokk.hunglish.lucene;
 
 import hu.mokk.hunglish.domain.Bisen;
 import hu.mokk.hunglish.jmorph.AnalyzerProvider;
