@@ -45,7 +45,7 @@ public class Searcher {
 	@Autowired
 	private LuceneQueryBuilder luceneQueryBuilder;
 	
-	synchronized public void initSearcher() {
+	public void initSearcher() {
 		boolean readOnly = true;
 		if (indexReader == null) {
 			try {
@@ -79,8 +79,6 @@ public class Searcher {
 	}
 
 	public SearchResult search(SearchRequest request){
-		//TODO FIXME
-		initSearcher();
 		Query query = null;
 		try {
 			query = luceneQueryBuilder.parseRequest(request);

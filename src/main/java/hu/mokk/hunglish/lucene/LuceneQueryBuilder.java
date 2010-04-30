@@ -26,9 +26,7 @@ public class LuceneQueryBuilder {
 	@Autowired
 	private AnalyzerProvider analyzerProvider;
 
-	
-	
-	
+
 	public static void printBytes(byte[] array, String name) {
 		for (int k = 0; k < array.length; k++) {
 			System.out.println(name + "[" + k + "] = " + "0x" + byteToHex(array[k]));

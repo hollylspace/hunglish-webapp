@@ -93,7 +93,7 @@ public class AnalyzerProvider {
 	}
 
 	//init-method
-	public void initLemmatizer() throws IOException, IllegalAccessException,
+	public void initAnalyzerProvider() throws IOException, IllegalAccessException,
 			InstantiationException, ParseException {
 
 		try {
