@@ -97,12 +97,12 @@ public class AnalyzerProvider {
 			Lemmatizer huLemmatizer = new net.sf.jhunlang.jmorph.lemma.LemmatizerImpl(
 					huAnalyser, huStripDerivates, analyserContextHu);
 
-			AnalyserControl acRight = new AnalyserControl(
+			AnalyserControl acEn = new AnalyserControl(
 					AnalyserControl.ALL_COMPOUNDS);
-			AnalyserContext analyserContextRight = new AnalyserContext(acRight);
+			AnalyserContext analyserContextEn = new AnalyserContext(acEn);
 			boolean enStripDerivates = true;
 			Lemmatizer enLemmatizer = new net.sf.jhunlang.jmorph.lemma.LemmatizerImpl(
-					enAnalyser, enStripDerivates, analyserContextRight);
+					enAnalyser, enStripDerivates, analyserContextEn);
 
 			LemmatizerWrapper huLemmatizerWrapper = new LemmatizerWrapper();
 			huLemmatizerWrapper.setLemmatizer(huLemmatizer);
