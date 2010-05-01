@@ -15,7 +15,7 @@ public class SearchRequest {
     protected String leftQuery = null;
     
     /**
-     * Query with no specified field. Using by power users knowing the core lucene query
+     * Query with no specified field. Used only by power users knowing the core lucene query
      * syntax
      */
     protected String commonQuery = null;
