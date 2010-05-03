@@ -228,11 +228,7 @@ public class HungarianLuceneTester {
 
 		lemmatizerMap = new HashMap<String, LemmatizerWrapper>();
 
-		LemmatizerWrapper huLemmatizerWrapper = new LemmatizerWrapper();
-		huLemmatizerWrapper.setLemmatizer(huLemmatizer);
-		huLemmatizerWrapper.setReturnOOVOrig(false);
-		huLemmatizerWrapper.setReturnOrig(true);
-		huLemmatizerWrapper.setReturnPOS(false);
+		LemmatizerWrapper huLemmatizerWrapper = new LemmatizerWrapper(huLemmatizer,false/*returnOOVOrig*/,true/*returnOrig*/,false/*returnPOS*/);
 		lemmatizerMap.put(huFieldName, huLemmatizerWrapper);
 
 		System.out.println("hu lemmatizer created--------------");
@@ -243,11 +239,7 @@ public class HungarianLuceneTester {
 			}
 		}
 
-		LemmatizerWrapper enLemmatizerWrapper = new LemmatizerWrapper();
-		enLemmatizerWrapper.setLemmatizer(enLemmatizer);
-		enLemmatizerWrapper.setReturnOOVOrig(false);
-		enLemmatizerWrapper.setReturnOrig(true);
-		enLemmatizerWrapper.setReturnPOS(false);
+		LemmatizerWrapper enLemmatizerWrapper = new LemmatizerWrapper(enLemmatizer,false/*returnOOVOrig*/,true/*returnOrig*/,false/*returnPOS*/);
 		lemmatizerMap.put(enFieldName, enLemmatizerWrapper);
 	}
 
