@@ -2,48 +2,63 @@ package hu.mokk.hunglish.jmorph;
 
 //TODO add license and comments
 
+import java.util.List;
+import java.util.ArrayList;
+
+import net.sf.jhunlang.jmorph.lemma.Lemma;
 import net.sf.jhunlang.jmorph.lemma.Lemmatizer;
 
 public class LemmatizerWrapper {
 
-	Lemmatizer lemmatizer;
+	protected Lemmatizer lemmatizer;
 	
-	protected boolean returnOOVOrig = false;
+	protected boolean returnOOVOrig;
+	protected boolean returnOrig;
+	protected boolean returnPOS;
 
-	protected boolean returnPOS = false;
+	private static int MIN_WORD_SIZE = 1;
 
-	protected boolean returnOrig = true;
-
-	public Lemmatizer getLemmatizer() {
-		return lemmatizer;
+	// false,true,false is the recommended default.
+	public LemmatizerWrapper(Lemmatizer lemmatizer_, boolean returnOOVOrig_, boolean returnOrig_, boolean returnPOS_ ) {
+		lemmatizer = lemmatizer_;
+		returnOOVOrig = returnOOVOrig_;
+		returnOrig = returnOrig_;
+		returnPOS_ = returnPOS_;
 	}
 
-	public void setLemmatizer(Lemmatizer lemmatizer) {
-		this.lemmatizer = lemmatizer;
-	}
+	public List<String> lemmatize( String word ) {
+		List<String> results = new ArrayList<String>();
+		if (word.length() < MIN_WORD_SIZE) {
+			return results;
+		}
 
-	public boolean isReturnOOVOrig() {
-		return returnOOVOrig;
-	}
+		List<Lemma> lemmas = lemmatizer.lemmatize(word);
 
-	public void setReturnOOVOrig(boolean returnOOVOrig) {
-		this.returnOOVOrig = returnOOVOrig;
-	}
-
-	public boolean isReturnPOS() {
-		return returnPOS;
-	}
-
-	public void setReturnPOS(boolean returnPOS) {
-		this.returnPOS = returnPOS;
+		// az eredeti tokent csak akkor adjuk vissza, ha a szo ismeretlen
+		// es kertek
+		if ((lemmas.size() == 0)) {
+			if (returnOOVOrig || returnOrig) {
+				results.add(word);
+			}
+		} else {
+			if (returnOrig) {
+				results.add(word);
+			}
+			boolean isFirst = true;
+			for (Lemma lemma : lemmas) {
+				String stemmedText;
+				if (returnPOS) {
+					stemmedText = lemma.getWord() + "/" + lemma.getPOS();
+				} else {
+					stemmedText = lemma.getWord();
+				}
+				results.add(stemmedText);
+			}
+		}
+		return results;
 	}
 
 	public boolean isReturnOrig() {
 		return returnOrig;
 	}
-
-	public void setReturnOrig(boolean returnOrig) {
-		this.returnOrig = returnOrig;
-	}
-	
 }
