@@ -1,32 +1,13 @@
 package hu.mokk.hunglish.domain;
 
-import java.io.File;
-import java.io.IOException;
-
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.roo.addon.test.RooIntegrationTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
-import hu.mokk.hunglish.domain.Bisen;
-import hu.mokk.hunglish.lucene.HungarianLuceneTester;
-import hu.mokk.hunglish.lucene.analysis.StemmerAnalyzer;
-
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.index.CorruptIndexException;
-import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.queryParser.ParseException;
-import org.apache.lucene.queryParser.QueryParser;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.store.LockObtainFailedException;
-import org.apache.lucene.store.SimpleFSDirectory;
-import org.apache.lucene.util.Version;
-import org.junit.Test;
-import org.junit.runner.RunWith;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:/META-INF/spring/applicationContext.xml")
@@ -54,84 +35,6 @@ public class BisenIntegrationTest {
 		System.out.println("countDuplicates:" + bisen.countDuplicates());
 	}
 
-	String indexDir = "C:\\temp\\hunglishindex";
-
-	@Test
-	public void testSearch() throws CorruptIndexException, IOException, IllegalAccessException, InstantiationException, ParseException, net.sf.jhunlang.jmorph.parser.ParseException {
-		IndexSearcher isearcher = new IndexSearcher(new SimpleFSDirectory(
-				new File(indexDir)), true); // read-only=true
-		
-		Analyzer anal = getAnalyzer();
-		
-		HungarianLuceneTester.query(Bisen.huSentenceFieldName, "katonai", anal, isearcher);
-		HungarianLuceneTester.query(Bisen.huSentenceFieldName, "fiam", anal, isearcher);
-		HungarianLuceneTester.query(Bisen.huSentenceFieldName, "gyors", anal, isearcher);
-		HungarianLuceneTester.query(Bisen.huSentenceFieldName, "megy", anal, isearcher);
-		
-		HungarianLuceneTester.query(Bisen.enSentenceFieldName, "many", anal, isearcher);
-		
-		HungarianLuceneTester.query(Bisen.enSentenceFieldName, "general", anal, isearcher);
-		
-		
-		// hu.mokk.hunglish.domain.Bisen bisen =
-		// hu.mokk.hunglish.domain.Bisen.findBisen(new Long(23324));
-		// System.out.println(bisen);
-		// System.out.println("countDuplicates:"+bisen.countDuplicates());
-		//query()
-	}
-
-
-	public static Analyzer getAnalyzer() throws IOException,
-			IllegalAccessException, InstantiationException, ParseException,
-			net.sf.jhunlang.jmorph.parser.ParseException {
-		HungarianLuceneTester lemmatizerProvider = new HungarianLuceneTester();
-		lemmatizerProvider.initLemmatizer();
-		Analyzer analyzer = new StemmerAnalyzer(Version.LUCENE_CURRENT,
-				lemmatizerProvider.getLemmatizerMap());
-		;
-		return analyzer;
-	}
-
-	private IndexWriter getIndexWriter() throws CorruptIndexException, LockObtainFailedException, IOException, IllegalAccessException, InstantiationException, ParseException, net.sf.jhunlang.jmorph.parser.ParseException{
-		int mergeFactor = 100;
-		int maxBufferedDocs = 1000;
-		IndexWriter indexWriter = new IndexWriter(new SimpleFSDirectory(
-				new File(indexDir)), getAnalyzer(), true,
-				IndexWriter.MaxFieldLength.UNLIMITED);
-		indexWriter.setMergeFactor(mergeFactor);
-		indexWriter.setMaxBufferedDocs(maxBufferedDocs);
-		return indexWriter;
-	}
-	
-	@Test
-	public void testIndexDoc() throws IOException, IllegalAccessException,
-			InstantiationException, ParseException,
-			net.sf.jhunlang.jmorph.parser.ParseException {
-		IndexWriter indexWriter = getIndexWriter();
-		hu.mokk.hunglish.domain.Bisen.indexDoc(indexWriter, new Long(2));
-		indexWriter.close();
-	}
-
-	@Test
-	public void testIndexSen() throws IOException, IllegalAccessException,
-			InstantiationException, ParseException,
-			net.sf.jhunlang.jmorph.parser.ParseException {
-		IndexWriter indexWriter = getIndexWriter();
-		hu.mokk.hunglish.domain.Bisen.indexSen(indexWriter, new Long(8));
-		indexWriter.close();
-	}
-	
-	
-	@Test
-	public void testIndexAll() throws IOException, IllegalAccessException,
-			InstantiationException, ParseException,
-			net.sf.jhunlang.jmorph.parser.ParseException {
-		IndexWriter indexWriter = getIndexWriter();
-		hu.mokk.hunglish.domain.Bisen.indexAll(indexWriter);
-		indexWriter.close();
-	}
-	
-	
 	@Test
 	public void testCountBisens() {
 		org.junit.Assert.assertNotNull(
