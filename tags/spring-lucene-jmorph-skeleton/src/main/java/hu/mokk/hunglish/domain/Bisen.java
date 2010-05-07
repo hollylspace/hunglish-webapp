@@ -235,7 +235,7 @@ public class Bisen {
 	public static void indexDoc(IndexWriter iwriter, Long docId) {
 		List<Bisen> bisens = entityManager()
 				.createQuery(
-						"from Bisen o where o.isIndexed is null and o.doc.id = :docid")
+						"from Bisen o where o.doc.id = :docid")
 				.setParameter("docid", docId).getResultList();
 		index(bisens, iwriter);
 	}
