@@ -31,10 +31,13 @@ public class IndexerTest {
 	@Autowired
 	Indexer indexer;
 	
-	
+	@Autowired
+	private TestData testData;
+
 	@Test
 	public void testIndex() throws CorruptIndexException, LockObtainFailedException, IOException, IllegalAccessException, InstantiationException, ParseException {
-		indexer.indexDoc(new Long(2), true);
+//		indexer.indexDoc(new Long(2), false/*false=tmp, true=main*/);
+		indexer.mergeTmpIndex();
 	}
 	
 	
