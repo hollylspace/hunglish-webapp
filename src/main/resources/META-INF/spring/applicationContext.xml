@@ -93,11 +93,17 @@
 
     <bean class="hu.mokk.hunglish.lucene.Searcher" id="searcher" init-method="initSearcher">
         <property name="luceneQueryBuilder" ref="luceneQueryBuilder"/>
-        <property name="indexDir" value="${indexer.tmpIndexDir}"/> <!--  ${indexer.indexDir} ATTENTION, this is the same as indexer.indexDir -->
+        <property name="indexDir" value="${indexer.tmpIndexDir}"/> <!--  ${indexer.indexDir} ATTENTION, this is the same as indexer.indexDir -->        
     </bean>
-
 				 
     <bean class="hu.mokk.hunglish.lucene.LuceneQueryBuilder" id="luceneQueryBuilder">
         <property name="analyzerProvider" ref="analyzerProvider"/>
     </bean>
+
+    <bean class="hu.mokk.hunglish.lucene.TestData" id="testData">
+        <property name="testQueriesHu" value="${testing.testQueriesHu}"/>
+        <property name="testQueriesEn" value="${testing.testQueriesEn}"/>
+        <property name="testDataEncoding" value="${testing.testDataEncoding}"/>
+    </bean>
+
 </beans>
