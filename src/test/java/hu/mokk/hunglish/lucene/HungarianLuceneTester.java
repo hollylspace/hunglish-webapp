@@ -26,6 +26,7 @@ import net.sf.jhunlang.jmorph.sword.parser.SwordAffixReader;
 import net.sf.jhunlang.jmorph.sword.parser.SwordReader;
 
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.index.CorruptIndexException;
@@ -128,16 +129,18 @@ public class HungarianLuceneTester {
 		directory = new RAMDirectory();
 		// To store an index on disk, use this instead:
 		// Directory directory = FSDirectory.open("/tmp/testindex");
+		//analyzer = new StandardAnalyzer(Version.LUCENE_CURRENT);
 		iwriter = new IndexWriter(directory, analyzer, true,
 				new IndexWriter.MaxFieldLength(25000));
 		Document doc = new Document();
-		String enText = "This is the text to be indexed.";
+		String enText = "This is the text to be index.";
 		// List<String> huSens = getLines(testDataSenHu, testDataEncodingHu);
 		doc.add(new Field(enFieldName, enText, Field.Store.YES,
 				Field.Index.ANALYZED));
 		doc.add(new Field(huFieldName, huQueries.get(0), Field.Store.YES,
 				Field.Index.ANALYZED));
-
+		//doc.add(new Field("vacak", "this must work", Field.Store.YES, Field.Index.NOT_ANALYZED));
+		
 		iwriter.addDocument(doc);
 		iwriter.close();
 		System.out.println("------indexing done---------------");
@@ -145,11 +148,13 @@ public class HungarianLuceneTester {
 		// Now search the index:
 		isearcher = new IndexSearcher(directory, true); // read-only=true
 
-		query(enFieldName, "indexed");
-		query(enFieldName, "index");
-
+		query(enFieldName, "indexed", analyzer, isearcher);
+		query(enFieldName, "index", analyzer, isearcher);
+		//query("vacak", "must");
+		//query("vacak", "nono");
+		
 		for (String query : huQueries) {
-			query(huFieldName, query);
+			query(huFieldName, query, analyzer, isearcher);
 		}
 
 		isearcher.close();
@@ -157,17 +162,18 @@ public class HungarianLuceneTester {
 
 	}
 
-	public void query(String fieldName, String term) throws ParseException,
+	public static void query(String fieldName, String term, Analyzer analyzerr, 
+			IndexSearcher isearcherr) throws ParseException,
 			IOException {
 		QueryParser parser = new QueryParser(Version.LUCENE_30, fieldName,
-				analyzer);
+				analyzerr);
 		Query query = parser.parse(term);
-		ScoreDoc[] hits = isearcher.search(query, null, 1000).scoreDocs;
-		System.out.println("searchd:" + term + ";hits.length:" + hits.length);
+		ScoreDoc[] hits = isearcherr.search(query, null, 1000).scoreDocs;
+		System.out.println("searchd fieldName:" + fieldName + ";term:" + term + ";hits.length:" + hits.length);
 		// org.junit.Assert.assertEquals(1, hits.length);
 		// Iterate through the results:
 		for (int i = 0; i < hits.length; i++) {
-			Document hitDoc = isearcher.doc(hits[i].doc);
+			Document hitDoc = isearcherr.doc(hits[i].doc);
 			System.out
 					.println("hitDoc.get(fieldname):" + hitDoc.get(fieldName));
 			// org.junit.Assert.assertEquals(enText,
