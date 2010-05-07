@@ -34,9 +34,6 @@ public class Indexer {
 	 * @author bpgergo
 	 * 
 	 */
-	public enum CreateOrAppend {
-		Create, Append
-	}
 
 	@Autowired
 	private AnalyzerProvider analyzerProvider;
@@ -49,23 +46,22 @@ public class Indexer {
 	private IndexWriter indexWriter;
 	//private CreateOrAppend createOrAppend = CreateOrAppend.Create;
 
-	private void initIndexer(CreateOrAppend createOrAppend) {
+	private void initIndexer(Boolean tmp) {
 		if (analyzerProvider == null) {
 			throw new IllegalStateException(
 					"Cannot create indexWriter. The analyzerProvider is null.");
 		}
-		boolean create = createOrAppend.compareTo(CreateOrAppend.Create) == 0;
-		String dir = create ? tmpIndexDir : indexDir;
+		String dir = tmp ? tmpIndexDir : indexDir;
 		if (dir == null) {
 			throw new IllegalStateException(
 					"Cannot create indexWriter. The directory is null.");
 		}
 		try {
-			if (create) {
+			if (tmp) {
 				deleteTmpDirectory();
 			}
 			indexWriter = new IndexWriter(new SimpleFSDirectory(new File(dir)),
-					analyzerProvider.getAnalyzer(), create,
+					analyzerProvider.getAnalyzer(), tmp,
 					IndexWriter.MaxFieldLength.UNLIMITED);
 		} catch (CorruptIndexException e) {
 			throw new RuntimeException("Cannot open index directory.", e);
@@ -93,19 +89,19 @@ public class Indexer {
 		reCreateDir(new File(tmpIndexDir));
 	}
 
-	synchronized public void indexAll(CreateOrAppend createOrAppend)
+	synchronized public void indexAll(boolean tmp)
 			throws CorruptIndexException, LockObtainFailedException,
 			IOException, IllegalAccessException, InstantiationException,
 			ParseException {
-		initIndexer(createOrAppend);
+		initIndexer(tmp);
 		Bisen.indexAll(indexWriter);
 		indexWriter.close();
 	}
 
-	synchronized public void indexDoc(Long docId) throws CorruptIndexException,
+	synchronized public void indexDoc(Long docId, boolean tmp) throws CorruptIndexException,
 			LockObtainFailedException, IOException, IllegalAccessException,
 			InstantiationException, ParseException {
-		initIndexer(CreateOrAppend.Create);
+		initIndexer(tmp);
 		Bisen.indexDoc(indexWriter, docId);
 		indexWriter.close();
 	}
@@ -115,7 +111,7 @@ public class Indexer {
 		try {
 			IndexReader indexReader = IndexReader.open(new SimpleFSDirectory(
 					new File(tmpIndexDir)), readOnly);
-			initIndexer(CreateOrAppend.Append);
+			initIndexer(false);
 			indexWriter.addIndexes(indexReader);
 			indexReader.close();
 			indexWriter.close();
