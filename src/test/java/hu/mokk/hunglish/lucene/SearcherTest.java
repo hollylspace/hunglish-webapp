@@ -30,11 +30,22 @@ public class SearcherTest {
 		request.setMaxResults(10);
 		SearchResult searchResult = searcher.search(request);
 		List<Bisen> hits = searchResult.getHitList();
-		System.out.println(Integer.toString(hits.size())+" results returned by searcher.");			
-		for (Bisen hit : hits) {
-			System.out.println(hit.getEnSentence());			
-		}
-		System.out.println("Wow, testSearch() finished without run-time errors.");
+		printList(hits);
+		
+		request = new SearchRequest();
+		request.setRightQuery("keep");
+		request.setMaxResults(10);
+
+		searchResult = searcher.search(request);
+		hits = searchResult.getHitList();
+		printList(hits);
+		
 	}
 
+	private static void printList(List list){
+		System.out.println("printList size"+list.size());
+		for (Object o : list){
+			System.out.println(o);
+		}
+	}
 }
