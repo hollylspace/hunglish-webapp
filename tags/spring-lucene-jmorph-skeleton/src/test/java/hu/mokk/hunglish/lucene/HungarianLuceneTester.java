@@ -59,10 +59,8 @@ public class HungarianLuceneTester {
 	private static String huDic = "C:\\workspaces\\hunglish-webapp\\trunk\\data\\jmorph\\mispellRC1.dic";
 	private static String huDerivatives = "C:\\workspaces\\hunglish-webapp\\trunk\\data\\jmorph\\derivatives.lst";
 	private static String huCompounds = "C:\\workspaces\\hunglish-webapp\\trunk\\data\\jmorph\\compound.lst";
-	private static int huRecursionDepth = 4;
 	private static String enAff = "C:\\workspaces\\hunglish-webapp\\trunk\\data\\jmorph\\en.aff";
 	private static String enDic = "C:\\workspaces\\hunglish-webapp\\trunk\\data\\jmorph\\en.dic";
-	private static int enRecursionDepth = 2;
 	private static String testDataQueryHu = "C:\\work\\hunmorph\\root-test\\resources-lang\\test-data.txt";
 
 	private static int huRecursionDepth = 4;
