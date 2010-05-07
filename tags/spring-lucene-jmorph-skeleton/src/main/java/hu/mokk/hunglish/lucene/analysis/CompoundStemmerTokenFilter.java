@@ -37,7 +37,7 @@ public class CompoundStemmerTokenFilter extends CompoundWordTokenFilterBase {
 	}
 
 	private void add(Object token) {
-		// System.out.println("#token:"+token.toString());
+System.out.println("#token:"+token.toString());
 		tokens.add(token);
 	}
 
@@ -46,20 +46,27 @@ public class CompoundStemmerTokenFilter extends CompoundWordTokenFilterBase {
 
 		String origWord = new String(token.term());
 		List<String> lemmas = lemmatizerWrapper.lemmatize(origWord);
-		
+
+		// the original token will be preserved?
+		if (lemmatizerWrapper.isReturnOrig() || lemmas.size() == 0) {
+			add(token.clone());
+		}
+
 		boolean isFirst = true;
 		for (String lemma : lemmas) {
-			Token stemToken = new Token(lemma, token.startOffset(), token.endOffset(), token.type());
-
-			// put the token representing the stem to the same position as
-			// the original word if the orig word won't be returned
-			if (lemmatizerWrapper.isReturnOrig() || !isFirst) {
-				stemToken.setPositionIncrement(0);
-			}
 			// if the original token is the same as the stemmed text
-			// and the origian token was returned as well
+			// and the origianal token was returned as well
 			// then no need to return the stemmed token
-			if (!(lemmatizerWrapper.isReturnOrig() && origWord.toLowerCase().equals(lemma.toLowerCase()))) {
+			if (!origWord.toLowerCase().equals(lemma.toLowerCase())) {
+
+				Token stemToken = new Token(lemma, token.startOffset(), token
+						.endOffset(), token.type());
+
+				// put the token representing the stem to the same position as
+				// the original word if the orig word won't be returned
+				if (lemmatizerWrapper.isReturnOrig() || !isFirst) {
+					stemToken.setPositionIncrement(0);
+				}
 				add(stemToken);
 			}
 			isFirst = false;

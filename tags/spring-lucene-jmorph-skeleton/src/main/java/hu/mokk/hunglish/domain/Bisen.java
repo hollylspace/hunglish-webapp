@@ -65,8 +65,7 @@ public class Bisen {
 
 	transient String huSentenceView;
 	transient String enSentenceView;
-	
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "id")
@@ -146,7 +145,8 @@ public class Bisen {
 				.createQuery(
 						"select count(o) from Bisen o where o.isIndexed = true and o.huSentenceHash = :huhash and o.enSentenceHash = :enhash and o.id != :id")
 				.setParameter("huhash", this.huSentenceHash).setParameter(
-						"enhash", this.enSentenceHash).setParameter("id", this.id) .getSingleResult();
+						"enhash", this.enSentenceHash).setParameter("id",
+						this.id).getSingleResult();
 	}
 
 	public static List<Bisen> findAllBisens() {
@@ -161,6 +161,7 @@ public class Bisen {
 		return entityManager().find(Bisen.class, id);
 	}
 
+	@SuppressWarnings("unchecked")
 	public static List<Bisen> findBisenEntriesByDoc(int firstResult,
 			int maxResults, Doc doc) {
 		return entityManager().createQuery(
@@ -169,8 +170,9 @@ public class Bisen {
 				.setMaxResults(maxResults).getResultList();
 	}
 
+	@SuppressWarnings("unchecked")
 	public static List<Bisen> findBisenEntries(int firstResult, int maxResults) {
-		return entityManager().createQuery("select o from Bisen o")
+		return entityManager().createQuery("select o from Bisen o order by o.id")
 				.setFirstResult(firstResult).setMaxResults(maxResults)
 				.getResultList();
 	}
@@ -200,6 +202,7 @@ public class Bisen {
 		update.executeUpdate();
 	}
 
+	@SuppressWarnings("unchecked")
 	public static void updateHashCodes() {
 		List<Bisen> bisens = entityManager().createQuery("from Bisen o")
 				.getResultList();
@@ -208,11 +211,7 @@ public class Bisen {
 		}
 	}
 
-	public static void indexAll(IndexWriter iwriter) {
-		List<Bisen> bisens = entityManager().createQuery(
-				"from Bisen o where o.isIndexed is null")
-		// where o.doc.id = 2 -- .setParameter(1, new Long(2))
-				.getResultList();
+	public static void index(List<Bisen> bisens, IndexWriter iwriter) {
 		for (Bisen bisen : bisens) {
 			try {
 				if (bisen.countDuplicates() > 0) {
@@ -230,7 +229,23 @@ public class Bisen {
 				e.printStackTrace();
 			}
 		}
+	}
 
+	@SuppressWarnings("unchecked")
+	public static void indexDoc(IndexWriter iwriter, Long docId) {
+		List<Bisen> bisens = entityManager()
+				.createQuery(
+						"from Bisen o where o.isIndexed is null where o.doc.id = :docid")
+				.setParameter("docid", docId).getResultList();
+		index(bisens, iwriter);
+	}
+
+	@SuppressWarnings("unchecked")
+	public static void indexAll(IndexWriter iwriter) {
+		List<Bisen> bisens = entityManager().createQuery(
+				"from Bisen o where o.isIndexed is null")
+				.getResultList();
+		index(bisens, iwriter);
 	}
 
 	public String toString() {
@@ -268,40 +283,41 @@ public class Bisen {
 		return sb.toString().replaceAll(" +", " ").trim();
 	}
 
-	
 	public static String idFieldName = "id";
 	public static String genreFieldName = "doc.genre.id";
 	public static String huSentenceFieldName = "huSentence";
-	public static String enSentenceFieldName = "huSentence"; 
+	public static String enSentenceFieldName = "huSentence";
 	public static String huSentenceStemmedFieldName = "huSentenceStemmed";
 	public static String enSentenceStemmedFieldName = "enSentenceStemmed";
-	
-	public static Bisen toBisen(Document document){
+
+	public static Bisen toBisen(Document document) {
 		return findBisen(new Long(document.getField(idFieldName).stringValue()));
 	}
-	
+
 	public Document toLucene() {
 		Document result = new Document();
 
-		result.add(new Field(idFieldName, this.getId().toString(), Field.Store.YES,
-				Field.Index.NOT_ANALYZED, Field.TermVector.NO));
+		result
+				.add(new Field(idFieldName, this.getId().toString(),
+						Field.Store.YES, Field.Index.NOT_ANALYZED,
+						Field.TermVector.NO));
 
 		result.add(new Field(genreFieldName, this.doc.getGenre().getId()
-				.toString(), Field.Store.YES,
-				Field.Index.NOT_ANALYZED, Field.TermVector.NO));
+				.toString(), Field.Store.YES, Field.Index.NOT_ANALYZED,
+				Field.TermVector.NO));
 
 		result.add(new Field(huSentenceFieldName, this.huSentence,
 				Field.Store.YES, Field.Index.ANALYZED,
 				Field.TermVector.WITH_POSITIONS_OFFSETS));
-		//result.add(new Field(huSentenceStemmedFieldName, this.huSentence,
-		//		Field.Store.NO, Field.Index.ANALYZED,
-		//		Field.TermVector.WITH_POSITIONS_OFFSETS));
+		// result.add(new Field(huSentenceStemmedFieldName, this.huSentence,
+		// Field.Store.NO, Field.Index.ANALYZED,
+		// Field.TermVector.WITH_POSITIONS_OFFSETS));
 		result.add(new Field(enSentenceFieldName, this.enSentence,
 				Field.Store.YES, Field.Index.ANALYZED,
 				Field.TermVector.WITH_POSITIONS_OFFSETS));
-		//result.add(new Field(enSentenceStemmedFieldName, this.enSentence,
-		//		Field.Store.NO, Field.Index.ANALYZED,
-		//		Field.TermVector.WITH_POSITIONS_OFFSETS));
+		// result.add(new Field(enSentenceStemmedFieldName, this.enSentence,
+		// Field.Store.NO, Field.Index.ANALYZED,
+		// Field.TermVector.WITH_POSITIONS_OFFSETS));
 
 		return result;
 
