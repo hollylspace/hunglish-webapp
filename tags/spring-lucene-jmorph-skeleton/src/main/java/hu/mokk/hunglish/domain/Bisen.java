@@ -213,6 +213,7 @@ public class Bisen {
 
 	public static void index(List<Bisen> bisens, IndexWriter iwriter) {
 		for (Bisen bisen : bisens) {
+//System.out.println("--------------------index bisen\n"+bisen);			
 			try {
 				if (bisen.countDuplicates() > 0) {
 					bisen.updateIsIndexed(false);
@@ -232,11 +233,23 @@ public class Bisen {
 	}
 
 	@SuppressWarnings("unchecked")
+	public static void indexSen(IndexWriter iwriter, Long id) {
+		List<Bisen> bisens = entityManager()
+				.createQuery(
+						"from Bisen o where o.id = :senid")
+				.setParameter("senid", id)
+				.getResultList();
+		index(bisens, iwriter);
+	}
+	
+	
+	@SuppressWarnings("unchecked")
 	public static void indexDoc(IndexWriter iwriter, Long docId) {
 		List<Bisen> bisens = entityManager()
 				.createQuery(
 						"from Bisen o where o.doc.id = :docid")
-				.setParameter("docid", docId).getResultList();
+				.setParameter("docid", docId)
+				.getResultList();
 		index(bisens, iwriter);
 	}
 
@@ -257,8 +270,8 @@ public class Bisen {
 		sb.append("LineNumber: ").append(getLineNumber()).append(", ");
 		sb.append("Upvotes: ").append(getUpvotes()).append(", ");
 		sb.append("Downvotes: ").append(getDownvotes()).append(", ");
-		// sb.append("HuSentence: ").append(getHuSentence()).append(", ");
-		// sb.append("EnSentence: ").append(getEnSentence());
+		sb.append("HuSentence: ").append(getHuSentence()).append(", ");
+		sb.append("EnSentence: ").append(getEnSentence());
 		return sb.toString();
 	}
 
@@ -286,7 +299,7 @@ public class Bisen {
 	public static String idFieldName = "id";
 	public static String genreFieldName = "doc.genre.id";
 	public static String huSentenceFieldName = "huSentence";
-	public static String enSentenceFieldName = "huSentence";
+	public static String enSentenceFieldName = "enSentence";
 	public static String huSentenceStemmedFieldName = "huSentenceStemmed";
 	public static String enSentenceStemmedFieldName = "enSentenceStemmed";
 

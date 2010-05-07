@@ -26,7 +26,7 @@ public class SearcherTest {
 	@Test
 	public void testSearch() {
 		SearchRequest request = new SearchRequest();
-		request.setLeftQuery("nem");
+		request.setLeftQuery("katonai");
 		request.setMaxResults(10);
 		SearchResult searchResult = searcher.search(request);
 		List<Bisen> hits = searchResult.getHitList();

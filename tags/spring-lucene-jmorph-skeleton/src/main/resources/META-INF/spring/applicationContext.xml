@@ -93,7 +93,7 @@
 
     <bean class="hu.mokk.hunglish.lucene.Searcher" id="searcher" init-method="initSearcher">
         <property name="luceneQueryBuilder" ref="luceneQueryBuilder"/>
-        <property name="indexDir" value="${indexer.indexDir}"/> <!-- ATTENTION, this is the same as indexer.indexDir -->
+        <property name="indexDir" value="c:\temp\hunglishindex"/> <!-- ${indexer.indexDir} ATTENTION, this is the same as indexer.indexDir -->
     </bean>
 
 				 
