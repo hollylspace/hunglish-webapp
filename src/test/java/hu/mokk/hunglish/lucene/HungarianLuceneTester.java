@@ -46,21 +46,14 @@ public class HungarianLuceneTester {
 	public static String resouceEncodingEn = "ISO-8859-1";
 	public static String resouceEncodingHu = "ISO-8859-2";
 
-	/* hehehe
-	 * private static String huAff =
-	 * "/Users/daniel/experiments/hunglish-webapp/spring-lucene-jmorph-skeleton/resources-lang/jmorph/mispellRC1.aff"
-	 * ; private static String huDic =
-	 * "/Users/daniel/experiments/hunglish-webapp/spring-lucene-jmorph-skeleton/resources-lang/jmorph/mispellRC1.dic"
-	 * ; private static String huDerivatives =
-	 * "/Users/daniel/experiments/hunglish-webapp/spring-lucene-jmorph-skeleton/resources-lang/jmorph/derivatives.lst"
-	 * ; private static String huCompounds =
-	 * "/Users/daniel/experiments/hunglish-webapp/spring-lucene-jmorph-skeleton/resources-lang/jmorph/compound.lst"
-	 * ; private static int huRecursionDepth = 4; private static String enAff =
-	 * "/Users/daniel/experiments/hunglish-webapp/spring-lucene-jmorph-skeleton/resources-lang/jmorph/en.aff"
-	 * ; private static String enDic =
-	 * "/Users/daniel/experiments/hunglish-webapp/spring-lucene-jmorph-skeleton/resources-lang/jmorph/en.dic"
-	 * ; private static int enRecursionDepth = 2;
-	 */
+//	private static String huAff = "/Users/daniel/experiments/hunglish-webapp/hunglish-webapp/resources-lang/jmorph/mispellRC1.aff";
+//	private static String huDic = "/Users/daniel/experiments/hunglish-webapp/hunglish-webapp/resources-lang/jmorph/mispellRC1.dic";
+//	private static String huDerivatives = "/Users/daniel/experiments/hunglish-webapp/hunglish-webapp/resources-lang/jmorph/derivatives.lst";
+//	private static String huCompounds = "/Users/daniel/experiments/hunglish-webapp/hunglish-webapp/resources-lang/jmorph/compound.lst";
+//	private static String enAff = "/Users/daniel/experiments/hunglish-webapp/hunglish-webapp/resources-lang/jmorph/en.aff";
+//	private static String enDic = "/Users/daniel/experiments/hunglish-webapp/hunglish-webapp/resources-lang/jmorph/en.dic" ; 
+//	private static String testDataQueryHu = "/Users/daniel/experiments/hunglish-webapp/hunglish-webapp/resources-lang/test-data.txt";
+//	private static String testDataSenHu = "/Users/daniel/experiments/hunglish-webapp/hunglish-webapp/resources-lang/test-data-sen.txt";
 
 	private static String huAff = "C:\\workspaces\\hunglish-webapp\\trunk\\data\\jmorph\\mispellRC1.aff";
 	private static String huDic = "C:\\workspaces\\hunglish-webapp\\trunk\\data\\jmorph\\mispellRC1.dic";
@@ -70,11 +63,11 @@ public class HungarianLuceneTester {
 	private static String enAff = "C:\\workspaces\\hunglish-webapp\\trunk\\data\\jmorph\\en.aff";
 	private static String enDic = "C:\\workspaces\\hunglish-webapp\\trunk\\data\\jmorph\\en.dic";
 	private static int enRecursionDepth = 2;
-	// private static String testDataSenHu =
-	// "/Users/daniel/experiments/hunglish-webapp/spring-lucene-jmorph-skeleton/resources-lang/test-data-sen.txt";
-	// private static String testDataQueryHu =
-	// "/Users/daniel/experiments/hunglish-webapp/spring-lucene-jmorph-skeleton/resources-lang/test-data.txt";
 	private static String testDataQueryHu = "C:\\work\\hunmorph\\root-test\\resources-lang\\test-data.txt";
+
+	private static int huRecursionDepth = 4;
+	private static int enRecursionDepth = 2;
+
 	public static String testDataEncodingHu = "UTF-8";
 	List<String> huQueries ;
 
