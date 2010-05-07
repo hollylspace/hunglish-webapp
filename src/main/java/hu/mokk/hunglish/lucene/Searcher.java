@@ -135,7 +135,8 @@ public class Searcher {
 					bisen.setHuSentenceView((highlightField(leftTokens, query,
 							Bisen.huSentenceFieldName, bisen.getHuSentence())));
 				} catch (Exception e) {
-					throw new RuntimeException("error while highlighting", e);
+					e.printStackTrace(); //TODO FIXME
+					//throw new RuntimeException("error while highlighting", e);
 				}
 			}
 
@@ -146,7 +147,8 @@ public class Searcher {
 					bisen.setEnSentenceView((highlightField(leftTokens, query,
 							Bisen.enSentenceFieldName, bisen.getEnSentence())));
 				} catch (Exception e) {
-					throw new RuntimeException("error while highlighting", e);
+					e.printStackTrace(); //TODO FIXME
+					//throw new RuntimeException("error while highlighting", e);
 				}
 			}
 			result.addToHits(bisen);
@@ -159,6 +161,7 @@ public class Searcher {
 		this.indexDir = indexDir;
 	}
 
+	
 	public void setSearcher(IndexSearcher searcher) {
 		this.searcher = searcher;
 	}
@@ -166,6 +169,10 @@ public class Searcher {
 
 	public void setLuceneQueryBuilder(LuceneQueryBuilder luceneQueryBuilder) {
 		this.luceneQueryBuilder = luceneQueryBuilder;
+	}
+
+	public String getIndexDir() {
+		return indexDir;
 	}
 
 
