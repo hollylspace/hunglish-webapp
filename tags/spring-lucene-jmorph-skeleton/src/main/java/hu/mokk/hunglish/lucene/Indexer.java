@@ -40,16 +40,16 @@ public class Indexer {
 
 	@Autowired
 	private AnalyzerProvider analyzerProvider;
-	
+
 	private Integer mergeFactor = 100;
 	private Integer maxBufferedDocs = 1000;
 	private String indexDir;
 	private String tmpIndexDir;
-	
+
 	private IndexWriter indexWriter;
-	private CreateOrAppend createOrAppend = CreateOrAppend.Create;
-	
-	private void initIndexer() {
+	//private CreateOrAppend createOrAppend = CreateOrAppend.Create;
+
+	private void initIndexer(CreateOrAppend createOrAppend) {
 		if (analyzerProvider == null) {
 			throw new IllegalStateException(
 					"Cannot create indexWriter. The analyzerProvider is null.");
@@ -61,7 +61,7 @@ public class Indexer {
 					"Cannot create indexWriter. The directory is null.");
 		}
 		try {
-			if (create){
+			if (create) {
 				deleteTmpDirectory();
 			}
 			indexWriter = new IndexWriter(new SimpleFSDirectory(new File(dir)),
@@ -74,31 +74,48 @@ public class Indexer {
 		} catch (IOException e) {
 			throw new RuntimeException("Cannot open index directory.", e);
 		}
-		if (mergeFactor != null){
+		if (mergeFactor != null) {
 			indexWriter.setMergeFactor(mergeFactor);
 		}
 		indexWriter.setMaxBufferedDocs(maxBufferedDocs);
 	}
 
-	public void deleteTmpDirectory() throws IOException{
-		FileUtils.deleteDirectory(new File(tmpIndexDir));
+	private void reCreateDir(File dir) {
+		try {
+			FileUtils.deleteQuietly(dir);
+			FileUtils.forceMkdir(dir);
+		} catch (IOException e) {
+			throw new RuntimeException("Cannot recreate directory:" + dir, e);
+		}
 	}
-	
+
+	public void deleteTmpDirectory() throws IOException {
+		reCreateDir(new File(tmpIndexDir));
+	}
+
 	synchronized public void indexAll(CreateOrAppend createOrAppend)
 			throws CorruptIndexException, LockObtainFailedException,
 			IOException, IllegalAccessException, InstantiationException,
 			ParseException {
+		initIndexer(createOrAppend);
 		Bisen.indexAll(indexWriter);
 		indexWriter.close();
 	}
 
-	synchronized public void mergeTmpIndex(){
+	synchronized public void indexDoc(Long docId) throws CorruptIndexException,
+			LockObtainFailedException, IOException, IllegalAccessException,
+			InstantiationException, ParseException {
+		initIndexer(CreateOrAppend.Create);
+		Bisen.indexDoc(indexWriter, docId);
+		indexWriter.close();
+	}
+
+	synchronized public void mergeTmpIndex() {
 		boolean readOnly = true;
 		try {
-			IndexReader indexReader = IndexReader.open(new SimpleFSDirectory(new File(
-					tmpIndexDir)), readOnly);
-			createOrAppend = CreateOrAppend.Append;
-			initIndexer();
+			IndexReader indexReader = IndexReader.open(new SimpleFSDirectory(
+					new File(tmpIndexDir)), readOnly);
+			initIndexer(CreateOrAppend.Append);
 			indexWriter.addIndexes(indexReader);
 			indexReader.close();
 			indexWriter.close();
@@ -111,7 +128,7 @@ public class Indexer {
 		}
 
 	}
-	
+
 	public void setAnalyzerProvider(AnalyzerProvider analyzerProvider) {
 		this.analyzerProvider = analyzerProvider;
 	}

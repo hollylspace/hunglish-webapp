@@ -82,7 +82,7 @@
         <property name="enRecursionDepth" value="${stemmer.enRecursionDepth}"/>
     </bean>
 
-    <bean class="hu.mokk.hunglish.lucene.Indexer" id="indexer" init-method="initIndexer">
+    <bean class="hu.mokk.hunglish.lucene.Indexer" id="indexer" >   <!-- init-method="initIndexer" -->
         <property name="analyzerProvider" ref="analyzerProvider"/>
 
         <property name="mergeFactor" value="${indexer.mergeFactor}"/>
@@ -93,7 +93,7 @@
 
     <bean class="hu.mokk.hunglish.lucene.Searcher" id="searcher" init-method="initSearcher">
         <property name="luceneQueryBuilder" ref="luceneQueryBuilder"/>
-        <property name="indexDir" value="c:\temp\hunglishindex"/> <!-- ${indexer.indexDir} ATTENTION, this is the same as indexer.indexDir -->
+        <property name="indexDir" value="${indexer.tmpIndexDir}"/> <!--  ${indexer.indexDir} ATTENTION, this is the same as indexer.indexDir -->
     </bean>
 
 				 
