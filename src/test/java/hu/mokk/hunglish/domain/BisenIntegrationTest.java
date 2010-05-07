@@ -109,7 +109,7 @@ public class BisenIntegrationTest {
 		indexWriter.setMergeFactor(mergeFactor);
 		indexWriter.setMaxBufferedDocs(maxBufferedDocs);
 
-		hu.mokk.hunglish.domain.Bisen.indexAll(indexWriter);
+		hu.mokk.hunglish.domain.Bisen.indexDoc(indexWriter, new Long(2));
 	}
 
 	@Test
