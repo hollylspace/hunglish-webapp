@@ -141,7 +141,7 @@ public class Searcher {
 				}
 			}
 
-			if (request.isRightQuery() && request.getHighlightHu()) {
+			if (request.isRightQuery() && request.getHighlightEn()) {
 				try {
 					TokenStream leftTokens = TokenSources.getTokenStream(
 							indexReader, docId, Bisen.enSentenceFieldName);
