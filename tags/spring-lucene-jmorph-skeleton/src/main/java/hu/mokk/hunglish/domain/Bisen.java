@@ -298,10 +298,10 @@ public class Bisen {
 
 	public static String idFieldName = "id";
 	public static String genreFieldName = "doc.genre.id";
-	public static String huSentenceFieldName = "huSentence";
-	public static String enSentenceFieldName = "enSentence";
-	public static String huSentenceStemmedFieldName = "huSentenceStemmed";
-	public static String enSentenceStemmedFieldName = "enSentenceStemmed";
+	public static String huSentenceFieldName = "huSen";
+	public static String enSentenceFieldName = "enSen";
+	public static String huSentenceStemmedFieldName = "huSenStemmed";
+	public static String enSentenceStemmedFieldName = "enSenStemmed";
 
 	public static Bisen toBisen(Document document) {
 		return findBisen(new Long(document.getField(idFieldName).stringValue()));
@@ -320,18 +320,21 @@ public class Bisen {
 				Field.TermVector.NO));
 
 		result.add(new Field(huSentenceFieldName, this.huSentence,
-				Field.Store.YES, Field.Index.ANALYZED,
+				Field.Store.YES, Field.Index.NOT_ANALYZED,
 				Field.TermVector.WITH_POSITIONS_OFFSETS));
-		// result.add(new Field(huSentenceStemmedFieldName, this.huSentence,
-		// Field.Store.NO, Field.Index.ANALYZED,
-		// Field.TermVector.WITH_POSITIONS_OFFSETS));
+		result.add(new Field(huSentenceStemmedFieldName, this.huSentence,
+				Field.Store.NO, Field.Index.ANALYZED,
+				Field.TermVector.WITH_POSITIONS_OFFSETS));
+		
 		result.add(new Field(enSentenceFieldName, this.enSentence,
-				Field.Store.YES, Field.Index.ANALYZED,
+				Field.Store.YES, Field.Index.NOT_ANALYZED,
 				Field.TermVector.WITH_POSITIONS_OFFSETS));
-		// result.add(new Field(enSentenceStemmedFieldName, this.enSentence,
-		// Field.Store.NO, Field.Index.ANALYZED,
-		// Field.TermVector.WITH_POSITIONS_OFFSETS));
+		
+		result.add(new Field(enSentenceStemmedFieldName, this.enSentence,
+				Field.Store.NO, Field.Index.ANALYZED,
+				Field.TermVector.WITH_POSITIONS_OFFSETS));
 
+		
 		return result;
 
 	}

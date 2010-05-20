@@ -1,17 +1,14 @@
 package hu.mokk.hunglish.lucene;
 
 import hu.mokk.hunglish.domain.Bisen;
-import hu.mokk.hunglish.jmorph.AnalyzerProvider;
+import hu.mokk.hunglish.lucene.query.QueryParser;
 
 import java.util.HashMap;
 
 import org.apache.lucene.queryParser.ParseException;
-import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.FilteredQuery;
 import org.apache.lucene.search.Query;
-import org.apache.lucene.search.BooleanClause.Occur;
-import org.apache.lucene.util.Version;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
@@ -24,10 +21,17 @@ public class LuceneQueryBuilder {
 	private HashMap<String, SourceFilter> sourceFilterCache = new HashMap<String, SourceFilter>();
 
 	@Autowired
-	private AnalyzerProvider analyzerProvider;
+	private QueryParser queryParser;
+	
 
 	private Query parseSearchRequest(SearchRequest request) {
-		BooleanQuery result = new BooleanQuery();
+		Query result = new BooleanQuery();
+		try {
+			result = queryParser.parse(request.getLeftQuery(), request.getRightQuery());
+		} catch (Exception e) {
+			throw new RuntimeException("query couldn't be parsed", e);
+		}
+		/*
 		try {
 			String leftRequest;
 			leftRequest = request.getLeftQuery();
@@ -51,7 +55,7 @@ public class LuceneQueryBuilder {
 			}
 		} catch (ParseException e) {
 			throw new RuntimeException("right query couldn't be parsed", e);
-		}
+		}*/
 		return result;
 	}
 
@@ -82,10 +86,6 @@ public class LuceneQueryBuilder {
 		return qf;
 	}
 
-	public void setAnalyzerProvider(AnalyzerProvider analyzerProvider) {
-		this.analyzerProvider = analyzerProvider;
-	}
-
 	public static void printBytes(byte[] array, String name) {
 		for (int k = 0; k < array.length; k++) {
 			System.out.println(name + "[" + k + "] = " + "0x"
@@ -99,6 +99,10 @@ public class LuceneQueryBuilder {
 				'a', 'b', 'c', 'd', 'e', 'f' };
 		char[] array = { hexDigit[(b >> 4) & 0x0f], hexDigit[b & 0x0f] };
 		return new String(array);
+	}
+
+	public void setQueryParser(QueryParser queryParser) {
+		this.queryParser = queryParser;
 	}
 
 	
