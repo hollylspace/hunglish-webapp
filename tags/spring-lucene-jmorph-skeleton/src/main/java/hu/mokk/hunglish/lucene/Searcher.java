@@ -126,9 +126,10 @@ public class Searcher {
 				throw new RuntimeException(ioe);
 			}
 
+			//TODO FIXME request Bisens from the db in one batch, that is: where id in (<idlist>)
 			Bisen bisen = Bisen.toBisen(d);
 
-			if (request.isLeftQuery()) {
+			if (request.isLeftQuery() && request.getHighlightHu()) {
 				try {
 					TokenStream leftTokens = TokenSources.getTokenStream(
 							indexReader, docId, Bisen.huSentenceFieldName);
@@ -140,7 +141,7 @@ public class Searcher {
 				}
 			}
 
-			if (request.isRightQuery()) {
+			if (request.isRightQuery() && request.getHighlightHu()) {
 				try {
 					TokenStream leftTokens = TokenSources.getTokenStream(
 							indexReader, docId, Bisen.enSentenceFieldName);
