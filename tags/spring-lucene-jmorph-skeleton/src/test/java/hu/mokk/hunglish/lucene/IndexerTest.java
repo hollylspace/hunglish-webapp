@@ -36,8 +36,8 @@ public class IndexerTest {
 
 	@Test
 	public void testIndex() throws CorruptIndexException, LockObtainFailedException, IOException, IllegalAccessException, InstantiationException, ParseException {
-//		indexer.indexDoc(new Long(2), false/*false=tmp, true=main*/);
-		indexer.mergeTmpIndex();
+		indexer.indexDoc(new Long(2), false/*false=tmp, true=main*/);
+//		indexer.mergeTmpIndex();
 	}
 	
 	
