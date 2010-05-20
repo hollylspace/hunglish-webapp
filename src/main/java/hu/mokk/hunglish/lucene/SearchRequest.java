@@ -9,7 +9,17 @@ package hu.mokk.hunglish.lucene;
  */
 public class SearchRequest {
 
-    /**
+	/**
+	 * The search terms should be highlighted in HU (that is left) results 
+	 */
+	protected Boolean highlightHu;
+	
+	/**
+	 * The search terms should be highlighted in EN (that is right) results 
+	 */
+	protected Boolean highlightEn;
+
+	/**
      * Baloldali query string
      */
     protected String leftQuery = null;
@@ -26,7 +36,7 @@ public class SearchRequest {
     protected String rightQuery = null;
     
     /**
-     * Kell-e tovezni a baloldali keresest
+     * Kell-e tovezni a baloldali keresest TODO implement this
      */
     protected boolean stemLeftQuery = true;
     
@@ -161,6 +171,26 @@ public class SearchRequest {
     public void setCommonQuery(String commonQuery) {
         this.commonQuery = commonQuery;
     }
+
+
+	public Boolean getHighlightHu() {
+		return highlightHu;
+	}
+
+
+	public void setHighlightHu(Boolean highlightHu) {
+		this.highlightHu = highlightHu;
+	}
+
+
+	public Boolean getHighlightEn() {
+		return highlightEn;
+	}
+
+
+	public void setHighlightEn(Boolean highlightEn) {
+		this.highlightEn = highlightEn;
+	}
 
 
 }
