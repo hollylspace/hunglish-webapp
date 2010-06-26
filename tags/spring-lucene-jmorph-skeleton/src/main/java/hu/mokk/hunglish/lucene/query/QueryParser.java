@@ -168,17 +168,13 @@ public class QueryParser {
     	LemmatizerWrapper lemmatizer = analyzerProvider.getLemmatizerMap().get(t.field());
         
         Term[] terms;
-        List lemmas = lemmatizer.lemmatize(t.text());
-        
-   
-        
+        List<String> lemmas = lemmatizer.lemmatize(t.text());
+
         terms = new Term[lemmas.size()];
         Iterator it = lemmas.iterator();
         
         for(int i = 0; it.hasNext(); i++) {
-            Lemma lemma = (Lemma) it.next();
-            String term;
-            term = lemma.getWord();
+            String term = (String) it.next();
             terms[i] = new Term(t.field(), term);
         }
         return terms;
@@ -191,7 +187,8 @@ public class QueryParser {
         stems[1] = s + "2";
         stems[2] = s + "3";
 
-        return stems;
+    	throw new RuntimeException("debug code, should not be reached");
+//        return stems;
     }
 
     private Query termsToQuery(QueryPhrase.Field field, String[] terms) {
