@@ -5,14 +5,27 @@
 package hu.mokk.hunglish.lucene;
 
 import hu.mokk.hunglish.domain.Bisen;
+import hu.mokk.hunglish.lucene.query.QueryPhrase;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.io.FileNotFoundException;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.Reader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
-
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.TokenStream;
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.index.CorruptIndexException;
+import org.apache.lucene.queryParser.ParseException;
+import org.apache.lucene.queryParser.QueryParser;
+import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.util.Version;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,30 +45,62 @@ public class SearcherTest {
 	private TestData testData;
 
 	@Test
+	public void testIndexSearcher() throws CorruptIndexException, IOException, ParseException {
+		IndexSearcher is = searcher.getSearcher();
+		System.out.println("maxDox:"+is.maxDoc());
+		
+		for (int i = 0; i < 10; i++){
+			System.out.println(is.doc(i));
+		}
+		System.out.println("------------");
+		
+		String term = "about"; String field = "enSenStemmed";
+		Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_CURRENT); 
+		QueryParser qp = new QueryParser(Version.LUCENE_CURRENT, field, analyzer);
+		Query query = qp.parse(term);
+		ScoreDoc[] scs = is.search(query, 10).scoreDocs;
+		System.out.println("search results count for term:"+term+" and in the field:"+field+" =>"+scs.length+" list of results:");
+		for (ScoreDoc scoreDoc : scs){
+			System.out.println(is.doc(scoreDoc.doc));			
+		}
+	}
+	
+	@Test
 	public void testSearch() throws FileNotFoundException {
 		
 		List<String> testQueryListHu = getLines(testData.testQueriesHu, testData.testDataEncoding);
 		List<String> testQueryListEn = getLines(testData.testQueriesEn, testData.testDataEncoding);
 
 		for ( String query : testQueryListHu ) {
-			SearchRequest request = new SearchRequest();
-			request.setLeftQuery(query);
-			request.setMaxResults(10);
-			SearchResult searchResult = searcher.search(request);
-			List<Bisen> hits = searchResult.getHitList();
-			printList(hits);
+			runSingleSearch(query, QueryPhrase.Field.HU);
 		}
 		for ( String query : testQueryListEn ) {
-			SearchRequest request = new SearchRequest();
-			request.setRightQuery(query);
-			request.setMaxResults(10);
-			SearchResult searchResult = searcher.search(request);
-			List<Bisen> hits = searchResult.getHitList();
-			printList(hits);
+			runSingleSearch(query, QueryPhrase.Field.EN);
 		}
 		
 	}
 
+	private void runSingleSearch(String query, QueryPhrase.Field field){
+		System.out.println("Test searchin:"+query);
+		try {
+			SearchRequest request = new SearchRequest();
+			if (QueryPhrase.Field.HU.equals(field)){
+				request.setHuQuery(query);
+			} else {
+				request.setEnQuery(query);
+			}
+			request.setMaxResults(10);
+			SearchResult searchResult = searcher.search(request);
+			List<Bisen> hits = searchResult.getHitList();
+			printList(hits);
+			
+		} catch (Exception e) {
+			System.err.println("Exception when searchin:"+query);
+			e.printStackTrace();
+		}
+	}
+	
+	
 	private static void printList(List list){
 		System.out.println("printList size"+list.size());
 		for (Object o : list){

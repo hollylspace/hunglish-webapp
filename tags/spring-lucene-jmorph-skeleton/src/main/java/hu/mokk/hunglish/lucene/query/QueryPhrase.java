@@ -17,8 +17,8 @@ public class QueryPhrase {
 	};
 
 	public static final class Field {
-		public static final Field LEFT = new Field();
-		public static final Field RIGHT = new Field();
+		public static final Field HU = new Field();
+		public static final Field EN = new Field();
 	};
 
 	public Qualifier qualifier;
@@ -46,6 +46,16 @@ public class QueryPhrase {
 		return terms;
 	}
 
+	public String getTermsSpaceSeparated() {
+		String result = "";
+		if (terms.length > 0){
+			for (String term : terms){
+				result += terms + " ";
+			}
+		}
+		return result.trim();
+	}
+	
 	public boolean isStemmed() {
 		return stemmed;
 	}
@@ -69,7 +79,7 @@ public class QueryPhrase {
 		buff.append(qualifier == Qualifier.SHOULD ? "SHOULD"
 				: (qualifier == Qualifier.MUST ? "MUST" : "MUSTNOT"));
 		buff.append(" ");
-		buff.append(field == Field.LEFT ? "LEFT" : "RIGHT");
+		buff.append(field == Field.HU ? "HU" : "EN");
 		buff.append(" ");
 
 		buff.append(stemmed ? "stemmed" : "not stemmed");

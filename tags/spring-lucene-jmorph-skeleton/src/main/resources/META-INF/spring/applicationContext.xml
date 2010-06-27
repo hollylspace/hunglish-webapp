@@ -100,7 +100,7 @@
         <property name="queryParser" ref="queryParser"/>
     </bean>
 
-    <bean class="hu.mokk.hunglish.lucene.query.QueryParser" id="queryParser">
+    <bean class="hu.mokk.hunglish.lucene.query.HunglishQueryParser" id="queryParser">
         <property name="analyzerProvider" ref="analyzerProvider"/>
     </bean>
 

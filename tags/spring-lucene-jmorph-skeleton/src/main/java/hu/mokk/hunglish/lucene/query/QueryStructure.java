@@ -12,10 +12,10 @@ import java.util.List;
  *
  */
 public class QueryStructure {
-    List phrases;
+    List<QueryPhrase> phrases;
     
     public QueryStructure() {
-        phrases = new ArrayList();
+        phrases = new ArrayList<QueryPhrase>();
     }
     
     public void addPhrase(QueryPhrase phrase) {
@@ -29,10 +29,10 @@ public class QueryStructure {
     public String toString() {
         StringBuffer buff = new StringBuffer();
         
-        Iterator it = phrases.iterator();
+        Iterator<QueryPhrase> it = phrases.iterator();
         
         while(it.hasNext()) {
-            buff.append(it.next());
+            buff.append(it.next().toString());
         }
         
         return buff.toString();

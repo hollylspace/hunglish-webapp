@@ -10,19 +10,19 @@ package hu.mokk.hunglish.lucene;
 public class SearchRequest {
 
 	/**
-	 * The search terms should be highlighted in HU (that is left) results 
+	 * The search terms should be highlighted in HU (that is the left search box) results 
 	 */
 	protected Boolean highlightHu;
 	
 	/**
-	 * The search terms should be highlighted in EN (that is right) results 
+	 * The search terms should be highlighted in EN (that is the right search box) results 
 	 */
 	protected Boolean highlightEn;
 
 	/**
      * Baloldali query string
      */
-    protected String leftQuery = null;
+    protected String huQuery = null;
     
     /**
      * Query with no specified field. Used only by power users knowing the core lucene query
@@ -33,17 +33,17 @@ public class SearchRequest {
     /**
      * Jobb oldali query string
      */
-    protected String rightQuery = null;
+    protected String enQuery = null;
     
     /**
      * Kell-e tovezni a baloldali keresest TODO implement this
      */
-    protected boolean stemLeftQuery = true;
+    protected boolean stemHuQuery = true;
     
     /**
      * Kell-e tovezni a jobboldali keresest
      */
-    protected boolean stemRightQuery = true;
+    protected boolean stemEnQuery = true;
     
     /**
      * The first returned bisentence (used to implement a pager)
@@ -68,24 +68,24 @@ public class SearchRequest {
 
     
     /**
-     * @return Returns the leftQuery.
+     * @return Returns the Hungarian Query.
      */
-    public String getLeftQuery() {
-        return leftQuery;
+    public String getHuQuery() {
+        return huQuery;
     }
     /**
-     * @param leftQuery The leftQuery to set.
+     * @param huQuery The huQuery to set.
      */
-    public void setLeftQuery(String leftQuery) {
-        this.leftQuery = leftQuery;
+    public void setHuQuery(String huQuery) {
+        this.huQuery = huQuery;
     }
     
-    public boolean isLeftQuery() {
-        return leftQuery != null && leftQuery.length() >= 0;
+    public boolean isHuQuery() {
+        return huQuery != null && huQuery.length() >= 0;
     }
     
-    public boolean isRightQuery() {
-        return rightQuery != null && rightQuery.length() >= 0;
+    public boolean isEnQuery() {
+        return enQuery != null && enQuery.length() >= 0;
     }
     /**
      * @return Returns the maxResults.
@@ -100,16 +100,16 @@ public class SearchRequest {
         this.maxResults = maxResults;
     }
     /**
-     * @return Returns the rightQuery.
+     * @return Returns the enQuery.
      */
-    public String getRightQuery() {
-        return rightQuery;
+    public String getEnQuery() {
+        return enQuery;
     }
     /**
-     * @param rightQuery The rightQuery to set.
+     * @param enQuery The enQuery to set.
      */
-    public void setRightQuery(String rightQuery) {
-        this.rightQuery = rightQuery;
+    public void setEnQuery(String enQuery) {
+        this.enQuery = enQuery;
     }
     /**
      * @return Returns the sourceId.
@@ -136,28 +136,28 @@ public class SearchRequest {
         this.startOffset = startOffset;
     }
     /**
-     * @return Returns the stemLeftQuery.
+     * @return Returns the stemHuQuery.
      */
-    public boolean isStemLeftQuery() {
-        return stemLeftQuery;
+    public boolean isStemHuQuery() {
+        return stemHuQuery;
     }
     /**
-     * @param stemLeftQuery The stemLeftQuery to set.
+     * @param stemHuQuery The stemHuQuery to set.
      */
-    public void setStemLeftQuery(boolean stemLeftQuery) {
-        this.stemLeftQuery = stemLeftQuery;
+    public void setStemHuQuery(boolean stemHuQuery) {
+        this.stemHuQuery = stemHuQuery;
     }
     /**
-     * @return Returns the stemRightQuery.
+     * @return Returns the stemEnQuery.
      */
-    public boolean isStemRightQuery() {
-        return stemRightQuery;
+    public boolean isStemEnQuery() {
+        return stemEnQuery;
     }
     /**
-     * @param stemRightQuery The stemRightQuery to set.
+     * @param stemEnQuery The stemEnQuery to set.
      */
-    public void setStemRightQuery(boolean stemRightQuery) {
-        this.stemRightQuery = stemRightQuery;
+    public void setStemEnQuery(boolean stemEnQuery) {
+        this.stemEnQuery = stemEnQuery;
     }
     /**
      * @return Returns the commonQuery.

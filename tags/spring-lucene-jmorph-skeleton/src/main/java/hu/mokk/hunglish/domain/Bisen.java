@@ -140,6 +140,10 @@ public class Bisen {
 				"select count(o) from Bisen o").getSingleResult();
 	}
 
+	/**
+	 * 
+	 * @return count of Bisentences which are a duplicate of this   
+	 */
 	public long countDuplicates() {
 		return (Long) entityManager()
 				.createQuery(
@@ -213,7 +217,6 @@ public class Bisen {
 
 	public static void index(List<Bisen> bisens, IndexWriter iwriter) {
 		for (Bisen bisen : bisens) {
-//System.out.println("--------------------index bisen\n"+bisen);			
 			try {
 				if (bisen.countDuplicates() > 0) {
 					bisen.updateIsIndexed(false);
@@ -221,7 +224,6 @@ public class Bisen {
 					iwriter.addDocument(bisen.toLucene());
 					bisen.updateIsIndexed(true);
 				}
-
 			} catch (CorruptIndexException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -303,6 +305,18 @@ public class Bisen {
 	public static String huSentenceStemmedFieldName = "huSenStemmed";
 	public static String enSentenceStemmedFieldName = "enSenStemmed";
 
+	public static String fieldName2LemmatizerMapCode(String fieldName){
+		String res = null;
+		if (huSentenceStemmedFieldName.equals(fieldName)){
+			res = huSentenceFieldName;
+		} else if (enSentenceStemmedFieldName.equals(fieldName)){
+			res = enSentenceFieldName;
+		} else {
+			res = fieldName;
+		}
+		return res;
+	}
+	
 	public static Bisen toBisen(Document document) {
 		return findBisen(new Long(document.getField(idFieldName).stringValue()));
 	}
@@ -310,24 +324,23 @@ public class Bisen {
 	public Document toLucene() {
 		Document result = new Document();
 
-		result
-				.add(new Field(idFieldName, this.getId().toString(),
-						Field.Store.YES, Field.Index.NOT_ANALYZED,
-						Field.TermVector.NO));
+		result.add(new Field(idFieldName, this.getId().toString(),
+				Field.Store.YES, Field.Index.NOT_ANALYZED,
+				Field.TermVector.NO));
 
 		result.add(new Field(genreFieldName, this.doc.getGenre().getId()
 				.toString(), Field.Store.YES, Field.Index.NOT_ANALYZED,
 				Field.TermVector.NO));
 
 		result.add(new Field(huSentenceFieldName, this.huSentence,
-				Field.Store.YES, Field.Index.NOT_ANALYZED,
+				Field.Store.YES, Field.Index.ANALYZED,
 				Field.TermVector.WITH_POSITIONS_OFFSETS));
 		result.add(new Field(huSentenceStemmedFieldName, this.huSentence,
 				Field.Store.NO, Field.Index.ANALYZED,
 				Field.TermVector.WITH_POSITIONS_OFFSETS));
 		
 		result.add(new Field(enSentenceFieldName, this.enSentence,
-				Field.Store.YES, Field.Index.NOT_ANALYZED,
+				Field.Store.YES, Field.Index.ANALYZED,
 				Field.TermVector.WITH_POSITIONS_OFFSETS));
 		
 		result.add(new Field(enSentenceStemmedFieldName, this.enSentence,
@@ -338,8 +351,6 @@ public class Bisen {
 		return result;
 
 	}
-
-	// getter ans setters
 
 	public Doc getDoc() {
 		return this.doc;

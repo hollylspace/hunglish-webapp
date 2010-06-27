@@ -129,11 +129,11 @@ public class Searcher {
 			//TODO FIXME request Bisens from the db in one batch, that is: where id in (<idlist>)
 			Bisen bisen = Bisen.toBisen(d);
 
-			if (request.isLeftQuery() && request.getHighlightHu()) {
+			if (request.isHuQuery()) { // && request.getHighlightHu()
 				try {
-					TokenStream leftTokens = TokenSources.getTokenStream(
+					TokenStream huTokens = TokenSources.getTokenStream(
 							indexReader, docId, Bisen.huSentenceFieldName);
-					bisen.setHuSentenceView((highlightField(leftTokens, query,
+					bisen.setHuSentenceView((highlightField(huTokens, query,
 							Bisen.huSentenceFieldName, bisen.getHuSentence())));
 				} catch (Exception e) {
 					e.printStackTrace(); //TODO FIXME
@@ -141,11 +141,11 @@ public class Searcher {
 				}
 			}
 
-			if (request.isRightQuery() && request.getHighlightEn()) {
+			if (request.isEnQuery()) { // && request.getHighlightEn()
 				try {
-					TokenStream leftTokens = TokenSources.getTokenStream(
+					TokenStream enTokens = TokenSources.getTokenStream(
 							indexReader, docId, Bisen.enSentenceFieldName);
-					bisen.setEnSentenceView((highlightField(leftTokens, query,
+					bisen.setEnSentenceView((highlightField(enTokens, query,
 							Bisen.enSentenceFieldName, bisen.getEnSentence())));
 				} catch (Exception e) {
 					e.printStackTrace(); //TODO FIXME
@@ -174,6 +174,10 @@ public class Searcher {
 
 	public String getIndexDir() {
 		return indexDir;
+	}
+
+	public IndexSearcher getSearcher() {
+		return searcher;
 	}
 
 

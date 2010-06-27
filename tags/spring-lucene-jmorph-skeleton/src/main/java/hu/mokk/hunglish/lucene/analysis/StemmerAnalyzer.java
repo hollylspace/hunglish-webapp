@@ -17,10 +17,13 @@ import org.apache.lucene.analysis.standard.StandardTokenizer;
 import org.apache.lucene.util.Version;
 
 /**
- * This class is created from Lucene {@link StandardAnalyzer}. It filters
- * {@link StandardTokenizer} with {@link CompoundStemmerTokenFilter},
- * {@link LowerCaseFilter} and {@link StopFilter}, using a list of stop words
- * provided.
+ * This class is created from Lucene {@link StandardAnalyzer}. 
+ * It filters {@link StandardTokenizer} 
+ * with {@link CompoundStemmerTokenFilter},
+ * {@link LowerCaseFilter} 
+ * and {@link StopFilter}, using a list of stop words provided.
+ * 
+ * User of the class will provide a map of fieldNames and {@link LemmatizerWrapper}.
  * 
  * 
  * <a name="version"/>

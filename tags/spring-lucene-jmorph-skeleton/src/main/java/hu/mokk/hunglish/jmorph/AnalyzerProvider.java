@@ -24,10 +24,19 @@ import net.sf.jhunlang.jmorph.sword.parser.SwordAffixReader;
 import net.sf.jhunlang.jmorph.sword.parser.SwordReader;
 
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.PerFieldAnalyzerWrapper;
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.util.Version;
 import org.springframework.beans.factory.annotation.Configurable;
 
 /**
+ * This class will provide the {@link Analyzer} for 
+ * the indexer and the searcher.
+ * 
+ * We use {@link PerFieldAnalyzerWrapper} to assign 
+ * a Lucene {@link StandardAnalyzer} to the non-stemmed fields,
+ * and for the stemmed fields on the other hand, 
+ * we assign Lucene {@link StemmerAnalyzer}
  * @author bpgergo
  * 
  */
@@ -46,11 +55,22 @@ public class AnalyzerProvider {
 	private int enRecursionDepth;
 
 	/*******************************************/
+	/**
+	 * morphological analyser for Hungarian
+	 */
 	private Analyser huAnalyser;
+	/**
+	 * morphological analyser for English
+	 */
 	private Analyser enAnalyser;
 
-	/*******************************************/
-	Map<String, LemmatizerWrapper> lemmatizerMap;
+	
+	private Map<String, LemmatizerWrapper> lemmatizerMap;
+	
+	/**
+	 * Lucene analyzer.
+	 * This will be a per field analyzer wrapper
+	 */
 	Analyzer analyzer;
 
 	/*******************************************/
@@ -81,7 +101,13 @@ public class AnalyzerProvider {
 		enAnalyser = jf.build(new Definition[] { affixDef, dicDef });
 	}
 
-	//init-method
+	/**
+	 * This method initialize the Analyzers.
+	 * @throws IOException
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
+	 * @throws ParseException
+	 */
 	public void initAnalyzerProvider() throws IOException, IllegalAccessException,
 			InstantiationException, ParseException {
 
@@ -105,12 +131,20 @@ public class AnalyzerProvider {
 					enAnalyser, enStripDerivates, analyserContextEn);
 
 			LemmatizerWrapper huLemmatizerWrapper = new LemmatizerWrapper(huLemmatizer,false/*returnOOVOrig*/,true/*returnOrig*/,false/*returnPOS*/);
-			lemmatizerMap.put(Bisen.huSentenceFieldName, huLemmatizerWrapper);
+			lemmatizerMap.put(Bisen.huSentenceStemmedFieldName, huLemmatizerWrapper);
 
 			LemmatizerWrapper enLemmatizerWrapper = new LemmatizerWrapper(enLemmatizer,false/*returnOOVOrig*/,true/*returnOrig*/,false/*returnPOS*/);
-			lemmatizerMap.put(Bisen.enSentenceFieldName, enLemmatizerWrapper);
+			lemmatizerMap.put(Bisen.enSentenceStemmedFieldName, enLemmatizerWrapper);
 
-			analyzer = new StemmerAnalyzer(Version.LUCENE_30, lemmatizerMap);
+			StemmerAnalyzer stemmerAnalyzer = new StemmerAnalyzer(Version.LUCENE_30, lemmatizerMap);
+			
+			PerFieldAnalyzerWrapper analyzerWrapper =
+			      new PerFieldAnalyzerWrapper(new StandardAnalyzer(Version.LUCENE_CURRENT));
+			analyzerWrapper.addAnalyzer(Bisen.huSentenceStemmedFieldName, stemmerAnalyzer);
+			analyzerWrapper.addAnalyzer(Bisen.enSentenceStemmedFieldName, stemmerAnalyzer);
+			
+			this.analyzer = analyzerWrapper;
+			
 		} catch (IOException e) {
 			throw new RuntimeException("Cannot initialize jmorph stemmer.", e);
 		} catch (IllegalAccessException e) {
