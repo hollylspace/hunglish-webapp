@@ -1,209 +1,123 @@
-package hu.mokk.hunglish.lucene.query;
-
-import java.util.ArrayList;
-import java.util.LinkedList;
-
 /**
  * 
+ */
+package hu.mokk.hunglish.lucene.query;
+
+import hu.mokk.hunglish.domain.Bisen;
+import hu.mokk.hunglish.jmorph.AnalyzerProvider;
+import hu.mokk.hunglish.jmorph.LemmatizerWrapper;
+
+import java.util.Iterator;
+import java.util.List;
+
+import org.apache.lucene.index.Term;
+import org.apache.lucene.queryParser.ParseException;
+import org.apache.lucene.queryParser.QueryParser;
+import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.MultiPhraseQuery;
+import org.apache.lucene.search.PhraseQuery;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.TermQuery;
+import org.apache.lucene.util.Version;
+import org.springframework.beans.factory.annotation.Autowired;
+
+/**
  * @author Peter Halacsy <peter at halacsy.com>
  *
  */
 public class HunglishQueryParser {
 
-    public static void main(String args[]) throws Exception {
-        HunglishQueryParser qp = new HunglishQueryParser();
-        System.out.println(qp.parse("-<ablak> \"ajto ablak\"", "-<don't know>"));
+	@Autowired
+	private AnalyzerProvider analyzerProvider;
+ 
+    public HunglishQueryParser() {
     }
-    public QueryStructure parse(String left, String right) throws Exception {
-        QueryStructure qs = new QueryStructure();
-
-        if(left != null && left.length() > 0) {
-            parseHunglishSearchbox(left, QueryPhrase.Field.LEFT, qs);
-        }
-        
-        if(right != null && right.length() > 0) {
-            parseHunglishSearchbox(right, QueryPhrase.Field.RIGHT, qs);
-        }
-        return qs;
-    }
-
+    
  
 
-    void parseHunglishSearchbox(String q, QueryPhrase.Field field,
-            QueryStructure queryStructure) throws Exception {
-        String[] ps = primitiveParse(q);
 
-        for (int i = 0; i < ps.length; ++i) {
-            String p = ps[i];
-
-            QueryPhrase queryPhrase = parseAnnotatedPhrase(p, field);
-
-            queryStructure.addPhrase(queryPhrase);
+    public Query parse(String hu, String en) throws Exception {
+    	HunglishQuerySyntaxParser qp = new HunglishQuerySyntaxParser();
+        QueryStructure qs = qp.parse(hu, en);
+        
+        QueryPhrase[] phrases = qs.getPhrases();
+        
+        if(phrases.length == 0) {
+            return null;
         }
+        BooleanQuery theQuery = new BooleanQuery();
+        
+        
+        for (int i = 0; i < phrases.length; i++) {
+            Query q = phraseToQuery(phrases[i]);
+            BooleanClause bc = null;
+
+            if (phrases[i].getQualifier() == QueryPhrase.Qualifier.MUSTNOT) {
+                bc = new BooleanClause(q, BooleanClause.Occur.MUST_NOT);
+            } else if (phrases[i].getQualifier() == QueryPhrase.Qualifier.MUST) {
+                bc = new BooleanClause(q, BooleanClause.Occur.MUST);
+            } else {
+                bc = new BooleanClause(q, BooleanClause.Occur.SHOULD);
+            }
+
+            theQuery.add(bc);
+
+        }
+
+        return theQuery;
     }
 
-    private QueryPhrase parseAnnotatedPhrase(String pc, QueryPhrase.Field field)
-            throws Exception {
-        int mode = noparaMode;
+    private Query phraseToQuery(QueryPhrase phrase) {
+    	String luceneField = null;
+    	Query result = null;
+    	if (phrase.stemmed){
+    		luceneField = Bisen.huSentenceStemmedFieldName;
+	        if (phrase.field == QueryPhrase.Field.EN) {
+	            luceneField = Bisen.enSentenceStemmedFieldName;
+	        }
+    	} else {
+    		luceneField = Bisen.huSentenceFieldName;
+	        if (phrase.field == QueryPhrase.Field.EN) {
+	            luceneField = Bisen.enSentenceFieldName;
+	        }
+    	}
 
-        QueryPhrase.Qualifier qualifier;
-        boolean stemmed;
-
-        String[] terms;
-
-        String p = pc;
-
-        if (p.charAt(0) == '-') {
-            qualifier = QueryPhrase.Qualifier.MUSTNOT;
-            p = p.substring(1);
-        } else if (p.charAt(0) == '+') {
-            qualifier = QueryPhrase.Qualifier.MUST;
-            p = p.substring(1);
+		try {
+			result = new QueryParser(Version.LUCENE_CURRENT,
+					luceneField, analyzerProvider.getAnalyzer())
+				.parse(phrase.getTermsSpaceSeparated());
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new RuntimeException("Parse error while parsing:"+phrase.getTermsSpaceSeparated(), e);
+		}	        
+    	
+    	/*
+    	if (phrase.terms.length == 0) {
+            return null;
+        } else if (phrase.terms.length == 1) {
+            return new TermQuery(new Term(luceneField, phrase.terms[0]));
         } else {
-            qualifier = QueryPhrase.Qualifier.SHOULD;
-        }
-
-        char start = p.charAt(0);
-        char end = p.charAt(p.length() - 1);
-
-        if (start == '<') {
-            mode = bracketMode;
-
-            if (end != '>') {
-                throw new Exception("no closing bracket: " + p);
-            }
-            p = p.substring(1, p.length() - 1);
-        } else if (start == '"') {
-            mode = quoteMode;
-
-            if (end != '"') {
-                throw new Exception("no closing quotation mark: " + p);
-            }
-            p = p.substring(1, p.length() - 1);
-        }
-
-        stemmed = (mode != bracketMode);
-
-        terms = parsePhrase(p);
-        return new QueryPhrase(field, terms, qualifier, stemmed);
+	        PhraseQuery pq = new PhraseQuery();
+	        for (int i = 0; i < phrase.terms.length; i++) {
+	            pq.add(new Term(luceneField, phrase.terms[i]));
+	        }
+	        return pq;
+        } //*/  
+    	
+    	return result;
     }
 
-    private String[] parsePhrase(String s) throws Exception {
-        LinkedList terms = new LinkedList();
+    
+	public AnalyzerProvider getAnalyzerProvider() {
+		return analyzerProvider;
+	}
 
-        String q = s + " ";
 
-        StringBuffer collected = new StringBuffer();
 
-        for (int i = 0; i < q.length(); ++i) {
 
-            char c = q.charAt(i);
-
-            if (Character.isWhitespace(c) || (c == '-') || (c == '.')) {
-
-                if (collected.length() > 0) {
-
-                    terms.add(collected.toString());
-                    collected = new StringBuffer();
-                }
-            } else {
-
-                collected.append(c);
-            }
-
-            if ((c == '"') || (c == '<') || (c == '>') || (c == '+')) {
-                {
-                    throw new Exception("not valid character found: " + c);
-                }
-            }
-        }
-        return (String[]) terms.toArray(new String[0]);
-    }
-
-    final static int noparaMode = 1;
-
-    final static int bracketMode = 2;
-
-    final static int quoteMode = 3;
-
-    /*
-     * Tokenize the text but leaves the " - + < > signs sticked to the tokens
-     */
-    private String[] primitiveParse(final String qc) throws Exception {
-        ArrayList ps = new ArrayList();
-
-        String q = qc + " ";
-
-        StringBuffer collected = new StringBuffer();
-        int mode = noparaMode;
-
-        for (int i = 0; i < q.length(); ++i) {
-            char c = q.charAt(i);
-
-            if ((Character.isWhitespace(c)) && (mode == noparaMode)) {
-                if (collected.length() > 0) {
-                    ps.add(collected.toString());
-                    collected = new StringBuffer();
-                }
-            } else {
-                collected.append(c);
-            }
-
-            if (c == '"') {
-                switch (mode) {
-                case noparaMode:
-                    mode = quoteMode;
-                    break;
-
-                case bracketMode:
-                    throw new Exception(
-                            "found bracket inside quotation mark");
-
-                case quoteMode:
-                    mode = noparaMode;
-                    break;
-                }
-            }
-
-            if (c == '<') {
-                switch (mode) {
-                case noparaMode:
-                    mode = bracketMode;
-                    break;
-
-                case bracketMode:
-                    throw new Exception(
-                            "found opening bracket after other ");
-
-                case quoteMode:
-                    throw new Exception(
-                            "found opening bracket inside quatation mark");
-
-                }
-            }
-
-            if (c == '>') {
-                switch (mode) {
-                case noparaMode:
-                    throw new Exception(
-                            "found closing bracket but no opening one");
-
-                case bracketMode:
-                    mode = noparaMode;
-                    break;
-
-                case quoteMode:
-                    throw new Exception(
-                            "found closing bracket inside quatation marks");
-
-                }
-            }
-        }
-
-        if (mode != noparaMode) {
-            throw new Exception("no closing bracket or quotation mark");
-        }
-        return (String[]) ps.toArray(new String[0]);
-    }
-
+	public void setAnalyzerProvider(AnalyzerProvider analyzerProvider) {
+		this.analyzerProvider = analyzerProvider;
+	}
 }
