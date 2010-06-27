@@ -93,11 +93,12 @@
 
     <bean class="hu.mokk.hunglish.lucene.Searcher" id="searcher" init-method="initSearcher">
         <property name="luceneQueryBuilder" ref="luceneQueryBuilder"/>
-        <property name="indexDir" value="${indexer.tmpIndexDir}"/> <!--  ${indexer.indexDir} ATTENTION, this is the same as indexer.indexDir -->        
+        <property name="indexDir" value="${indexer.tmpIndexDir}"/> <!--  ${indexer.indexDir} ATTENTION, this is the same as indexer.indexDir -->
     </bean>
 				 
     <bean class="hu.mokk.hunglish.lucene.LuceneQueryBuilder" id="luceneQueryBuilder">
         <property name="queryParser" ref="queryParser"/>
+		<property name="useHunglishSyntax" value="${searcher.useHunglishSyntax}"/>        
     </bean>
 
     <bean class="hu.mokk.hunglish.lucene.query.HunglishQueryParser" id="queryParser">
