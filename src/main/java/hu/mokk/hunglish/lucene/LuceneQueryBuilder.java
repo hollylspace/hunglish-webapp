@@ -26,6 +26,10 @@ public class LuceneQueryBuilder {
 	@Autowired
 	private HunglishQueryParser queryParser;
 	
+	private String useHunglishSyntax;
+	private Boolean hunglishSyntax = false;
+	
+	
 
 	private Query parseSearchRequest(SearchRequest request) {
 		Query result = new BooleanQuery();
@@ -69,8 +73,16 @@ public class LuceneQueryBuilder {
 	}
 	
 	public Query parseRequest(SearchRequest request) throws ParseException {
-		Query query = simpleParseSearchRequest(request);
-		query = addSourceFilter(query, Bisen.genreFieldName, request.getSourceId());
+		Query query; 
+		if (hunglishSyntax){
+			query = parseSearchRequest(request);
+		} else {
+			query = simpleParseSearchRequest(request);
+		}
+		if (request.getSourceId() != null){
+			query = addSourceFilter(query, Bisen.genreFieldName, request.getSourceId());
+		}
+		
 		return query;
 	}
 
@@ -114,5 +126,10 @@ public class LuceneQueryBuilder {
 		this.queryParser = queryParser;
 	}
 
+	public void setUseHunglishSyntax(String useHunglishSyntax) {
+		this.useHunglishSyntax = useHunglishSyntax;
+		this.hunglishSyntax = Boolean.parseBoolean(this.useHunglishSyntax);
+
+	}
 	
 }
