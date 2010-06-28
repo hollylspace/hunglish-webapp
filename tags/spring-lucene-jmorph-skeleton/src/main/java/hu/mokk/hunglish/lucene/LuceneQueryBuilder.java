@@ -50,7 +50,7 @@ public class LuceneQueryBuilder {
 			if (huRequest != null && huRequest.length() > 0) {
 				
 				Query huQuery = new QueryParser(Version.LUCENE_30,
-						Bisen.enSentenceStemmedFieldName, queryParser.getAnalyzerProvider()
+						Bisen.huSentenceStemmedFieldName, queryParser.getAnalyzerProvider()
 								.getAnalyzer()).parse(huRequest);
 				result.add(huQuery, Occur.SHOULD);
 			}

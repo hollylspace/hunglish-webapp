@@ -1,7 +1,8 @@
-<adott>
 adott
 megöl
 kisebb
+<kisebb>
+"kisebb"
 gyémántjaim
 gyémánt
 Kisebb
