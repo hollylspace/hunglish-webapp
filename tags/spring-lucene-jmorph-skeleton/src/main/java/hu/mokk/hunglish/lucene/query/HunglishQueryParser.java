@@ -84,9 +84,11 @@ public class HunglishQueryParser {
     	}
 
 		try {
+			String wtf = phrase.getTermsSpaceSeparated();
+			System.out.println("wft"+wtf);
 			result = new QueryParser(Version.LUCENE_CURRENT,
 					luceneField, analyzerProvider.getAnalyzer())
-				.parse(phrase.getTermsSpaceSeparated());
+				.parse(wtf);
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

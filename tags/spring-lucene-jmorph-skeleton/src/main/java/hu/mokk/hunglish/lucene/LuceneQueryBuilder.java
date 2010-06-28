@@ -27,7 +27,7 @@ public class LuceneQueryBuilder {
 	private HunglishQueryParser queryParser;
 	
 	private String useHunglishSyntax;
-	private Boolean hunglishSyntax = false;
+	private Boolean hunglishSyntax = true;
 	
 	
 
