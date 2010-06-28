@@ -50,7 +50,7 @@ public class QueryPhrase {
 		String result = "";
 		if (terms.length > 0){
 			for (String term : terms){
-				result += terms + " ";
+				result += term + " ";
 			}
 		}
 		return result.trim();
