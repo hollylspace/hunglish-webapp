@@ -40,6 +40,8 @@ public class Searcher {
 	private IndexSearcher searcher;
 	private IndexReader indexReader;
 	
+	private String useHunglishSyntax = "true";  
+	
 	@Autowired
 	private LuceneQueryBuilder luceneQueryBuilder;
 	
@@ -51,6 +53,7 @@ public class Searcher {
 						indexDir)), readOnly);
 				searcher = new IndexSearcher(indexReader);
 				luceneQueryBuilder = new LuceneQueryBuilder();
+				luceneQueryBuilder.setHunglishSyntax(useHunglishSyntax);
 			} catch (CorruptIndexException e) {
 				throw new RuntimeException("Cannot open index directory.", e);
 			} catch (IOException e) {
@@ -65,7 +68,7 @@ public class Searcher {
 			throw new IllegalStateException("can not search. Initialize searcher first.");
 		}
 	}
-	
+		
 	
 	private static String highlightField(TokenStream tokenStream, Query query,
 			String fieldName, String text) throws IOException,
@@ -78,8 +81,19 @@ public class Searcher {
 		return rv.length() == 0 ? text : rv;
 	}
 
+	private boolean requestIsEmpty(SearchRequest request) {
+		return (request == null) || ( 
+				(request.getEnQuery() == null || request.getEnQuery().isEmpty()) 
+				&& (request.getHuQuery() == null || request.getHuQuery().isEmpty())
+				);
+	}
+	
 	public SearchResult search(SearchRequest request){
 		checkState();
+		SearchResult result = new SearchResult();
+		if (requestIsEmpty(request)){
+			return result;
+		}
 		Query query = null;
 		try {
 			query = luceneQueryBuilder.parseRequest(request);
@@ -88,8 +102,6 @@ public class Searcher {
 			e1.printStackTrace();
 		}
 		
-		SearchResult result = new SearchResult();
-
 		// Collect enough docs to show 1 pages
 		TopScoreDocCollector collector = TopScoreDocCollector.create(
 				maxDocumments, false);
@@ -178,6 +190,14 @@ public class Searcher {
 
 	public IndexSearcher getSearcher() {
 		return searcher;
+	}
+
+	public String getUseHunglishSyntax() {
+		return useHunglishSyntax;
+	}
+
+	public void setUseHunglishSyntax(String useHunglishSyntax) {
+		this.useHunglishSyntax = useHunglishSyntax;
 	}
 
 
