@@ -6,11 +6,14 @@ package hu.mokk.hunglish.lucene.query;
 import hu.mokk.hunglish.domain.Bisen;
 import hu.mokk.hunglish.jmorph.AnalyzerProvider;
 
+import org.apache.lucene.index.Term;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.PhraseQuery;
 import org.apache.lucene.search.Query;
+import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.util.Version;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -62,7 +65,6 @@ public class HunglishQueryParser {
 
     private Query phraseToQuery(QueryPhrase phrase) {
     	String luceneField = null;
-    	Query result = null;
     	if (phrase.stemmed){
     		luceneField = Bisen.huSentenceStemmedFieldName;
 	        if (phrase.field == QueryPhrase.Field.EN) {
@@ -74,10 +76,28 @@ public class HunglishQueryParser {
 	            luceneField = Bisen.enSentenceFieldName;
 	        }
     	}
+
+		
+    	/*--------old HUnglish version----------*/
+        String [] terms = phrase.getTerms();
+    	if (terms.length == 0) {
+            return null;
+        } else if (terms.length == 1) {
+            return new TermQuery(new Term(luceneField, terms[0]));
+        }
+
+    	PhraseQuery result = new PhraseQuery(); 
+        for (int i = 0; i < terms.length; i++) {
+            result.add(new Term(luceneField, terms[i]));
+        }
+    	return result;
+
+        /*----------new version-----------*/
+        /*
+		Query result = null;
     	QueryParser luceneQueryParser = new QueryParser(Version.LUCENE_CURRENT,
 				luceneField, analyzerProvider.getAnalyzer());
-
-		try {
+    	try {
 			//TODO FIXME create separate query object from each term and
 			//combine them with boolean query
 			String wtf = phrase.getTermsSpaceSeparated(); 
@@ -87,22 +107,8 @@ public class HunglishQueryParser {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			throw new RuntimeException("Parse error while parsing:"+phrase.getTermsSpaceSeparated(), e);
-		}	        
+		}//*/	        
     	
-    	/*
-    	if (phrase.terms.length == 0) {
-            return null;
-        } else if (phrase.terms.length == 1) {
-            return new TermQuery(new Term(luceneField, phrase.terms[0]));
-        } else {
-	        PhraseQuery pq = new PhraseQuery();
-	        for (int i = 0; i < phrase.terms.length; i++) {
-	            pq.add(new Term(luceneField, phrase.terms[i]));
-	        }
-	        return pq;
-        } //*/  
-    	
-    	return result;
     }
 
     
