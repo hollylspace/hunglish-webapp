@@ -206,7 +206,6 @@ public class HunglishQueryParser {
     }
 
     private Term[] stemTerm(Term t) {
-        String luceneField = t.field() + "_stemmed";
         LemmatizerWrapper lemmatizer = 
         	analyzerProvider.getLemmatizerMap().get(t.field());
         
@@ -220,7 +219,7 @@ public class HunglishQueryParser {
         
         for(int i = 0; it.hasNext(); i++) {
         	String term = it.next();
-            terms[i] = new Term(luceneField, term);
+            terms[i] = new Term(t.field(), term);
         }
         return terms;
 
