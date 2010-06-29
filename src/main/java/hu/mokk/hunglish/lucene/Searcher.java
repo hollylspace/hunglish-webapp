@@ -53,7 +53,6 @@ public class Searcher {
 						indexDir)), readOnly);
 				searcher = new IndexSearcher(indexReader);
 				luceneQueryBuilder = new LuceneQueryBuilder();
-				luceneQueryBuilder.setHunglishSyntax(useHunglishSyntax);
 			} catch (CorruptIndexException e) {
 				throw new RuntimeException("Cannot open index directory.", e);
 			} catch (IOException e) {
@@ -96,6 +95,7 @@ public class Searcher {
 		}
 		Query query = null;
 		try {
+			luceneQueryBuilder.setHunglishSyntax(useHunglishSyntax);
 			query = luceneQueryBuilder.parseRequest(request);
 		} catch (ParseException e1) {
 			// TODO Auto-generated catch block
