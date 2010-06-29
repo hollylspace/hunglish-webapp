@@ -93,13 +93,7 @@ public class SearcherTest {
 		}
 		for ( String query : testQueryListEn ) {
 			runSingleSearch(query, QueryPhrase.Field.EN);
-		}
-		int i = 0;
-		for ( String query : testQueryListEn ) {
-			runSingleSearch(query, QueryPhrase.Field.EN);
-			i++;
-		}
-		
+		}		
 	}
 
 	private void runMultiSearch(String enQuery, QueryPhrase.Field enField, 
@@ -107,7 +101,7 @@ public class SearcherTest {
 	}
 	
 	private void runSingleSearch(String query, QueryPhrase.Field field){
-		System.out.println("Test searchin:"+query);
+		System.out.println("-------------------------Test searchin:"+query);
 		try {
 			SearchRequest request = new SearchRequest();
 			if (QueryPhrase.Field.HU.equals(field)){
