@@ -5,20 +5,12 @@ package hu.mokk.hunglish.lucene.query;
 
 import hu.mokk.hunglish.domain.Bisen;
 import hu.mokk.hunglish.jmorph.AnalyzerProvider;
-import hu.mokk.hunglish.jmorph.LemmatizerWrapper;
 
-import java.util.Iterator;
-import java.util.List;
-
-import org.apache.lucene.index.Term;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.MultiPhraseQuery;
-import org.apache.lucene.search.PhraseQuery;
 import org.apache.lucene.search.Query;
-import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.util.Version;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -82,13 +74,15 @@ public class HunglishQueryParser {
 	            luceneField = Bisen.enSentenceFieldName;
 	        }
     	}
+    	QueryParser luceneQueryParser = new QueryParser(Version.LUCENE_CURRENT,
+				luceneField, analyzerProvider.getAnalyzer());
 
 		try {
-			String wtf = phrase.getTermsSpaceSeparated();
-			System.out.println("wft"+wtf);
-			result = new QueryParser(Version.LUCENE_CURRENT,
-					luceneField, analyzerProvider.getAnalyzer())
-				.parse(wtf);
+			//TODO FIXME create separate query object from each term and
+			//combine them with boolean query
+			String wtf = phrase.getTermsSpaceSeparated(); 
+			//System.out.println("wft"+wtf);
+			result = luceneQueryParser.parse(wtf);
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
