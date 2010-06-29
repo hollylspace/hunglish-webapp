@@ -26,7 +26,6 @@ public class LuceneQueryBuilder {
 	@Autowired
 	private HunglishQueryParser queryParser;
 	
-	private String useHunglishSyntax;
 	private Boolean hunglishSyntax = true;
 	
 	
@@ -126,10 +125,8 @@ public class LuceneQueryBuilder {
 		this.queryParser = queryParser;
 	}
 
-	public void setUseHunglishSyntax(String useHunglishSyntax) {
-		this.useHunglishSyntax = useHunglishSyntax;
-		this.hunglishSyntax = Boolean.parseBoolean(this.useHunglishSyntax);
-
+	public void setHunglishSyntax(String useHunglishSyntax) {
+		this.hunglishSyntax = Boolean.parseBoolean(useHunglishSyntax);
 	}
 	
 }

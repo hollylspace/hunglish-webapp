@@ -67,21 +67,39 @@ public class SearcherTest {
 		}
 	}
 	
+	List<String> testQueryListHu;
+	List<String> testQueryListEn;
+	
 	@Test
-	public void testSearch() throws FileNotFoundException {
+	public void testSearch2Sides() throws FileNotFoundException {
+		testQueryListHu = getLines(testData.testQueriesHu, testData.testDataEncoding);
+		testQueryListEn = getLines(testData.testQueriesEn, testData.testDataEncoding);
+		searcher.setUseHunglishSyntax("true");
+		testSearch();
+		searcher.setUseHunglishSyntax("false");
+		testSearch();
 		
-		List<String> testQueryListHu = getLines(testData.testQueriesHu, testData.testDataEncoding);
-		List<String> testQueryListEn = getLines(testData.testQueriesEn, testData.testDataEncoding);
-
+	}
+	
+	private void testSearch() throws FileNotFoundException {		
 		for ( String query : testQueryListHu ) {
 			runSingleSearch(query, QueryPhrase.Field.HU);
 		}
 		for ( String query : testQueryListEn ) {
 			runSingleSearch(query, QueryPhrase.Field.EN);
 		}
+		int i = 0;
+		for ( String query : testQueryListEn ) {
+			runSingleSearch(query, QueryPhrase.Field.EN);
+			i++;
+		}
 		
 	}
 
+	private void runMultiSearch(String enQuery, QueryPhrase.Field enField, 
+			String huQuery, QueryPhrase.Field huField){		
+	}
+	
 	private void runSingleSearch(String query, QueryPhrase.Field field){
 		System.out.println("Test searchin:"+query);
 		try {
