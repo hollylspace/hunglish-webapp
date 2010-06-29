@@ -24,10 +24,6 @@ public class SearchController {
         modelMap.addAttribute("bisens", Bisen.findBisenEntries((pageNo - 1) * sizeNo, sizeNo));
         //float nrOfPages = (float) Bisen.countBisens() / sizeNo;
         //modelMap.addAttribute("maxPages", (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages));
-        return "search/";
+        return "search/search";
     }
-	
-	
-	
-	
 }
