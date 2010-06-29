@@ -105,10 +105,12 @@
         <property name="analyzerProvider" ref="analyzerProvider"/>
     </bean>
 
+    <!-- 
     <bean class="hu.mokk.hunglish.lucene.TestData" id="testData">
         <property name="testQueriesHu" value="${testing.testQueriesHu}"/>
         <property name="testQueriesEn" value="${testing.testQueriesEn}"/>
         <property name="testDataEncoding" value="${testing.testDataEncoding}"/>
     </bean>
-
+ 	-->
+ 	
 </beans>
