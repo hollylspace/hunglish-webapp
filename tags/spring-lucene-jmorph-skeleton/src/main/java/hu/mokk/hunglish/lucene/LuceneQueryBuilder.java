@@ -35,6 +35,7 @@ public class LuceneQueryBuilder {
 		try {
 			result = queryParser.parse(request.getHuQuery(), request.getEnQuery());
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new RuntimeException("query couldn't be parsed", e);
 		}
 		return result;
