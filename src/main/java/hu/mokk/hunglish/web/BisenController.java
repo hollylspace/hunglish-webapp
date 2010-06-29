@@ -48,7 +48,7 @@ public class BisenController {
     		@RequestParam(value = "page", required = false) Integer page, 
     		@RequestParam(value = "size", required = false) Integer size, ModelMap modelMap) {
         int sizeNo = size == null ? 10 : size.intValue();
-        int pageNo = page == null ? 0 : page.intValue();
+        int pageNo = page == null ? 1 : page.intValue();
         modelMap.addAttribute("bisens", Bisen.findBisenEntries((pageNo - 1) * sizeNo, sizeNo));
         float nrOfPages = (float) Bisen.countBisens() / sizeNo;
         modelMap.addAttribute("maxPages", (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages));

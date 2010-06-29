@@ -1,0 +1,46 @@
+<div 
+xmlns:c="http://java.sun.com/jsp/jstl/core" 
+xmlns:fmt="http://java.sun.com/jsp/jstl/fmt" 
+xmlns:fn="http://java.sun.com/jsp/jstl/functions" 
+xmlns:form="http://www.springframework.org/tags/form" 
+xmlns:jsp="http://java.sun.com/JSP/Page" 
+xmlns:roo="urn:jsptagdir:/WEB-INF/tags" 
+xmlns:spring="http://www.springframework.org/tags" version="2.0">
+    <jsp:output omit-xml-declaration="yes"/>
+    <script type="text/javascript">dojo.require('dijit.TitlePane');</script>
+    <div id="_title_div">
+        <spring:message code="label.bisen" var="entity_label"/>
+        <spring:message code="label.bisens" var="entity_label_plural"/>
+        <spring:message arguments="${entity_label_plural}" code="entity.list.all" var="title_msg"/>
+        <script type="text/javascript">Spring.addDecoration(new Spring.ElementDecoration({elementId : '_title_div', widgetType : 'dijit.TitlePane', widgetAttrs : {title: '${title_msg}'}})); </script>
+        <c:if test="${not empty bisens}">
+            <table width="500px">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Doc</th>
+                        <th>Hu Sentence</th>
+                        <th>En Sentence</th>
+                    </tr>
+                </thead>
+                <c:forEach items="${bisens}" var="bisen">
+                    <tr>
+                        <td>${bisen.id}</td>
+                        <td>
+                            <c:out value="${fn:substring(bisen.doc, 0, 15)}"/>
+                        </td>
+                        <td>
+                            <c:out value="${bisen.huSentence}"/>
+                        </td>
+                        <td>
+                            <c:out value="${bisen.enSentence}"/>
+                        </td>
+                    </tr>
+                </c:forEach>
+            </table>
+        </c:if>
+        <c:if test="${empty bisens}">
+            <spring:message arguments="${entity_label_plural}" code="entity.not.found"/>            
+        </c:if>
+    </div>
+</div>

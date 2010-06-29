@@ -23,6 +23,7 @@
 
         
         <intercept-url pattern="/resources/**" access="permitAll" />
+        <intercept-url pattern="/search/**" access="permitAll" />
         <intercept-url pattern="/static/**" access="permitAll" />
         <intercept-url pattern="/login" access="permitAll" />
         <intercept-url pattern="/**" access="permitAll" />
