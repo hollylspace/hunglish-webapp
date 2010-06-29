@@ -74,9 +74,15 @@ public class SearcherTest {
 	public void testSearch2Sides() throws FileNotFoundException {
 		testQueryListHu = getLines(testData.testQueriesHu, testData.testDataEncoding);
 		testQueryListEn = getLines(testData.testQueriesEn, testData.testDataEncoding);
-		searcher.setUseHunglishSyntax("true");
+		
+		String useTheHunglishSyn = "true";
+		System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++++++useTheHunglishSyn:"+useTheHunglishSyn);
+		searcher.setUseHunglishSyntax(useTheHunglishSyn);
 		testSearch();
-		searcher.setUseHunglishSyntax("false");
+		
+		useTheHunglishSyn = "false";
+		System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++++++useTheHunglishSyn:"+useTheHunglishSyn);
+		searcher.setUseHunglishSyntax(useTheHunglishSyn);
 		testSearch();
 		
 	}
