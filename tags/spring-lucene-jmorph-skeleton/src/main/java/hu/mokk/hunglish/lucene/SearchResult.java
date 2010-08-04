@@ -43,7 +43,7 @@ public class SearchResult {
 	/**
 	 * @return Returns the resultList.
 	 */
-	public List getHitList() {
+	public List<Bisen> getHitList() {
 		return hitList;
 	}
 	/**

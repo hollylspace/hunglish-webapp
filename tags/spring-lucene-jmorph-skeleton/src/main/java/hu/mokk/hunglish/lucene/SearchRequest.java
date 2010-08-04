@@ -10,6 +10,11 @@ package hu.mokk.hunglish.lucene;
 public class SearchRequest {
 
 	/**
+	 * Use the special Hunglish query syntax implemented by HunglishQueryParser
+	 */
+	private Boolean hunglishSyntax = false;
+	
+	/**
 	 * The search terms should be highlighted in HU (that is the left search box) results 
 	 */
 	protected Boolean highlightHu;
@@ -53,7 +58,7 @@ public class SearchRequest {
     /**
      * The number of max returned bisentences (used to implement a pager)
      */
-    protected int maxResults = 0;
+    protected int maxResults = 20;
     
     /**
      * Restrict search to a specified source
@@ -192,5 +197,18 @@ public class SearchRequest {
 		this.highlightEn = highlightEn;
 	}
 
+
+	public Boolean getHunglishSyntax() {
+		return hunglishSyntax;
+	}
+
+
+	public void setHunglishSyntax(Boolean hunglishSyntax) {
+		this.hunglishSyntax = hunglishSyntax;
+	}
+
+	public void setHunglishSyntax(String useHunglishSyntax) {
+		this.hunglishSyntax = Boolean.parseBoolean(useHunglishSyntax);
+	}
 
 }

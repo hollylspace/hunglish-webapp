@@ -26,59 +26,55 @@ public class LuceneQueryBuilder {
 	@Autowired
 	private HunglishQueryParser queryParser;
 	
-	private Boolean hunglishSyntax = true;
-	
-	
-
 	private Query parseSearchRequest(SearchRequest request) {
 		Query result = new BooleanQuery();
 		try {
 			result = queryParser.parse(request.getHuQuery(), request.getEnQuery());
 		} catch (Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			throw new RuntimeException("query couldn't be parsed", e);
 		}
 		return result;
 	}
 
 	
-	private Query simpleParseSearchRequest(SearchRequest request) {
+	private Query simpleParseSearchRequest(SearchRequest request) throws ParseException {
 		BooleanQuery result = new BooleanQuery();
-		try {
-			String huRequest;
-			huRequest = request.getHuQuery();
-			if (huRequest != null && huRequest.length() > 0) {
-				
-				Query huQuery = new QueryParser(Version.LUCENE_30,
-						Bisen.huSentenceStemmedFieldName, queryParser.getAnalyzerProvider()
-								.getAnalyzer()).parse(huRequest);
-				result.add(huQuery, Occur.SHOULD);
-			}
-
-		} catch (ParseException e) {
-			throw new RuntimeException("left query couldn't be parsed", e);
+		String huRequest;
+		huRequest = request.getHuQuery();
+		if (huRequest != null && huRequest.length() > 0) {
+			
+			Query huQuery = new QueryParser(Version.LUCENE_30,
+					Bisen.huSentenceStemmedFieldName, queryParser.getAnalyzerProvider()
+							.getAnalyzer()).parse(huRequest);
+			result.add(huQuery, Occur.SHOULD);
 		}
-		try {
-			if (request.getEnQuery() != null
-					&& request.getEnQuery().length() > 0) {
-				Query enQuery = new QueryParser(Version.LUCENE_30,
-						Bisen.enSentenceStemmedFieldName, queryParser.getAnalyzerProvider()
-								.getAnalyzer()).parse(request.getEnQuery());
-				result.add(enQuery, Occur.SHOULD);
-			}
-		} catch (ParseException e) {
-			throw new RuntimeException("right query couldn't be parsed", e);
+
+		if (request.getEnQuery() != null
+				&& request.getEnQuery().length() > 0) {
+			Query enQuery = new QueryParser(Version.LUCENE_30,
+					Bisen.enSentenceStemmedFieldName, queryParser.getAnalyzerProvider()
+							.getAnalyzer()).parse(request.getEnQuery());
+			result.add(enQuery, Occur.SHOULD);
 		}
 		return result;
 	}
 	
 	public Query parseRequest(SearchRequest request) throws ParseException {
 		Query query; 
-		if (hunglishSyntax){
-			query = parseSearchRequest(request);
-		} else {
-			query = simpleParseSearchRequest(request);
+		try {
+			if (request.getHunglishSyntax()){
+				query = new BooleanQuery();
+					query = queryParser.parse(request.getHuQuery(), request.getEnQuery());
+				query = parseSearchRequest(request);
+			} else {
+				query = simpleParseSearchRequest(request);
+			}
+		} catch (Exception e) {
+			//e.printStackTrace(); 
+			throw new RuntimeException("query couldn't be parsed", e);
 		}
+		
 		if (request.getSourceId() != null){
 			query = addSourceFilter(query, Bisen.genreFieldName, request.getSourceId());
 		}
@@ -126,8 +122,5 @@ public class LuceneQueryBuilder {
 		this.queryParser = queryParser;
 	}
 
-	public void setHunglishSyntax(String useHunglishSyntax) {
-		this.hunglishSyntax = Boolean.parseBoolean(useHunglishSyntax);
-	}
 	
 }
