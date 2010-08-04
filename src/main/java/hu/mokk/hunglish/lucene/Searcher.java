@@ -7,6 +7,7 @@ import hu.mokk.hunglish.domain.Bisen;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.document.Document;
@@ -40,7 +41,8 @@ public class Searcher {
 	private IndexSearcher searcher;
 	private IndexReader indexReader;
 	
-	private String useHunglishSyntax = "true";  
+	private String useHunglishSyntax = "true";
+	private Boolean setHunglishSyntax = false;
 	
 	@Autowired
 	private LuceneQueryBuilder luceneQueryBuilder;
@@ -94,12 +96,15 @@ public class Searcher {
 			return result;
 		}
 		Query query = null;
+		if (setHunglishSyntax){
+			request.setHunglishSyntax(useHunglishSyntax);
+		}
 		try {
-			luceneQueryBuilder.setHunglishSyntax(useHunglishSyntax);
 			query = luceneQueryBuilder.parseRequest(request);
 		} catch (ParseException e1) {
 			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			//e1.printStackTrace();
+			throw new RuntimeException("Request couldn't be parsed", e1);
 		}
 		
 		// Collect enough docs to show 1 pages
@@ -139,6 +144,7 @@ public class Searcher {
 			}
 
 			//TODO FIXME request Bisens from the db in one batch, that is: where id in (<idlist>)
+			//public static List<Bisen> findBisenEntries(List<Long> ids)
 			Bisen bisen = Bisen.toBisen(d);
 
 			if (request.isHuQuery()) { // && request.getHighlightHu()
@@ -198,6 +204,9 @@ public class Searcher {
 
 	public void setUseHunglishSyntax(String useHunglishSyntax) {
 		this.useHunglishSyntax = useHunglishSyntax;
+		if (Boolean.parseBoolean(useHunglishSyntax)){
+			setHunglishSyntax = true;
+		}
 	}
 
 
