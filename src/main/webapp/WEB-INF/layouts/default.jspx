@@ -42,7 +42,8 @@
 		<spring:message code="application.name" var="app_name"/>
 		<title><spring:message code="welcome.h3" arguments="${app_name}" /></title>
 	</head>
-   	<body class="tundra spring">		
+   	<body class="tundra spring">
+		<!-- div id="hehe"> <h1>this is default.jspx</h1> </div -->
    		<div id="wrapper">
 		    <tiles:insertAttribute name="menu" ignore="true" />   
 	    	<div id="main">

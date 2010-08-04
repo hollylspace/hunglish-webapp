@@ -12,7 +12,9 @@ xmlns:spring="http://www.springframework.org/tags" version="2.0">
         <spring:message code="label.bisen" var="entity_label"/>
         <spring:message code="label.bisens" var="entity_label_plural"/>
         <spring:message arguments="${entity_label_plural}" code="entity.list.all" var="title_msg"/>
+        <!-- 
         <script type="text/javascript">Spring.addDecoration(new Spring.ElementDecoration({elementId : '_title_div', widgetType : 'dijit.TitlePane', widgetAttrs : {title: '${title_msg}'}})); </script>
+         -->
         <c:if test="${not empty bisens}">
             <table width="500px">
                 <thead>
