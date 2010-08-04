@@ -32,7 +32,7 @@ public class UploadDataOnDemand {
         obj.setEnTitle("enTitle_" + index);
         obj.setGenre(genreDataOnDemand.getRandomGenre());
         obj.setIsApproved(new Boolean(true));
-        obj.setIsProcessed(new Boolean(true));
+        obj.setIsProcessed(new String("N"));
         return obj;
     }
 

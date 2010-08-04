@@ -30,7 +30,7 @@ field reference --notNull --fieldName genre --type ~.domain.Genre
 field reference --notNull --fieldName author --type ~.domain.Author
 field string --notNull --fieldName enTitle --sizeMax 255
 field string --fieldName huTitle --sizeMax 255
-field boolean --fieldName isProcessed
+field string --fieldName isProcessed
 field boolean --fieldName isApproved
 field string --fieldName huFilePath --sizeMax 255
 field string --fieldName enFilePath --sizeMax 255

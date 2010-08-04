@@ -46,7 +46,11 @@
             <br/>
             <div id="roo_upload_isProcessed">
                 <label for="_isProcessed_id">Is Processed:</label>
-                <form:checkbox id="_isProcessed_id" path="isProcessed"/>
+                <!-- form:checkbox id="_isProcessed_id" path="isProcessed"/ -->
+                <form:textarea cssStyle="width:50px" id="_isProcessed_id" path="isProcessed"/>
+                <script type="text/javascript">Spring.addDecoration(new Spring.ElementDecoration({elementId : '_isProcessed_id', widgetType: 'dijit.form.SimpleTextarea', widgetAttrs: {}})); </script>
+                <br/>
+                <form:errors cssClass="errors" id="_isProcessed_error_id" path="isProcessed"/>                
             </div>
             <br/>
             <div id="roo_upload_isApproved">
