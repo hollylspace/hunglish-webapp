@@ -123,7 +123,7 @@ CREATE TABLE `upload` (
   `hu_sentence` varchar(4000) DEFAULT NULL,
   `hu_title` varchar(255) DEFAULT NULL,
   `is_approved` bit(1) DEFAULT 0,
-  `is_processed` bit(1) DEFAULT 0,
+  `is_processed` varchar(1) not null DEFAULT 'N', -- Y = processed, N = not processed, E = processed with error
   `author` bigint(20) not NULL,
   `genre` bigint(20) not NULL,
   PRIMARY KEY (`id`),

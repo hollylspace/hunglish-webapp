@@ -45,7 +45,9 @@ public class Upload {
     @Size(max = 255)
     private String huTitle;
 
-    private Boolean isProcessed;
+    @NotNull
+    @Size(max = 1)
+    private String isProcessed;
 
     private Boolean isApproved;
 
@@ -110,11 +112,11 @@ public class Upload {
         this.huTitle = huTitle;
     }
 
-	public Boolean getIsProcessed() {
+	public String getIsProcessed() {
         return this.isProcessed;
     }
 
-	public void setIsProcessed(Boolean isProcessed) {
+	public void setIsProcessed(String isProcessed) {
         this.isProcessed = isProcessed;
     }
 
