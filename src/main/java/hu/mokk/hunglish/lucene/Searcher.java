@@ -42,7 +42,7 @@ public class Searcher {
 	private IndexReader indexReader;
 	
 	private String useHunglishSyntax = "true";
-	private Boolean setHunglishSyntax = false;
+	//private Boolean setHunglishSyntax = false;
 	
 	@Autowired
 	private LuceneQueryBuilder luceneQueryBuilder;
@@ -96,9 +96,10 @@ public class Searcher {
 			return result;
 		}
 		Query query = null;
-		if (setHunglishSyntax){
-			request.setHunglishSyntax(useHunglishSyntax);
-		}
+//		if (setHunglishSyntax){
+//System.out.println("FFFFFFFUUUUUUUUUUUUUUUUUUUUUUUUUU setHunglishSyntax");			
+//			request.setHunglishSyntax(useHunglishSyntax);
+//		}
 		try {
 			query = luceneQueryBuilder.parseRequest(request);
 		} catch (ParseException e1) {
@@ -147,7 +148,7 @@ public class Searcher {
 			//public static List<Bisen> findBisenEntries(List<Long> ids)
 			Bisen bisen = Bisen.toBisen(d);
 
-			if (request.isHuQuery()) { // && request.getHighlightHu()
+			if (request.nonEmptyHuQuery()) { // && request.getHighlightHu()
 				try {
 					TokenStream huTokens = TokenSources.getTokenStream(
 							indexReader, docId, Bisen.huSentenceFieldName);
@@ -159,7 +160,7 @@ public class Searcher {
 				}
 			}
 
-			if (request.isEnQuery()) { // && request.getHighlightEn()
+			if (request.nonEmptyEnQuery()) { // && request.getHighlightEn()
 				try {
 					TokenStream enTokens = TokenSources.getTokenStream(
 							indexReader, docId, Bisen.enSentenceFieldName);
@@ -204,9 +205,9 @@ public class Searcher {
 
 	public void setUseHunglishSyntax(String useHunglishSyntax) {
 		this.useHunglishSyntax = useHunglishSyntax;
-		if (Boolean.parseBoolean(useHunglishSyntax)){
-			setHunglishSyntax = true;
-		}
+		//if (Boolean.parseBoolean(useHunglishSyntax)){
+		//	setHunglishSyntax = true;
+		//}
 	}
 
 
