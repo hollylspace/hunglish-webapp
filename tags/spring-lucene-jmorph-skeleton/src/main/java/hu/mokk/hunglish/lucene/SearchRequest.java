@@ -3,10 +3,14 @@
  */
 package hu.mokk.hunglish.lucene;
 
+import org.springframework.roo.addon.javabean.RooJavaBean;
+import org.springframework.roo.addon.tostring.RooToString;
+
 
 /**
  * Ez egy sima bean, ami egy search request-et reprezental
  */
+@RooJavaBean
 public class SearchRequest {
 
 	/**
@@ -85,11 +89,11 @@ public class SearchRequest {
         this.huQuery = huQuery;
     }
     
-    public boolean isHuQuery() {
+    public boolean nonEmptyHuQuery() {
         return huQuery != null && huQuery.length() >= 0;
     }
     
-    public boolean isEnQuery() {
+    public boolean nonEmptyEnQuery() {
         return enQuery != null && enQuery.length() >= 0;
     }
     /**

@@ -15,7 +15,38 @@ xmlns:spring="http://www.springframework.org/tags" version="2.0">
         <!-- 
         <script type="text/javascript">Spring.addDecoration(new Spring.ElementDecoration({elementId : '_title_div', widgetType : 'dijit.TitlePane', widgetAttrs : {title: '${title_msg}'}})); </script>
          -->
-        <c:if test="${not empty bisens}">
+
+<c:if test="${not empty request}">         
+<div id="searchform">
+<form> 
+Hungarian:
+<input type="text" value="${request.huQuery}" name="ql"/> 
+English:
+<input type="text" value="${request.enQuery}" name="qr"/> 
+<!--  
+<SELECT NAME="source"> 
+<option value="all">all</option>
+<option value="eulaw"  > Legal texts</option>
+<option value="film"  > Movie subtitles</option>
+<option value="lit"  > Literature</option>
+<option value="lit/Arthur_C_Clarke"  > Books of Arthur C. Clark</option>
+<option value="mag"  > Magazines and news</option>
+<option value="sw"  > Software documentation</option>
+<option value="tcom"  > TCOM corpus</option>
+<option value="tcom/sajtofigyelo"  > TCOM news</option>
+</SELECT> 
+-->
+<input type="button" onclick="ql.value=''; qr.value=''" value="reset" /> 
+<input type="submit" value="search"/> 
+</form>
+</div>
+</c:if>
+<c:if test="${not empty result}">
+<p> Results ${result.startOffset} - ${result.endOffset} of ${result.totalCount}<br/>
+</p>
+</c:if>         
+        <!-- <c:if test="${not empty bisens}"> -->
+        <c:if test="${not empty result.hitList}">
             <table width="500px">
                 <thead>
                     <tr>
@@ -25,7 +56,8 @@ xmlns:spring="http://www.springframework.org/tags" version="2.0">
                         <th>En Sentence</th>
                     </tr>
                 </thead>
-                <c:forEach items="${bisens}" var="bisen">
+                <!-- <c:forEach items="${bisens}" var="bisen"> -->
+                <c:forEach items="${result.hitList}" var="bisen">
                     <tr>
                         <td>${bisen.id}</td>
                         <td>
@@ -41,8 +73,47 @@ xmlns:spring="http://www.springframework.org/tags" version="2.0">
                 </c:forEach>
             </table>
         </c:if>
-        <c:if test="${empty bisens}">
+        <!-- 
+        <c:if test="${empty result.hitList}">
             <spring:message arguments="${entity_label_plural}" code="entity.not.found"/>            
         </c:if>
+         -->
+         
+         
+<c:if test="${not empty resultHunglishSyntax}">
+<p> Hunglish Syntax results ${resultHunglishSyntax.startOffset} - ${resultHunglishSyntax.endOffset} of ${resultHunglishSyntax.totalCount}<br/>
+</p>
+</c:if>         
+        <!-- <c:if test="${not empty bisens}"> -->
+        <c:if test="${not empty resultHunglishSyntax.hitList}">
+            <table width="500px">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Doc</th>
+                        <th>Hu Sentence</th>
+                        <th>En Sentence</th>
+                    </tr>
+                </thead>
+                <!-- <c:forEach items="${bisens}" var="bisen"> -->
+                <c:forEach items="${resultHunglishSyntax.hitList}" var="bisen">
+                    <tr>
+                        <td>${bisen.id}</td>
+                        <td>
+                            <c:out value="${fn:substring(bisen.doc, 0, 15)}"/>
+                        </td>
+                        <td>
+                            <c:out value="${bisen.huSentence}"/>
+                        </td>
+                        <td>
+                            <c:out value="${bisen.enSentence}"/>
+                        </td>
+                    </tr>
+                </c:forEach>
+            </table>
+        </c:if>
+         
+         
+         
     </div>
 </div>

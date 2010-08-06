@@ -26,19 +26,8 @@ public class LuceneQueryBuilder {
 	@Autowired
 	private HunglishQueryParser queryParser;
 	
-	private Query parseSearchRequest(SearchRequest request) {
-		Query result = new BooleanQuery();
-		try {
-			result = queryParser.parse(request.getHuQuery(), request.getEnQuery());
-		} catch (Exception e) {
-			//e.printStackTrace();
-			throw new RuntimeException("query couldn't be parsed", e);
-		}
-		return result;
-	}
-
-	
 	private Query simpleParseSearchRequest(SearchRequest request) throws ParseException {
+System.out.println("------------------OOOOOOOOOOOOKKKKKKKKKK, simpleParseSearchRequest");		
 		BooleanQuery result = new BooleanQuery();
 		String huRequest;
 		huRequest = request.getHuQuery();
@@ -65,8 +54,8 @@ public class LuceneQueryBuilder {
 		try {
 			if (request.getHunglishSyntax()){
 				query = new BooleanQuery();
-					query = queryParser.parse(request.getHuQuery(), request.getEnQuery());
-				query = parseSearchRequest(request);
+System.out.println("------------------HHHHHHHHHHOOOOOOOOOOOOKKKKKKKKKK, Hunglish ParseSearchRequest");				
+				query = queryParser.parse(request.getHuQuery(), request.getEnQuery());
 			} else {
 				query = simpleParseSearchRequest(request);
 			}
@@ -83,6 +72,7 @@ public class LuceneQueryBuilder {
 	}
 
 	private Query addSourceFilter(Query q, String fieldName, String sourceId) {
+System.out.println("------------------SSSSSSSSSSSOOOOOOOOOOOOKKKKKKKKKK, addSourceFilter:"+fieldName+":"+sourceId);		
 		if (sourceId == null || "".equals(sourceId)) {
 			return q;
 		}

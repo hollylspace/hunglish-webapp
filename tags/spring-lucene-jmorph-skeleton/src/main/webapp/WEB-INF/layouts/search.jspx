@@ -62,6 +62,7 @@
    	<body class="tundra spring">
    		<!-- div id="hehe"> <h1>this is search.jspx</h1> </div -->		
    		<div id="wrapper">
+
 	    	<div id="main">
 	    		<tiles:insertAttribute name="body" />
 			</div>

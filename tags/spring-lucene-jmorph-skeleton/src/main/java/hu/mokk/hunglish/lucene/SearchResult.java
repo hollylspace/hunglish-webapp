@@ -4,11 +4,12 @@ import hu.mokk.hunglish.domain.Bisen;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.lucene.document.Document;
+import org.springframework.roo.addon.javabean.RooJavaBean;
 
 
-
+@RooJavaBean
 public class SearchResult {
+	
 	private int totalCount;
 	
 	private int startOffset;
@@ -80,4 +81,5 @@ public class SearchResult {
 	public void setTotalCount(int totalCount) {
 		this.totalCount = totalCount;
 	}
+
 }
