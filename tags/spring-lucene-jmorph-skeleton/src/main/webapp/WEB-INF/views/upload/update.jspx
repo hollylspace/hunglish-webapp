@@ -28,6 +28,14 @@
                 </c:if>
             </div>
             <br/>
+            <div id="roo_upload_authorName">
+                <label for="_authorName_id">Author Name:</label>
+                <form:textarea cssStyle="width:250px" id="_authorName_id" path="authorName"/>
+                <script type="text/javascript">Spring.addDecoration(new Spring.ElementDecoration({elementId : '_authorName_id', widgetType: 'dijit.form.SimpleTextarea', widgetAttrs: {}})); </script>
+                <br/>
+                <form:errors cssClass="errors" id="_authorName_error_id" path="authorName"/>
+            </div>
+            <br/>
             <div id="roo_upload_enTitle">
                 <label for="_enTitle_id">En Title:</label>
                 <form:textarea cssStyle="width:250px" id="_enTitle_id" path="enTitle"/>
