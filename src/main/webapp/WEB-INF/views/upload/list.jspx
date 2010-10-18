@@ -13,6 +13,7 @@
                         <th>Id</th>
                         <th>Genre</th>
                         <th>Author</th>
+                        <th>Author Name</th>
                         <th>En Title</th>
                         <th>Hu Title</th>
                         <th>Is Processed</th>
@@ -30,6 +31,9 @@
                         </td>
                         <td>
                             <c:out value="${fn:substring(upload.author, 0, 10)}"/>
+                        </td>
+                        <td>
+                            <c:out value="${fn:substring(upload.authorName, 0, 25)}"/>
                         </td>
                         <td>
                             <c:out value="${fn:substring(upload.enTitle, 0, 10)}"/>

@@ -20,6 +20,12 @@
                 </div>
             </div>
             <br/>
+            <div id="roo_upload_authorName">
+                <label for="_authorName_id">Author Name:</label>
+                <div class="box" id="_authorName_id">
+                    <c:out value="${upload.authorName}"/>
+                </div>
+            </div>
             <div id="roo_upload_enTitle">
                 <label for="_enTitle_id">En Title:</label>
                 <div class="box" id="_enTitle_id">
