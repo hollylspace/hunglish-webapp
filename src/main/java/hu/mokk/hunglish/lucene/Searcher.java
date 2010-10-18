@@ -118,14 +118,17 @@ public class Searcher {
 			throw new RuntimeException(ioe);
 		}
 		ScoreDoc[] hits = collector.topDocs().scoreDocs;
-		int l = collector.getTotalHits();
+		int totalHits = collector.getTotalHits();
+//System.out.println("totalHits:"+totalHits);		
+		result.setTotalCount(totalHits);
+//System.out.println("startoffset:"+request.getStartOffset());
 
-		result.setTotalCount(l);
 		result.setStartOffset(request.getStartOffset());
 		int end = request.getStartOffset() + request.getMaxResults();
-		if (end > l) {
-			end = l;
+		if (end > totalHits) {
+			end = totalHits;
 		}
+//System.out.println("end:"+end);		
 		result.setEndOffset(end);
 
 		// kiemeleshez
