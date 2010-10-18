@@ -34,11 +34,11 @@ public class SearchController {
     		@RequestParam(value = "source", required = false) String source,
     		ModelMap modelMap) {
         
-System.out.println("fuck huQuery:"+huQuery);
-System.out.println("fuck enQuery:"+enQuery);
+//System.out.println("FFFFFFFFFFFFFFFFFFUUUUUUUUUUUUUUUU huQuery:"+huQuery);
+//System.out.println("FFFFFFFFFFFFFFFFFFUUUUUUUUUUUUUUUU enQuery:"+enQuery);
         
 		int sizeNo = size == null ? 10 : size.intValue();
-        int startNo = start == null ? 1 : start.intValue();
+        int startNo = start == null ? 0 : start.intValue();
         
 		SearchRequest request = new SearchRequest();
 		request.setEnQuery(enQuery);
@@ -50,6 +50,13 @@ System.out.println("fuck enQuery:"+enQuery);
         modelMap.addAttribute("request", request);
         
         SearchResult result = searcher.search(request);
+        
+        
+        int ressize = result.getHitList().size();
+//System.out.println("FFFFFFFFFFFFFFFFFFUUUUUUUUUUUUUUUU ressize:"+ressize+" totAAAAAAAAAAAAAAALcount:"+result.getTotalCount());        
+        if (ressize > 0){ 
+//System.out.println("FFFFFFFFFFFFFFFFFFUUUUUUUUUUUUUUUU "+result.getHitList().get(0));
+        }
         modelMap.addAttribute("result", result);
         //modelMap.addAttribute("bisens", result.getHitList());
         //float nrOfPages = (float) Bisen.countBisens() / sizeNo;
@@ -57,6 +64,11 @@ System.out.println("fuck enQuery:"+enQuery);
         
         request.setHunglishSyntax(true);
         SearchResult resultHunglishSyntax = searcher.search(request);
+        ressize = resultHunglishSyntax.getHitList().size();
+//System.out.println("FFFFFFFFFFFFFFFFFFaaaaAAAAAAAA ressize:"+ressize+" totAAAAAAAAAAAAAAALcount:"+resultHunglishSyntax.getTotalCount());        
+        if (ressize > 0){ 
+//System.out.println("FFFFFFFFFFFFFFFFFFaaaaAAAAAAAA "+resultHunglishSyntax.getHitList().get(0));
+        }
         modelMap.addAttribute("resultHunglishSyntax", resultHunglishSyntax);
         
         
