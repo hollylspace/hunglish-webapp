@@ -124,7 +124,8 @@ CREATE TABLE `upload` (
   `hu_title` varchar(255) DEFAULT NULL,
   `is_approved` bit(1) DEFAULT 0,
   `is_processed` varchar(1) not null DEFAULT 'N', -- Y = processed, N = not processed, E = processed with error
-  `author` bigint(20) not NULL,
+  `author` bigint(20) DEFAULT NULL,
+  `author_name` varchar(255) DEFAULT NULL,
   `genre` bigint(20) not NULL,
   PRIMARY KEY (`id`),
   KEY `fk_upload_genre` (`genre`),

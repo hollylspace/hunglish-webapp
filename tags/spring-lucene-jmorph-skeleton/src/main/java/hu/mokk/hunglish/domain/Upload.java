@@ -33,12 +33,13 @@ public class Upload {
     @JoinColumn
     private Genre genre;
 
-    @NotNull
     @ManyToOne(targetEntity = Author.class)
     @JoinColumn
     private Author author;
+    
+    @Size(max = 255)
+    private String authorName;
 
-    @NotNull
     @Size(max = 255)
     private String enTitle;
 
@@ -94,7 +95,15 @@ public class Upload {
 
 	public void setAuthor(Author author) {
         this.author = author;
-    }
+    }	
+	
+	public String getAuthorName() {
+		return authorName;
+	}
+
+	public void setAuthorName(String authorName) {
+		this.authorName = authorName;
+	}
 
 	public String getEnTitle() {
         return this.enTitle;
