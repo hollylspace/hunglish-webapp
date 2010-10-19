@@ -123,7 +123,8 @@ CREATE TABLE `upload` (
   `hu_sentence` varchar(4000) DEFAULT NULL,
   `hu_title` varchar(255) DEFAULT NULL,
   `is_approved` bit(1) DEFAULT 0,
-  `is_processed` varchar(1) not null DEFAULT 'N', -- Y = processed, N = not processed, E = processed with error
+  -- Y = processed, N = not processed, E = processed with error, L = processed without error but the result is of bad quality
+  `is_processed` varchar(1) not null DEFAULT 'N',  
   `author` bigint(20) DEFAULT NULL,
   `author_name` varchar(255) DEFAULT NULL,
   `genre` bigint(20) not NULL,
