@@ -7,7 +7,6 @@ import hu.mokk.hunglish.domain.Bisen;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.document.Document;

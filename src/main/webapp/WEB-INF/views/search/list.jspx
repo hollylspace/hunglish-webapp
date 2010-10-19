@@ -1,36 +1,77 @@
 <div xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:fmt="http://java.sun.com/jsp/jstl/fmt" xmlns:fn="http://java.sun.com/jsp/jstl/functions" xmlns:form="http://www.springframework.org/tags/form" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:roo="urn:jsptagdir:/WEB-INF/tags" xmlns:spring="http://www.springframework.org/tags" version="2.0">
-    <jsp:output omit-xml-declaration="yes"/>
-    <div id="_title_div">
+<jsp:output omit-xml-declaration="yes"/>
+<div id="_title_div">
 
-<c:if test="${not empty request}">         
+<spring:url value="/search" var="form_url"/>
+        <form:form action="${form_url}" method="GET" modelAttribute="bisen">
+            
+            <!-- <form:errors cssClass="errors" delimiter="&lt;p/&gt;"/>
+            -->
+            <div id="roo_bisen_huSentence">
+                <label for="_huSentence_id">Hungarian:</label>
+                <form:textarea cssStyle="width:250px" id="_huSentence_id" path="huSentence"/>
+                <!-- 
+                <script type="text/javascript">Spring.addDecoration(new Spring.ElementDecoration({elementId : '_huSentence_id', widgetType: 'dijit.form.SimpleTextarea', widgetAttrs: {}})); </script>
+                <form:errors cssClass="errors" id="_huSentence_error_id" path="huSentence"/>
+                -->
+            </div>
+            <div id="roo_bisen_enSentence">
+                <label for="_enSentence_id">English:</label>
+                <form:textarea cssStyle="width:250px" id="_enSentence_id" path="enSentence"/>
+                <!-- <script type="text/javascript">Spring.addDecoration(new Spring.ElementDecoration({elementId : '_enSentence_id', widgetType: 'dijit.form.SimpleTextarea', widgetAttrs: {}})); </script>
+                <form:errors cssClass="errors" id="_enSentence_error_id" path="enSentence"/>
+                -->
+            </div> 
+            <div id="roo_doc_genre">
+                <c:if test="${not empty genres}">
+                    <label for="_genre_id">Genre:</label>
+                    <form:select cssStyle="width:250px" id="_genre_id" path="doc.genre">
+                        <form:options itemValue="id" items="${genres}"/>
+                    </form:select>
+                    <!-- <script type="text/javascript">Spring.addDecoration(new Spring.ElementDecoration({elementId : '_genre_id', widgetType: 'dijit.form.FilteringSelect', widgetAttrs : {hasDownArrow : true}})); </script>
+                     -->
+                </c:if>
+            </div>
+            <div id="roo_doc_author">
+                <c:if test="${not empty authors}">
+                    <label for="_author_id">Author:</label>
+                    <form:select cssStyle="width:250px" id="_author_id" path="doc.author">
+                        <form:options itemValue="id" items="${authors}"/>
+                    </form:select>
+                    <script type="text/javascript">Spring.addDecoration(new Spring.ElementDecoration({elementId : '_author_id', widgetType: 'dijit.form.FilteringSelect', widgetAttrs : {hasDownArrow : true}})); </script>
+                </c:if>
+            </div>
+            <div class="submit" id="roo_doc_submit">
+                <spring:message code="button.search" var="update_button"/>
+                <!-- <script type="text/javascript">Spring.addDecoration(new Spring.ValidateAllDecoration({elementId:'proceed', event:'onclick'}));</script>
+                 -->
+                <input id="proceed" type="submit" value="${update_button}"/>
+            </div>
+            <form:hidden id="_id_id" path="id"/>
+            <form:hidden id="_version_id" path="version"/>
+        </form:form>
+
+<!-- 
+<c:if test="${not empty request}">
 <div id="searchform">
 <form> 
 Hungarian:
 <input type="text" value="${request.huQuery}" name="ql"/> 
 English:
 <input type="text" value="${request.enQuery}" name="qr"/> 
-<!--  
-<SELECT NAME="source"> 
-<option value="all">all</option>
-<option value="eulaw"  > Legal texts</option>
-<option value="film"  > Movie subtitles</option>
-<option value="lit"  > Literature</option>
-<option value="lit/Arthur_C_Clarke"  > Books of Arthur C. Clark</option>
-<option value="mag"  > Magazines and news</option>
-<option value="sw"  > Software documentation</option>
-<option value="tcom"  > TCOM corpus</option>
-<option value="tcom/sajtofigyelo"  > TCOM news</option>
-</SELECT> 
--->
 <input type="button" onclick="ql.value=''; qr.value=''" value="reset" /> 
 <input type="submit" value="search"/> 
 </form>
 </div>
 </c:if>
+ -->
+ 
 <c:if test="${not empty result}">
 <p> Results ${result.startOffset} - ${result.endOffset} of ${result.totalCount}<br/>
 </p>
-</c:if>         
+</c:if>
+
+         
         <!-- <c:if test="${not empty bisens}"> -->
         <c:if test="${not empty result.hitList}">
             <table width="500px">
@@ -98,7 +139,6 @@ English:
                 </c:forEach>
             </table>
         </c:if>
-         
          
          
     </div>
