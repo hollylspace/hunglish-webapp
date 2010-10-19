@@ -54,7 +54,7 @@ System.out.println("------------------OOOOOOOOOOOOKKKKKKKKKK, simpleParseSearchR
 		try {
 			if (request.getHunglishSyntax()){
 				query = new BooleanQuery();
-System.out.println("------------------HHHHHHHHHHOOOOOOOOOOOOKKKKKKKKKK, Hunglish ParseSearchRequest");				
+//System.out.println("------------------HHHHHHHHHHOOOOOOOOOOOOKKKKKKKKKK, Hunglish ParseSearchRequest");				
 				query = queryParser.parse(request.getHuQuery(), request.getEnQuery());
 			} else {
 				query = simpleParseSearchRequest(request);
