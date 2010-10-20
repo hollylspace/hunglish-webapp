@@ -1,10 +1,5 @@
 package hu.mokk.hunglish.web;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javax.validation.Valid;
-
 import hu.mokk.hunglish.domain.Bisen;
 import hu.mokk.hunglish.domain.Genre;
 import hu.mokk.hunglish.lucene.SearchRequest;
@@ -15,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.roo.addon.web.mvc.controller.RooWebScaffold;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;

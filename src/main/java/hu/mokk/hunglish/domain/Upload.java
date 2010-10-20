@@ -1,6 +1,9 @@
 package hu.mokk.hunglish.domain;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -29,6 +32,9 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
 @RooToString
 @RooEntity
 public class Upload {
+	private static String[] validExtensionElements = {"doc","htm","html","pdf", "rtf", "txt", "srt"};
+	private static Set<String> validExtensions = new HashSet<String>(Arrays.asList(validExtensionElements));
+	private static char extensionSeparator = '.'; 
 
 	@Transient
 	private CommonsMultipartFile huFileData;	
@@ -65,12 +71,47 @@ public class Upload {
     @Size(max = 255)
     private String enFilePath;
 
-    @Size(max = 4000)
+    @Size(max = 255)
+    private String huOriginalName;
+        
+    @Size(max = 255)
+    private String enOriginalName;
+
+    @Transient
+    private String enExtension;
+    
+    @Transient
+    private String huExtension;
+    
+    /*@Size(max = 4000)
     private String huSentence;
 
     @Size(max = 4000)
-    private String enSentence;
+    private String enSentence;*/
 
+	/**
+	 * validate the upload
+	 */
+    public void validate(){
+		if (this.getHuFileData() == null){
+			throw new RuntimeException("The Hungarian file is null");
+		} else if (this.getHuFileData().getOriginalFilename() == null){
+			throw new RuntimeException("The Hungarian filename is null");
+		}
+		if (this.getEnFileData() == null){
+			throw new RuntimeException("The English file is null");
+		}else if (this.getEnFileData().getOriginalFilename() == null){
+			throw new RuntimeException("The English filename is null");
+		}
+		if (!validExtensions.contains(this.enExtension)){
+			throw new RuntimeException("Invalid English file extension:"+this.enExtension);
+		}
+		if (!validExtensions.contains(this.huExtension)){
+			throw new RuntimeException("Invalid Hungarian file extension:"+this.huExtension);
+		}
+	}
+	
+    
 	public String toString() {
         StringBuilder sb = new StringBuilder();
         //sb.append("Id: ").append(getId()).append(", ");
@@ -176,7 +217,7 @@ public class Upload {
         this.enFilePath = enFilePath;
     }
 
-	public String getHuSentence() {
+	/*public String getHuSentence() {
         return this.huSentence;
     }
 
@@ -190,7 +231,36 @@ public class Upload {
 
 	public void setEnSentence(String enSentence) {
         this.enSentence = enSentence;
-    }
+    }*/
+
+	public String getHuOriginalName() {
+		return huOriginalName;
+	}
+
+	public void setHuOriginalName(String huOriginalName) {
+		this.huOriginalName = huOriginalName;
+		int dot = huOriginalName.lastIndexOf(extensionSeparator);
+		this.huExtension = huOriginalName.substring(dot + 1).toLowerCase();
+	}
+
+	public String getEnOriginalName() {
+		return enOriginalName;
+	}
+
+	public void setEnOriginalName(String enOriginalName) {
+		this.enOriginalName = enOriginalName;
+		int dot = enOriginalName.lastIndexOf(extensionSeparator);
+		this.enExtension = enOriginalName.substring(dot + 1).toLowerCase();
+	}
+
+	public String getEnExtension() {
+		return enExtension;
+	}
+
+
+	public String getHuExtension() {
+		return huExtension;
+	}
 
 	@PersistenceContext
     transient EntityManager entityManager;
