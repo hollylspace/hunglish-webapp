@@ -37,7 +37,6 @@ public class CompoundStemmerTokenFilter extends CompoundWordTokenFilterBase {
 	}
 
 	private void add(Object token) {
-//System.out.println("#token:"+token.toString());
 		tokens.add(token);
 	}
 

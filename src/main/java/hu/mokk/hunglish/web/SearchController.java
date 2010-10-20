@@ -44,9 +44,6 @@ public class SearchController {
 		
 		modelMap.addAttribute("genres", Genre.findAllGenres());
 		
-//System.out.println("FFFFFFFFFFFFFFFFFFUUUUUUUUUUUUUUUU huQuery:"+huQuery);
-//System.out.println("FFFFFFFFFFFFFFFFFFUUUUUUUUUUUUUUUU enQuery:"+enQuery);
-        
 		int sizeNo = size == null ? 10 : size.intValue();
         int startNo = start == null ? 0 : start.intValue();
         
@@ -66,9 +63,7 @@ public class SearchController {
         
         
         int ressize = result.getHitList().size();
-//System.out.println("FFFFFFFFFFFFFFFFFFUUUUUUUUUUUUUUUU ressize:"+ressize+" totAAAAAAAAAAAAAAALcount:"+result.getTotalCount());        
         if (ressize > 0){ 
-//System.out.println("FFFFFFFFFFFFFFFFFFUUUUUUUUUUUUUUUU "+result.getHitList().get(0));
         }
         modelMap.addAttribute("result", result);
         //modelMap.addAttribute("bisens", result.getHitList());
@@ -78,9 +73,7 @@ public class SearchController {
         request.setHunglishSyntax(true);
         SearchResult resultHunglishSyntax = searcher.search(request);
         ressize = resultHunglishSyntax.getHitList().size();
-//System.out.println("FFFFFFFFFFFFFFFFFFaaaaAAAAAAAA ressize:"+ressize+" totAAAAAAAAAAAAAAALcount:"+resultHunglishSyntax.getTotalCount());        
         if (ressize > 0){ 
-//System.out.println("FFFFFFFFFFFFFFFFFFaaaaAAAAAAAA "+resultHunglishSyntax.getHitList().get(0));
         }
         modelMap.addAttribute("resultHunglishSyntax", resultHunglishSyntax);
         

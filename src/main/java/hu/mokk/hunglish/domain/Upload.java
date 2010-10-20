@@ -1,25 +1,27 @@
 package hu.mokk.hunglish.domain;
 
 import java.util.List;
-import javax.persistence.Entity;
-import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.roo.addon.javabean.RooJavaBean;
-import org.springframework.roo.addon.tostring.RooToString;
-import org.springframework.roo.addon.entity.RooEntity;
-import org.springframework.transaction.annotation.Transactional;
-import hu.mokk.hunglish.domain.Genre;
-import javax.validation.constraints.NotNull;
+
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Transient;
 import javax.persistence.Version;
-import hu.mokk.hunglish.domain.Author;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.roo.addon.entity.RooEntity;
+import org.springframework.roo.addon.javabean.RooJavaBean;
+import org.springframework.roo.addon.tostring.RooToString;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 @Configurable
 @Entity
@@ -28,6 +30,11 @@ import javax.validation.constraints.Size;
 @RooEntity
 public class Upload {
 
+	@Transient
+	private CommonsMultipartFile huFileData;	
+	@Transient
+	private CommonsMultipartFile enFileData;
+	
     @NotNull
     @ManyToOne(targetEntity = Genre.class)
     @JoinColumn
@@ -80,6 +87,22 @@ public class Upload {
         //sb.append("EnSentence: ").append(getEnSentence());
         return sb.toString();
     }
+
+	public CommonsMultipartFile getHuFileData() {
+		return huFileData;
+	}
+
+	public void setHuFileData(CommonsMultipartFile huFileData) {
+		this.huFileData = huFileData;
+	}
+
+	public CommonsMultipartFile getEnFileData() {
+		return enFileData;
+	}
+
+	public void setEnFileData(CommonsMultipartFile enFileData) {
+		this.enFileData = enFileData;
+	}
 
 	public Genre getGenre() {
         return this.genre;

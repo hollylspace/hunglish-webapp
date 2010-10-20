@@ -176,7 +176,6 @@ public class StemmerAnalyzer extends Analyzer {
 	@Override
 	public TokenStream reusableTokenStream(String fieldName, Reader reader)
 			throws IOException {
-		// System.out.println("reusableTokenStream, fieldname:"+fieldName);
 		if (overridesTokenStreamMethod) {
 			// LUCENE-1678: force fallback to tokenStream() if we
 			// have been subclassed and that subclass overrides
@@ -190,11 +189,9 @@ public class StemmerAnalyzer extends Analyzer {
 			streams.tokenStream = new StandardTokenizer(matchVersion, reader);
 			LemmatizerWrapper lemmatizerWrapper = getLemmatizerWrapper(fieldName);
 			if (lemmatizerWrapper != null) {
-				// System.out.println("reusableTokenStream new CompoundStemmerTokenFilter:"+fieldName);
 				streams.filteredTokenStream = new CompoundStemmerTokenFilter(
 						streams.tokenStream, lemmatizerWrapper);
 			} else {
-				// System.out.println("reusableTokenStream FAKKEEEER:"+fieldName);
 				streams.filteredTokenStream = new StandardFilter(
 						streams.tokenStream);
 			}

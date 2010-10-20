@@ -28,6 +28,11 @@ public class UploadController {
             return "upload/create";
         }
         upload.persist();
+
+        System.err.println("-------------------------------------------");
+        System.err.println("Test upload name: " + upload.getHuFileData().getOriginalFilename());
+        System.err.println("Test upload size: " + upload.getHuFileData().getFileItem().getSize());
+        System.err.println("-------------------------------------------");        
         return "redirect:/upload/" + upload.getId();
     }
 

@@ -27,7 +27,6 @@ public class LuceneQueryBuilder {
 	private HunglishQueryParser queryParser;
 	
 	private Query simpleParseSearchRequest(SearchRequest request) throws ParseException {
-System.out.println("------------------OOOOOOOOOOOOKKKKKKKKKK, simpleParseSearchRequest");		
 		BooleanQuery result = new BooleanQuery();
 		String huRequest;
 		huRequest = request.getHuQuery();
@@ -54,7 +53,6 @@ System.out.println("------------------OOOOOOOOOOOOKKKKKKKKKK, simpleParseSearchR
 		try {
 			if (request.getHunglishSyntax()){
 				query = new BooleanQuery();
-//System.out.println("------------------HHHHHHHHHHOOOOOOOOOOOOKKKKKKKKKK, Hunglish ParseSearchRequest");				
 				query = queryParser.parse(request.getHuQuery(), request.getEnQuery());
 			} else {
 				query = simpleParseSearchRequest(request);
@@ -72,7 +70,6 @@ System.out.println("------------------OOOOOOOOOOOOKKKKKKKKKK, simpleParseSearchR
 	}
 
 	private Query addSourceFilter(Query q, String fieldName, String sourceId) {
-System.out.println("------------------SSSSSSSSSSSOOOOOOOOOOOOKKKKKKKKKK, addSourceFilter:"+fieldName+":"+sourceId);		
 		if (sourceId == null || "".equals(sourceId)) {
 			return q;
 		}
