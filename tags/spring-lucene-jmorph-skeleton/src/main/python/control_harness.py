@@ -26,8 +26,9 @@ def extension(filename) :
     assert len(a)>1
     return a[-1]
 
+#TODO 'srt'
 def isExtensionWeLike(ext) :
-    return ext in ( 'doc','htm','html','pdf', 'rtf', 'txt' )
+    return ext in ( 'doc','htm','html','pdf', 'rtf', 'txt', )
 
 def moveFileToHarness(rawPath,lang,ext,id) :
     global g_harnessDataDirectory
