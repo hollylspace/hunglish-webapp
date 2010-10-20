@@ -95,10 +95,6 @@ public class Searcher {
 			return result;
 		}
 		Query query = null;
-//		if (setHunglishSyntax){
-//System.out.println("FFFFFFFUUUUUUUUUUUUUUUUUUUUUUUUUU setHunglishSyntax");			
-//			request.setHunglishSyntax(useHunglishSyntax);
-//		}
 		try {
 			query = luceneQueryBuilder.parseRequest(request);
 		} catch (ParseException e1) {
@@ -118,16 +114,13 @@ public class Searcher {
 		}
 		ScoreDoc[] hits = collector.topDocs().scoreDocs;
 		int totalHits = collector.getTotalHits();
-//System.out.println("totalHits:"+totalHits);		
 		result.setTotalCount(totalHits);
-//System.out.println("startoffset:"+request.getStartOffset());
 
 		result.setStartOffset(request.getStartOffset());
 		int end = request.getStartOffset() + request.getMaxResults();
 		if (end > totalHits) {
 			end = totalHits;
 		}
-//System.out.println("end:"+end);		
 		result.setEndOffset(end);
 
 		// kiemeleshez

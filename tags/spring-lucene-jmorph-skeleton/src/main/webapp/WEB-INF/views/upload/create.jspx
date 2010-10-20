@@ -6,8 +6,18 @@
         <spring:message arguments="${entity_label}" code="entity.create" var="title_msg"/>
         <script type="text/javascript">Spring.addDecoration(new Spring.ElementDecoration({elementId : '_title_div', widgetType : 'dijit.TitlePane', widgetAttrs : {title: '${title_msg}'}})); </script>
         <spring:url value="/upload" var="form_url"/>
-        <form:form action="${form_url}" method="POST" modelAttribute="upload">
+        <form:form action="${form_url}" method="POST" modelAttribute="upload" enctype="multipart/form-data">
             <form:errors cssClass="errors" delimiter="&lt;p/&gt;"/>
+            <div id="roo_upload_enFileData">
+                    <form:label for="_upload_enFileData" path="enFileData">English File</form:label>
+                    <form:input path="enFileData" type="file"/>
+            </div>
+            <br/>
+            <div id="roo_upload_huFileData">
+                    <form:label for="_upload_huFileData" path="huFileData">Hungarian File</form:label>
+                    <form:input path="huFileData" type="file"/>
+            </div>
+            <br/>
             <div id="roo_upload_genre">
                 <c:if test="${not empty genres}">
                     <label for="_genre_id">Genre:</label>
@@ -64,22 +74,6 @@
             <div id="roo_upload_isApproved">
                 <label for="_isApproved_id">Is Approved:</label>
                 <form:checkbox id="_isApproved_id" path="isApproved"/>
-            </div>
-            <br/>
-            <div id="roo_upload_huFilePath">
-                <label for="_huFilePath_id">Hu File Path:</label>
-                <form:textarea cssStyle="width:250px" id="_huFilePath_id" path="huFilePath"/>
-                <script type="text/javascript">Spring.addDecoration(new Spring.ElementDecoration({elementId : '_huFilePath_id', widgetType: 'dijit.form.SimpleTextarea', widgetAttrs: {}})); </script>
-                <br/>
-                <form:errors cssClass="errors" id="_huFilePath_error_id" path="huFilePath"/>
-            </div>
-            <br/>
-            <div id="roo_upload_enFilePath">
-                <label for="_enFilePath_id">En File Path:</label>
-                <form:textarea cssStyle="width:250px" id="_enFilePath_id" path="enFilePath"/>
-                <script type="text/javascript">Spring.addDecoration(new Spring.ElementDecoration({elementId : '_enFilePath_id', widgetType: 'dijit.form.SimpleTextarea', widgetAttrs: {}})); </script>
-                <br/>
-                <form:errors cssClass="errors" id="_enFilePath_error_id" path="enFilePath"/>
             </div>
             <br/>
             <div id="roo_upload_huSentence">

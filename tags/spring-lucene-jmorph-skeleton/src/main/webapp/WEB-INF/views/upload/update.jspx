@@ -66,22 +66,6 @@
                 <form:checkbox id="_isApproved_id" path="isApproved"/>
             </div>
             <br/>
-            <div id="roo_upload_huFilePath">
-                <label for="_huFilePath_id">Hu File Path:</label>
-                <form:textarea cssStyle="width:250px" id="_huFilePath_id" path="huFilePath"/>
-                <script type="text/javascript">Spring.addDecoration(new Spring.ElementDecoration({elementId : '_huFilePath_id', widgetType: 'dijit.form.SimpleTextarea', widgetAttrs: {}})); </script>
-                <br/>
-                <form:errors cssClass="errors" id="_huFilePath_error_id" path="huFilePath"/>
-            </div>
-            <br/>
-            <div id="roo_upload_enFilePath">
-                <label for="_enFilePath_id">En File Path:</label>
-                <form:textarea cssStyle="width:250px" id="_enFilePath_id" path="enFilePath"/>
-                <script type="text/javascript">Spring.addDecoration(new Spring.ElementDecoration({elementId : '_enFilePath_id', widgetType: 'dijit.form.SimpleTextarea', widgetAttrs: {}})); </script>
-                <br/>
-                <form:errors cssClass="errors" id="_enFilePath_error_id" path="enFilePath"/>
-            </div>
-            <br/>
             <div id="roo_upload_huSentence">
                 <label for="_huSentence_id">Hu Sentence:</label>
                 <form:textarea cssStyle="width:250px" id="_huSentence_id" path="huSentence"/>

@@ -68,6 +68,12 @@
     </bean>
 <!-- =================================================== -->
 	
+	<bean id="multipartResolver"
+	    class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+	    <!-- one of the properties available; the maximum file size in bytes -->
+	    <property name="maxUploadSize" value="100000"/>
+	</bean>	
+	
     <bean class="hu.mokk.hunglish.jmorph.AnalyzerProvider" id="analyzerProvider" init-method="initAnalyzerProvider">
         <property name="resourceEncodingHu" value="${stemmer.resourceEncodingHu}"/>
         <property name="huAff" value="${stemmer.huAff}"/>

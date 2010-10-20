@@ -46,7 +46,6 @@ public abstract class CompoundWordTokenFilterBase extends TokenFilter {
 	}
 
 	private final void setToken(final Token token) throws IOException {
-//System.out.println("!!!settoken:"+token);		
 		termAtt.setTermBuffer(token.termBuffer(), 0, token.termLength());
 		flagsAtt.setFlags(token.getFlags());
 		typeAtt.setType(token.type());
