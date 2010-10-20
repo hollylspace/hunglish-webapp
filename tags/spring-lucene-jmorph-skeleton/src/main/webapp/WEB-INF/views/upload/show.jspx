@@ -68,17 +68,17 @@
                 </div>
             </div>
             <br/>
-            <div id="roo_upload_huSentence">
-                <label for="_huSentence_id">Hu Sentence:</label>
-                <div class="box" id="_huSentence_id">
-                    <c:out value="${upload.huSentence}"/>
+            <div id="roo_upload_huOriginalName">
+                <label for="_huOriginalName_id">Hu Original Name:</label>
+                <div class="box" id="_huOriginalName_id">
+                    <c:out value="${upload.huOriginalName}"/>
                 </div>
             </div>
             <br/>
-            <div id="roo_upload_enSentence">
-                <label for="_enSentence_id">En Sentence:</label>
-                <div class="box" id="_enSentence_id">
-                    <c:out value="${upload.enSentence}"/>
+            <div id="roo_upload_enOriginalName">
+                <label for="_enOriginalName_id">En Original Name:</label>
+                <div class="box" id="_enOriginalName_id">
+                    <c:out value="${upload.enOriginalName}"/>
                 </div>
             </div>
             <br/>

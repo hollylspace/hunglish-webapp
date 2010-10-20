@@ -66,6 +66,7 @@
                 <form:checkbox id="_isApproved_id" path="isApproved"/>
             </div>
             <br/>
+            <!-- 
             <div id="roo_upload_huSentence">
                 <label for="_huSentence_id">Hu Sentence:</label>
                 <form:textarea cssStyle="width:250px" id="_huSentence_id" path="huSentence"/>
@@ -82,6 +83,7 @@
                 <form:errors cssClass="errors" id="_enSentence_error_id" path="enSentence"/>
             </div>
             <br/>
+             -->
             <div class="submit" id="roo_upload_submit">
                 <spring:message code="button.update" var="update_button"/>
                 <script type="text/javascript">Spring.addDecoration(new Spring.ValidateAllDecoration({elementId:'proceed', event:'onclick'}));</script>

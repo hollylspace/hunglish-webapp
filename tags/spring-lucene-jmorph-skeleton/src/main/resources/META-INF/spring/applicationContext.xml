@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:aop="http://www.springframework.org/schema/aop" xmlns:context="http://www.springframework.org/schema/context" xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd   http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd   http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd   http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.0.xsd   http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd   http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd   http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd   http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.0.xsd   http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
 
 	<!--
 		This will automatically locate any and all property files you have
@@ -8,7 +12,7 @@
 		then be used within application context files in the form of
 		${propertyKey}.
 	-->
-	<context:property-placeholder location="classpath*:META-INF/spring/*.properties"/>
+	<context:property-placeholder location="classpath*:META-INF/spring/*.properties" />
 
 	<!--
 		Turn on AspectJ @Configurable support. As a result, any time you
@@ -23,7 +27,7 @@
 		method). Roo applications use this useful feature in a number of
 		areas, such as @PersistenceContext injection into entities.
 	-->
-	<context:spring-configured/>
+	<context:spring-configured />
 
 	<!--
 		This declaration will cause Spring to locate every @Component,
@@ -38,77 +42,93 @@
 		introspecting Roo-specific ITD aspects. The second ensures Roo doesn't
 		instantiate your @Controller classes, as these should be instantiated
 		by a web tier application context. Refer to web.xml for more details
-		about the web tier application context setup services.
-		
-		Furthermore, this turns on @Autowired, @PostConstruct etc support. These 
-		annotations allow you to use common Spring and Java Enterprise Edition 
-		annotations in your classes without needing to do any special configuration. 
-		The most commonly used annotation is @Autowired, which instructs Spring to
-		dependency inject an object into your class.
+		about the web tier application context setup services. Furthermore,
+		this turns on @Autowired, @PostConstruct etc support. These
+		annotations allow you to use common Spring and Java Enterprise Edition
+		annotations in your classes without needing to do any special
+		configuration. The most commonly used annotation is @Autowired, which
+		instructs Spring to dependency inject an object into your class.
 	-->
 	<context:component-scan base-package="hu.mokk.hunglish">
-		<context:exclude-filter expression=".*_Roo_.*" type="regex"/>
-		<context:exclude-filter expression="org.springframework.stereotype.Controller" type="annotation"/>
+		<context:exclude-filter expression=".*_Roo_.*"
+			type="regex" />
+		<context:exclude-filter expression="org.springframework.stereotype.Controller"
+			type="annotation" />
 	</context:component-scan>
 
-	<bean class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" id="dataSource">
-        <property name="driverClassName" value="${database.driverClassName}"/>
-        <property name="url" value="${database.url}"/>
-        <property name="username" value="${database.username}"/>
-        <property name="password" value="${database.password}"/>
-    </bean>
+	<bean class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close" id="dataSource">
+		<property name="driverClassName" value="${database.driverClassName}" />
+		<property name="url" value="${database.url}" />
+		<property name="username" value="${database.username}" />
+		<property name="password" value="${database.password}" />
+	</bean>
 
-    <bean class="org.springframework.orm.jpa.JpaTransactionManager" id="transactionManager">
-        <property name="entityManagerFactory" ref="entityManagerFactory"/>
-    </bean>
-    <tx:annotation-driven mode="aspectj" transaction-manager="transactionManager"/>
+	<bean class="org.springframework.orm.jpa.JpaTransactionManager"
+		id="transactionManager">
+		<property name="entityManagerFactory" ref="entityManagerFactory" />
+	</bean>
+	<tx:annotation-driven mode="aspectj"
+		transaction-manager="transactionManager" />
 
-    <bean class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" id="entityManagerFactory">
-        <property name="dataSource" ref="dataSource"/>
-    </bean>
-<!-- =================================================== -->
-	
+	<bean
+		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
+		id="entityManagerFactory">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	<!-- =================================================== -->
+
 	<bean id="multipartResolver"
-	    class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
-	    <!-- one of the properties available; the maximum file size in bytes -->
-	    <property name="maxUploadSize" value="100000"/>
-	</bean>	
-	
-    <bean class="hu.mokk.hunglish.jmorph.AnalyzerProvider" id="analyzerProvider" init-method="initAnalyzerProvider">
-        <property name="resourceEncodingHu" value="${stemmer.resourceEncodingHu}"/>
-        <property name="huAff" value="${stemmer.huAff}"/>
-        <property name="huDic" value="${stemmer.huDic}"/>
-        <property name="huDerivatives" value="${stemmer.huDerivatives}"/>
-        <property name="huCompounds" value="${stemmer.huCompounds}"/>
-        <property name="huRecursionDepth" value="${stemmer.huRecursionDepth}"/>
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<!-- the maximum file size in bytes : thid id 10 Megs for now -->
+		<property name="maxUploadSize" value="10000000" />
+	</bean>
 
-        <property name="resourceEncodingEn" value="${stemmer.resourceEncodingEn}"/>
-        <property name="enAff" value="${stemmer.enAff}"/>
-        <property name="enDic" value="${stemmer.enDic}"/>
-        <property name="enRecursionDepth" value="${stemmer.enRecursionDepth}"/>
-    </bean>
+	<bean class="hu.mokk.hunglish.jmorph.AnalyzerProvider" id="analyzerProvider"
+		init-method="initAnalyzerProvider">
+		<property name="resourceEncodingHu" value="${stemmer.resourceEncodingHu}" />
+		<property name="huAff" value="${stemmer.huAff}" />
+		<property name="huDic" value="${stemmer.huDic}" />
+		<property name="huDerivatives" value="${stemmer.huDerivatives}" />
+		<property name="huCompounds" value="${stemmer.huCompounds}" />
+		<property name="huRecursionDepth" value="${stemmer.huRecursionDepth}" />
 
-    <bean class="hu.mokk.hunglish.lucene.Indexer" id="indexer" >   <!-- init-method="initIndexer" -->
-        <property name="analyzerProvider" ref="analyzerProvider"/>
+		<property name="resourceEncodingEn" value="${stemmer.resourceEncodingEn}" />
+		<property name="enAff" value="${stemmer.enAff}" />
+		<property name="enDic" value="${stemmer.enDic}" />
+		<property name="enRecursionDepth" value="${stemmer.enRecursionDepth}" />
+	</bean>
 
-        <property name="mergeFactor" value="${indexer.mergeFactor}"/>
-        <property name="maxBufferedDocs" value="${indexer.maxBufferedDocs}"/>
-        <property name="indexDir" value="${indexer.indexDir}"/>
-        <property name="tmpIndexDir" value="${indexer.tmpIndexDir}"/>
-    </bean>
+	<bean class="hu.mokk.hunglish.lucene.Indexer" id="indexer">   <!-- init-method="initIndexer" -->
+		<property name="analyzerProvider" ref="analyzerProvider" />
 
-    <bean class="hu.mokk.hunglish.lucene.Searcher" id="searcher" init-method="initSearcher">
-        <property name="luceneQueryBuilder" ref="luceneQueryBuilder"/>
-        <property name="indexDir" value="${indexer.tmpIndexDir}"/> <!--  ${indexer.indexDir} ATTENTION, this is the same as indexer.indexDir -->
-    	<property name="useHunglishSyntax" value="${searcher.useHunglishSyntax}"/>
-    </bean>
-				 
-    <bean class="hu.mokk.hunglish.lucene.LuceneQueryBuilder" id="luceneQueryBuilder">
-        <property name="queryParser" ref="queryParser"/>
-    </bean>
+		<property name="mergeFactor" value="${indexer.mergeFactor}" />
+		<property name="maxBufferedDocs" value="${indexer.maxBufferedDocs}" />
+		<property name="indexDir" value="${indexer.indexDir}" />
+		<property name="tmpIndexDir" value="${indexer.tmpIndexDir}" />
+	</bean>
 
-    <bean class="hu.mokk.hunglish.lucene.query.HunglishQueryParser" id="queryParser">
-        <property name="analyzerProvider" ref="analyzerProvider"/>
-    </bean>
+	<bean class="hu.mokk.hunglish.web.UploadController" id="uploadController">
+		<property name="uploadDir" value="${indexer.uploadDir}" />
+	</bean>
+
+	<bean class="hu.mokk.hunglish.lucene.Searcher" id="searcher"
+		init-method="initSearcher">
+		<property name="luceneQueryBuilder" ref="luceneQueryBuilder" />
+		<property name="indexDir" value="${indexer.tmpIndexDir}" />
+		<!--
+			${indexer.indexDir} ATTENTION, this is the same as indexer.indexDir
+		-->
+		<property name="useHunglishSyntax" value="${searcher.useHunglishSyntax}" />
+	</bean>
+
+	<bean class="hu.mokk.hunglish.lucene.LuceneQueryBuilder" id="luceneQueryBuilder">
+		<property name="queryParser" ref="queryParser" />
+	</bean>
+
+	<bean class="hu.mokk.hunglish.lucene.query.HunglishQueryParser"
+		id="queryParser">
+		<property name="analyzerProvider" ref="analyzerProvider" />
+	</bean>
 
 </beans>
