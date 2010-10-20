@@ -8,7 +8,6 @@ import java.io.File;
 
 import javax.validation.Valid;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.roo.addon.web.mvc.controller.RooWebScaffold;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -23,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class UploadController {
 
-	private String uploadDir = "fileUpload"; //TODO FIXME this should com from Spring config (property file)
+	private String uploadDir = "fileUpload"; //TODO FIXME this should come from Spring config (property file)
 
 		
 	@RequestMapping(value = "/upload", method = RequestMethod.POST)
@@ -56,9 +55,9 @@ public class UploadController {
 	        
         } catch (Exception e) {
         	result.reject("ERROR", e.getLocalizedMessage());
-//TODO
-e.printStackTrace();
-//throw new RuntimeException(e);
+        	//TODO
+        	e.printStackTrace();
+//throw new IllegalArgumentException(e);
         	return "upload/create";
 		}
         return "redirect:/upload/" + upload.getId();
