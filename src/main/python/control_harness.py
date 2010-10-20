@@ -16,7 +16,7 @@ def mkdir(f) :
 
 def cp(f1,f2) :
     print "cp "+f1+" "+f2
-#    shutil.copy(f1,f2)
+    shutil.copy(f1,f2)
 
 def getCursor(db) :
     return db.cursor(MySQLdb.cursors.SSDictCursor)
@@ -33,9 +33,14 @@ def isExtensionWeLike(ext) :
 def moveFileToHarness(rawPath,lang,ext,id) :
     global g_harnessDataDirectory
     assert lang in ('hu','en')
-    targetDir = g_harnessDataDirectory +"/"+ lang +"/"+ ext +"/"
-    targetFilename = id+"."+lang+"."+ext
-    cp( rawPath, targetPath+targetFilename )
+    targetDir = g_harnessDataDirectory
+    mkdir(targetDir)
+    targetDir += "/"+lang
+    mkdir(targetDir)
+    targetDir += "/"+ext
+    mkdir(targetDir)
+    targetFilename = str(id)+"."+lang+"."+ext
+    cp( rawPath, targetDir+"/"+targetFilename )
 
 def moveFilesToHarness(metadata) :
     huRawPath = metadata['hu_raw_file_path']
@@ -48,33 +53,31 @@ def moveFilesToHarness(metadata) :
     moveFileToHarness(huRawPath,'hu',huExt,id)
     moveFileToHarness(enRawPath,'en',enExt,id)
 
-def runHarness(db,id) :
-    return acceptable
+def runHarness(metadata) :
+    return True # acceptable
     raise "unimplemented"
 
-def lookup(tableName,fieldName,value) :
+def lookup(db,tableName,fieldName,value) :
     cursor = getCursor(db)
-    cursor.execute("select id from %s where %s = %s", (tableName,fieldName,value) )
-    rows = cursor.fetchAll()
+    command = 'select id from %s where %s = ' % (tableName,fieldName)
+    cursor.execute( command+' %s', value )
+    rows = cursor.fetchall()
     assert len(rows)<=1
     if len(rows)==0 :
 	return None
     else :
 	return rows[0]['id']
 
-def lastInsertId(cursor) :
-    cursor.execute("select LAST_INSERT_ID()")
-    rs = cursor.fetchall()
-    assert len(rs)==1
-    return rs[0][0]
-
 def addAuthorIfNeeded(db,author) :
-    authorId = lookup("author","name",author)
+    authorId = lookup(db,"author","name",author)
     if authorId!=None :
 	return authorId
     cursor = getCursor(db)
-    cursor.execute("insert into author ( name )", (author,) )
-    authorId = lastInsertId(cursor)
+    # db.begin()
+    # print "insert into author ( name ) values ( %s )" % author 
+    cursor.execute("insert into author ( name ) values ( %s )", author )
+    db.commit()
+    authorId = cursor.lastrowid
     return authorId
 
 def recordToDict(db,id) :
@@ -112,11 +115,11 @@ def metadataFromUpload(db,id) :
     # Konstans:
     # old_docid, is_open_content
     metadata['old_docid'] = ""
-    metadata['is_open_content'] = "false"
+    metadata['is_open_content'] = False
 
     # Szarmaztatjuk:
     # aligned_file_path
-    metadata['aligned_file_path'] = g_harnessDataDirectory + "/align/qf/" + id + ".align.qf"
+    metadata['aligned_file_path'] = g_harnessDataDirectory + "/align/qf/" + str(id) + ".align.qf"
     
     return metadata
 
@@ -129,7 +132,7 @@ def metadataToDoc(db,metadata) :
     cursor.execute("insert into doc \
 	(id, old_docid, genre, author, en_title, hu_title, \
 	is_open_content, hu_raw_file_path, en_raw_file_path, aligned_file_path) \
-	values (%s, %s, %s, %s, %s, %s, %s, %s, %s)",
+	values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
 	(m['id'], m['old_docid'], m['genre'], m['author'],
          m['en_title'],m['hu_title'],
 	 m['is_open_content'], m['hu_raw_file_path'], m['en_raw_file_path'],
@@ -160,10 +163,10 @@ def readAlignFile(path, enc):
     return list(numberedlines)
 
 
-def harnessOutputFileToBisenTable(id,alignedFilePath) :
+def harnessOutputFileToBisenTable(db,id,alignedFilePath) :
     sentences = readAlignFile(alignedFilePath, 'ISO-8859-2')
-    cursor = db.cursor()
-    db.begin()
+    cursor = getCursor(db)
+    # db.begin()
     if len(sentences) > 0 :
         try :
             cursor.executemany("insert into bisen (doc, line_number, hu_sentence, en_sentence) VALUES (" + id + ", %s, %s,%s)", sentences)
@@ -175,48 +178,45 @@ def harnessOutputFileToBisenTable(id,alignedFilePath) :
 
 def setUploadTo(db,id,status) :
     cursor = getCursor(db)
-    cursor.execute("update upload set is_processed = %s where id = %s", status, id)
+    cursor.execute("update upload set is_processed = %s where id = %s", (status,id) )
 
 def newUploads(db) :
     cursor = getCursor(db)
     processedFlag = "N" # Unprocessed
     ids = []
     if cursor.execute("select id from upload where is_processed = %s", processedFlag) > 0 :
-	ids = [ int(r["id"]) for r in cursor.fetchall() ]
+	ids = [ r["id"] for r in cursor.fetchall() ]
     return ids
 
 class LowQualityException(Exception) :
     pass
 
 def processOneUpload(db,id) :
-    db.begin()
+    # db.begin()
     try :
         metadata = metadataFromUpload(db,id)
 	moveFilesToHarness(metadata)
 	acceptable = runHarness(metadata)
         if acceptable :
-            harnessOutputFileToBisenTable(id,metadata['aligned_file_path'])
+            harnessOutputFileToBisenTable(db,id,metadata['aligned_file_path'])
         else :
             raise LowQualityException()
     except Exception, e :
+	print e
 	db.rollback()
-        db.begin()
+        # db.begin()
         if type(e)==LowQualityException :
             processedFlag = "L"
         else :
             processedFlag = "E"
 	setUploadTo(db,id,processedFlag)
 	db.commit()
+	raise
     else :
         metadataToDoc(db,metadata)
         processedFlag = "Y"
 	setUploadTo(db,id,processedFlag)
 	db.commit()
-
-def main_egyelore(db) :
-    ids = newUploads(db)
-    for id in ids :
-	processOneUpload(db,id)
 	
 def main():
     global g_harnessDataDirectory
@@ -237,4 +237,3 @@ def main():
 
 if __name__ == "__main__" :
     main()
-
