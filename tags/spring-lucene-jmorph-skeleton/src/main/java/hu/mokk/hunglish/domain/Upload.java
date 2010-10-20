@@ -94,20 +94,20 @@ public class Upload {
 	 */
     public void validate(){
 		if (this.getHuFileData() == null){
-			throw new RuntimeException("The Hungarian file is null");
+			throw new IllegalArgumentException("The Hungarian file is null");
 		} else if (this.getHuFileData().getOriginalFilename() == null){
-			throw new RuntimeException("The Hungarian filename is null");
+			throw new IllegalArgumentException("The Hungarian filename is null");
 		}
 		if (this.getEnFileData() == null){
-			throw new RuntimeException("The English file is null");
+			throw new IllegalArgumentException("The English file is null");
 		}else if (this.getEnFileData().getOriginalFilename() == null){
-			throw new RuntimeException("The English filename is null");
+			throw new IllegalArgumentException("The English filename is null");
 		}
 		if (!validExtensions.contains(this.enExtension)){
-			throw new RuntimeException("Invalid English file extension:"+this.enExtension);
+			throw new IllegalArgumentException("Invalid English file extension:"+this.enExtension);
 		}
 		if (!validExtensions.contains(this.huExtension)){
-			throw new RuntimeException("Invalid Hungarian file extension:"+this.huExtension);
+			throw new IllegalArgumentException("Invalid Hungarian file extension:"+this.huExtension);
 		}
 	}
 	

@@ -26,6 +26,7 @@
                     <c:out value="${upload.authorName}"/>
                 </div>
             </div>
+            <br/>
             <div id="roo_upload_enTitle">
                 <label for="_enTitle_id">En Title:</label>
                 <div class="box" id="_enTitle_id">
