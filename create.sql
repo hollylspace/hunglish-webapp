@@ -80,12 +80,14 @@ CREATE TABLE `doc` (
   `old_docid` varchar(255) DEFAULT NULL,
   `author` bigint(20) not NULL,
   `genre` bigint(20) not NULL,
+  `upload` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_doc_genre` (`genre`),
   KEY `fk_doc_author` (`author`),
   UNIQUE KEY `doc_i_aligned_file_path` (`aligned_file_path`),
   CONSTRAINT `fk_doc_author` FOREIGN KEY (`author`) REFERENCES `author` (`id`),
-  CONSTRAINT `fk_doc_genre` FOREIGN KEY (`genre`) REFERENCES `genre` (`id`)
+  CONSTRAINT `fk_doc_genre` FOREIGN KEY (`genre`) REFERENCES `genre` (`id`),
+  CONSTRAINT `fk_doc_upload` FOREIGN KEY (`upload`) REFERENCES `upload` (`id`)  
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
