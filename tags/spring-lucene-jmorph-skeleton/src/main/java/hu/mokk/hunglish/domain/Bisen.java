@@ -272,19 +272,24 @@ public class Bisen {
 	 * This is going to be a full table scan
 	 * All bisen record not already hashed will get hashcodes 
 	 */
+	@SuppressWarnings("unchecked")
 	@Transactional
-	public static void updateHashCodeAll() {
+	public static boolean updateHashCodeAll() {
+		boolean result = false;
 		List<Bisen> bisens = entityManager().createQuery(
 		"from Bisen o where o.huSentenceHash is null or o.enSentenceHash is null")
 		.getResultList();
 		for (Bisen bisen : bisens) {
+			result = true;
 			bisen.updateHashCode();
 		}
+		return result;
 	}
 	
 	
 	@SuppressWarnings("unchecked")
 	public static void indexAll(IndexWriter iwriter) {
+		updateHashCodeAll(); //TODO log if there were any record to update
 		List<Bisen> bisens = entityManager().createQuery(
 				"from Bisen o where o.isIndexed is null")
 				.getResultList();
