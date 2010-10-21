@@ -3,6 +3,11 @@
 
     <persistence-unit name="persistenceUnit" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.ejb.HibernatePersistence</provider>
+        <class>hu.mokk.hunglish.domain.Author</class>
+        <class>hu.mokk.hunglish.domain.Bisen</class>
+        <class>hu.mokk.hunglish.domain.Doc</class>
+        <class>hu.mokk.hunglish.domain.Genre</class>
+        <class>hu.mokk.hunglish.domain.Upload</class>
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>
             <!--value='create' to build a new database on each run; value='update' to modify an existing database; value='create-drop' means the same as 'create' but also drops tables when Hibernate closes; value='validate' makes no changes to the database-->
