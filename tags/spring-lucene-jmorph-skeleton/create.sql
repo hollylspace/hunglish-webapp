@@ -54,8 +54,7 @@ CREATE TABLE `bisen` (
   `is_duplicate` bit(1) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_bisen_doc` (`doc`),
-  KEY `bisen_en_hash` (`en_sentence_hash`),
-  KEY `bisen_hu_hash` (`hu_sentence_hash`),
+  KEY `bisen_hash` (`is_indexed`, `en_sentence_hash`, `hu_sentence_hash`),
   UNIQUE KEY `i_bisen_uniq` (`doc`, `line_number`),
   CONSTRAINT `fk_bisen_doc` FOREIGN KEY (`doc`) REFERENCES `doc` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
