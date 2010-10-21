@@ -31,6 +31,10 @@ public class Doc {
     @Size(max = 255)
     private String oldDocid;
 
+    @ManyToOne(targetEntity = Upload.class)
+    @JoinColumn
+    private Upload upload;
+
     @NotNull
     @ManyToOne(targetEntity = Genre.class)
     @JoinColumn
@@ -165,6 +169,14 @@ public class Doc {
 	public void setOldDocid(String oldDocid) {
         this.oldDocid = oldDocid;
     }
+
+	public Upload getUpload() {
+		return upload;
+	}
+
+	public void setUpload(Upload upload) {
+		this.upload = upload;
+	}
 
 	public Genre getGenre() {
         return this.genre;
