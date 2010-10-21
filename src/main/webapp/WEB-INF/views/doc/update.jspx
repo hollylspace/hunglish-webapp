@@ -36,6 +36,13 @@
                 </c:if>
             </div>
             <br/>
+            <div id="roo_doc_upload">
+                <label for="_upload_id">Upload:</label>
+                <div class="box" id="_upload_id">
+                    <c:out value="${doc.upload}"/>
+                </div>
+            </div>
+            <br/>
             <div id="roo_doc_enTitle">
                 <label for="_enTitle_id">En Title:</label>
                 <form:textarea cssStyle="width:250px" id="_enTitle_id" path="enTitle"/>
