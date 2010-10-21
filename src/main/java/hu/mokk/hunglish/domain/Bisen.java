@@ -223,8 +223,8 @@ public class Bisen {
 		}
 	}
 
-	public static void index(List<Bisen> bisens, IndexWriter iwriter) {
-		for (Bisen bisen : bisens) {
+	public static void index(Bisen bisen, IndexWriter iwriter) {
+			bisen.updateHashCodes();
 			try {
 				if (bisen.countDuplicates() > 0) {
 					bisen.updateIsIndexed(false);
@@ -235,11 +235,12 @@ public class Bisen {
 			} catch (CorruptIndexException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				throw new RuntimeException("Error while indexing", e);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
-		}
+				throw new RuntimeException("Error while indexing", e);
+			}		
 	}
 
 	@SuppressWarnings("unchecked")
@@ -249,7 +250,9 @@ public class Bisen {
 						"from Bisen o where o.id = :senid")
 				.setParameter("senid", id)
 				.getResultList();
-		index(bisens, iwriter);
+		for (Bisen bisen : bisens) {
+			index(bisen, iwriter);
+		}
 	}
 	
 	
@@ -260,15 +263,34 @@ public class Bisen {
 						"from Bisen o where o.doc.id = :docid")
 				.setParameter("docid", docId)
 				.getResultList();
-		index(bisens, iwriter);
+		for (Bisen bisen : bisens) {
+			index(bisen, iwriter);
+		}
 	}
 
+	/**
+	 * This is going to be a full table scan
+	 * All bisen record not already hashed will get hashcodes 
+	 */
+	@Transactional
+	public static void updateHashCodeAll() {
+		List<Bisen> bisens = entityManager().createQuery(
+		"from Bisen o where o.huSentenceHash is null or o.enSentenceHash is null")
+		.getResultList();
+		for (Bisen bisen : bisens) {
+			bisen.updateHashCode();
+		}
+	}
+	
+	
 	@SuppressWarnings("unchecked")
 	public static void indexAll(IndexWriter iwriter) {
 		List<Bisen> bisens = entityManager().createQuery(
 				"from Bisen o where o.isIndexed is null")
 				.getResultList();
-		index(bisens, iwriter);
+		for (Bisen bisen : bisens) {
+			index(bisen, iwriter);
+		}
 	}
 
 	public String toString() {
@@ -308,6 +330,7 @@ public class Bisen {
 
 	public static String idFieldName = "id";
 	public static String genreFieldName = "doc.genre.id";
+	public static String authorFieldName = "doc.author.id";
 	public static String huSentenceFieldName = "huSen";
 	public static String enSentenceFieldName = "enSen";
 	public static String huSentenceStemmedFieldName = "huSenStemmed";
@@ -340,6 +363,10 @@ public class Bisen {
 				.toString(), Field.Store.YES, Field.Index.NOT_ANALYZED,
 				Field.TermVector.NO));
 
+		result.add(new Field(authorFieldName, this.doc.getAuthor().getId()
+				.toString(), Field.Store.YES, Field.Index.NOT_ANALYZED,
+				Field.TermVector.NO));
+		
 		result.add(new Field(huSentenceFieldName, this.huSentence,
 				Field.Store.YES, Field.Index.ANALYZED,
 				Field.TermVector.WITH_POSITIONS_OFFSETS));
@@ -350,11 +377,9 @@ public class Bisen {
 		result.add(new Field(enSentenceFieldName, this.enSentence,
 				Field.Store.YES, Field.Index.ANALYZED,
 				Field.TermVector.WITH_POSITIONS_OFFSETS));
-		
 		result.add(new Field(enSentenceStemmedFieldName, this.enSentence,
 				Field.Store.NO, Field.Index.ANALYZED,
 				Field.TermVector.WITH_POSITIONS_OFFSETS));
-
 		
 		return result;
 
