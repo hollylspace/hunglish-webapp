@@ -6,6 +6,10 @@ import os
 import shutil
 
 g_harnessDataDirectory = ""
+g_harnessAppDir = "/big1/Work/Pipeline/cvs/tcg/harness"
+
+def logg(s) :
+    sys.stderr.write(s+"\n")
 
 def mkdir(f) :
     try :
@@ -15,7 +19,7 @@ def mkdir(f) :
 	pass
 
 def cp(f1,f2) :
-    print "cp "+f1+" "+f2
+    logg( "cp "+f1+" "+f2 )
     shutil.copy(f1,f2)
 
 def getCursor(db) :
@@ -53,9 +57,30 @@ def moveFilesToHarness(metadata) :
     moveFileToHarness(huRawPath,'hu',huExt,id)
     moveFileToHarness(enRawPath,'en',enExt,id)
 
-def runHarness(metadata) :
-    return True # acceptable
-    raise "unimplemented"
+def runHarness(id) :
+    global g_harnessAppDir
+    global g_harnessDataDirectory
+    catalogFile = "catalog.tmp"
+
+    f = file(catalogFile,"w")
+    f.write(str(id)+"\n")
+    f.close()    
+
+    command = "python %s/harness.py " % g_harnessAppDir
+    command += "--graph=%s/hunglishstategraph.txt " % g_harnessAppDir
+    command += "--commands=%s/hunglishcommands.txt " % g_harnessAppDir
+    command += "--root=%s --catalog=%s" % ( g_harnessDataDirectory, catalogFile )
+
+    logg( command )
+    doIt = False
+    if doIt :
+	status = os.system(command)
+    else :
+	# Csak teszteleshez, ha a qf fajl mar korabban a helyere kerult.
+	status = 0
+
+    # TODO Cso"ro:zzu:k at a kimenetet valami $LOGDIR/$id.log fajlba.
+    return status==0
 
 def lookup(db,tableName,fieldName,value) :
     cursor = getCursor(db)
@@ -73,8 +98,6 @@ def addAuthorIfNeeded(db,author) :
     if authorId!=None :
 	return authorId
     cursor = getCursor(db)
-    # db.begin()
-    # print "insert into author ( name ) values ( %s )" % author 
     cursor.execute("insert into author ( name ) values ( %s )", author )
     db.commit()
     authorId = cursor.lastrowid
@@ -130,14 +153,16 @@ def metadataToDoc(db,metadata) :
     m = metadata
     cursor = getCursor(db)
     cursor.execute("insert into doc \
-	(id, old_docid, genre, author, en_title, hu_title, \
-	is_open_content, hu_raw_file_path, en_raw_file_path, aligned_file_path) \
+	(old_docid, genre, author, en_title, hu_title, \
+	is_open_content, hu_raw_file_path, en_raw_file_path, aligned_file_path, upload) \
 	values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
-	(m['id'], m['old_docid'], m['genre'], m['author'],
+	(m['old_docid'], m['genre'], m['author'],
          m['en_title'],m['hu_title'],
 	 m['is_open_content'], m['hu_raw_file_path'], m['en_raw_file_path'],
-         m['aligned_file_path'] )
+         m['aligned_file_path'], m['id'] )
     )
+    docId = cursor.lastrowid
+    return docId
 
 '''file -> lines of the file'''
 def readfile(path, enc):
@@ -163,18 +188,19 @@ def readAlignFile(path, enc):
     return list(numberedlines)
 
 
-def harnessOutputFileToBisenTable(db,id,alignedFilePath) :
+class LowQualityException(Exception) :
+    pass
+
+# docId nem tevesztendo ossze id-vel, az utobbit az upload tabla
+# adja autoincrementtel, az elobbit a doc.
+def harnessOutputFileToBisenTable(db,docId,alignedFilePath) :
+    logg( "Loading into database: "+alignedFilePath )
     sentences = readAlignFile(alignedFilePath, 'ISO-8859-2')
     cursor = getCursor(db)
-    # db.begin()
     if len(sentences) > 0 :
-        try :
-            cursor.executemany("insert into bisen (doc, line_number, hu_sentence, en_sentence) VALUES (" + id + ", %s, %s,%s)", sentences)
-        except :
-            db.rollback()
-            raise
-        else :
-            db.commit()
+        cursor.executemany("insert into bisen (doc, line_number, hu_sentence, en_sentence) VALUES (" +str(docId)+ ", %s,%s,%s)", sentences)
+    else :
+	raise LowQualityException()
 
 def setUploadTo(db,id,status) :
     cursor = getCursor(db)
@@ -188,52 +214,55 @@ def newUploads(db) :
 	ids = [ r["id"] for r in cursor.fetchall() ]
     return ids
 
-class LowQualityException(Exception) :
-    pass
-
 def processOneUpload(db,id) :
-    # db.begin()
     try :
         metadata = metadataFromUpload(db,id)
 	moveFilesToHarness(metadata)
-	acceptable = runHarness(metadata)
+	acceptable = runHarness(id)
         if acceptable :
-            harnessOutputFileToBisenTable(db,id,metadata['aligned_file_path'])
+    	    docId = metadataToDoc(db,metadata)
+            harnessOutputFileToBisenTable(db,docId,metadata['aligned_file_path'])
         else :
             raise LowQualityException()
     except Exception, e :
-	print e
+	logg(e)
 	db.rollback()
-        # db.begin()
         if type(e)==LowQualityException :
             processedFlag = "L"
+	    logg("%d (%s) was not loaded into bisen, because its quality was low." % (id,metadata[en_title]) )
         else :
             processedFlag = "E"
+	    logg("%d (%s) had some error, it could not be loaded into bisen." % (id,metadata[en_title]) )
 	setUploadTo(db,id,processedFlag)
 	db.commit()
-	raise
     else :
-        metadataToDoc(db,metadata)
         processedFlag = "Y"
 	setUploadTo(db,id,processedFlag)
 	db.commit()
-	
+	logg(str(id)+" was successfully loaded into bisen.")
+
+def indexThemLucene() :
+    # command = "java -Xmx1500M -classpath lib:hunglish-0.1.0.jar:. hu.mokk.hunglish.lucene.Launcher"
+    pass
+
 def main():
     global g_harnessDataDirectory
     if len(sys.argv)!=5 :
-        print "Usage: control_harness.py username passwd db harnessDataDir"
+        logg("Usage: control_harness.py username passwd db harnessDataDir")
         sys.exit(-1)
-    else :
-        username = sys.argv[1]
-        password = sys.argv[2]
-        database = sys.argv[3]
-        g_harnessDataDirectory = sys.argv[4]
-        db = MySQLdb.connect(host="localhost", user=username, passwd=password, db=database)
+
+    username = sys.argv[1]
+    password = sys.argv[2]
+    database = sys.argv[3]
+    g_harnessDataDirectory = sys.argv[4]
+    
+    db = MySQLdb.connect(host="localhost", user=username, passwd=password, db=database)
         
     ids = newUploads(db)
     for id in ids :
 	processOneUpload(db,id)
 
+    indexThemLucene()
 
 if __name__ == "__main__" :
     main()
