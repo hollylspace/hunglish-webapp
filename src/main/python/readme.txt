@@ -37,3 +37,20 @@ java -Xmx1500M -classpath lib:hunglish-0.1.0.jar:. hu.mokk.hunglish.lucene.Launc
 - maga a control_harness kimenet logba. datum.controller.log
 
 - egy biztonsagi mentest kellene csinalni az indexrol, mielott meghivjuk az indexert.
+
+
+---
+Command line indexer build process:
+
+cd /big1/tmp/hunglish-webapp/
+mvn package
+# Nemreprodukalhato modon ez nekem nem futott elsore.
+mvn package
+rm target/classes/META-INF/*.xml target/classes/META-INF/spring/*.xml
+cd target/classes
+zip -r ../hunglish-0.1.0.jar *
+cd ../..
+cp target/hunglish-0.1.0.jar src/main/python/command_line_pack/
+cd src/main/python/command_line_pack/
+# Itt mar varnak minket a jol beallitott xml-ek.
+java -Xmx1500M -classpath lib/*:hunglish-0.1.0.jar:. hu.mokk.hunglish.lucene.Launcher > cout 2> cerr
