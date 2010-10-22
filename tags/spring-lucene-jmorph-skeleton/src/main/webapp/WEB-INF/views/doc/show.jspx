@@ -55,20 +55,6 @@
                 </div>
             </div>
             <br/>
-            <div id="roo_doc_huRawFilePath">
-                <label for="_huRawFilePath_id">Hu Raw File Path:</label>
-                <div class="box" id="_huRawFilePath_id">
-                    <c:out value="${doc.huRawFilePath}"/>
-                </div>
-            </div>
-            <br/>
-            <div id="roo_doc_enRawFilePath">
-                <label for="_enRawFilePath_id">En Raw File Path:</label>
-                <div class="box" id="_enRawFilePath_id">
-                    <c:out value="${doc.enRawFilePath}"/>
-                </div>
-            </div>
-            <br/>
             <div id="roo_doc_alignedFilePath">
                 <label for="_alignedFilePath_id">Aligned File Path:</label>
                 <div class="box" id="_alignedFilePath_id">

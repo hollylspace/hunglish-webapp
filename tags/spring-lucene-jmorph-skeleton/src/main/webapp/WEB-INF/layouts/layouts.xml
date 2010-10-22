@@ -12,6 +12,9 @@
 	<definition name="search" template="/WEB-INF/layouts/search.jspx">
 	</definition>
 	
+	<definition name="indexer" template="/WEB-INF/layouts/indexer.jspx">
+	</definition>
+	
 	<definition name="public" template="/WEB-INF/layouts/default.jspx" />
 	
 </tiles-definitions>

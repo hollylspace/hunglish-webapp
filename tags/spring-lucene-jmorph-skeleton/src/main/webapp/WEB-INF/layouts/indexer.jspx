@@ -27,7 +27,11 @@
    		<div id="wrapper">
 
 	    	<div id="main">
-	    		<tiles:insertAttribute name="body" />
+	    		<!-- <tiles:insertAttribute name="body" /> -->
+		        <form method="GET">
+		        	<input type="text" value="" name="magic"/>
+					<input type="submit" value="Start indexer"/>         
+		        </form>
 			</div>
 		</div>
 	</body>
