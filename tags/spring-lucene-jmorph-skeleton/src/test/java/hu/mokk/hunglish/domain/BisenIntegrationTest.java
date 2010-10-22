@@ -24,7 +24,7 @@ public class BisenIntegrationTest {
 
 	@Test
 	public void testHash() {
-		hu.mokk.hunglish.domain.Bisen.updateHashCodes();
+		hu.mokk.hunglish.domain.Bisen.updateHashCodeAll();
 	}
 
 	@Test

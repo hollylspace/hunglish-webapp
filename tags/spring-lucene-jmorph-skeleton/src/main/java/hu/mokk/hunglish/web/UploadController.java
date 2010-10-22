@@ -5,6 +5,7 @@ import hu.mokk.hunglish.domain.Genre;
 import hu.mokk.hunglish.domain.Upload;
 
 import java.io.File;
+import java.util.Date;
 
 import javax.validation.Valid;
 
@@ -36,8 +37,11 @@ public class UploadController {
         }
         
         try{        	
-	        upload.setHuOriginalName(upload.getHuFileData().getOriginalFilename());
-	        upload.setEnOriginalName(upload.getEnFileData().getOriginalFilename());
+	        upload.setHuOriginalFileName(upload.getHuFileData().getOriginalFilename());
+	        upload.setEnOriginalFileName(upload.getEnFileData().getOriginalFilename());
+	        upload.setHuOriginalFileSize(upload.getHuFileData().getSize());
+	        upload.setEnOriginalFileSize(upload.getEnFileData().getSize());
+	        upload.setCreatedTimestamp(new Date());
 	        
 	        upload.validate();
 	        
@@ -45,11 +49,11 @@ public class UploadController {
 	        
 	        String huFilePath = uploadDir+File.separator + upload.getId()+"_HU."+upload.getHuExtension();
 	        upload.getHuFileData().transferTo(new File(huFilePath));
-	        upload.setHuFilePath(huFilePath);
+	        upload.setHuUploadedFilePath(huFilePath);
 
 	        String enFilePath = uploadDir+File.separator + upload.getId()+"_EN."+upload.getEnExtension();
 	        upload.getEnFileData().transferTo(new File(enFilePath));
-	        upload.setEnFilePath(enFilePath);
+	        upload.setEnUploadedFilePath(enFilePath);
 	        
 	        upload.merge();
 	        
