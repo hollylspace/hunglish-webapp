@@ -26,7 +26,8 @@ CREATE TABLE `job_queue` (
   `start_timestamp` TIMESTAMP DEFAULT NULL,
   `end_timestamp` TIMESTAMP DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `job_queue_i_status` (`status`)
+  KEY `job_queue_i_status` (`status`),
+  KEY `job_queue_i_ts` (`request_timestamp`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 
@@ -160,8 +161,11 @@ CREATE TABLE `upload` (
   `genre` bigint(20) not NULL, --this is user input via the webapp (UploadController)
   -- `en_sentence` varchar(4000) DEFAULT NULL, -- not used in current implementation
   -- `hu_sentence` varchar(4000) DEFAULT NULL, -- not used in current implementation
+  
+  
   `created_timestamp` TIMESTAMP not NULL, --this is filled by the webapp (UploadController) when the files was uploaded
   `harnessed_timestamp` TIMESTAMP DEFAULT NULL, --this is filled by control_harness.py when the pipe-line is completed
+  
   PRIMARY KEY (`id`),
   KEY `fk_upload_genre` (`genre`),
   KEY `fk_upload_author` (`author`),

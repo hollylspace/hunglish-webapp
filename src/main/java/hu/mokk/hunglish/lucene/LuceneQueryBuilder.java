@@ -89,6 +89,12 @@ public class LuceneQueryBuilder {
 		FilteredQuery qf = new FilteredQuery(q, filter);
 		return qf;
 	}
+	
+	public void deleteSourceFilterCache(){
+		synchronized (sourceFilterCache){
+			sourceFilterCache.clear();
+		}
+	}
 
 	public static void printBytes(byte[] array, String name) {
 		for (int k = 0; k < array.length; k++) {

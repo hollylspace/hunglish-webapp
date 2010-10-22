@@ -13,6 +13,7 @@
         
         <!-- Configure these elements to secure URIs in your application -->
         <intercept-url pattern="/choice/**" access="hasRole('ROLE_ADMIN')"/>
+        <intercept-url pattern="/indexer/**" access="hasRole('ROLE_ADMIN')"/>
         <intercept-url pattern="/member/**" access="isAuthenticated()" />
         
         <intercept-url pattern="/bisen/**" access="isAuthenticated()" />

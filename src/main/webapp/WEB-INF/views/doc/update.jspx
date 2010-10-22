@@ -64,22 +64,6 @@
                 <form:checkbox id="_isOpenContent_id" path="isOpenContent"/>
             </div>
             <br/>
-            <div id="roo_doc_huRawFilePath">
-                <label for="_huRawFilePath_id">Hu Raw File Path:</label>
-                <form:textarea cssStyle="width:250px" id="_huRawFilePath_id" path="huRawFilePath"/>
-                <script type="text/javascript">Spring.addDecoration(new Spring.ElementDecoration({elementId : '_huRawFilePath_id', widgetType: 'dijit.form.SimpleTextarea', widgetAttrs: {}})); </script>
-                <br/>
-                <form:errors cssClass="errors" id="_huRawFilePath_error_id" path="huRawFilePath"/>
-            </div>
-            <br/>
-            <div id="roo_doc_enRawFilePath">
-                <label for="_enRawFilePath_id">En Raw File Path:</label>
-                <form:textarea cssStyle="width:250px" id="_enRawFilePath_id" path="enRawFilePath"/>
-                <script type="text/javascript">Spring.addDecoration(new Spring.ElementDecoration({elementId : '_enRawFilePath_id', widgetType: 'dijit.form.SimpleTextarea', widgetAttrs: {}})); </script>
-                <br/>
-                <form:errors cssClass="errors" id="_enRawFilePath_error_id" path="enRawFilePath"/>
-            </div>
-            <br/>
             <div id="roo_doc_alignedFilePath">
                 <label for="_alignedFilePath_id">Aligned File Path:</label>
                 <form:textarea cssStyle="width:250px" id="_alignedFilePath_id" path="alignedFilePath"/>

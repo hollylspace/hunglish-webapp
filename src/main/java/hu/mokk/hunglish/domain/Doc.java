@@ -54,12 +54,6 @@ public class Doc {
 
     private Boolean isOpenContent;
 
-    @Size(max = 255)
-    private String huRawFilePath;
-
-    @Size(max = 255)
-    private String enRawFilePath;
-
     @NotNull
     @Size(max = 255)
     private String alignedFilePath;
@@ -216,22 +210,6 @@ public class Doc {
 
 	public void setIsOpenContent(Boolean isOpenContent) {
         this.isOpenContent = isOpenContent;
-    }
-
-	public String getHuRawFilePath() {
-        return this.huRawFilePath;
-    }
-
-	public void setHuRawFilePath(String huRawFilePath) {
-        this.huRawFilePath = huRawFilePath;
-    }
-
-	public String getEnRawFilePath() {
-        return this.enRawFilePath;
-    }
-
-	public void setEnRawFilePath(String enRawFilePath) {
-        this.enRawFilePath = enRawFilePath;
     }
 
 	public String getAlignedFilePath() {

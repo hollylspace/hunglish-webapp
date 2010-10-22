@@ -1,6 +1,7 @@
 package hu.mokk.hunglish.domain;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -41,7 +42,8 @@ public class Upload {
 	@Transient
 	private CommonsMultipartFile enFileData;
 	
-    @NotNull
+	
+	@NotNull
     @ManyToOne(targetEntity = Genre.class)
     @JoinColumn
     private Genre genre;
@@ -59,38 +61,53 @@ public class Upload {
     @Size(max = 255)
     private String huTitle;
 
+    /**
+     * Y = processed, N = not processed, E = processed with error, L = processed without error but the result is of bad quality
+     */
     @NotNull
     @Size(max = 1)
     private String isProcessed;
 
-    private Boolean isApproved;
+    
+    @NotNull
+    private Date createdTimestamp;
+
+    private Date harnessedTimestamp;
+
+    
+    @Size(max = 255)
+    private String huUploadedFilePath;
 
     @Size(max = 255)
-    private String huFilePath;
+    private String enUploadedFilePath;
 
+    @NotNull
     @Size(max = 255)
-    private String enFilePath;
-
-    @Size(max = 255)
-    private String huOriginalName;
+    private String huOriginalFileName;
         
+    @NotNull
     @Size(max = 255)
-    private String enOriginalName;
+    private String enOriginalFileName;
 
+    private Long huOriginalFileSize;
+    private Long enOriginalFileSize;
+    
+    private Long huRawFileSize;
+    private Long enRawFileSize;
+    
+    private Long huSentenceCount;
+    private Long enSentenceCount;
+
+    private Long alignBisentenceCount;
+    
     @Transient
     private String enExtension;
     
     @Transient
     private String huExtension;
     
-    /*@Size(max = 4000)
-    private String huSentence;
-
-    @Size(max = 4000)
-    private String enSentence;*/
-
 	/**
-	 * validate the upload
+	 * validate the uploaded files (no missing files, only allowed extensions)
 	 */
     public void validate(){
 		if (this.getHuFileData() == null){
@@ -193,64 +210,43 @@ public class Upload {
         this.isProcessed = isProcessed;
     }
 
-	public Boolean getIsApproved() {
-        return this.isApproved;
+	public String getHuUploadedFilePath() {
+        return this.huUploadedFilePath;
     }
 
-	public void setIsApproved(Boolean isApproved) {
-        this.isApproved = isApproved;
+	public void setHuUploadedFilePath(String huUploadedFilePath) {
+        this.huUploadedFilePath = huUploadedFilePath;
     }
 
-	public String getHuFilePath() {
-        return this.huFilePath;
+	public String getEnUploadedFilePath() {
+        return this.enUploadedFilePath;
     }
 
-	public void setHuFilePath(String huFilePath) {
-        this.huFilePath = huFilePath;
+	public void setEnUploadedFilePath(String enUploadedFilePath) {
+        this.enUploadedFilePath = enUploadedFilePath;
     }
 
-	public String getEnFilePath() {
-        return this.enFilePath;
-    }
-
-	public void setEnFilePath(String enFilePath) {
-        this.enFilePath = enFilePath;
-    }
-
-	/*public String getHuSentence() {
-        return this.huSentence;
-    }
-
-	public void setHuSentence(String huSentence) {
-        this.huSentence = huSentence;
-    }
-
-	public String getEnSentence() {
-        return this.enSentence;
-    }
-
-	public void setEnSentence(String enSentence) {
-        this.enSentence = enSentence;
-    }*/
-
-	public String getHuOriginalName() {
-		return huOriginalName;
+	public String getHuOriginalFileName() {
+		return huOriginalFileName;
 	}
 
-	public void setHuOriginalName(String huOriginalName) {
-		this.huOriginalName = huOriginalName;
-		int dot = huOriginalName.lastIndexOf(extensionSeparator);
-		this.huExtension = huOriginalName.substring(dot + 1).toLowerCase();
+	private static String getExtension(String fileName){
+		int dot = fileName.lastIndexOf(extensionSeparator);
+		return fileName.substring(dot + 1).toLowerCase();
+	}
+	
+	public void setHuOriginalFileName(String huOriginalFileName) {
+		this.huOriginalFileName = huOriginalFileName;
+		this.huExtension = getExtension(huOriginalFileName);
 	}
 
-	public String getEnOriginalName() {
-		return enOriginalName;
+	public String getEnOriginalFileName() {
+		return enOriginalFileName;
 	}
 
-	public void setEnOriginalName(String enOriginalName) {
-		this.enOriginalName = enOriginalName;
-		int dot = enOriginalName.lastIndexOf(extensionSeparator);
-		this.enExtension = enOriginalName.substring(dot + 1).toLowerCase();
+	public void setEnOriginalFileName(String enOriginalFileName) {
+		this.enOriginalFileName = enOriginalFileName;
+		this.enExtension = getExtension(enOriginalFileName);
 	}
 
 	public String getEnExtension() {
@@ -261,6 +257,97 @@ public class Upload {
 	public String getHuExtension() {
 		return huExtension;
 	}
+
+	
+	public Date getCreatedTimestamp() {
+		return createdTimestamp;
+	}
+
+
+	public void setCreatedTimestamp(Date createdTimestamp) {
+		this.createdTimestamp = createdTimestamp;
+	}
+
+
+	public Date getHarnessedTimestamp() {
+		return harnessedTimestamp;
+	}
+
+
+	public void setHarnessedTimestamp(Date harnessedTimestamp) {
+		this.harnessedTimestamp = harnessedTimestamp;
+	}
+
+
+	public Long getHuOriginalFileSize() {
+		return huOriginalFileSize;
+	}
+
+
+	public void setHuOriginalFileSize(Long huOriginalFileSize) {
+		this.huOriginalFileSize = huOriginalFileSize;
+	}
+
+
+	public Long getEnOriginalFileSize() {
+		return enOriginalFileSize;
+	}
+
+
+	public void setEnOriginalFileSize(Long enOriginalFileSize) {
+		this.enOriginalFileSize = enOriginalFileSize;
+	}
+
+
+	public Long getHuRawFileSize() {
+		return huRawFileSize;
+	}
+
+
+	public void setHuRawFileSize(Long huRawFileSize) {
+		this.huRawFileSize = huRawFileSize;
+	}
+
+
+	public Long getEnRawFileSize() {
+		return enRawFileSize;
+	}
+
+
+	public void setEnRawFileSize(Long enRawFileSize) {
+		this.enRawFileSize = enRawFileSize;
+	}
+
+
+	public Long getHuSentenceCount() {
+		return huSentenceCount;
+	}
+
+
+	public void setHuSentenceCount(Long huSentenceCount) {
+		this.huSentenceCount = huSentenceCount;
+	}
+
+
+	public Long getEnSentenceCount() {
+		return enSentenceCount;
+	}
+
+
+	public void setEnSentenceCount(Long enSentenceCount) {
+		this.enSentenceCount = enSentenceCount;
+	}
+
+
+	public Long getAlignBisentenceCount() {
+		return alignBisentenceCount;
+	}
+
+
+	public void setAlignBisentenceCount(Long alignBisentenceCount) {
+		this.alignBisentenceCount = alignBisentenceCount;
+	}
+
 
 	@PersistenceContext
     transient EntityManager entityManager;
