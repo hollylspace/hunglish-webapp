@@ -61,7 +61,7 @@ CREATE TABLE `bisen` (
   `downvotes` bigint(20) DEFAULT NULL,
   `en_sentence` varchar(4000) DEFAULT NULL,
   `hu_sentence` varchar(4000) DEFAULT NULL,
-  `is_indexed` bit(1) DEFAULT NULL, --TODO maybe a three-way flag would be better: N-not indexed, T-indexed into a temp index, Y-temp index merged into main index
+  `is_indexed` bit(1) DEFAULT NULL, -- TODO maybe a three-way flag would be better: N-not indexed, T-indexed into a temp index, Y-temp index merged into main index
   `line_number` int(11) DEFAULT NULL,
   `upvotes` bigint(20) DEFAULT NULL,
   `doc` bigint(20) DEFAULT NULL,
@@ -95,7 +95,7 @@ CREATE TABLE `doc` (
   `author` bigint(20) not NULL,
   `genre` bigint(20) not NULL,
   `upload` bigint(20) DEFAULT NULL,
-  --`is_approved` bit(1) DEFAULT 0,  TODO the indexing would not be started automatically on a new doc, but could be triggered by hand on a doc.   
+  -- `is_approved` bit(1) DEFAULT 0,  TODO the indexing would not be started automatically on a new doc, but could be triggered by hand on a doc.   
   PRIMARY KEY (`id`),
   KEY `fk_doc_genre` (`genre`),
   KEY `fk_doc_author` (`author`),
@@ -141,30 +141,30 @@ CREATE TABLE `upload` (
   `hu_original_file_name` varchar(255) not NULL, -- the file was uploaded with this name;this is filled by the webapp (UploadController)
   `en_original_file_name` varchar(255) not NULL, 
   
-  `hu_original_file_size` bigint(20) , --the file size after upload; this is filled by the webapp (UploadController)
+  `hu_original_file_size` bigint(20) , -- the file size after upload; this is filled by the webapp (UploadController)
   `en_original_file_size` bigint(20) ,
 
   
-  `hu_raw_file_size` bigint(20) , --the size of the file after it was converted into text; this is fiilled by control_harness.py
+  `hu_raw_file_size` bigint(20) , -- the size of the file after it was converted into text; this is fiilled by control_harness.py
   `en_raw_file_size` bigint(20) ,
   
-  `hu_sentence_count` bigint(20) , --number of sentences after sen phase; this is fiilled by control_harness.py
+  `hu_sentence_count` bigint(20) , -- number of sentences after sen phase; this is fiilled by control_harness.py
   `en_sentence_count` bigint(20) ,
 
-  `align_bisentence_count` --number of aligned sentences; this is fiilled by control_harness.py
+  `align_bisentence_count` -- number of aligned sentences; this is fiilled by control_harness.py
    
   `is_processed` varchar(1) not null DEFAULT 'N',-- Y = processed, N = not processed, E = processed with error, L = processed without error but the result is of bad quality
-  `hu_title` varchar(255) DEFAULT NULL, --this is user input via the webapp (UploadController)
-  `en_title` varchar(255) DEFAULT NULL, --this is user input via the webapp (UploadController)
-  `author` bigint(20) DEFAULT NULL, --chosen from existing Authors; this is user input via the webapp (UploadController)
-  `author_name` varchar(255) DEFAULT NULL, --when given, new Author will be created with this name; this is user input via the webapp (UploadController)
-  `genre` bigint(20) not NULL, --this is user input via the webapp (UploadController)
+  `hu_title` varchar(255) DEFAULT NULL, -- this is user input via the webapp (UploadController)
+  `en_title` varchar(255) DEFAULT NULL, -- this is user input via the webapp (UploadController)
+  `author` bigint(20) DEFAULT NULL, -- chosen from existing Authors; this is user input via the webapp (UploadController)
+  `author_name` varchar(255) DEFAULT NULL, -- when given, new Author will be created with this name; this is user input via the webapp (UploadController)
+  `genre` bigint(20) not NULL, -- this is user input via the webapp (UploadController)
   -- `en_sentence` varchar(4000) DEFAULT NULL, -- not used in current implementation
   -- `hu_sentence` varchar(4000) DEFAULT NULL, -- not used in current implementation
   
   
-  `created_timestamp` TIMESTAMP not NULL, --this is filled by the webapp (UploadController) when the files was uploaded
-  `harnessed_timestamp` TIMESTAMP DEFAULT NULL, --this is filled by control_harness.py when the pipe-line is completed
+  `created_timestamp` TIMESTAMP not NULL, -- this is filled by the webapp (UploadController) when the files was uploaded
+  `harnessed_timestamp` TIMESTAMP DEFAULT NULL, -- this is filled by control_harness.py when the pipe-line is completed
   
   PRIMARY KEY (`id`),
   KEY `fk_upload_genre` (`genre`),
