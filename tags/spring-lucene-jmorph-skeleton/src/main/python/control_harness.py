@@ -70,7 +70,7 @@ def runHarness(metadata) :
     command += "--root=%s --catalog=%s" % ( g_harnessDataDirectory, catalogFile )
 
     logg( command )
-    doIt = False
+    doIt = True
     if doIt :
 	status = os.system(command)
 	if status!=0 :
@@ -91,7 +91,7 @@ def addAuthorIfNeeded(db,author) :
     if authorId!=None :
 	return authorId
     cursor = getCursor(db)
-    cursor.execute("insert into author ( name ) values ( %s )", author )
+    cursor.execute("insert into author ( name, version ) values ( %s, 1 )", author )
     db.commit()
     authorId = cursor.lastrowid
     return authorId
@@ -147,8 +147,8 @@ def metadataToDoc(db,metadata) :
     cursor = getCursor(db)
     cursor.execute("insert into doc \
 	(old_docid, genre, author, en_title, hu_title, \
-	is_open_content, aligned_file_path, upload) \
-	values (%s, %s, %s, %s, %s, %s, %s, %s)",
+	is_open_content, aligned_file_path, upload, version) \
+	values (%s, %s, %s, %s, %s, %s, %s, %s, 1)",
 	(m['old_docid'], m['genre'], m['author'],
          m['en_title'],m['hu_title'],
 	 m['is_open_content'],
@@ -191,7 +191,8 @@ def harnessOutputFileToBisenTable(db,docId,alignedFilePath) :
     sentences = readAlignFile(alignedFilePath, 'ISO-8859-2')
     cursor = getCursor(db)
     if len(sentences) > 0 :
-        cursor.executemany("insert into bisen (doc, line_number, hu_sentence, en_sentence) VALUES (" +str(docId)+ ", %s,%s,%s)", sentences)
+        cursor.executemany("insert into bisen (doc, line_number, hu_sentence, en_sentence, version) \
+	values (" +str(docId)+ ", %s,%s,%s,1)", sentences)
     else :
 	raise Exception("There should be binsentences in the qf file.")
 
