@@ -94,7 +94,13 @@ public class Indexer {
 			IOException, IllegalAccessException, InstantiationException,
 			ParseException {
 		initIndexer(tmp);
+System.out.println("-----------------------------------------------------------------------------");		
+System.out.println("--------------------------init indexer done ---------------------------------");		
+System.out.println("-----------------------------------------------------------------------------");		
 		Bisen.indexAll(indexWriter);
+System.out.println("-----------------------------------------------------------------------------");		
+System.out.println("--------------------------indexerall   done ---------------------------------");		
+System.out.println("-----------------------------------------------------------------------------");		
 		indexWriter.close();
 	}
 
@@ -112,9 +118,20 @@ public class Indexer {
 			IndexReader indexReader = IndexReader.open(new SimpleFSDirectory(
 					new File(tmpIndexDir)), readOnly);
 			initIndexer(false);
+System.out.println("-----------------------------------------------------------------------------");		
+System.out.println("--------------------------merge init indexer done ---------------------------------");		
+System.out.println("-----------------------------------------------------------------------------");		
+			
 			indexWriter.addIndexes(indexReader);
+System.out.println("-----------------------------------------------------------------------------");		
+System.out.println("--------------------------merge done ---------------------------------");		
+System.out.println("-----------------------------------------------------------------------------");		
+			
 			indexReader.close();
 			indexWriter.close();
+System.out.println("-----------------------------------------------------------------------------");		
+System.out.println("--------------------------merge closed ---------------------------------");		
+System.out.println("-----------------------------------------------------------------------------");		
 		} catch (CorruptIndexException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

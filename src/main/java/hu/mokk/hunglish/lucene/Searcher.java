@@ -46,6 +46,17 @@ public class Searcher {
 	@Autowired
 	private LuceneQueryBuilder luceneQueryBuilder;
 	
+	public void reInitSearcher(){
+		try {
+			indexReader.close();
+		} catch (IOException e) {
+			throw new RuntimeException("Error while closing indexreader.", e);
+		}
+		indexReader = null;
+		luceneQueryBuilder.deleteSourceFilterCache();
+		initSearcher();
+	}
+	
 	public void initSearcher() {
 		boolean readOnly = true;
 		if (indexReader == null) {

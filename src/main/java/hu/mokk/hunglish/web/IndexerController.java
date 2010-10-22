@@ -2,6 +2,7 @@ package hu.mokk.hunglish.web;
 
 import hu.mokk.hunglish.lucene.Indexer;
 import hu.mokk.hunglish.lucene.LuceneQueryBuilder;
+import hu.mokk.hunglish.lucene.Searcher;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,10 +19,11 @@ public class IndexerController {
 	
 	@Autowired
 	private Indexer indexer;
-
-	@Autowired
-	private LuceneQueryBuilder luceneQueryBuilder;
 	
+	@Autowired
+	private Searcher searcher;
+	
+
 	@RequestMapping(value = "/indexer", method = RequestMethod.GET)
     public String indexer(
     		@RequestParam(value = "magic", required = false) String magic,
@@ -34,7 +36,9 @@ public class IndexerController {
 				throw new RuntimeException(e);
 			} 
 			indexer.mergeTmpIndex();
-			luceneQueryBuilder.deleteSourceFilterCache();
+			
+			searcher.reInitSearcher();
+			
 		}
         return "indexer";
     }

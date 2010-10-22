@@ -1,6 +1,7 @@
 package hu.mokk.hunglish.domain;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -59,6 +60,8 @@ public class Bisen {
 	private Long enSentenceHash;
 
 	private Boolean isDuplicate;
+	
+	private Date indexedTimestamp;
 
 	@PersistenceContext
 	transient EntityManager entityManager;
@@ -145,12 +148,21 @@ public class Bisen {
 	 * @return count of Bisentences which are a duplicate of this   
 	 */
 	public long countDuplicates() {
-		return (Long) entityManager()
+		Long result = (Long) entityManager()
 				.createQuery(
-						"select count(o) from Bisen o where o.isIndexed = true and o.huSentenceHash = :huhash and o.enSentenceHash = :enhash and o.id != :id")
-				.setParameter("huhash", this.huSentenceHash).setParameter(
-						"enhash", this.enSentenceHash).setParameter("id",
-						this.id).getSingleResult();
+						"select count(o) from Bisen o where " +
+						"o.isIndexed = true and " +
+						"o.huSentenceHash = :huhash and " +
+						"o.enSentenceHash = :enhash and " +
+						"o.id != :id").setParameter(
+						"huhash", this.huSentenceHash).setParameter(
+						"enhash", this.enSentenceHash).setParameter(
+						"id", this.id).getSingleResult();
+System.out.println("-----------------------------------------------------------------------------");		
+System.out.println("--------------------------countDuplicates id:"+this.id+ " result:"+result+" ---------------------------------");		
+System.out.println("--------------------------huhash:"+this.huSentenceHash+" en hash:"+this.enSentenceHash+"---------------------");		
+		
+		return result;
 	}
 
 	public static List<Bisen> findAllBisens() {
@@ -191,29 +203,25 @@ public class Bisen {
 	
 	@Transactional
 	public void updateHashCode() {
-		Long huHash = new Long(stripPunctuation(this.getHuSentence())
-				.hashCode());
-		Long enHash = new Long(stripPunctuation(this.getEnSentence())
-				.hashCode());
-		Query update = entityManager()
-				.createQuery(
-						"update Bisen set enSentenceHash = ?, huSentenceHash = ? where id  = ?");
-		update.setParameter(1, enHash);
-		update.setParameter(2, huHash);
-		update.setParameter(3, this.getId());
-		update.executeUpdate();
+		if (this.getEnSentenceHash() == null || this.getHuSentenceHash() == null){
+			this.huSentenceHash = new Long(stripPunctuation(this.getHuSentence())
+					.hashCode());
+			this.enSentenceHash = new Long(stripPunctuation(this.getEnSentence())
+					.hashCode());
+			this.merge();
+		}
 	}
 
 	@Transactional
 	public void updateIsIndexed(Boolean value) {
-		Query update = entityManager().createQuery(
-				"update Bisen set isIndexed=? , isDuplicate=? where id=?");
-		update.setParameter(1, value);
-		update.setParameter(2, !value);
-		update.setParameter(3, this.getId());
-		update.executeUpdate();
+		this.setIsIndexed(value);
+		this.setIsDuplicate(!value);
+		this.setIndexedTimestamp(new Date());
+		this.merge();
 	}
 
+	
+	/*
 	@SuppressWarnings("unchecked")
 	public static void updateHashCodes() {
 		List<Bisen> bisens = entityManager().createQuery("from Bisen o")
@@ -221,10 +229,10 @@ public class Bisen {
 		for (Bisen bisen : bisens) {
 			bisen.updateHashCode();
 		}
-	}
+	}*/
 
 	public static void index(Bisen bisen, IndexWriter iwriter) {
-			bisen.updateHashCodes();
+			bisen.updateHashCode();
 			try {
 				if (bisen.countDuplicates() > 0) {
 					bisen.updateIsIndexed(false);
@@ -233,12 +241,8 @@ public class Bisen {
 					bisen.updateIsIndexed(true);
 				}
 			} catch (CorruptIndexException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 				throw new RuntimeException("Error while indexing", e);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 				throw new RuntimeException("Error while indexing", e);
 			}		
 	}
@@ -290,11 +294,19 @@ public class Bisen {
 	@SuppressWarnings("unchecked")
 	public static void indexAll(IndexWriter iwriter) {
 		updateHashCodeAll(); //TODO log if there were any record to update
+System.out.println("-----------------------------------------------------------------------------");		
+System.out.println("--------------------------updateHashCodeAll() done ---------------------------------");		
+System.out.println("-----------------------------------------------------------------------------");		
+		
 		List<Bisen> bisens = entityManager().createQuery(
 				"from Bisen o where o.isIndexed is null")
 				.getResultList();
 		for (Bisen bisen : bisens) {
 			index(bisen, iwriter);
+System.out.println("-----------------------------------------------------------------------------");		
+System.out.println("--------------------------indexing bisen.id:"+bisen.getId().toString()+"---------------------------------");		
+System.out.println("-----------------------------------------------------------------------------");		
+			
 		}
 	}
 
@@ -468,6 +480,14 @@ public class Bisen {
 
 	public void setIsDuplicate(Boolean isDuplicate) {
 		this.isDuplicate = isDuplicate;
+	}
+
+	public Date getIndexedTimestamp() {
+		return indexedTimestamp;
+	}
+
+	public void setIndexedTimestamp(Date indexedTimestamp) {
+		this.indexedTimestamp = indexedTimestamp;
 	}
 
 	public String getHuSentenceView() {
