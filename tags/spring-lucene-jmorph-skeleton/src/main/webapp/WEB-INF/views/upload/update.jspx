@@ -61,58 +61,7 @@
                 <form:errors cssClass="errors" id="_isProcessed_error_id" path="isProcessed"/>                
             </div>
             <br/>
-            <div id="roo_upload_isApproved">
-                <label for="_isApproved_id">Is Approved:</label>
-                <form:checkbox id="_isApproved_id" path="isApproved"/>
-            </div>
-            <br/>
-            <div id="roo_upload_huFilePath">
-                <label for="_huFilePath_id">Hu File Path:</label>
-                <div class="box" id="_huFilePath_id">
-                    <c:out value="${upload.huFilePath}"/>
-                </div>
-            </div>
-            <br/>
-            <div id="roo_upload_enFilePath">
-                <label for="_enFilePath_id">En File Path:</label>
-                <div class="box" id="_enFilePath_id">
-                    <c:out value="${upload.enFilePath}"/>
-                </div>
-            </div>
-            <br/>
-            <div id="roo_upload_huOriginalName">
-                <label for="_huOriginalName_id">Hu Original Name:</label>
-                <div class="box" id="_huOriginalName_id">
-                    <c:out value="${upload.huOriginalName}"/>
-                </div>
-            </div>
-            <br/>
-            <div id="roo_upload_enOriginalName">
-                <label for="_enOriginalName_id">En Original Name:</label>
-                <div class="box" id="_enOriginalName_id">
-                    <c:out value="${upload.enOriginalName}"/>
-                </div>
-            </div>
-            <br/>
             
-            <!-- 
-            <div id="roo_upload_huSentence">
-                <label for="_huSentence_id">Hu Sentence:</label>
-                <form:textarea cssStyle="width:250px" id="_huSentence_id" path="huSentence"/>
-                <script type="text/javascript">Spring.addDecoration(new Spring.ElementDecoration({elementId : '_huSentence_id', widgetType: 'dijit.form.SimpleTextarea', widgetAttrs: {}})); </script>
-                <br/>
-                <form:errors cssClass="errors" id="_huSentence_error_id" path="huSentence"/>
-            </div>
-            <br/>
-            <div id="roo_upload_enSentence">
-                <label for="_enSentence_id">En Sentence:</label>
-                <form:textarea cssStyle="width:250px" id="_enSentence_id" path="enSentence"/>
-                <script type="text/javascript">Spring.addDecoration(new Spring.ElementDecoration({elementId : '_enSentence_id', widgetType: 'dijit.form.SimpleTextarea', widgetAttrs: {}})); </script>
-                <br/>
-                <form:errors cssClass="errors" id="_enSentence_error_id" path="enSentence"/>
-            </div>
-            <br/>
-             -->
             <div class="submit" id="roo_upload_submit">
                 <spring:message code="button.update" var="update_button"/>
                 <script type="text/javascript">Spring.addDecoration(new Spring.ValidateAllDecoration({elementId:'proceed', event:'onclick'}));</script>

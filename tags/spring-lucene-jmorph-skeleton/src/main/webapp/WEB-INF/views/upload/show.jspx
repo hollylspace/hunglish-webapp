@@ -48,38 +48,31 @@
                 </div>
             </div>
             <br/>
-            <div id="roo_upload_isApproved">
-                <label for="_isApproved_id">Is Approved:</label>
-                <div class="box" id="_isApproved_id">
-                    <c:out value="${upload.isApproved}"/>
+            <div id="roo_upload_huUploadedFilePath">
+                <label for="_huUploadedFilePath_id">Hu Uploaded File Path:</label>
+                <div class="box" id="_huUploadedFilePath_id">
+                    <c:out value="${upload.huUploadedFilePath}"/>
                 </div>
             </div>
             <br/>
-            <div id="roo_upload_huFilePath">
-                <label for="_huFilePath_id">Hu File Path:</label>
-                <div class="box" id="_huFilePath_id">
-                    <c:out value="${upload.huFilePath}"/>
+            <div id="roo_upload_enUploadedFilePath">
+                <label for="_enUploadedFilePath_id">En File Uploaded Path:</label>
+                <div class="box" id="_enUploadedFilePath_id">
+                    <c:out value="${upload.enUploadedFilePath}"/>
                 </div>
             </div>
             <br/>
-            <div id="roo_upload_enFilePath">
-                <label for="_enFilePath_id">En File Path:</label>
-                <div class="box" id="_enFilePath_id">
-                    <c:out value="${upload.enFilePath}"/>
+            <div id="roo_upload_huOriginalFileName">
+                <label for="_huOriginalFileName_id">Hu Original File Name:</label>
+                <div class="box" id="_huOriginalFileName_id">
+                    <c:out value="${upload.huOriginalFileName}"/>
                 </div>
             </div>
             <br/>
-            <div id="roo_upload_huOriginalName">
-                <label for="_huOriginalName_id">Hu Original Name:</label>
-                <div class="box" id="_huOriginalName_id">
-                    <c:out value="${upload.huOriginalName}"/>
-                </div>
-            </div>
-            <br/>
-            <div id="roo_upload_enOriginalName">
-                <label for="_enOriginalName_id">En Original Name:</label>
-                <div class="box" id="_enOriginalName_id">
-                    <c:out value="${upload.enOriginalName}"/>
+            <div id="roo_upload_enOriginalFileName">
+                <label for="_enOriginalFileName_id">En Original File Name:</label>
+                <div class="box" id="_enOriginalFileName_id">
+                    <c:out value="${upload.enOriginalFileName}"/>
                 </div>
             </div>
             <br/>

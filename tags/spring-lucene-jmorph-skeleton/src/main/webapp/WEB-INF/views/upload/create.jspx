@@ -62,9 +62,10 @@
                 <form:errors cssClass="errors" id="_huTitle_error_id" path="huTitle"/>
             </div>
             <br/>
+            <!-- 
             <div id="roo_upload_isProcessed">
                 <label for="_isProcessed_id">Is Processed:</label>
-                <!-- form:checkbox id="_isProcessed_id" path="isProcessed"/-->
+                <form:checkbox id="_isProcessed_id" path="isProcessed"/>
                 <form:textarea cssStyle="width:50px" id="_isProcessed_id" path="isProcessed"/>
                 <script type="text/javascript">Spring.addDecoration(new Spring.ElementDecoration({elementId : '_isProcessed_id', widgetType: 'dijit.form.SimpleTextarea', widgetAttrs: {}})); </script>
                 <br/>
@@ -76,24 +77,7 @@
                 <form:checkbox id="_isApproved_id" path="isApproved"/>
             </div>
             <br/>
-            <!-- 
-            <div id="roo_upload_huSentence">
-                <label for="_huSentence_id">Hu Sentence:</label>
-                <form:textarea cssStyle="width:250px" id="_huSentence_id" path="huSentence"/>
-                <script type="text/javascript">Spring.addDecoration(new Spring.ElementDecoration({elementId : '_huSentence_id', widgetType: 'dijit.form.SimpleTextarea', widgetAttrs: {}})); </script>
-                <br/>
-                <form:errors cssClass="errors" id="_huSentence_error_id" path="huSentence"/>
-            </div>
-            <br/>
-            <div id="roo_upload_enSentence">
-                <label for="_enSentence_id">En Sentence:</label>
-                <form:textarea cssStyle="width:250px" id="_enSentence_id" path="enSentence"/>
-                <script type="text/javascript">Spring.addDecoration(new Spring.ElementDecoration({elementId : '_enSentence_id', widgetType: 'dijit.form.SimpleTextarea', widgetAttrs: {}})); </script>
-                <br/>
-                <form:errors cssClass="errors" id="_enSentence_error_id" path="enSentence"/>
-            </div>
-            <br/>
-             -->
+            -->
             <div class="submit" id="roo_upload_submit">
                 <spring:message code="button.save" var="save_button"/>
                 <script type="text/javascript">Spring.addDecoration(new Spring.ValidateAllDecoration({elementId:'proceed', event:'onclick'}));</script>

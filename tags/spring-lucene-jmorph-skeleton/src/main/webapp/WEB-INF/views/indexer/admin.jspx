@@ -1,0 +1,15 @@
+<div xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:fmt="http://java.sun.com/jsp/jstl/fmt" xmlns:fn="http://java.sun.com/jsp/jstl/functions" xmlns:form="http://www.springframework.org/tags/form" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:roo="urn:jsptagdir:/WEB-INF/tags" xmlns:spring="http://www.springframework.org/tags" version="2.0">
+<jsp:output omit-xml-declaration="yes"/>
+	<div id="_title_div">
+
+		<spring:url value="/search" var="form_url"/>
+
+        <form method="GET">
+        	<input type="text" value="" name="magic"/>
+			<input type="submit" value="Start indexer"/>         
+        </form>
+
+         
+         
+    </div>
+</div>
