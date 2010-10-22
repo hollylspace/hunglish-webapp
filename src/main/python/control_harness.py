@@ -20,9 +20,7 @@ def moveFileToHarness(rawPath,lang,ext,id) :
     targetDir += "/"+ext
     mkdir(targetDir)
     targetFilename = str(id)+"."+lang+"."+ext
-    logg( rawPath +" ~~~ "+ targetDir+"/"+targetFilename )
     cp( rawPath, targetDir+"/"+targetFilename )
-    logg("Done.")
 
 def moveFilesToHarness(metadata) :
     huRawPath = metadata['hu_uploaded_file_path']
@@ -67,8 +65,8 @@ def runHarness(metadata) :
     f.close()    
 
     command = "python %s/harness.py " % g_harnessAppDir
-    command += "--graph=%s/hunglishstategraph.filters.txt " % g_harnessAppDir
-    command += "--commands=%s/hunglishcommands.filters.txt " % g_harnessAppDir
+    command += "--graph=%s/hunglishstategraph.txt " % g_harnessAppDir
+    command += "--commands=%s/hunglishcommands.txt " % g_harnessAppDir
     command += "--root=%s --catalog=%s" % ( g_harnessDataDirectory, catalogFile )
 
     logg( command )
