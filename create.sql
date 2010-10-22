@@ -22,9 +22,9 @@ CREATE TABLE `job_queue` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `version` int(11) DEFAULT NULL,
   `status` varchar(1) not null DEFAULT 'N', -- N not processed; S started; F finished
-  `request_timestamp` TIMESTAMP NOT NULL,
-  `start_timestamp` TIMESTAMP DEFAULT NULL,
-  `end_timestamp` TIMESTAMP DEFAULT NULL,
+  `request_timestamp` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `start_timestamp` TIMESTAMP ,
+  `end_timestamp` TIMESTAMP ,
   PRIMARY KEY (`id`),
   KEY `job_queue_i_status` (`status`),
   KEY `job_queue_i_ts` (`request_timestamp`)
@@ -68,7 +68,7 @@ CREATE TABLE `bisen` (
   `en_sentence_hash` bigint(20) DEFAULT NULL,
   `hu_sentence_hash` bigint(20) DEFAULT NULL,
   `is_duplicate` bit(1) DEFAULT NULL,
-  `indexed_timestamp` TIMESTAMP DEFAULT NULL,
+  `indexed_timestamp` TIMESTAMP ,
   PRIMARY KEY (`id`),
   KEY `fk_bisen_doc` (`doc`),
   KEY `bisen_hash` (`is_indexed`, `en_sentence_hash`, `hu_sentence_hash`),
@@ -135,7 +135,7 @@ CREATE TABLE `upload` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `version` int(11) DEFAULT NULL,
   
-  `hu_uploaded_file_path` varchar(255) DEFAULT NULL, --this is filled by the webapp (UploadController); this is normalized name
+  `hu_uploaded_file_path` varchar(255) DEFAULT NULL, -- this is filled by the webapp (UploadController); this is normalized name
   `en_uploaded_file_path` varchar(255) DEFAULT NULL, 
   
   `hu_original_file_name` varchar(255) not NULL, -- the file was uploaded with this name;this is filled by the webapp (UploadController)
@@ -163,8 +163,8 @@ CREATE TABLE `upload` (
   -- `hu_sentence` varchar(4000) DEFAULT NULL, -- not used in current implementation
   
   
-  `created_timestamp` TIMESTAMP not NULL, -- this is filled by the webapp (UploadController) when the files was uploaded
-  `harnessed_timestamp` TIMESTAMP DEFAULT NULL, -- this is filled by control_harness.py when the pipe-line is completed
+  `created_timestamp` TIMESTAMP , -- this is filled by the webapp (UploadController) when the files was uploaded
+  `harnessed_timestamp` TIMESTAMP , -- this is filled by control_harness.py when the pipe-line is completed
   
   PRIMARY KEY (`id`),
   KEY `fk_upload_genre` (`genre`),
