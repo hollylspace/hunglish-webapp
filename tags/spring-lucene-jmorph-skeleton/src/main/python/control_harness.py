@@ -5,34 +5,10 @@ import sys
 import os
 import shutil
 
+from base import *
+
 g_harnessDataDirectory = ""
 g_harnessAppDir = "/big1/Work/Pipeline/cvs/tcg/harness"
-
-def logg(s) :
-    sys.stderr.write(s+"\n")
-
-def mkdir(f) :
-    try :
-        os.mkdir(f)
-    except :
-	# Ez csuf, de csak a mar letezo dir-t fedi el. Egyelore megfelel.
-	pass
-
-def cp(f1,f2) :
-    logg( "cp "+f1+" "+f2 )
-    shutil.copy(f1,f2)
-
-def getCursor(db) :
-    return db.cursor(MySQLdb.cursors.SSDictCursor)
-
-def extension(filename) :
-    a = filename.split(".")
-    assert len(a)>1
-    return a[-1]
-
-#TODO 'srt'
-def isExtensionWeLike(ext) :
-    return ext in ( 'doc','htm','html','pdf', 'rtf', 'txt', )
 
 def moveFileToHarness(rawPath,lang,ext,id) :
     global g_harnessDataDirectory
@@ -44,11 +20,13 @@ def moveFileToHarness(rawPath,lang,ext,id) :
     targetDir += "/"+ext
     mkdir(targetDir)
     targetFilename = str(id)+"."+lang+"."+ext
+    logg( rawPath +" ~~~ "+ targetDir+"/"+targetFilename )
     cp( rawPath, targetDir+"/"+targetFilename )
+    logg("Done.")
 
 def moveFilesToHarness(metadata) :
-    huRawPath = metadata['hu_raw_file_path']
-    enRawPath = metadata['en_raw_file_path']
+    huRawPath = metadata['hu_uploaded_file_path']
+    enRawPath = metadata['en_uploaded_file_path']
     id = metadata['id']
     huExt = extension(huRawPath)
     enExt = extension(enRawPath)
@@ -56,42 +34,59 @@ def moveFilesToHarness(metadata) :
     assert isExtensionWeLike(enExt)
     moveFileToHarness(huRawPath,'hu',huExt,id)
     moveFileToHarness(enRawPath,'en',enExt,id)
+    logg("Finished moving files to harness.")
 
-def runHarness(id) :
+def collectMoreMetadata(metadata,metadataFile) :
+    f = file(metadataFile)
+    for l in f :
+	a = l.strip("\n").split("\t")
+	metadata[a[0]] = int(a[1])
+    return metadata
+
+def decideIfWorthIndexing(metadata) :
+    huLines = metadata['hu_sentence_count']
+    enLines = metadata['en_sentence_count']
+    alignLines = metadata['align_bisentence_count']
+    if alignLines >= min((huLines,enLines))*0.8 :
+	keepIt = True
+    else :
+	keepIt = False
+    keepIt = True
+    metadata['keep_it'] = str(keepIt).lower()
+    return metadata
+
+def runHarness(metadata) :
     global g_harnessAppDir
     global g_harnessDataDirectory
     catalogFile = "catalog.tmp"
-
+    
+    id = metadata['id']
+    
     f = file(catalogFile,"w")
     f.write(str(id)+"\n")
     f.close()    
 
     command = "python %s/harness.py " % g_harnessAppDir
-    command += "--graph=%s/hunglishstategraph.txt " % g_harnessAppDir
-    command += "--commands=%s/hunglishcommands.txt " % g_harnessAppDir
+    command += "--graph=%s/hunglishstategraph.filters.txt " % g_harnessAppDir
+    command += "--commands=%s/hunglishcommands.filters.txt " % g_harnessAppDir
     command += "--root=%s --catalog=%s" % ( g_harnessDataDirectory, catalogFile )
 
     logg( command )
     doIt = False
     if doIt :
 	status = os.system(command)
+	if status!=0 :
+	    raise Exception( "harness returned with error code"+str(status) )
     else :
 	# Csak teszteleshez, ha a qf fajl mar korabban a helyere kerult.
 	status = 0
 
     # TODO Cso"ro:zzu:k at a kimenetet valami $LOGDIR/$id.log fajlba.
-    return status==0
 
-def lookup(db,tableName,fieldName,value) :
-    cursor = getCursor(db)
-    command = 'select id from %s where %s = ' % (tableName,fieldName)
-    cursor.execute( command+' %s', value )
-    rows = cursor.fetchall()
-    assert len(rows)<=1
-    if len(rows)==0 :
-	return None
-    else :
-	return rows[0]['id']
+    metadataFile = "%s/align/bimeta/%s.align.bimeta" % ( g_harnessDataDirectory,str(id) )
+    metadata = collectMoreMetadata(metadata,metadataFile)
+    metadata = decideIfWorthIndexing(metadata)
+    return metadata
 
 def addAuthorIfNeeded(db,author) :
     authorId = lookup(db,"author","name",author)
@@ -124,8 +119,8 @@ def metadataFromUpload(db,id) :
     metadata['hu_title'] = r['hu_title']
     metadata['en_title'] = r['en_title']
     metadata['genre'] = r['genre']
-    metadata['hu_raw_file_path'] = r['hu_file_path']
-    metadata['en_raw_file_path'] = r['en_file_path']
+    metadata['hu_uploaded_file_path'] = r['hu_uploaded_file_path']
+    metadata['en_uploaded_file_path'] = r['en_uploaded_file_path']
     
     # Ha uj, akkor kibovitjuk vele az author tablat.
     author = r['author']
@@ -148,17 +143,17 @@ def metadataFromUpload(db,id) :
 
 def metadataToDoc(db,metadata) :
 # (id, old_docid, genre, author, en_title, hu_title,
-# is_open_content, hu_raw_file_path, en_raw_file_path, aligned_file_path)
+# is_open_content, aligned_file_path)
 
     m = metadata
     cursor = getCursor(db)
     cursor.execute("insert into doc \
 	(old_docid, genre, author, en_title, hu_title, \
-	is_open_content, hu_raw_file_path, en_raw_file_path, aligned_file_path, upload) \
-	values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+	is_open_content, aligned_file_path, upload) \
+	values (%s, %s, %s, %s, %s, %s, %s, %s)",
 	(m['old_docid'], m['genre'], m['author'],
          m['en_title'],m['hu_title'],
-	 m['is_open_content'], m['hu_raw_file_path'], m['en_raw_file_path'],
+	 m['is_open_content'],
          m['aligned_file_path'], m['id'] )
     )
     docId = cursor.lastrowid
@@ -200,7 +195,7 @@ def harnessOutputFileToBisenTable(db,docId,alignedFilePath) :
     if len(sentences) > 0 :
         cursor.executemany("insert into bisen (doc, line_number, hu_sentence, en_sentence) VALUES (" +str(docId)+ ", %s,%s,%s)", sentences)
     else :
-	raise LowQualityException()
+	raise Exception("There should be binsentences in the qf file.")
 
 def setUploadTo(db,id,status) :
     cursor = getCursor(db)
@@ -214,30 +209,59 @@ def newUploads(db) :
 	ids = [ r["id"] for r in cursor.fetchall() ]
     return ids
 
+# The task of this function is to update the following fields:
+# is_processed
+# hu_raw_file_size, en_raw_file_size
+# hu_sentence_count, en_sentence_count
+# align_bisentence_count, harnessed_timestamp
+def updateUploadTable(db,metadata,processedFlag) :
+    cursor = getCursor(db)
+    id = metadata['id']
+    hu_raw_file_size = metadata['hu_raw_file_size']
+    en_raw_file_size = metadata['en_raw_file_size']
+    hu_sentence_count = metadata['hu_sentence_count']
+    en_sentence_count = metadata['en_sentence_count']
+    align_bisentence_count = metadata['align_bisentence_count']
+
+    cursor.execute("update upload set is_processed=%s, \
+	hu_raw_file_size=%s  , en_raw_file_size=%s, \
+	hu_sentence_count=%s , en_sentence_count=%s, \
+	align_bisentence_count=%s , harnessed_timestamp=now() \
+	where id=%s",
+	    (processedFlag,
+	    hu_raw_file_size,en_raw_file_size,
+	    hu_sentence_count,en_sentence_count,
+	    align_bisentence_count,id) )
+
 def processOneUpload(db,id) :
     try :
+	logg("Looking up data from update table...")
         metadata = metadataFromUpload(db,id)
+	logg("Moving document files to harness...")
 	moveFilesToHarness(metadata)
-	acceptable = runHarness(id)
-        if acceptable :
+	logg("Running harness...")
+	metadata = runHarness(metadata)
+	keepIt = metadata['keep_it']=="true"
+        if keepIt :
+	    logg("Adding metadata to doc table...")
     	    docId = metadataToDoc(db,metadata)
+	    logg("Adding harvested bisentences to bisen table...")
             harnessOutputFileToBisenTable(db,docId,metadata['aligned_file_path'])
+	    processedFlag = "Y"
         else :
-            raise LowQualityException()
+	    processedFlag = "L"
+	    logg("Throwing it away.")
+	logg("Updating upload record with metadata...")
+	updateUploadTable(db,metadata,processedFlag)
     except Exception, e :
-	logg(e)
+	raise
+	logg("Exception: "+str(e)) # TODO Miert nem irja ki rendesen?
 	db.rollback()
-        if type(e)==LowQualityException :
-            processedFlag = "L"
-	    logg("%d (%s) was not loaded into bisen, because its quality was low." % (id,metadata[en_title]) )
-        else :
-            processedFlag = "E"
-	    logg("%d (%s) had some error, it could not be loaded into bisen." % (id,metadata[en_title]) )
+	logg("%d (%s) had some error, it could not be loaded into bisen." % (id,metadata['en_title']) )
+        processedFlag = "E"
 	setUploadTo(db,id,processedFlag)
 	db.commit()
     else :
-        processedFlag = "Y"
-	setUploadTo(db,id,processedFlag)
 	db.commit()
 	logg(str(id)+" was successfully loaded into bisen.")
 
@@ -260,6 +284,7 @@ def main():
         
     ids = newUploads(db)
     for id in ids :
+	logg("Processing "+str(id)+"...")
 	processOneUpload(db,id)
 
     indexThemLucene()

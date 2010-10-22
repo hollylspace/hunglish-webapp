@@ -19,15 +19,18 @@ HARNESSDIR=/big1/Work/Pipeline/cvs/tcg/harness
 python $HARNESSDIR/harness.py --graph=$HARNESSDIR/hunglishstategraph.txt --commands=$HARNESSDIR/hunglishcommands.txt --root=<ARGUMENTUM> --catalog catalog.tmp
 Ha ez eredmenyt adott (azaz nem szallt el, es a minosegszurok nem csonkoltak nulla bajtosra),
 akkor letrehoz neki egy uj doc-ot, es a mondatparokat bemasolja a bisen tablaba.
+Az upload tablat frissiti a harness altal kibocsatott meret-adatokkal.
 Amikor ez mind lezajlott, akkor meghivja az indexelot.
 
 
+---
 TODO:
 - egy qfilter a mondatraszegmentalas utanra, ami eldobja az egeszet,
-ha rosszak az aranyok mondatra vagy bajtra.
+ha rosszak az aranyok mondatra vagy bajtra. (A helye mar megvan.)
 
 - egy qfilter, ami eldobja az egeszet, ha nagyon keves mondatpar van,
 vagy nagyon rossz az aranya a parhuzamositas elotti mondatpar-szamnak.
+(A helye mar megvan.)
 
 - meghivni az indexer parancssort. Majd kiderul hogy hogy kell, windowson igy:
 java -Xmx1500M -classpath lib:hunglish-0.1.0.jar:. hu.mokk.hunglish.lucene.Launcher
@@ -37,7 +40,6 @@ java -Xmx1500M -classpath lib:hunglish-0.1.0.jar:. hu.mokk.hunglish.lucene.Launc
 - maga a control_harness kimenet logba. datum.controller.log
 
 - egy biztonsagi mentest kellene csinalni az indexrol, mielott meghivjuk az indexert.
-
 
 ---
 Command line indexer build process:
