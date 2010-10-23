@@ -264,9 +264,12 @@ def processOneUpload(db,id) :
 	db.commit()
 	logg(str(id)+" was successfully loaded into bisen.")
 
-def indexThemLucene() :
-    # command = "java -Xmx1500M -classpath lib:hunglish-0.1.0.jar:. hu.mokk.hunglish.lucene.Launcher"
-    pass
+# 
+def indexThemLucene(db) :
+    logg("Sending signal to indexer...")
+    cursor = getCursor(db)
+    cursor.execute("insert into job_queue (status) values ('N')")
+    db.commit()
 
 def main():
     global g_harnessDataDirectory

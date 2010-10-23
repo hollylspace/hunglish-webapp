@@ -30,11 +30,14 @@ Amikor ez mind lezajlott, akkor egy job queue tablan keresztul uzen a webappnak,
 
 ---
 TODO:
+
 - utf8 bug.
 
 - harness kimenet logba. datum-uploadId.log
 - indexer kimenet logba. datum.indexer.log
 - maga a control_harness kimenet logba. datum.controller.log
+
+- Atkoltozni a big3-ra.
 
 - megepiteni az uploadtable-t az alabbi adathalmazokhoz, es vegigzavarni a gepet rajta:
 ~/big/experiments/hunglish.webservice/importolddata/doclist.nolaw
