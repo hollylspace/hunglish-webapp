@@ -8,7 +8,7 @@ import shutil
 from base import *
 
 g_harnessDataDirectory = ""
-g_harnessAppDir = "/big1/Work/Pipeline/cvs/tcg/harness"
+g_harnessAppDir = "/big3/Work/HunglishMondattar/tcg/harness"
 
 def moveFileToHarness(rawPath,lang,ext,id) :
     global g_harnessDataDirectory
@@ -289,7 +289,7 @@ def main():
 	logg("Processing "+str(id)+"...")
 	processOneUpload(db,id)
 
-    indexThemLucene()
+    indexThemLucene(db)
 
 if __name__ == "__main__" :
     main()
