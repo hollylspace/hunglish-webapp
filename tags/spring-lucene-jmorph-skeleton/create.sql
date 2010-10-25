@@ -21,7 +21,7 @@ DROP TABLE IF EXISTS `job_queue`;
 CREATE TABLE `job_queue` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `version` int(11) DEFAULT NULL,
-  `status` varchar(1) not null DEFAULT 'N', -- N not processed; S started; F finished
+  `status` varchar(1) not null DEFAULT 'N', -- N new, not processed; S started; F finished
   `request_timestamp` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `start_timestamp` TIMESTAMP ,
   `end_timestamp` TIMESTAMP ,
