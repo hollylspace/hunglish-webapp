@@ -8,6 +8,7 @@ import hu.mokk.hunglish.jmorph.AnalyzerProvider;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 
 import net.sf.jhunlang.jmorph.parser.ParseException;
 
@@ -78,15 +79,24 @@ public class Indexer {
 
 	private void reCreateDir(File dir) {
 		try {
-			FileUtils.deleteQuietly(dir);
-			FileUtils.forceMkdir(dir);
+			Collection coll = FileUtils.listFiles(dir, null, false);
+			if (coll.size() > 0){
+				FileUtils.deleteQuietly(dir);
+				FileUtils.forceMkdir(dir);
+			}
 		} catch (IOException e) {
 			throw new RuntimeException("Cannot recreate directory:" + dir, e);
 		}
 	}
 
 	public void deleteTmpDirectory() throws IOException {
-		reCreateDir(new File(tmpIndexDir));
+		File dir = new File(tmpIndexDir); 
+System.out.println("-----------------------------------------------------");		
+System.out.println("-----------------exists?"+dir.exists()+"------------------------------------");		
+System.out.println("-----------------is it a dir?"+dir.isDirectory()+"------------------------");
+System.out.println("-----------------recreate dir:"+dir.getAbsolutePath()+"------------------------------------");
+		
+		reCreateDir(dir);
 	}
 
 	synchronized public void indexAll(boolean tmp)

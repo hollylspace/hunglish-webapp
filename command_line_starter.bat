@@ -11,3 +11,10 @@ rem 5) a jar mell� az appContext-et �s a *.properties-t
 rem 6) az Appcontextban jav�tani
 rem 6.1) 	<context:property-placeholder location="classpath*:*.properties" />
 rem 6.2) 	<bean id="multipartResolver" ---> ezt ki kell kommentezni
+
+----------------------------
+rem maven war build
+rem 1) edit database.properties
+rem 2) copy resources-lang
+rem 3) create dirs: fileUpload, hunglishIndex, hunglishIndexTmp
+rem 4) copy j-morph jar into libs

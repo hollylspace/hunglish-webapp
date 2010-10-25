@@ -17,7 +17,6 @@
                         <th>En Title</th>
                         <th>Hu Title</th>
                         <th>Is Processed</th>
-                        <th>Is Approved</th>
                         <th/>
                         <th/>
                         <th/>
@@ -43,9 +42,6 @@
                         </td>
                         <td>
                             <c:out value="${fn:substring(upload.isProcessed, 0, 10)}"/>
-                        </td>
-                        <td>
-                            <c:out value="${fn:substring(upload.isApproved, 0, 10)}"/>
                         </td>
                         <td>
                             <spring:url value="/upload/${upload.id}" var="show_form_url"/>
