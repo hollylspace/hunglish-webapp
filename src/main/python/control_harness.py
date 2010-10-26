@@ -253,8 +253,7 @@ def processOneUpload(db,id) :
 	logg("Updating upload record with metadata...")
 	updateUploadTable(db,metadata,processedFlag)
     except Exception, e :
-	raise
-	logg("Exception: "+str(e)) # TODO Miert nem irja ki rendesen?
+	logg("Exception: "+str(type(e))+" "+str(e))
 	db.rollback()
 	logg("%d (%s) had some error, it could not be loaded into bisen." % (id,metadata['en_title']) )
         processedFlag = "E"
