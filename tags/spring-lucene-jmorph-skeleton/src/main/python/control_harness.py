@@ -167,7 +167,7 @@ this is the format of quality fitlered aligned file:
 '''
 def readAlignFile(path, enc):
     def getSentences(line):
-        sentences = line.encode('utf-8').split('\t')
+        sentences = line.split('\t')
         if len(sentences) != 2:
             # TODO here we need an assert len(sentences) == 2
             return ('', '')
@@ -281,8 +281,10 @@ def main():
     database = sys.argv[3]
     g_harnessDataDirectory = sys.argv[4]
     
-    db = MySQLdb.connect(host="localhost", user=username, passwd=password, db=database)
-        
+    db = MySQLdb.connect( host="localhost",
+	user=username, passwd=password, db=database )
+    db.set_character_set("utf8")
+
     ids = newUploads(db)
     for id in ids :
 	logg("Processing "+str(id)+"...")
