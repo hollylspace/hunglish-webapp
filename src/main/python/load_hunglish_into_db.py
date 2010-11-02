@@ -50,10 +50,12 @@ def processFile(db, qfpath, genre, author, hutitle, entitle, opencontent, rawHuP
     isopencontent = False
     if opencontent == 'Y':
         isopencontent = True
-    cursor.execute("insert into doc (old_docid, genre, author, en_title, hu_title, is_open_content, hu_raw_file_path, en_raw_file_path, aligned_file_path) values (%s, %s, %s, %s, %s, %s, %s, %s, %s)", (oldDocId, genreId, authorId, entitle, hutitle, isopencontent, rawHuPath, rawEnPath, qfpath))
+    cursor.execute("insert into doc (old_docid, genre, author, en_title, hu_title, is_open_content, aligned_file_path) values (%s, %s, %s, %s, %s, %s, %s)", (oldDocId, genreId, authorId, entitle, hutitle, isopencontent, qfpath))
     docId = cursor.lastrowid
     if len(sentences) > 0:
         cursor.executemany("insert into bisen (doc, line_number, hu_sentence, en_sentence) VALUES (" + str(docId) + ", %s, %s,%s)", sentences)
+    for (n,hu,en) in sentences[10:20] :
+	print hu
     db.commit()
 
 '''Process the doclist file (sort of a catalog)
@@ -74,6 +76,9 @@ def main():
         password = sys.argv[2]
         database = sys.argv[3]
         db = MySQLdb.connect(host="localhost", user=username, passwd=password, db=database)
+	print "character_set_name:  "+db.character_set_name()
+	db.set_character_set("utf8")
+	print "character_set_name2: "+db.character_set_name()
     if len(sys.argv) == 9:
         filepath = sys.argv[4]
         author = sys.argv[5]

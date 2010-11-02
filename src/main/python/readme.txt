@@ -31,6 +31,9 @@ Amikor ez mind lezajlott, akkor egy job queue tablan keresztul uzen a webappnak,
 ---
 TODO:
 
+- A hasheles fix stabil percenkent 12.3 darabos sebesseggel tortenik, ez igy 62 nap
+a hunglish1.nolaw-ra.
+
 - utf8 bug.
 
 - Ha ures a qf, akkor most "E"-t jegyez be "L" helyett.
@@ -39,11 +42,16 @@ TODO:
 - indexer kimenet logba. datum.indexer.log
 - maga a control_harness kimenet logba. datum.controller.log
 
-A metaadatok is utf8-ban legyenek.
+- A metaadatok is utf8-ban legyenek.
+
+- Kellene egy save-load script-pa'r, ami a megadott konyvtarba ment
+egy mysqldumpot, egy harness.data es fileUpload konyvtarat es egy lucene indexet.
+
+- old_docid-t kivezetni az uploadtable formatumig. Ha mar az se kezeli, akkor ki kezelje?
 
 DONE - Atkoltozni a big3-ra.
 
-DONE - megepiteni az uploadtable-t a reszkorpuszokhoz, es vegigzavarni a gepet rajta:
+DONE - megepiteni az uploadtable-t a reszkorpuszokhoz, es vegigzavarni a gepet rajta.
 
 - WTF Szegyenszemre az alkalmazas konyvtarabol kell inditani a tomcat-et, nem tudom miert:
 daniel@kozel:/srv/tomcat-6.0.20/webapps/hunglish-0.1.0-SNAPSHOT$ sudo /etc/init.d/tomcat6 start
@@ -55,6 +63,8 @@ akkor csendben kivalasztja az egyiket, feltehetoleg nem azt, amit igazibol akars
 Mondjuk ha ez eloall, az mar reg rossz, az is igaz.
 
 - srt formatum feltoltese, konverzioja.
+
+Maradtak bent html entitasok valamelyik konverter kimeneteben.
 
 - Tortenetesen a hunglish2 txt resze es a sajtofigyelo egyarant latin2, de
 nemigen lehet meguszni vagy egy autodetect-et, ami a txt-bol raw-ba alakitaskor fut,
@@ -84,6 +94,9 @@ nem hogy a hunglish1.nolaw.uploadtable megalkotasaig.
 - Kornai feature request-je: A lucene tokenizalo legyen olyan okos,
 hogy a dog's szot is megtalalja, ha a dog-ra keresek.
 
+- A bena felhasznalok nagyon el tudjak csufitani a korpuszt, ha ugyetlenul
+felcserelik az angol es magyar upload mezot. Kell egy nyelvdetektor filter.
+
 ---
 Adatforrasok
 
@@ -105,7 +118,7 @@ Igy keszult az uploadtable:
 cat /big3/Work/HunglishMondattar/datasources/hunglish1.nolaw/doclist.nolaw | awk 'BEGIN{t="\t";FS=t;dir="/big3/Work/HunglishMondattar/datasources/hunglish1.nolaw"}  { print $3 t $4 t $5 t $2 t dir "/hu/" $9 ".hu.txt" t dir "/en/" $9 ".en.txt" }' > /big3/Work/HunglishMondattar/datasources/hunglish1.nolaw/hunglish1.nolaw.uploadtable
 TODO A subtitles reszkorpuszban benne maradtak a wiIIing bugok.
 Szerintem ezt a harness elott kellene rendberakni,
-
+a tcg/scripts/normalizeSubtitles.py fajlban.
 
 = Hunglish 1.0 Law
 originally at: ~/big/experiments/hunglish.webservice/importolddata/doclist.justlaw
