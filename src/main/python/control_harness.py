@@ -70,7 +70,7 @@ def runHarness(metadata) :
     command += "--root=%s --catalog=%s" % ( g_harnessDataDirectory, catalogFile )
 
     logg( command )
-    doIt = True
+    doIt = False
     if doIt :
 	status = os.system(command)
 	if status!=0 :
@@ -218,11 +218,11 @@ def harnessOutputFileToBisenTable(db,docId,alignedFilePath) :
     bisentences = readAlignFile(alignedFilePath, 'ISO-8859-2')
     hashedBisentences = hashSentences(bisentences)
     cursor = getCursor(db)
-    if len(sentences) > 0 :
+    if len(bisentences) > 0 :
         cursor.executemany("insert into bisen (doc, line_number, hu_sentence, en_sentence, hu_sentence_hash, en_sentence_hash, version) \
 	values (" +str(docId)+ ", %s,%s,%s,%s,%s,1)", hashedBisentences)
     else :
-	raise Exception("There should be binsentences in the qf file.")
+	raise Exception("There should be bisentences in the qf file.")
 
 def setUploadTo(db,id,status) :
     cursor = getCursor(db)
@@ -294,32 +294,39 @@ def processOneUpload(db,id) :
 def flagDuplicates(db) :
     logg("Flagging duplicates...")
     try :
-        cursor = getCursor(db)
-        cursor.execute("select id,hu_sentence_hash,en_sentence_hash,is_indexed ordered by hu_sentence_hash,en_sentence_hash,is_indexed")
-        results = cursor.fetch_all()
+        cursor = db.cursor(MySQLdb.cursors.Cursor)
+	# Az itt a jopofa trukk, hogy az egyforma hash-ueket (es indexeltsegueket)
+	# mar az osszhosszuk szerint rendezi, hogy a sok nemalfanumerikust ne tolja
+	# a felhasznalo arcaba feleslegesen.
+        cursor.execute("""select
+	    id,hu_sentence_hash,en_sentence_hash,is_indexed
+	    from bisen order by
+	    hu_sentence_hash,en_sentence_hash,is_indexed,
+	    CHAR_LENGTH(CONCAT(en_sentence,hu_sentence))""")
+        results = cursor.fetchall()
         dupIds = []
         prevHashes = (None,None)
         newBisenNum = 0
         for (id,huHash,enHash,isIndexed) in results :
             hashes = (huHash,enHash)
-            raise "is this boolean?"
-            if not isIndexed :
+            if isIndexed==None :
                 newBisenNum += 1
                 if hashes==prevHashes :
                     dupIds.append(id)
             prevHashes = hashes
 
         for id in dupIds :
-            cursor.execute("update is_duplicate values (true) where id=%s" % id )
+            cursor.execute("update bisen set is_duplicate=True where id=%s" % id )
 
         logg("%d duplicates found in %d new records. total # of records %d" % (len(dupIds),newBisenNum,len(results)) )
     except Exception, e:
 	logg("ERROR in flagDuplicates()!")
         logg("Exception: "+str(type(e))+" "+str(e))
         db.rollback()
+        logg("Flagging duplicates rolled back.")
     else :
         db.commit()
-        logg("Done.")
+        logg("Done flagging duplicates.")
 
 def indexThemLucene(db) :
     logg("Sending signal to indexer...")
