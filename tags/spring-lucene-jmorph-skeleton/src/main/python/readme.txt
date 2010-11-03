@@ -31,6 +31,8 @@ Amikor ez mind lezajlott, akkor egy job queue tablan keresztul uzen a webappnak,
 ---
 TODO:
 
+- Most a bisen.is_indexed -et olyanra hasznalom, ami igazibol is_duplumflagged, vagy ilyesmi.
+
 - A hasheles fix stabil percenkent 12.3 darabos sebesseggel tortenik, ez igy 62 nap
 a hunglish1.nolaw-ra.
 
