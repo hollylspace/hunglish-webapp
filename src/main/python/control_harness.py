@@ -184,15 +184,43 @@ def readAlignFile(path, enc):
 class LowQualityException(Exception) :
     pass
 
+def normalizeSentence(sentence) :
+    s = sentence.lower()
+    
+    # I'm sorry.
+    a = s.split(" ")
+    s = " ".join( [ w for w in a if w!="" ] )
+    
+    a = []
+    for c in s :
+	if c==" " or c.isalnum() :
+	    a.append(c)
+    return u"".join(a)
+
+def normalizedHash(sentence) :
+    norm = normalizeSentence(sentence)
+    return hash(norm) # Lehet, hogy ez a hash nem eleg eros, nem tudom.
+
+# Input: list of 3-length tuples (line_number, hu_sentence, en_sentence)
+# Output: list of 5-length tuples (line_number, hu_sentence, en_sentence, hu_sentence_hash, en_sentence_hash)
+def hashSentences(bisentences) :
+    hashedBisentences = []
+    for (line_number, hu_sentence, en_sentence) in bisentences :
+	hu_sentence_hash = normalizedHash(hu_sentence)
+	en_sentence_hash = normalizedHash(en_sentence)
+	hashedBisentences.append( (line_number, hu_sentence, en_sentence, hu_sentence_hash, en_sentence_hash) )
+    return hashedBisentences
+
 # docId nem tevesztendo ossze id-vel, az utobbit az upload tabla
 # adja autoincrementtel, az elobbit a doc.
 def harnessOutputFileToBisenTable(db,docId,alignedFilePath) :
     logg( "Loading into database: "+alignedFilePath )
-    sentences = readAlignFile(alignedFilePath, 'ISO-8859-2')
+    bisentences = readAlignFile(alignedFilePath, 'ISO-8859-2')
+    hashedBisentences = hashSentences(bisentences)
     cursor = getCursor(db)
     if len(sentences) > 0 :
-        cursor.executemany("insert into bisen (doc, line_number, hu_sentence, en_sentence, version) \
-	values (" +str(docId)+ ", %s,%s,%s,1)", sentences)
+        cursor.executemany("insert into bisen (doc, line_number, hu_sentence, en_sentence, hu_sentence_hash, en_sentence_hash, version) \
+	values (" +str(docId)+ ", %s,%s,%s,%s,%s,1)", hashedBisentences)
     else :
 	raise Exception("There should be binsentences in the qf file.")
 
@@ -263,12 +291,42 @@ def processOneUpload(db,id) :
 	db.commit()
 	logg(str(id)+" was successfully loaded into bisen.")
 
-# 
+def flagDuplicates(db) :
+    logg("Flagging duplicates...")
+    try :
+        cursor = getCursor(db)
+        cursor.execute("select id,hu_sentence_hash,en_sentence_hash,is_indexed ordered by hu_sentence_hash,en_sentence_hash,is_indexed")
+        results = cursor.fetch_all()
+        dupIds = []
+        prevHashes = (None,None)
+        newBisenNum = 0
+        for (id,huHash,enHash,isIndexed) in results :
+            hashes = (huHash,enHash)
+            raise "is this boolean?"
+            if not isIndexed :
+                newBisenNum += 1
+                if hashes==prevHashes :
+                    dupIds.append(id)
+            prevHashes = hashes
+
+        for id in dupIds :
+            cursor.execute("update is_duplicate values (true) where id=%s" % id )
+
+        logg("%d duplicates found in %d new records. total # of records %d" % (len(dupIds),newBisenNum,len(results)) )
+    except Exception, e:
+	logg("ERROR in flagDuplicates()!")
+        logg("Exception: "+str(type(e))+" "+str(e))
+        db.rollback()
+    else :
+        db.commit()
+        logg("Done.")
+
 def indexThemLucene(db) :
     logg("Sending signal to indexer...")
     cursor = getCursor(db)
     cursor.execute("insert into job_queue (status) values ('N')")
     db.commit()
+    logg("Done.")
 
 def main():
     global g_harnessDataDirectory
@@ -289,6 +347,8 @@ def main():
     for id in ids :
 	logg("Processing "+str(id)+"...")
 	processOneUpload(db,id)
+
+    flagDuplicates(db)
 
     indexThemLucene(db)
 
