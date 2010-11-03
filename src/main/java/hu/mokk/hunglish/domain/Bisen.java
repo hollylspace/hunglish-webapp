@@ -13,7 +13,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -130,6 +129,7 @@ public class Bisen {
 		this.id = merged.getId(); // */
 	}
 
+	
 	public static final EntityManager entityManager() {
 		EntityManager em = new Bisen().entityManager;
 		if (em == null)
@@ -158,10 +158,6 @@ public class Bisen {
 						"huhash", this.huSentenceHash).setParameter(
 						"enhash", this.enSentenceHash).setParameter(
 						"id", this.id).getSingleResult();
-System.out.println("-----------------------------------------------------------------------------");		
-System.out.println("--------------------------countDuplicates id:"+this.id+ " result:"+result+" ---------------------------------");		
-System.out.println("--------------------------huhash:"+this.huSentenceHash+" en hash:"+this.enSentenceHash+"---------------------");		
-		
 		return result;
 	}
 
@@ -215,7 +211,7 @@ System.out.println("--------------------------huhash:"+this.huSentenceHash+" en 
 	@Transactional
 	public void updateIsIndexed(Boolean value) {
 		this.setIsIndexed(value);
-		this.setIsDuplicate(!value);
+		//this.setIsDuplicate(!value);
 		this.setIndexedTimestamp(new Date());
 		this.merge();
 	}
@@ -232,14 +228,9 @@ System.out.println("--------------------------huhash:"+this.huSentenceHash+" en 
 	}*/
 
 	public static void index(Bisen bisen, IndexWriter iwriter) {
-			bisen.updateHashCode();
 			try {
-				if (bisen.countDuplicates() > 0) {
-					bisen.updateIsIndexed(false);
-				} else {
-					iwriter.addDocument(bisen.toLucene());
-					bisen.updateIsIndexed(true);
-				}
+				iwriter.addDocument(bisen.toLucene());
+				bisen.updateIsIndexed(true);
 			} catch (CorruptIndexException e) {
 				throw new RuntimeException("Error while indexing", e);
 			} catch (IOException e) {
@@ -293,19 +284,13 @@ System.out.println("--------------------------huhash:"+this.huSentenceHash+" en 
 	
 	@SuppressWarnings("unchecked")
 	public static void indexAll(IndexWriter iwriter) {
-		updateHashCodeAll(); //TODO log if there were any record to update
-System.out.println("-----------------------------------------------------------------------------");		
-System.out.println("--------------------------updateHashCodeAll() done ---------------------------------");		
-System.out.println("-----------------------------------------------------------------------------");		
+		//updateHashCodeAll(); //TODO log if there were any record to update
 		
 		List<Bisen> bisens = entityManager().createQuery(
-				"from Bisen o where o.isIndexed is null")
+				"from Bisen o where o.isIndexed is null and isDuplicate = False")
 				.getResultList();
 		for (Bisen bisen : bisens) {
 			index(bisen, iwriter);
-System.out.println("-----------------------------------------------------------------------------");		
-System.out.println("--------------------------indexing bisen.id:"+bisen.getId().toString()+"---------------------------------");		
-System.out.println("-----------------------------------------------------------------------------");		
 			
 		}
 	}
