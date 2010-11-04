@@ -2,6 +2,7 @@ package hu.mokk.hunglish.domain;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -17,6 +18,8 @@ import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.index.CorruptIndexException;
@@ -33,7 +36,8 @@ import org.springframework.transaction.annotation.Transactional;
 @RooToString
 @RooEntity
 public class Bisen {
-
+	transient private static Log logger = LogFactory.getLog(Bisen.class);
+	 
 	@NotNull
 	@ManyToOne(targetEntity = Doc.class)
 	@JoinColumn
@@ -216,6 +220,14 @@ public class Bisen {
 		this.merge();
 	}
 
+
+	@Transactional
+	public static void batchUpdateIsIndexed(List<Long> ids, Boolean value) {
+		entityManager().createNativeQuery(
+				"update bisen set is_indexed = ?, indexed_timestamp = now() " +
+				"where id in (?) ")
+				.setParameter(0, value).setParameter(1, ids).executeUpdate();
+	}
 	
 	/*
 	@SuppressWarnings("unchecked")
@@ -227,15 +239,9 @@ public class Bisen {
 		}
 	}*/
 
-	public static void index(Bisen bisen, IndexWriter iwriter) {
-			try {
+	public static void index(Bisen bisen, IndexWriter iwriter) throws CorruptIndexException, IOException {
 				iwriter.addDocument(bisen.toLucene());
 				//bisen.updateIsIndexed(true);
-			} catch (CorruptIndexException e) {
-				throw new RuntimeException("Error while indexing", e);
-			} catch (IOException e) {
-				throw new RuntimeException("Error while indexing", e);
-			}		
 	}
 
 	@SuppressWarnings("unchecked")
@@ -246,7 +252,13 @@ public class Bisen {
 				.setParameter("senid", id)
 				.getResultList();
 		for (Bisen bisen : bisens) {
-			index(bisen, iwriter);
+			try {
+				index(bisen, iwriter);
+			} catch (CorruptIndexException e) {
+				throw new RuntimeException("Error while indexing", e);
+			} catch (IOException e) {
+				throw new RuntimeException("Error while indexing", e);
+			}		
 		}
 	}
 	
@@ -259,7 +271,13 @@ public class Bisen {
 				.setParameter("docid", docId)
 				.getResultList();
 		for (Bisen bisen : bisens) {
-			index(bisen, iwriter);
+			try {
+				index(bisen, iwriter);
+			} catch (CorruptIndexException e) {
+				throw new RuntimeException("Error while indexing", e);
+			} catch (IOException e) {
+				throw new RuntimeException("Error while indexing", e);
+			}		
 		}
 	}
 
@@ -284,21 +302,48 @@ public class Bisen {
 	
 	@SuppressWarnings("unchecked")
 	public static void indexAll(IndexWriter iwriter) {
-		//updateHashCodeAll(); //TODO log if there were any record to update
-		
-		List<Bisen> bisens = entityManager().createQuery(
-//				"from Bisen o where o.isIndexed is null and isDuplicate = False")
-				"from Bisen o where o.isIndexed is null and isDuplicate is null")
-				.getResultList();
-		for (Bisen bisen : bisens) {
-			index(bisen, iwriter);
-			
+		int batchSize = 1000;
+		int batchIndex = 0;
+		EntityManager entityManager = entityManager();
+		List<Bisen> bisens;
+		List<Long> coolIds = new LinkedList<Long>(); 
+		List<Long> wrongIds = new LinkedList<Long>();
+		boolean doIt = true;
+		while (doIt){
+			bisens = entityManager.createQuery(
+					"from Bisen o where o.isIndexed is null and isDuplicate is null" +
+					//"from Bisen o where o.isIndexed is null and isDuplicate = False " +
+					"order by o.id")
+					.setFirstResult(batchIndex++ * batchSize).setMaxResults(batchSize)
+					.getResultList();
+			doIt = (bisens != null) && (bisens.size() > 0); 
+			for (Bisen bisen : bisens) {
+				try {
+					index(bisen, iwriter);
+					coolIds.add(bisen.getId());
+				} catch (CorruptIndexException e) {
+					//throw new RuntimeException("Error while indexing", e);
+					logger.error("Indexing error bisen:"+bisen, e);
+					wrongIds.add(bisen.getId());
+				} catch (IOException e) {
+					//throw new RuntimeException("Error while indexing", e);
+					logger.error("Indexing error bisen:"+bisen, e);
+					wrongIds.add(bisen.getId());
+				}		
+			}
+			batchUpdateIsIndexed(coolIds, Boolean.TRUE);
+			batchUpdateIsIndexed(wrongIds, Boolean.FALSE);
+			entityManager.flush();
+			entityManager.clear();
+			wrongIds.clear();
+			coolIds.clear();
 		}
 	}
+	
 
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		// sb.append("Id: ").append(getId()).append(", ");
+		sb.append("Id: ").append(getId()).append(", ");
 		// sb.append("Version: ").append(getVersion()).append(", ");
 		sb.append("Doc: ").append(getDoc()).append(", ");
 		// sb.append("IsIndexed: ").append(getIsIndexed()).append(", ");
