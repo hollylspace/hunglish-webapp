@@ -307,7 +307,7 @@ public class Bisen {
 	
 	@SuppressWarnings("unchecked")
 	public static void indexAll(IndexWriter iwriter) {
-		int batchSize = 1000;
+		int batchSize = 2000;
 		int batchIndex = 0;
 		EntityManager em = entityManager();
 		em.setFlushMode(FlushModeType.COMMIT);
@@ -316,30 +316,31 @@ public class Bisen {
 		List<Long> wrongIds = new LinkedList<Long>();
 		boolean doIt = true;
 		while (doIt){
+			logger.info("indexing batch starting at "+batchIndex*batchSize);
 			bisens = em.createQuery(
-					"from Bisen o where o.isIndexed is null and isDuplicate is null" +
-					//"from Bisen o where o.isIndexed is null and isDuplicate = False " +
-					"order by o.id")
+					// This will be isDuplicate=False after I'll modify control_harness.py.
+					"from Bisen o where o.isIndexed is null and isDuplicate is null order by o.id")
 					.setFirstResult(batchIndex++ * batchSize).setMaxResults(batchSize)
 					.getResultList();
+			logger.info("getResultList() done");
 			doIt = (bisens != null) && (bisens.size() > 0); 
 			for (Bisen bisen : bisens) {
 				try {
 					index(bisen, iwriter);
 					coolIds.add(bisen.getId());
 				} catch (CorruptIndexException e) {
-					//throw new RuntimeException("Error while indexing", e);
-					logger.error("Indexing error bisen:"+bisen, e);
+					logger.error("Indexing error (CorruptIndexException) for bisen:"+bisen, e);
 					wrongIds.add(bisen.getId());
 				} catch (IOException e) {
-					//throw new RuntimeException("Error while indexing", e);
-					logger.error("Indexing error bisen:"+bisen, e);
+					logger.error("Indexing error (IOException) for bisen:"+bisen, e);
 					wrongIds.add(bisen.getId());
 				}		
 			}
-			batchUpdateIsIndexed(coolIds, Boolean.TRUE);
-			batchUpdateIsIndexed(wrongIds, Boolean.FALSE);
-			em.flush();
+			logger.info("indexing done");
+			// TODO These do not work now, but they should:
+			//batchUpdateIsIndexed(coolIds, Boolean.TRUE);
+			//batchUpdateIsIndexed(wrongIds, Boolean.FALSE);
+			//em.flush();
 			em.clear();
 			wrongIds.clear();
 			coolIds.clear();
