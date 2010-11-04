@@ -26,17 +26,27 @@ python $HARNESSDIR/harness.py --graph=$HARNESSDIR/hunglishstategraph.txt --comma
 Ha ez eredmenyt adott (azaz nem szallt el, es a minosegszurok nem csonkoltak nulla bajtosra),
 akkor letrehoz neki egy uj doc-ot, es a mondatparokat bemasolja a bisen tablaba.
 Az upload tablat frissiti a harness altal kibocsatott meret-adatokkal.
-Amikor ez mind lezajlott, akkor egy job queue tablan keresztul uzen a webappnak, hogy indexelhet.
+A bisen tabla mondataihoz eltarolja a mondat normalizalt valtozatanak hash-et.
+Ez alapjan beallitja a duplum flaget az uj bisentence-ekre.
+Amikor ez mind lezajlott, akkor egy job queue tablan keresztul uzen a webappnak, hogy indexelheti az uj ES nemduplum mondatparokat.
 
 ---
 TODO:
 
-- Most a bisen.is_indexed -et olyanra hasznalom, ami igazibol is_duplumflagged, vagy ilyesmi.
+- GERGO: Aramvonalasabba kellene tenni a kozel deploy-t. A mac-emen mar teljesen jo:
+mvn jetty:run > cout 2> cerr &
+, bar csak parancssorbol, eclipse-bol valamiert nem talalja az eroforrast.
 
-- A hasheles fix stabil percenkent 12.3 darabos sebesseggel tortenik, ez igy 62 nap
-a hunglish1.nolaw-ra.
+- Most a bisen.is_indexed -et olyanra hasznalom, ami igazibol nem az.
+Ugy kellene csinalni, hogy is_duplicate null jelenti azt, hogy me'g nem tortent duplumszures,
+es ha tortent, akkor mar true vagy false.
+Ennek megfeleloen a ("from Bisen o where o.isIndexed is null and isDuplicate is null") is modositando Bisen.java-ban.
 
-- utf8 bug.
+- Most eppen ki van kommentelve bisen.updateIsIndexed(true), mert tul lassu. Valami kotegelt timestampeles kellene ide.
+
+DONE - A hasheles fix stabil percenkent 12.3 darabos sebesseggel tortenik, ez igy 62 nap a hunglish1.nolaw-ra.
+
+DONE - utf8 bug.
 
 - Ha ures a qf, akkor most "E"-t jegyez be "L" helyett.
 
