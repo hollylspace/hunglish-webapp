@@ -224,10 +224,14 @@ public class Bisen {
 
 	@Transactional
 	public static void batchUpdateIsIndexed(List<Long> ids, Boolean value) {
+		EntityManager em = entityManager();
+		em.setFlushMode(FlushModeType.COMMIT);
+		em.getTransaction().begin();
 		entityManager().createNativeQuery(
 				"update bisen set is_indexed = ?, indexed_timestamp = now() " +
 				"where id in (?) ")
 				.setParameter(1, value).setParameter(2, ids).executeUpdate();
+		em.getTransaction().commit();
 	}
 	
 	/*
@@ -305,14 +309,14 @@ public class Bisen {
 	public static void indexAll(IndexWriter iwriter) {
 		int batchSize = 1000;
 		int batchIndex = 0;
-		EntityManager entityManager = entityManager();
-		entityManager.setFlushMode(FlushModeType.COMMIT);
+		EntityManager em = entityManager();
+		em.setFlushMode(FlushModeType.COMMIT);
 		List<Bisen> bisens;
 		List<Long> coolIds = new LinkedList<Long>(); 
 		List<Long> wrongIds = new LinkedList<Long>();
 		boolean doIt = true;
 		while (doIt){
-			bisens = entityManager.createQuery(
+			bisens = em.createQuery(
 					"from Bisen o where o.isIndexed is null and isDuplicate is null" +
 					//"from Bisen o where o.isIndexed is null and isDuplicate = False " +
 					"order by o.id")
@@ -335,8 +339,8 @@ public class Bisen {
 			}
 			batchUpdateIsIndexed(coolIds, Boolean.TRUE);
 			batchUpdateIsIndexed(wrongIds, Boolean.FALSE);
-			entityManager.flush();
-			entityManager.clear();
+			em.flush();
+			em.clear();
 			wrongIds.clear();
 			coolIds.clear();
 		}
