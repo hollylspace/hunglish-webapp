@@ -61,6 +61,9 @@ egy mysqldumpot, egy harness.data es fileUpload konyvtarat es egy lucene indexet
 
 - old_docid-t kivezetni az uploadtable formatumig. Ha mar az se kezeli, akkor ki kezelje?
 
+- Vegiggondolni, hogy milyen katasztrofakhoz vezet (ha vezet), ha veletlenul
+egyidoben fut ket control_harness peldany. indexelesbol semmikeppen ne fusson.
+
 DONE - Atkoltozni a big3-ra.
 
 DONE - megepiteni az uploadtable-t a reszkorpuszokhoz, es vegigzavarni a gepet rajta.
@@ -93,7 +96,7 @@ ha rosszak az aranyok mondatra vagy bajtra. (A helye mar megvan.)
 vagy nagyon rossz az aranya a parhuzamositas elotti mondatpar-szamnak.
 (A helye mar megvan.)
 
-- Bug: Hogy a turoba tud 37 masodpercig futni ez a trivialis join:
+NOTDONE - Bug: Hogy a turoba tud 37 masodpercig futni ez a trivialis join:
 select count(*) from bisen,doc where bisen.doc=doc.id and doc.author=63;
 
 - Kell valami hivatalosan_jovahagyva flag az upload es doc tablakba.
@@ -107,7 +110,8 @@ nem hogy a hunglish1.nolaw.uploadtable megalkotasaig.
 hogy a dog's szot is megtalalja, ha a dog-ra keresek.
 
 - A bena felhasznalok nagyon el tudjak csufitani a korpuszt, ha ugyetlenul
-felcserelik az angol es magyar upload mezot. Kell egy nyelvdetektor filter.
+felcserelik az angol es magyar upload mezot, vagy mindket oldalra ugyanazt toltik fel.
+Kell egy nyelvdetektor filter.
 
 ---
 Adatforrasok
@@ -171,22 +175,9 @@ adathalmaznak.
 /big3/Work/HunglishMondattar/datasources/allexceptnolaw.mysqldump
 /big3/Work/HunglishMondattar/harness.data.archive.allexceptnolaw
 
+TODO Ez elavult, mert megvaltozott a sema. A vegen ujracsinalni.
+
 ---
-Command line indexer build process:
-
-cd /big1/tmp/hunglish-webapp/
-mvn package
-# Nemreprodukalhato modon ez nekem nem futott elsore.
-mvn package
-rm target/classes/META-INF/*.xml target/classes/META-INF/spring/*.xml
-cd target/classes
-zip -r ../hunglish-0.1.0.jar *
-cd ../..
-cp target/hunglish-0.1.0.jar src/main/python/command_line_pack/
-cd src/main/python/command_line_pack/
-# Itt mar varnak minket a jol beallitott xml-ek.
-java -Xmx1500M -classpath lib/*:hunglish-0.1.0.jar:. hu.mokk.hunglish.lucene.Launcher > cout 2> cerr
-
 
 1) database.properties editálás
 2) hiányzó könyvtárak : hunglishIndex, benne az aktuális indexállomány (most kezdetben lehet üres); hunglishIndexTmp üresen, resources-lang, benne van minden, ami a j-morph-nak kell tehát egy-az-egyben kell másolni a projekt alól;
