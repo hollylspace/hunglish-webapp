@@ -13,6 +13,7 @@
             <!--value='create' to build a new database on each run; value='update' to modify an existing database; value='create-drop' means the same as 'create' but also drops tables when Hibernate closes; value='validate' makes no changes to the database-->
             <property name="hibernate.hbm2ddl.auto" value="validate"/>
             <property name="hibernate.ejb.naming_strategy" value="org.hibernate.cfg.ImprovedNamingStrategy"/>
+            <property name="hibernate.jdbc.batch_size" value="256"/> <!-- this is set for batches of size 1000 -->
         </properties>
     </persistence-unit>
 </persistence>
