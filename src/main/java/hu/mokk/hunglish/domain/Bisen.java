@@ -8,6 +8,7 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
+import javax.persistence.FlushModeType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -305,6 +306,7 @@ public class Bisen {
 		int batchSize = 1000;
 		int batchIndex = 0;
 		EntityManager entityManager = entityManager();
+		entityManager.setFlushMode(FlushModeType.COMMIT);
 		List<Bisen> bisens;
 		List<Long> coolIds = new LinkedList<Long>(); 
 		List<Long> wrongIds = new LinkedList<Long>();
