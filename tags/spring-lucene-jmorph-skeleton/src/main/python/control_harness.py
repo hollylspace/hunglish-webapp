@@ -70,7 +70,7 @@ def runHarness(metadata) :
     command += "--root=%s --catalog=%s" % ( g_harnessDataDirectory, catalogFile )
 
     logg( command )
-    doIt = False
+    doIt = True
     if doIt :
 	status = os.system(command)
 	if status!=0 :
