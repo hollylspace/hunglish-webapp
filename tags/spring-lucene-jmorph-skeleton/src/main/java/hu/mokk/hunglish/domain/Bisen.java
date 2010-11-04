@@ -230,7 +230,7 @@ public class Bisen {
 	public static void index(Bisen bisen, IndexWriter iwriter) {
 			try {
 				iwriter.addDocument(bisen.toLucene());
-				bisen.updateIsIndexed(true);
+				//bisen.updateIsIndexed(true);
 			} catch (CorruptIndexException e) {
 				throw new RuntimeException("Error while indexing", e);
 			} catch (IOException e) {
@@ -287,7 +287,8 @@ public class Bisen {
 		//updateHashCodeAll(); //TODO log if there were any record to update
 		
 		List<Bisen> bisens = entityManager().createQuery(
-				"from Bisen o where o.isIndexed is null and isDuplicate = False")
+//				"from Bisen o where o.isIndexed is null and isDuplicate = False")
+				"from Bisen o where o.isIndexed is null and isDuplicate is null")
 				.getResultList();
 		for (Bisen bisen : bisens) {
 			index(bisen, iwriter);

@@ -13,6 +13,8 @@ import java.util.Collection;
 import net.sf.jhunlang.jmorph.parser.ParseException;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
@@ -35,6 +37,8 @@ public class Indexer {
 	 * @author bpgergo
 	 * 
 	 */
+
+	transient private static Log logger = LogFactory.getLog(Bisen.class);
 
 	@Autowired
 	private AnalyzerProvider analyzerProvider;
@@ -61,15 +65,20 @@ public class Indexer {
 			if (tmp) {
 				deleteTmpDirectory();
 			}
+		} catch (IOException e) {
+			throw new RuntimeException("IOException, cannot delete tmp directory.", e);
+		}
+
+		try {
 			indexWriter = new IndexWriter(new SimpleFSDirectory(new File(dir)),
 					analyzerProvider.getAnalyzer(), tmp,
 					IndexWriter.MaxFieldLength.UNLIMITED);
 		} catch (CorruptIndexException e) {
-			throw new RuntimeException("Cannot open index directory.", e);
+			throw new RuntimeException("CorruptIndexException, cannot open index directory: "+dir, e);
 		} catch (LockObtainFailedException e) {
-			throw new RuntimeException("Cannot open index directory.", e);
+			throw new RuntimeException("LockObtainFailedException, cannot open index directory: "+dir, e);
 		} catch (IOException e) {
-			throw new RuntimeException("Cannot open index directory.", e);
+			throw new RuntimeException("IOException, cannot open index directory: "+dir, e);
 		}
 		if (mergeFactor != null) {
 			indexWriter.setMergeFactor(mergeFactor);
@@ -91,10 +100,9 @@ public class Indexer {
 
 	public void deleteTmpDirectory() throws IOException {
 		File dir = new File(tmpIndexDir); 
-System.out.println("-----------------------------------------------------");		
-System.out.println("-----------------exists?"+dir.exists()+"------------------------------------");		
-System.out.println("-----------------is it a dir?"+dir.isDirectory()+"------------------------");
-System.out.println("-----------------recreate dir:"+dir.getAbsolutePath()+"------------------------------------");
+		logger.info("exists? "+dir.exists());
+		logger.info("is it a dir? "+dir.isDirectory());
+		logger.info("recreate dir: "+dir.getAbsolutePath());
 		
 		reCreateDir(dir);
 	}
@@ -104,13 +112,9 @@ System.out.println("-----------------recreate dir:"+dir.getAbsolutePath()+"-----
 			IOException, IllegalAccessException, InstantiationException,
 			ParseException {
 		initIndexer(tmp);
-System.out.println("-----------------------------------------------------------------------------");		
-System.out.println("--------------------------init indexer done ---------------------------------");		
-System.out.println("-----------------------------------------------------------------------------");		
+		logger.info("init indexer done");
 		Bisen.indexAll(indexWriter);
-System.out.println("-----------------------------------------------------------------------------");		
-System.out.println("--------------------------indexerall   done ---------------------------------");		
-System.out.println("-----------------------------------------------------------------------------");		
+		logger.info("index all done");
 		indexWriter.close();
 	}
 
