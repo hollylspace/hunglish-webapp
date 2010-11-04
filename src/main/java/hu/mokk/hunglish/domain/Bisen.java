@@ -227,7 +227,7 @@ public class Bisen {
 		entityManager().createNativeQuery(
 				"update bisen set is_indexed = ?, indexed_timestamp = now() " +
 				"where id in (?) ")
-				.setParameter(0, value).setParameter(1, ids).executeUpdate();
+				.setParameter(1, value).setParameter(2, ids).executeUpdate();
 	}
 	
 	/*
