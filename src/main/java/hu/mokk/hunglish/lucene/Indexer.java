@@ -115,16 +115,18 @@ public class Indexer {
 		logger.info("init indexer done");
 		Bisen.indexAll(indexWriter);
 		logger.info("index all done");
+		indexWriter.optimize();
 		indexWriter.close();
 	}
 
+	/*
 	synchronized public void indexDoc(Long docId, boolean tmp) throws CorruptIndexException,
 			LockObtainFailedException, IOException, IllegalAccessException,
 			InstantiationException, ParseException {
 		initIndexer(tmp);
 		Bisen.indexDoc(indexWriter, docId);
 		indexWriter.close();
-	}
+	} //*/
 
 	synchronized public void mergeTmpIndex() {
 		boolean readOnly = true;
@@ -132,26 +134,19 @@ public class Indexer {
 			IndexReader indexReader = IndexReader.open(new SimpleFSDirectory(
 					new File(tmpIndexDir)), readOnly);
 			initIndexer(false);
-System.out.println("-----------------------------------------------------------------------------");		
-System.out.println("--------------------------merge init indexer done ---------------------------------");		
-System.out.println("-----------------------------------------------------------------------------");		
-			
 			indexWriter.addIndexes(indexReader);
-System.out.println("-----------------------------------------------------------------------------");		
-System.out.println("--------------------------merge done ---------------------------------");		
-System.out.println("-----------------------------------------------------------------------------");		
-			
 			indexReader.close();
 			indexWriter.close();
-System.out.println("-----------------------------------------------------------------------------");		
-System.out.println("--------------------------merge closed ---------------------------------");		
-System.out.println("-----------------------------------------------------------------------------");		
 		} catch (CorruptIndexException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			logger.error("Index merge error", e);
+			throw new RuntimeException(e);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			logger.error("Index merge error", e);
+			throw new RuntimeException(e);			
 		}
 
 	}
