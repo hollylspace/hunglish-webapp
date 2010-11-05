@@ -64,12 +64,12 @@ public class Upload {
     /**
      * Y = processed, N = not processed, E = processed with error, L = processed without error but the result is of bad quality
      */
-    @NotNull
+    // TODO quick hack for the upload view @NotNull
     @Size(max = 1)
     private String isProcessed;
 
     
-    @NotNull
+    // TODO quick hack for the upload view @NotNull
     private Date createdTimestamp;
 
     private Date harnessedTimestamp;
@@ -81,11 +81,11 @@ public class Upload {
     @Size(max = 255)
     private String enUploadedFilePath;
 
-    @NotNull
+    // TODO quick hack for the upload view @NotNull
     @Size(max = 255)
     private String huOriginalFileName;
         
-    @NotNull
+    // TODO quick hack for the upload view @NotNull
     @Size(max = 255)
     private String enOriginalFileName;
 

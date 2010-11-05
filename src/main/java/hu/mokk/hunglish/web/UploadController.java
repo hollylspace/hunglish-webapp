@@ -13,6 +13,7 @@ import org.springframework.roo.addon.web.mvc.controller.RooWebScaffold;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -30,39 +31,45 @@ public class UploadController {
     public String create(@Valid Upload upload, BindingResult result, ModelMap modelMap) {
         if (upload == null) throw new IllegalArgumentException("A upload is required");
         if (result.hasErrors()) {
+			for (ObjectError r : result.getAllErrors()){
+			}
             modelMap.addAttribute("upload", upload);
             modelMap.addAttribute("authors", Author.findAllAuthors());
             modelMap.addAttribute("genres", Genre.findAllGenres());
             return "upload/create";
         }
-        
+
         try{        	
 	        upload.setHuOriginalFileName(upload.getHuFileData().getOriginalFilename());
 	        upload.setEnOriginalFileName(upload.getEnFileData().getOriginalFilename());
 	        upload.setHuOriginalFileSize(upload.getHuFileData().getSize());
 	        upload.setEnOriginalFileSize(upload.getEnFileData().getSize());
 	        upload.setCreatedTimestamp(new Date());
-	        
+	        upload.setIsProcessed("N"); //TODO FIXME
+
 	        upload.validate();
 	        
 	        upload.persist();
-	        
-	        String huFilePath = uploadDir+File.separator + upload.getId()+"_HU."+upload.getHuExtension();
-	        upload.getHuFileData().transferTo(new File(huFilePath));
-	        upload.setHuUploadedFilePath(huFilePath);
 
+	        String huFilePath = uploadDir+File.separator + upload.getId()+"_HU."+upload.getHuExtension();
+	        File huFile = new File(huFilePath);
+	        upload.getHuFileData().transferTo(huFile);
+	        upload.setHuUploadedFilePath(huFile.getCanonicalPath());
+	        
 	        String enFilePath = uploadDir+File.separator + upload.getId()+"_EN."+upload.getEnExtension();
-	        upload.getEnFileData().transferTo(new File(enFilePath));
-	        upload.setEnUploadedFilePath(enFilePath);
-	        
+	        File enFile = new File(enFilePath);
+	        upload.getEnFileData().transferTo(enFile);
+	        upload.setEnUploadedFilePath(enFile.getCanonicalPath());
 	        upload.merge();
-	        
         } catch (Exception e) {
+        	if (upload.getId() != null){
+        		upload.remove();
+        	}
         	result.reject("ERROR", e.getLocalizedMessage());
         	//TODO
         	e.printStackTrace();
-//throw new IllegalArgumentException(e);
-        	return "upload/create";
+        	throw new IllegalArgumentException(e);
+        	//return "upload/create";
 		}
         return "redirect:/upload/" + upload.getId();
     }
