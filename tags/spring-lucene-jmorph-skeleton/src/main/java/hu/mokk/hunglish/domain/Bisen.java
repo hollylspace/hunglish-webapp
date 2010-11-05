@@ -1,8 +1,8 @@
 package hu.mokk.hunglish.domain;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -244,12 +244,13 @@ public class Bisen {
 		}
 	}*/
 
-	public static void index(Bisen bisen, IndexWriter iwriter) throws CorruptIndexException, IOException {
-				iwriter.addDocument(bisen.toLucene());
-				//bisen.updateIsIndexed(true);
-	}
+	//public static void index(Bisen bisen, IndexWriter iwriter) throws CorruptIndexException, IOException {
+	//			iwriter.addDocument(bisen.toLucene());
+	//			//bisen.updateIsIndexed(true);
+	//}
 
-	@SuppressWarnings("unchecked")
+	//@SuppressWarnings("unchecked")
+	/*
 	public static void indexSen(IndexWriter iwriter, Long id) {
 		List<Bisen> bisens = entityManager()
 				.createQuery(
@@ -265,10 +266,11 @@ public class Bisen {
 				throw new RuntimeException("Error while indexing", e);
 			}		
 		}
-	}
+	} //*/
 	
 	
-	@SuppressWarnings("unchecked")
+	//@SuppressWarnings("unchecked")
+	/*
 	public static void indexDoc(IndexWriter iwriter, Long docId) {
 		List<Bisen> bisens = entityManager()
 				.createQuery(
@@ -284,7 +286,7 @@ public class Bisen {
 				throw new RuntimeException("Error while indexing", e);
 			}		
 		}
-	}
+	} //*/
 
 	/**
 	 * This is going to be a full table scan
@@ -304,36 +306,40 @@ public class Bisen {
 		return result;
 	}
 	
+	public static int BATCH_SIZE = 10000;
 	
 	@SuppressWarnings("unchecked")
 	public static void indexAll(IndexWriter iwriter) {
-		int batchSize = 2000;
+		
 		int batchIndex = 0;
 		EntityManager em = entityManager();
 		em.setFlushMode(FlushModeType.COMMIT);
 		List<Bisen> bisens;
-		List<Long> coolIds = new LinkedList<Long>(); 
-		List<Long> wrongIds = new LinkedList<Long>();
+		List<Long> coolIds = new ArrayList<Long>(); 
+		List<Long> wrongIds = new ArrayList<Long>();
 		boolean doIt = true;
 		while (doIt){
-			logger.info("indexing batch starting at "+batchIndex*batchSize);
+			logger.info("indexing batch starting at "+batchIndex*BATCH_SIZE);
 			bisens = em.createQuery(
 					// This will be isDuplicate=False after I'll modify control_harness.py.
 					"from Bisen o where o.isIndexed is null and isDuplicate is null order by o.id")
-					.setFirstResult(batchIndex++ * batchSize).setMaxResults(batchSize)
+					.setFirstResult(batchIndex++ * BATCH_SIZE).setMaxResults(BATCH_SIZE)
 					.getResultList();
 			logger.info("getResultList() done");
 			doIt = (bisens != null) && (bisens.size() > 0); 
 			for (Bisen bisen : bisens) {
 				try {
-					index(bisen, iwriter);
+					//index(bisen, iwriter);
+					iwriter.addDocument(bisen.toLucene());
 					coolIds.add(bisen.getId());
 				} catch (CorruptIndexException e) {
+					wrongIds.add(bisen.getId());
 					logger.error("Indexing error (CorruptIndexException) for bisen:"+bisen, e);
-					wrongIds.add(bisen.getId());
+					throw new RuntimeException(e);
 				} catch (IOException e) {
-					logger.error("Indexing error (IOException) for bisen:"+bisen, e);
 					wrongIds.add(bisen.getId());
+					logger.error("Indexing error (IOException) for bisen:"+bisen, e);
+					throw new RuntimeException(e);
 				}		
 			}
 			logger.info("indexing done");
@@ -341,6 +347,18 @@ public class Bisen {
 			//batchUpdateIsIndexed(coolIds, Boolean.TRUE);
 			//batchUpdateIsIndexed(wrongIds, Boolean.FALSE);
 			//em.flush();
+			try {
+				iwriter.commit();
+			} catch (CorruptIndexException e) {
+				e.printStackTrace();
+				logger.error("Indexing commit error", e);
+				throw new RuntimeException(e);
+			} catch (IOException e) {
+				e.printStackTrace();
+				logger.error("Indexing commit error", e);
+				throw new RuntimeException(e);
+			}
+			bisens.clear();
 			em.clear();
 			wrongIds.clear();
 			coolIds.clear();
