@@ -37,7 +37,7 @@ public class IndexerTest {
 	@Test
 	public void testIndex() throws CorruptIndexException, LockObtainFailedException, IOException, IllegalAccessException, InstantiationException, ParseException {
 		indexer.deleteTmpDirectory();
-		indexer.indexDoc(new Long(2), true/*true=temp that is index will be created in hunglishIndexTmp, false=main*/);
+		//indexer.indexDoc(new Long(2), true/*true=temp that is index will be created in hunglishIndexTmp, false=main*/);
 //		indexer.mergeTmpIndex();
 	}
 	
