@@ -1,7 +1,6 @@
 package hu.mokk.hunglish.web;
 
 import hu.mokk.hunglish.lucene.Indexer;
-import hu.mokk.hunglish.lucene.LuceneQueryBuilder;
 import hu.mokk.hunglish.lucene.Searcher;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,16 +29,19 @@ public class IndexerController {
     		ModelMap modelMap) {
 
 		if ("666".equals(magic)){
-			try {
-				indexer.indexAll(true/*true=temp that is index will be created in hunglishIndexTmp, false=main*/);
-			} catch (Exception e) {
-				throw new RuntimeException(e);
-			} 
+			/*true=temp that is index will be created in hunglishIndexTmp, false=main*/
+			boolean create = true;
+			indexer.indexAll(create);
 			indexer.mergeTmpIndex();
-			
 			searcher.reInitSearcher();
-			
 		}
+		if ("777".equals(magic)){
+			/*true=temp that is index will be created in hunglishIndexTmp, false=main*/
+			boolean create = false;
+			indexer.indexAll(create);
+			searcher.reInitSearcher();
+		}
+		
         return "indexer";
     }
 }

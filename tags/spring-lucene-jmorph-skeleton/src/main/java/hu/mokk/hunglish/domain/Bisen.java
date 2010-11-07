@@ -1,7 +1,5 @@
 package hu.mokk.hunglish.domain;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -23,7 +21,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexWriter;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.roo.addon.entity.RooEntity;
@@ -38,7 +35,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RooEntity
 public class Bisen {
 	transient private static Log logger = LogFactory.getLog(Bisen.class);
-	 
+
 	@NotNull
 	@ManyToOne(targetEntity = Doc.class)
 	@JoinColumn
@@ -64,11 +61,12 @@ public class Bisen {
 	private Long enSentenceHash;
 
 	private Boolean isDuplicate;
-	
+
 	private Date indexedTimestamp;
 
 	@PersistenceContext
 	transient EntityManager entityManager;
+
 
 	transient String huSentenceView;
 	transient String enSentenceView;
@@ -134,7 +132,6 @@ public class Bisen {
 		this.id = merged.getId(); // */
 	}
 
-	
 	public static final EntityManager entityManager() {
 		EntityManager em = new Bisen().entityManager;
 		if (em == null)
@@ -150,19 +147,17 @@ public class Bisen {
 
 	/**
 	 * 
-	 * @return count of Bisentences which are a duplicate of this   
+	 * @return count of Bisentences which are a duplicate of this
 	 */
 	public long countDuplicates() {
-		Long result = (Long) entityManager()
-				.createQuery(
-						"select count(o) from Bisen o where " +
-						"o.isIndexed = true and " +
-						"o.huSentenceHash = :huhash and " +
-						"o.enSentenceHash = :enhash and " +
-						"o.id != :id").setParameter(
-						"huhash", this.huSentenceHash).setParameter(
-						"enhash", this.enSentenceHash).setParameter(
-						"id", this.id).getSingleResult();
+		Long result = (Long) entityManager().createQuery(
+				"select count(o) from Bisen o where "
+						+ "o.isIndexed = true and "
+						+ "o.huSentenceHash = :huhash and "
+						+ "o.enSentenceHash = :enhash and " + "o.id != :id")
+				.setParameter("huhash", this.huSentenceHash).setParameter(
+						"enhash", this.enSentenceHash).setParameter("id",
+						this.id).getSingleResult();
 		return result;
 	}
 
@@ -189,26 +184,26 @@ public class Bisen {
 
 	@SuppressWarnings("unchecked")
 	public static List<Bisen> findBisenEntries(int firstResult, int maxResults) {
-		return entityManager().createQuery("select o from Bisen o order by o.id")
-				.setFirstResult(firstResult).setMaxResults(maxResults)
-				.getResultList();
+		return entityManager().createQuery(
+				"select o from Bisen o order by o.id").setFirstResult(
+				firstResult).setMaxResults(maxResults).getResultList();
 	}
 
 	@SuppressWarnings("unchecked")
 	public static List<Bisen> findBisenEntries(List<Long> ids) {
-		return entityManager().createQuery("select o from Bisen o where o.id in (:ids) order by o.id")
-				.setParameter("ids", ids)
-				.getResultList();
+		return entityManager().createQuery(
+				"select o from Bisen o where o.id in (:ids) order by o.id")
+				.setParameter("ids", ids).getResultList();
 	}
-	
-	
+
 	@Transactional
 	public void updateHashCode() {
-		if (this.getEnSentenceHash() == null || this.getHuSentenceHash() == null){
-			this.huSentenceHash = new Long(stripPunctuation(this.getHuSentence())
-					.hashCode());
-			this.enSentenceHash = new Long(stripPunctuation(this.getEnSentence())
-					.hashCode());
+		if (this.getEnSentenceHash() == null
+				|| this.getHuSentenceHash() == null) {
+			this.huSentenceHash = new Long(stripPunctuation(
+					this.getHuSentence()).hashCode());
+			this.enSentenceHash = new Long(stripPunctuation(
+					this.getEnSentence()).hashCode());
 			this.merge();
 		}
 	}
@@ -216,11 +211,10 @@ public class Bisen {
 	@Transactional
 	public void updateIsIndexed(Boolean value) {
 		this.setIsIndexed(value);
-		//this.setIsDuplicate(!value);
+		// this.setIsDuplicate(!value);
 		this.setIndexedTimestamp(new Date());
 		this.merge();
 	}
-
 
 	@Transactional
 	public static void batchUpdateIsIndexed(List<Long> ids, Boolean value) {
@@ -228,143 +222,70 @@ public class Bisen {
 		em.setFlushMode(FlushModeType.COMMIT);
 		em.getTransaction().begin();
 		entityManager().createNativeQuery(
-				"update bisen set is_indexed = ?, indexed_timestamp = now() " +
-				"where id in (?) ")
-				.setParameter(1, value).setParameter(2, ids).executeUpdate();
+				"update bisen set is_indexed = ?, indexed_timestamp = now() "
+						+ "where id in (?) ").setParameter(1, value)
+				.setParameter(2, ids).executeUpdate();
 		em.getTransaction().commit();
 	}
-	
-	/*
-	@SuppressWarnings("unchecked")
-	public static void updateHashCodes() {
-		List<Bisen> bisens = entityManager().createQuery("from Bisen o")
-				.getResultList();
-		for (Bisen bisen : bisens) {
-			bisen.updateHashCode();
-		}
-	}*/
 
-	//public static void index(Bisen bisen, IndexWriter iwriter) throws CorruptIndexException, IOException {
-	//			iwriter.addDocument(bisen.toLucene());
-	//			//bisen.updateIsIndexed(true);
-	//}
+	/*
+	 * @SuppressWarnings("unchecked") public static void updateHashCodes() {
+	 * List<Bisen> bisens = entityManager().createQuery("from Bisen o")
+	 * .getResultList(); for (Bisen bisen : bisens) { bisen.updateHashCode(); }
+	 * }
+	 */
 
-	//@SuppressWarnings("unchecked")
+	// public static void index(Bisen bisen, IndexWriter iwriter) throws
+	// CorruptIndexException, IOException {
+	// iwriter.addDocument(bisen.toLucene());
+	// //bisen.updateIsIndexed(true);
+	// }
+
+	// @SuppressWarnings("unchecked")
 	/*
-	public static void indexSen(IndexWriter iwriter, Long id) {
-		List<Bisen> bisens = entityManager()
-				.createQuery(
-						"from Bisen o where o.id = :senid")
-				.setParameter("senid", id)
-				.getResultList();
-		for (Bisen bisen : bisens) {
-			try {
-				index(bisen, iwriter);
-			} catch (CorruptIndexException e) {
-				throw new RuntimeException("Error while indexing", e);
-			} catch (IOException e) {
-				throw new RuntimeException("Error while indexing", e);
-			}		
-		}
-	} //*/
-	
-	
-	//@SuppressWarnings("unchecked")
+	 * public static void indexSen(IndexWriter iwriter, Long id) { List<Bisen>
+	 * bisens = entityManager() .createQuery(
+	 * "from Bisen o where o.id = :senid") .setParameter("senid", id)
+	 * .getResultList(); for (Bisen bisen : bisens) { try { index(bisen,
+	 * iwriter); } catch (CorruptIndexException e) { throw new
+	 * RuntimeException("Error while indexing", e); } catch (IOException e) {
+	 * throw new RuntimeException("Error while indexing", e); } } } //
+	 */
+
+	// @SuppressWarnings("unchecked")
 	/*
-	public static void indexDoc(IndexWriter iwriter, Long docId) {
-		List<Bisen> bisens = entityManager()
-				.createQuery(
-						"from Bisen o where o.doc.id = :docid")
-				.setParameter("docid", docId)
-				.getResultList();
-		for (Bisen bisen : bisens) {
-			try {
-				index(bisen, iwriter);
-			} catch (CorruptIndexException e) {
-				throw new RuntimeException("Error while indexing", e);
-			} catch (IOException e) {
-				throw new RuntimeException("Error while indexing", e);
-			}		
-		}
-	} //*/
+	 * public static void indexDoc(IndexWriter iwriter, Long docId) {
+	 * List<Bisen> bisens = entityManager() .createQuery(
+	 * "from Bisen o where o.doc.id = :docid") .setParameter("docid", docId)
+	 * .getResultList(); for (Bisen bisen : bisens) { try { index(bisen,
+	 * iwriter); } catch (CorruptIndexException e) { throw new
+	 * RuntimeException("Error while indexing", e); } catch (IOException e) {
+	 * throw new RuntimeException("Error while indexing", e); } } } //
+	 */
 
 	/**
-	 * This is going to be a full table scan
-	 * All bisen record not already hashed will get hashcodes 
+	 * This is going to be a full table scan All bisen record not already hashed
+	 * will get hashcodes
 	 */
 	@SuppressWarnings("unchecked")
 	@Transactional
 	public static boolean updateHashCodeAll() {
 		boolean result = false;
-		List<Bisen> bisens = entityManager().createQuery(
-		"from Bisen o where o.huSentenceHash is null or o.enSentenceHash is null")
-		.getResultList();
+		List<Bisen> bisens = entityManager()
+				.createQuery(
+						"from Bisen o where o.huSentenceHash is null or o.enSentenceHash is null")
+				.getResultList();
 		for (Bisen bisen : bisens) {
 			result = true;
 			bisen.updateHashCode();
 		}
 		return result;
 	}
-	
-	public static int BATCH_SIZE = 10000;
-	
+
+
 	@SuppressWarnings("unchecked")
-	public static void indexAll(IndexWriter iwriter) {
-		
-		int batchIndex = 0;
-		EntityManager em = entityManager();
-		em.setFlushMode(FlushModeType.COMMIT);
-		List<Bisen> bisens;
-		List<Long> coolIds = new ArrayList<Long>(); 
-		List<Long> wrongIds = new ArrayList<Long>();
-		boolean doIt = true;
-		while (doIt){
-			logger.info("indexing batch starting at "+batchIndex*BATCH_SIZE);
-			bisens = em.createQuery(
-					// This will be isDuplicate=False after I'll modify control_harness.py.
-					"from Bisen o where o.isIndexed is null and isDuplicate is null order by o.id")
-					.setFirstResult(batchIndex++ * BATCH_SIZE).setMaxResults(BATCH_SIZE)
-					.getResultList();
-			logger.info("getResultList() done");
-			doIt = (bisens != null) && (bisens.size() > 0); 
-			for (Bisen bisen : bisens) {
-				try {
-					//index(bisen, iwriter);
-					iwriter.addDocument(bisen.toLucene());
-					coolIds.add(bisen.getId());
-				} catch (CorruptIndexException e) {
-					wrongIds.add(bisen.getId());
-					logger.error("Indexing error (CorruptIndexException) for bisen:"+bisen, e);
-					throw new RuntimeException(e);
-				} catch (IOException e) {
-					wrongIds.add(bisen.getId());
-					logger.error("Indexing error (IOException) for bisen:"+bisen, e);
-					throw new RuntimeException(e);
-				}		
-			}
-			logger.info("indexing done");
-			// TODO These do not work now, but they should:
-			//batchUpdateIsIndexed(coolIds, Boolean.TRUE);
-			//batchUpdateIsIndexed(wrongIds, Boolean.FALSE);
-			//em.flush();
-			try {
-				iwriter.commit();
-			} catch (CorruptIndexException e) {
-				e.printStackTrace();
-				logger.error("Indexing commit error", e);
-				throw new RuntimeException(e);
-			} catch (IOException e) {
-				e.printStackTrace();
-				logger.error("Indexing commit error", e);
-				throw new RuntimeException(e);
-			}
-			bisens.clear();
-			em.clear();
-			wrongIds.clear();
-			coolIds.clear();
-		}
+	public void indexAll(IndexWriter iwriter) {
 	}
-	
 
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
@@ -409,18 +330,18 @@ public class Bisen {
 	public static String huSentenceStemmedFieldName = "huSenStemmed";
 	public static String enSentenceStemmedFieldName = "enSenStemmed";
 
-	public static String fieldName2LemmatizerMapCode(String fieldName){
+	public static String fieldName2LemmatizerMapCode(String fieldName) {
 		String res = null;
-		if (huSentenceStemmedFieldName.equals(fieldName)){
+		if (huSentenceStemmedFieldName.equals(fieldName)) {
 			res = huSentenceFieldName;
-		} else if (enSentenceStemmedFieldName.equals(fieldName)){
+		} else if (enSentenceStemmedFieldName.equals(fieldName)) {
 			res = enSentenceFieldName;
 		} else {
 			res = fieldName;
 		}
 		return res;
 	}
-	
+
 	public static Bisen toBisen(Document document) {
 		return findBisen(new Long(document.getField(idFieldName).stringValue()));
 	}
@@ -428,9 +349,10 @@ public class Bisen {
 	public Document toLucene() {
 		Document result = new Document();
 
-		result.add(new Field(idFieldName, this.getId().toString(),
-				Field.Store.YES, Field.Index.NOT_ANALYZED,
-				Field.TermVector.NO));
+		result
+				.add(new Field(idFieldName, this.getId().toString(),
+						Field.Store.YES, Field.Index.NOT_ANALYZED,
+						Field.TermVector.NO));
 
 		result.add(new Field(genreFieldName, this.doc.getGenre().getId()
 				.toString(), Field.Store.YES, Field.Index.NOT_ANALYZED,
@@ -439,21 +361,21 @@ public class Bisen {
 		result.add(new Field(authorFieldName, this.doc.getAuthor().getId()
 				.toString(), Field.Store.YES, Field.Index.NOT_ANALYZED,
 				Field.TermVector.NO));
-		
+
 		result.add(new Field(huSentenceFieldName, this.huSentence,
 				Field.Store.YES, Field.Index.ANALYZED,
 				Field.TermVector.WITH_POSITIONS_OFFSETS));
 		result.add(new Field(huSentenceStemmedFieldName, this.huSentence,
 				Field.Store.NO, Field.Index.ANALYZED,
 				Field.TermVector.WITH_POSITIONS_OFFSETS));
-		
+
 		result.add(new Field(enSentenceFieldName, this.enSentence,
 				Field.Store.YES, Field.Index.ANALYZED,
 				Field.TermVector.WITH_POSITIONS_OFFSETS));
 		result.add(new Field(enSentenceStemmedFieldName, this.enSentence,
 				Field.Store.NO, Field.Index.ANALYZED,
 				Field.TermVector.WITH_POSITIONS_OFFSETS));
-		
+
 		return result;
 
 	}

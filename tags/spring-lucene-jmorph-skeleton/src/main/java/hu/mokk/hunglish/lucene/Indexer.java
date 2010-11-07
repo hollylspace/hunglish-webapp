@@ -8,9 +8,16 @@ import hu.mokk.hunglish.jmorph.AnalyzerProvider;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
-import net.sf.jhunlang.jmorph.parser.ParseException;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
@@ -48,48 +55,60 @@ public class Indexer {
 	private String indexDir;
 	private String tmpIndexDir;
 
-	private IndexWriter indexWriter;
-	//private CreateOrAppend createOrAppend = CreateOrAppend.Create;
+	@Autowired
+	private EntityManagerFactory entityManagerFactory;
 
-	private void initIndexer(Boolean tmp) {
+	// private IndexWriter indexWriter;
+
+	// private CreateOrAppend createOrAppend = CreateOrAppend.Create;
+
+	private IndexWriter initIndexer(Boolean create) {
+		IndexWriter indexWriter;
 		if (analyzerProvider == null) {
 			throw new IllegalStateException(
 					"Cannot create indexWriter. The analyzerProvider is null.");
 		}
-		String dir = tmp ? tmpIndexDir : indexDir;
+		String dir = create ? tmpIndexDir : indexDir;
 		if (dir == null) {
 			throw new IllegalStateException(
 					"Cannot create indexWriter. The directory is null.");
 		}
 		try {
-			if (tmp) {
+			if (create) {
 				deleteTmpDirectory();
 			}
 		} catch (IOException e) {
-			throw new RuntimeException("IOException, cannot delete tmp directory.", e);
+			throw new RuntimeException(
+					"IOException, cannot delete tmp directory.", e);
 		}
 
 		try {
 			indexWriter = new IndexWriter(new SimpleFSDirectory(new File(dir)),
-					analyzerProvider.getAnalyzer(), tmp,
+					analyzerProvider.getAnalyzer(), create,
 					IndexWriter.MaxFieldLength.UNLIMITED);
 		} catch (CorruptIndexException e) {
-			throw new RuntimeException("CorruptIndexException, cannot open index directory: "+dir, e);
+			throw new RuntimeException(
+					"CorruptIndexException, cannot open index directory: "
+							+ dir, e);
 		} catch (LockObtainFailedException e) {
-			throw new RuntimeException("LockObtainFailedException, cannot open index directory: "+dir, e);
+			throw new RuntimeException(
+					"LockObtainFailedException, cannot open index directory: "
+							+ dir, e);
 		} catch (IOException e) {
-			throw new RuntimeException("IOException, cannot open index directory: "+dir, e);
+			throw new RuntimeException(
+					"IOException, cannot open index directory: " + dir, e);
 		}
 		if (mergeFactor != null) {
 			indexWriter.setMergeFactor(mergeFactor);
 		}
 		indexWriter.setMaxBufferedDocs(maxBufferedDocs);
+		return indexWriter;
 	}
 
 	private void reCreateDir(File dir) {
 		try {
 			Collection coll = FileUtils.listFiles(dir, null, false);
-			if (coll.size() > 0){
+			if (coll.size() > 0) {
 				FileUtils.deleteQuietly(dir);
 				FileUtils.forceMkdir(dir);
 			}
@@ -99,56 +118,194 @@ public class Indexer {
 	}
 
 	public void deleteTmpDirectory() throws IOException {
-		File dir = new File(tmpIndexDir); 
-		logger.info("exists? "+dir.exists());
-		logger.info("is it a dir? "+dir.isDirectory());
-		logger.info("recreate dir: "+dir.getAbsolutePath());
-		
+		File dir = new File(tmpIndexDir);
+		logger.info("exists? " + dir.exists());
+		logger.info("is it a dir? " + dir.isDirectory());
+		logger.info("recreate dir: " + dir.getAbsolutePath());
+
 		reCreateDir(dir);
 	}
 
-	synchronized public void indexAll(boolean tmp)
-			throws CorruptIndexException, LockObtainFailedException,
-			IOException, IllegalAccessException, InstantiationException,
-			ParseException {
-		initIndexer(tmp);
-		logger.info("init indexer done");
-		Bisen.indexAll(indexWriter);
-		logger.info("index all done");
-		indexWriter.optimize();
-		indexWriter.close();
+	//TODO get this from properties file 
+	String url = "jdbc:mysql://localhost:3306/";
+	String db = "hunglishwebapp";
+	String driver = "com.mysql.jdbc.Driver";
+	String user = "root";
+	String pass = "sw6x2the";
+	public static int BATCH_SIZE = 10000;
+	
+	private Connection getJdbcConnection() {
+		Connection con = null;
+		try {
+			Class.forName(driver);
+			con = DriverManager.getConnection(url + db, user, pass);
+			con.setAutoCommit(true);
+		} catch (Exception e) {
+			logger.error("Cannot create connection", e);
+			throw new RuntimeException(e);
+		}
+		return con;
 	}
 
-	/*
-	synchronized public void indexDoc(Long docId, boolean tmp) throws CorruptIndexException,
-			LockObtainFailedException, IOException, IllegalAccessException,
-			InstantiationException, ParseException {
-		initIndexer(tmp);
-		Bisen.indexDoc(indexWriter, docId);
-		indexWriter.close();
-	} //*/
+	private Statement getJdbcStatement(Connection con) {
+
+		Statement st = null;
+		try {
+			st = con.createStatement();
+			st = con.createStatement();// java.sql.ResultSet.TYPE_FORWARD_ONLY,java.sql.ResultSet.CONCUR_READ_ONLY);
+			// st.setFetchSize(Integer.MIN_VALUE);
+		} catch (SQLException e) {
+			logger.error("Cannot create statement", e);
+			throw new RuntimeException(e);
+		}
+		return st;
+	}
+
+	private void indexBisen(Bisen bisen, IndexWriter iwriter,
+			Statement jdbcStatement) {
+		try {
+			iwriter.addDocument(bisen.toLucene());
+			jdbcStatement
+					.addBatch("update bisen set is_indexed = true where id="
+							+ bisen.getId());
+		} catch (Exception e) {
+			try {
+				jdbcStatement.addBatch("update bisen "
+						+ "set is_indexed = false where id=" + bisen.getId());
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+				logger.fatal("Exception in Catch block for "
+						+ "Indexing error for bisen:", e1);
+			}
+			logger.error("Indexing error for bisen:" + bisen, e);
+			throw new RuntimeException(e);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private boolean indexBatch(IndexWriter iwriter, Connection connection) {
+		Statement jdbcStatement = null;
+		EntityManager em = null;
+		boolean result = false;
+		List<Bisen> bisens = new ArrayList<Bisen>(1);
+		try {
+			jdbcStatement = getJdbcStatement(connection);
+			em = entityManagerFactory.createEntityManager();
+			// em.setFlushMode(FlushModeType.COMMIT);
+			bisens = em
+					.createQuery(
+							"from Bisen o where o.isIndexed is null and isDuplicate is null")
+					// This will be isDuplicate=False after I'll modify
+					// control_harness.py.
+					.setMaxResults(BATCH_SIZE).getResultList();
+			result = (bisens != null) && (bisens.size() > 0);
+			if (result) {
+				logger.info("--getResultList() done resultList size:" + bisens.size());
+				for (Bisen bisen : bisens) {
+					indexBisen(bisen, iwriter, jdbcStatement);
+				}
+
+				logger
+						.info("------indexing batch done in memory. commit phase ...");
+				try {
+					jdbcStatement.executeBatch();
+					//connection.commit(); //conn.setAutoCommit
+					iwriter.commit();
+				} catch (Exception e) {
+					logger.error("Indexing batch commit error", e);
+					throw new RuntimeException(e);
+				}
+				logger.info("------indexing batch commited to disk ");
+
+			}
+		} finally {
+			try {
+				jdbcStatement.close();
+			} catch (SQLException e) {
+				logger.fatal("Inception: SQLException in finaly block and in "
+						+ "SQLException catch block for jdbcStatement.close()",
+						e);
+				throw new RuntimeException(
+						"Finally block Cannot close JDBC statement", e);
+			}
+			bisens.clear();
+			if (em != null) {
+				em.clear();
+				em.close();
+			}
+		}
+		return result;
+	}
+
+	/* true=temp that is index will be created in hunglishIndexTmp, false=main */
+	synchronized public void indexAll(boolean create) {
+		Connection jdbcConnection = null;
+		IndexWriter indexWriter = null;
+		try {
+			jdbcConnection = getJdbcConnection();
+			indexWriter = initIndexer(create);
+			logger.info("----init indexer done--");
+			int batchIndex = 0;
+			while (indexBatch(indexWriter, jdbcConnection)) {
+				logger.info("<<<<<< finished indexing batch at " + ++batchIndex
+						* BATCH_SIZE);
+			}
+			logger.info("-----index all batches done--");
+			try {
+				indexWriter.optimize();
+			} catch (Exception e) {
+				logger.error("indexWriter optimize error", e);
+				throw new RuntimeException(e);
+			}
+			logger.info("-------optimize done-----");
+
+		} finally {
+			try {
+				if (indexWriter != null) {
+					indexWriter.close();
+				}
+				if (jdbcConnection != null) {
+					jdbcConnection.close();
+				}
+			} catch (Exception e) {
+				logger.fatal("indexWriter close error", e);
+				throw new RuntimeException(e);
+			}
+		}
+	}
 
 	synchronized public void mergeTmpIndex() {
 		boolean readOnly = true;
+		IndexWriter indexWriter = null;
+		IndexReader indexReader = null;
 		try {
-			IndexReader indexReader = IndexReader.open(new SimpleFSDirectory(
-					new File(tmpIndexDir)), readOnly);
-			initIndexer(false);
-			indexWriter.addIndexes(indexReader);
-			indexReader.close();
-			indexWriter.close();
-		} catch (CorruptIndexException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			logger.error("Index merge error", e);
-			throw new RuntimeException(e);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			logger.error("Index merge error", e);
-			throw new RuntimeException(e);			
-		}
 
+			try {
+				indexWriter = initIndexer(false);
+				indexReader = IndexReader.open(new SimpleFSDirectory(new File(
+						tmpIndexDir)), readOnly);
+				indexWriter.addIndexes(indexReader);
+				logger.info("------indexreader addIndexes done----");
+
+			} catch (Exception e) {
+				logger.error("Index merge error", e);
+				throw new RuntimeException(e);
+			}
+		} finally {
+			try {
+				if (indexReader != null) {
+					indexReader.close();
+				}
+				logger.info("------indexreader close done----");
+				if (indexWriter != null) {
+					indexWriter.close();
+				}
+				logger.info("------indexwriter close done----");
+			} catch (Exception e) {
+				logger.fatal("indexReader/indexWriter close error in Finally block", e);
+				throw new RuntimeException(e);
+			}
+		}
 	}
 
 	public void setAnalyzerProvider(AnalyzerProvider analyzerProvider) {
