@@ -18,7 +18,6 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.FlushModeType;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
@@ -127,122 +126,108 @@ public class Indexer {
 		reCreateDir(dir);
 	}
 
-	// TODO get this from properties file
+	//TODO get this from properties file 
+	String url = "jdbc:mysql://localhost:3306/";
+	String db = "hunglishwebapp";
+	String driver = "com.mysql.jdbc.Driver";
+	String user = "hunglish";
+	String pass = "sw6x2the";
 	public static int BATCH_SIZE = 10000;
+	
+	private Connection getJdbcConnection() {
+		Connection con = null;
+		try {
+			Class.forName(driver);
+			con = DriverManager.getConnection(url + db, user, pass);
+			con.setAutoCommit(true);
+		} catch (Exception e) {
+			logger.error("Cannot create connection", e);
+			throw new RuntimeException(e);
+		}
+		return con;
+	}
 
-	/*
-	 * String url = "jdbc:mysql://localhost:3306/"; String db =
-	 * "hunglishwebapp"; String driver = "com.mysql.jdbc.Driver"; String user =
-	 * "root"; String pass = "sw6x2the";
-	 * 
-	 * private Connection getJdbcConnection() { Connection con = null; try {
-	 * Class.forName(driver); con = DriverManager.getConnection(url + db, user,
-	 * pass); con.setAutoCommit(true); } catch (Exception e) {
-	 * logger.error("Cannot create connection", e); throw new
-	 * RuntimeException(e); } return con; }//
-	 */
+	private Statement getJdbcStatement(Connection con) {
 
-	/*
-	 * private Statement getJdbcStatement(Connection con) { Statement st = null;
-	 * try { st = con.createStatement(); st = con.createStatement();//
-	 * java.sql.ResultSet
-	 * .TYPE_FORWARD_ONLY,java.sql.ResultSet.CONCUR_READ_ONLY); //
-	 * st.setFetchSize(Integer.MIN_VALUE); } catch (SQLException e) {
-	 * logger.error("Cannot create statement", e); throw new
-	 * RuntimeException(e); } return st; } //
-	 */
+		Statement st = null;
+		try {
+			st = con.createStatement();
+			st = con.createStatement();// java.sql.ResultSet.TYPE_FORWARD_ONLY,java.sql.ResultSet.CONCUR_READ_ONLY);
+			// st.setFetchSize(Integer.MIN_VALUE);
+		} catch (SQLException e) {
+			logger.error("Cannot create statement", e);
+			throw new RuntimeException(e);
+		}
+		return st;
+	}
 
 	private void indexBisen(Bisen bisen, IndexWriter iwriter,
-	// Statement jdbcStatement
-			List<Long> succesIds, List<Long> errorIds) {
+			Statement jdbcStatement) {
 		try {
 			iwriter.addDocument(bisen.toLucene());
-			succesIds.add(bisen.getId());
-			// jdbcStatement
-			// .addBatch("update bisen set is_indexed = true where id="
-			// + bisen.getId());
-		} catch (IOException e) {
-			/*
-			 * try { jdbcStatement.addBatch("update bisen " +
-			 * "set is_indexed = false where id=" + bisen.getId()); } catch
-			 * (SQLException e1) { e1.printStackTrace();
-			 * logger.fatal("Exception in Catch block for " +
-			 * "Indexing error for bisen:", e1); }
-			 */
-			errorIds.add(bisen.getId());
+			jdbcStatement
+					.addBatch("update bisen set is_indexed = true where id="
+							+ bisen.getId());
+		} catch (Exception e) {
+			try {
+				jdbcStatement.addBatch("update bisen "
+						+ "set is_indexed = false where id=" + bisen.getId());
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+				logger.fatal("Exception in Catch block for "
+						+ "Indexing error for bisen:", e1);
+			}
 			logger.error("Indexing error for bisen:" + bisen, e);
-			// if the indexwriter throws IOException while addin a new doc,
-			// then we'd better stop the show
 			throw new RuntimeException(e);
 		}
 	}
 
-	public void batchUpdateIsIndexed(List<Long> ids, Boolean value,
-			EntityManager em) {
-		em.setFlushMode(FlushModeType.COMMIT);
-		em.getTransaction().begin();
-		em.createNativeQuery(
-				"update bisen set is_indexed = ?, indexed_timestamp = now() "
-						+ "where id in (?) ").setParameter(1, value)
-				.setParameter(2, ids).executeUpdate();
-		em.flush();
-		em.getTransaction().commit();
-	}
-
 	@SuppressWarnings("unchecked")
-	private boolean indexBatch(IndexWriter iwriter// , Connection connection
-	) {
-		// Statement jdbcStatement = null;
+	private boolean indexBatch(IndexWriter iwriter, Connection connection) {
+		Statement jdbcStatement = null;
 		EntityManager em = null;
 		boolean result = false;
 		List<Bisen> bisens = new ArrayList<Bisen>(1);
-		List<Long> succesIds = new ArrayList<Long>();
-		List<Long> errorIds = new ArrayList<Long>();
 		try {
-			// jdbcStatement = getJdbcStatement(connection);
+			jdbcStatement = getJdbcStatement(connection);
 			em = entityManagerFactory.createEntityManager();
-			// em.setFlushMode(FlushModeType.COMMIT);
 			bisens = em
 					.createQuery(
-							"from Bisen o where o.isIndexed is null and isDuplicate is null")
+							"from Bisen o where o.isIndexed is null and isDuplicate != false") //isDuplicate is null
 					// This will be isDuplicate=False after I'll modify
 					// control_harness.py.
 					.setMaxResults(BATCH_SIZE).getResultList();
 			result = (bisens != null) && (bisens.size() > 0);
 			if (result) {
-				logger.info("--getResultList() done resultList size:"
-						+ bisens.size());
-				try {
-					for (Bisen bisen : bisens) {
-						indexBisen(bisen, iwriter,
-						// jdbcStatement);
-								succesIds, errorIds);
-					}
-
-					logger
-							.info("------indexing batch done in memory. commit phase ...");
-				} finally {
-					try {
-						// jdbcStatement.executeBatch();
-						// connection.commit(); //conn.setAutoCommit
-						batchUpdateIsIndexed(succesIds, true, em);
-						batchUpdateIsIndexed(errorIds, false, em);
-						iwriter.commit();
-					} catch (Exception e) {
-						logger.error("Indexing batch commit error", e);
-						throw new RuntimeException(e);
-					}
-					logger.info("------indexing batch commited to disk ");
+				logger.info("--getResultList() done resultList size:" + bisens.size());
+				for (Bisen bisen : bisens) {
+					indexBisen(bisen, iwriter, jdbcStatement);
 				}
+
+				logger
+						.info("------indexing batch done in memory. mysql commit phase ...");
+				try {
+					jdbcStatement.executeBatch();
+					//connection.commit(); //conn.setAutoCommit
+					logger.info("------indexing batch done in memory. lucene commit phase ...");
+					iwriter.commit();
+				} catch (Exception e) {
+					logger.error("Indexing batch commit error", e);
+					throw new RuntimeException(e);
+				}
+				logger.info("------indexing batch commited to disk ");
+
 			}
 		} finally {
-			/*
-			 * } try { jdbcStatement.close(); } catch (SQLException e) {
-			 * logger.fatal("Inception: SQLException in finaly block and in " +
-			 * "SQLException catch block for jdbcStatement.close()", e); throw
-			 * new RuntimeException(
-			 * "Finally block Cannot close JDBC statement", e); } //
-			 */
+			try {
+				jdbcStatement.close();
+			} catch (SQLException e) {
+				logger.fatal("Inception: SQLException in finaly block and in "
+						+ "SQLException catch block for jdbcStatement.close()",
+						e);
+				throw new RuntimeException(
+						"Finally block Cannot close JDBC statement", e);
+			}
 			bisens.clear();
 			if (em != null) {
 				em.clear();
@@ -254,14 +239,14 @@ public class Indexer {
 
 	/* true=temp that is index will be created in hunglishIndexTmp, false=main */
 	synchronized public void indexAll(boolean create) {
-		//Connection jdbcConnection = null;
+		Connection jdbcConnection = null;
 		IndexWriter indexWriter = null;
 		try {
-			//jdbcConnection = getJdbcConnection();
+			jdbcConnection = getJdbcConnection();
 			indexWriter = initIndexer(create);
 			logger.info("----init indexer done--");
 			int batchIndex = 0;
-			while (indexBatch(indexWriter)){//, jdbcConnection)) {
+			while (indexBatch(indexWriter, jdbcConnection)) {
 				logger.info("<<<<<< finished indexing batch at " + ++batchIndex
 						* BATCH_SIZE);
 			}
@@ -279,9 +264,9 @@ public class Indexer {
 				if (indexWriter != null) {
 					indexWriter.close();
 				}
-				/*if (jdbcConnection != null) {
+				if (jdbcConnection != null) {
 					jdbcConnection.close();
-				} //*/
+				}
 			} catch (Exception e) {
 				logger.fatal("indexWriter close error", e);
 				throw new RuntimeException(e);
@@ -317,9 +302,7 @@ public class Indexer {
 				}
 				logger.info("------indexwriter close done----");
 			} catch (Exception e) {
-				logger.fatal(
-						"indexReader/indexWriter close error in Finally block",
-						e);
+				logger.fatal("indexReader/indexWriter close error in Finally block", e);
 				throw new RuntimeException(e);
 			}
 		}

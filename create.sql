@@ -124,6 +124,14 @@ CREATE TABLE `genre` (
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+insert into genre (id, name,description) values (-10, "All",   "All") ;
+insert into genre (name,description) values ("lit",   "Literature") ;
+insert into genre (name,description) values ("film",  "Subtitles") ;
+insert into genre (name,description) values ("mag",   "Magazine") ;
+insert into genre (name,description) values ("swdoc", "Software Documentation") ;
+insert into genre (name,description) values ("law",   "Law") ;
+
+
 --
 -- Table structure for table `upload`
 --

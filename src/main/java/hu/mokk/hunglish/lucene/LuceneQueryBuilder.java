@@ -5,6 +5,8 @@ import hu.mokk.hunglish.lucene.query.HunglishQueryParser;
 
 import java.util.HashMap;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.BooleanQuery;
@@ -20,52 +22,69 @@ import org.springframework.beans.factory.annotation.Configurable;
  */
 @Configurable
 public class LuceneQueryBuilder {
+	transient private static Log logger = LogFactory.getLog(Searcher.class);
 
 	private HashMap<String, SourceFilter> sourceFilterCache = new HashMap<String, SourceFilter>();
 
 	@Autowired
 	private HunglishQueryParser queryParser;
-	
-	private Query simpleParseSearchRequest(SearchRequest request) throws ParseException {
+
+	private Query simpleParseSearchRequest(SearchRequest request)
+			throws ParseException {
 		BooleanQuery result = new BooleanQuery();
 		String huRequest;
 		huRequest = request.getHuQuery();
 		if (huRequest != null && huRequest.length() > 0) {
-			
+
 			Query huQuery = new QueryParser(Version.LUCENE_30,
-					Bisen.huSentenceStemmedFieldName, queryParser.getAnalyzerProvider()
-							.getAnalyzer()).parse(huRequest);
+					Bisen.huSentenceStemmedFieldName, queryParser
+							.getAnalyzerProvider().getAnalyzer())
+					.parse(huRequest);
 			result.add(huQuery, Occur.SHOULD);
 		}
 
-		if (request.getEnQuery() != null
-				&& request.getEnQuery().length() > 0) {
+		if (request.getEnQuery() != null && request.getEnQuery().length() > 0) {
 			Query enQuery = new QueryParser(Version.LUCENE_30,
-					Bisen.enSentenceStemmedFieldName, queryParser.getAnalyzerProvider()
-							.getAnalyzer()).parse(request.getEnQuery());
+					Bisen.enSentenceStemmedFieldName, queryParser
+							.getAnalyzerProvider().getAnalyzer()).parse(request
+					.getEnQuery());
 			result.add(enQuery, Occur.SHOULD);
 		}
 		return result;
 	}
-	
+
 	public Query parseRequest(SearchRequest request) throws ParseException {
-		Query query; 
+		Query query;
 		try {
-			if (request.getHunglishSyntax()){
+			if (request.getHunglishSyntax()) {
 				query = new BooleanQuery();
-				query = queryParser.parse(request.getHuQuery(), request.getEnQuery());
+				query = queryParser.parse(request.getHuQuery(), request
+						.getEnQuery());
 			} else {
 				query = simpleParseSearchRequest(request);
 			}
 		} catch (Exception e) {
-			//e.printStackTrace(); 
+			// e.printStackTrace();
 			throw new RuntimeException("query couldn't be parsed", e);
 		}
-		
-		if (request.getSourceId() != null){
-			query = addSourceFilter(query, Bisen.genreFieldName, request.getSourceId());
+
+		if (request.getSourceId() != null) {
+			Integer genreId = -1;
+			try {
+				// the String to int conversion happens here
+				genreId = Integer.parseInt(request.getSourceId().trim());
+			} catch (NumberFormatException nfe) {
+				genreId = -1;
+				logger.error(
+						"NumberFormatException: cannot convert source id to number:"
+								+ request.getSourceId(), nfe);
+			}
+			if (genreId > 0) {
+				query = addSourceFilter(query, Bisen.genreFieldName, request
+						.getSourceId());
+			}
 		}
-		
+
 		return query;
 	}
 
@@ -89,9 +108,9 @@ public class LuceneQueryBuilder {
 		FilteredQuery qf = new FilteredQuery(q, filter);
 		return qf;
 	}
-	
-	public void deleteSourceFilterCache(){
-		synchronized (sourceFilterCache){
+
+	public void deleteSourceFilterCache() {
+		synchronized (sourceFilterCache) {
 			sourceFilterCache.clear();
 		}
 	}
@@ -115,5 +134,4 @@ public class LuceneQueryBuilder {
 		this.queryParser = queryParser;
 	}
 
-	
 }
