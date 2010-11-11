@@ -26,7 +26,7 @@
                 <c:if test="${not empty genres}">
                     <label for="_genre_id">Genre:</label>
                     <form:select cssStyle="width:250px" id="_genre_id" path="doc.genre">
-                        <form:options itemValue="id" items="${genres}"/>
+                        <form:options itemValue="id" itemLabel="description" items="${genres}"/>
                     </form:select>
                     <!-- <script type="text/javascript">Spring.addDecoration(new Spring.ElementDecoration({elementId : '_genre_id', widgetType: 'dijit.form.FilteringSelect', widgetAttrs : {hasDownArrow : true}})); </script>
                      -->
@@ -106,12 +106,11 @@ English:
         </c:if>
          -->
          
-         
-<c:if test="${not empty resultHunglishSyntax}">
-<p> Hunglish Syntax results ${resultHunglishSyntax.startOffset} - ${resultHunglishSyntax.endOffset} of ${resultHunglishSyntax.totalCount}<br/>
-</p>
-</c:if>         
-        <!-- <c:if test="${not empty bisens}"> -->
+<!-- 
+		<c:if test="${not empty resultHunglishSyntax}">
+		<p> Hunglish Syntax results ${resultHunglishSyntax.startOffset} - ${resultHunglishSyntax.endOffset} of ${resultHunglishSyntax.totalCount}<br/>
+		</p>
+		</c:if>         
         <c:if test="${not empty resultHunglishSyntax.hitList}">
             <table width="500px">
                 <thead>
@@ -122,7 +121,6 @@ English:
                         <th>En Sentence</th>
                     </tr>
                 </thead>
-                <!-- <c:forEach items="${bisens}" var="bisen"> -->
                 <c:forEach items="${resultHunglishSyntax.hitList}" var="bisen">
                     <tr>
                         <td>${bisen.id}</td>
@@ -139,7 +137,7 @@ English:
                 </c:forEach>
             </table>
         </c:if>
-         
-         
+-->        
+        
     </div>
 </div>

@@ -8,6 +8,8 @@ import hu.mokk.hunglish.domain.Bisen;
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.CorruptIndexException;
@@ -33,7 +35,8 @@ import org.springframework.beans.factory.annotation.Configurable;
  */
 @Configurable
 public class Searcher {
-
+	
+	
 	private String indexDir;
 	private Integer maxDocumments = 1000;
 	
