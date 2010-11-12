@@ -284,7 +284,7 @@
 			<artifactId>jmorph</artifactId>
 			<version>1.0</version>
 			<scope>system</scope>
-            <systemPath>${basedir}/src/main/webapp/WEB-INF/lib/net/sf/jhunlang/jmorph/1.0/jmorph-1.0.jar</systemPath>			
+            <systemPath>${basedir}/lib/net/sf/jhunlang/jmorph/1.0/jmorph-1.0.jar</systemPath>
 		</dependency>
 
 		<dependency>
@@ -312,6 +312,33 @@
 		<resources>
 		</resources>
 		<plugins>
+		<!-- copy jmorph.jar to the WEB-INF/lib dir-->
+	  <plugin>
+		<artifactId>maven-resources-plugin</artifactId>
+        <version>2.4.3</version>
+        <executions>
+          <execution>
+            <id>copy-resources</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <includeEmptyDirs>true</includeEmptyDirs>
+            
+              <outputDirectory>src/main/webapp/WEB-INF/lib</outputDirectory>
+              <resources>          
+                <resource>
+                  <directory>lib/net/sf/jhunlang/jmorph/1.0/</directory>
+					<excludes>
+          				<exclude> **/*.pom </exclude>
+                    </excludes>
+                </resource>
+              </resources>              
+            </configuration>            
+          </execution>
+        </executions>
+      </plugin>
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
