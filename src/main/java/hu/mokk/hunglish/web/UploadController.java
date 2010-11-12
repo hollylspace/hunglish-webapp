@@ -3,9 +3,9 @@ package hu.mokk.hunglish.web;
 import hu.mokk.hunglish.domain.Author;
 import hu.mokk.hunglish.domain.Genre;
 import hu.mokk.hunglish.domain.Upload;
+import hu.mokk.hunglish.util.Utils;
 
 import java.io.File;
-import java.net.URISyntaxException;
 import java.util.Date;
 
 import javax.validation.Valid;
@@ -26,20 +26,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class UploadController {
 
 	private String uploadDir; 
-	private static final String URI_PREFIX = "file:/";
-	private String convertPath(String path){		
-		String result = null;
-		try {
-			result = getClass().getClassLoader().getResource(path).toURI().toString();
-			if (result.startsWith(URI_PREFIX)){
-				result = result.substring(URI_PREFIX.length());
-			}
-		} catch (URISyntaxException e) {
-			throw new RuntimeException("cannot convert path:"+path);
-		}
-		return result;
-	}
-
 		
 	@RequestMapping(value = "/upload", method = RequestMethod.POST)
     public String create(@Valid Upload upload, BindingResult result, ModelMap modelMap) {
@@ -64,7 +50,7 @@ public class UploadController {
 	        upload.validate();
 	        
 	        upload.persist();
-	        String path = convertPath(uploadDir);
+	        String path = Utils.convertPath(getClass(), uploadDir);
 	        String huFilePath = path+File.separator + upload.getId()+"_HU."+upload.getHuExtension();
 	        File huFile = new File(huFilePath);
 	        upload.getHuFileData().transferTo(huFile);
