@@ -5,7 +5,7 @@ import java.net.URL;
 
 public class Utils {
 
-	private static final String URI_PREFIX = "file:/";
+	private static final String URI_PREFIX = "file:";
 	
 	public static String convertPath(Class clazz, String path){		
 		String result = null;
