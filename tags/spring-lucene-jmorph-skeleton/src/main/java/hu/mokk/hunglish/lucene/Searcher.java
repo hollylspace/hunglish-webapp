@@ -4,10 +4,10 @@
 package hu.mokk.hunglish.lucene;
 
 import hu.mokk.hunglish.domain.Bisen;
+import hu.mokk.hunglish.util.Utils;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -50,20 +50,6 @@ public class Searcher {
 	@Autowired
 	private LuceneQueryBuilder luceneQueryBuilder;
 
-	private static final String URI_PREFIX = "file:/";
-	private String convertPath(String path){		
-		String result = null;
-		try {
-			result = getClass().getClassLoader().getResource(path).toURI().toString();
-			if (result.startsWith(URI_PREFIX)){
-				result = result.substring(URI_PREFIX.length());
-			}
-		} catch (URISyntaxException e) {
-			throw new RuntimeException("cannot convert path:"+path);
-		}
-		return result;
-	}
-	
 	
 	public void reInitSearcher(){
 		try {
@@ -78,7 +64,7 @@ public class Searcher {
 	
 	public void initSearcher() {
 		boolean readOnly = true;
-		String inderDirFullPath = convertPath(indexDir); 
+		String inderDirFullPath = Utils.convertPath(getClass(), indexDir); 
 		if (indexReader == null) {
 			try {
 				indexReader = IndexReader.open(new SimpleFSDirectory(new File(
