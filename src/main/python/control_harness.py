@@ -69,14 +69,15 @@ def runHarness(metadata) :
     command += "--commands=%s/hunglishcommands.txt " % g_harnessAppDir
     command += "--root=%s --catalog=%s" % ( g_harnessDataDirectory, catalogFile )
 
-    logg( command )
     doIt = True
     if doIt :
+	logg( command )
 	status = os.system(command)
 	if status!=0 :
 	    raise Exception( "harness returned with error code"+str(status) )
     else :
 	# Csak teszteleshez, ha a qf fajl mar korabban a helyere kerult.
+	logg( "NOT EXECUTING!: "+command )
 	status = 0
 
     # TODO Cso"ro:zzu:k at a kimenetet valami $LOGDIR/$id.log fajlba.
