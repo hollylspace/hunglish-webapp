@@ -310,10 +310,14 @@
 
 	<build>
 		<resources>
+			<!--  
+			<resource>
+       			<directory></directory>
+     		</resource>
+     		 -->		
 		</resources>
 		<plugins>
 
-<!-- 
 	  <plugin>
 		<artifactId>maven-resources-plugin</artifactId>
         <version>2.4.3</version>
@@ -325,22 +329,22 @@
               <goal>copy-resources</goal>
             </goals>
             <configuration>
-              <outputDirectory>webapp/WEB-INF/lib</outputDirectory>
+              <includeEmptyDirs>true</includeEmptyDirs>
+            
+              <outputDirectory>src/main/webapp/WEB-INF/lib</outputDirectory>
               <resources>          
                 <resource>
-                  <directory>lib/net/sf/jhunlang/jmorph/1.0</directory>
-                  <filtering>false</filtering>
-                </resource>
-                <resource>
-                  <directory>fuckme</directory>
-                  <filtering>false</filtering>
+                  <directory>lib/net/sf/jhunlang/jmorph/1.0/</directory>
+					<excludes>
+          				<exclude> **/*.pom </exclude>
+                    </excludes>
                 </resource>
               </resources>              
             </configuration>            
           </execution>
         </executions>
       </plugin>
- -->
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
