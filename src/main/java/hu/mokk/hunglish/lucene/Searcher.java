@@ -7,6 +7,7 @@ import hu.mokk.hunglish.domain.Bisen;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -36,7 +37,7 @@ import org.springframework.beans.factory.annotation.Configurable;
 @Configurable
 public class Searcher {
 	
-	
+	transient private static Log logger = LogFactory.getLog(Bisen.class);
 	private String indexDir;
 	private Integer maxDocumments = 1000;
 	
@@ -48,6 +49,21 @@ public class Searcher {
 	
 	@Autowired
 	private LuceneQueryBuilder luceneQueryBuilder;
+
+	private static final String URI_PREFIX = "file:/";
+	private String convertPath(String path){		
+		String result = null;
+		try {
+			result = getClass().getClassLoader().getResource(path).toURI().toString();
+			if (result.startsWith(URI_PREFIX)){
+				result = result.substring(URI_PREFIX.length());
+			}
+		} catch (URISyntaxException e) {
+			throw new RuntimeException("cannot convert path:"+path);
+		}
+		return result;
+	}
+	
 	
 	public void reInitSearcher(){
 		try {
@@ -62,17 +78,18 @@ public class Searcher {
 	
 	public void initSearcher() {
 		boolean readOnly = true;
+		String inderDirFullPath = convertPath(indexDir); 
 		if (indexReader == null) {
 			try {
 				indexReader = IndexReader.open(new SimpleFSDirectory(new File(
-						indexDir)), readOnly);
+						inderDirFullPath)), readOnly);
 				searcher = new IndexSearcher(indexReader);
 				luceneQueryBuilder = new LuceneQueryBuilder();
 			} catch (CorruptIndexException e) {
-				throw new RuntimeException("Cannot open index directory.", e);
+				throw new RuntimeException("Cannot open index directory:"+indexDir+"; fullpath:"+inderDirFullPath, e);
 			} catch (IOException e) {
-				//throw new RuntimeException("Cannot open index directory.", e);
 				indexReader =null;
+				throw new RuntimeException("Cannot open index directory:"+indexDir+"; fullpath:"+inderDirFullPath, e);				
 			}
 		}
 	}
@@ -86,8 +103,7 @@ public class Searcher {
 		}
 		if (luceneQueryBuilder == null){
 			throw new IllegalStateException("Cannot initialize searcher. luceneQueryBuilder is null");
-		}
-		
+		}		
 	}
 		
 	
@@ -119,8 +135,7 @@ public class Searcher {
 		try {
 			query = luceneQueryBuilder.parseRequest(request);
 		} catch (ParseException e1) {
-			// TODO Auto-generated catch block
-			//e1.printStackTrace();
+			logger.error("cannot parse search request:"+request, e1);
 			throw new RuntimeException("Request couldn't be parsed", e1);
 		}
 		

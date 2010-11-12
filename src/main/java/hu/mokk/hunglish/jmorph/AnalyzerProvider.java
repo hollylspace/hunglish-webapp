@@ -87,7 +87,6 @@ public class AnalyzerProvider {
 			throw new RuntimeException("cannot convert path:"+path);
 		}
 		return result;
-		
 	}
 	private void convertPaths(){
 		huAff = convertPath(huAff);
