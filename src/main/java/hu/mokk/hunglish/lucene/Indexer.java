@@ -8,6 +8,7 @@ import hu.mokk.hunglish.jmorph.AnalyzerProvider;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -122,12 +123,23 @@ public class Indexer {
 		}
 	}
 
+	private File getFile(String path){
+		File dir = null;
+		try {
+			dir = new File(getClass().getClassLoader().getResource(tmpIndexDir).toURI());
+		} catch (URISyntaxException e) {
+			String message = "Temp index dir cannot be resolved:"+tmpIndexDir;
+			logger.error(message, e);
+			throw new RuntimeException(message, e);
+		}
+		return dir;
+	}
+	
 	public void deleteTmpDirectory() throws IOException {
-		File dir = new File(tmpIndexDir);
+		File dir = getFile(tmpIndexDir);
 		logger.info("exists? " + dir.exists());
 		logger.info("is it a dir? " + dir.isDirectory());
 		logger.info("recreate dir: " + dir.getAbsolutePath());
-
 		reCreateDir(dir);
 	}
 
@@ -291,7 +303,8 @@ public class Indexer {
 
 			try {
 				indexWriter = initIndexer(false);
-				indexReader = IndexReader.open(new SimpleFSDirectory(new File(
+				File tmpDir = null;
+				indexReader = IndexReader.open(new SimpleFSDirectory(getFile(
 						tmpIndexDir)), readOnly);
 				indexWriter.addIndexes(indexReader);
 				logger.info("------indexreader addIndexes done----");

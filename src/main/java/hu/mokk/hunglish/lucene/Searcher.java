@@ -78,9 +78,16 @@ public class Searcher {
 	}
 
 	private void checkState(){
-		if (indexReader == null || searcher == null || luceneQueryBuilder == null){
-			throw new IllegalStateException("can not search. Initialize searcher first.");
+		if (indexReader == null){
+			throw new IllegalStateException("Cannot initialize searcher. indexReader is null");
 		}
+		if (searcher == null){
+			throw new IllegalStateException("Cannot initialize searcher. searcher is null");
+		}
+		if (luceneQueryBuilder == null){
+			throw new IllegalStateException("Cannot initialize searcher. luceneQueryBuilder is null");
+		}
+		
 	}
 		
 	

@@ -7,6 +7,7 @@ import hu.mokk.hunglish.domain.Bisen;
 import hu.mokk.hunglish.lucene.analysis.StemmerAnalyzer;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -74,6 +75,29 @@ public class AnalyzerProvider {
 	Analyzer analyzer;
 
 	/*******************************************/
+	private static final String URI_PREFIX = "file:/";
+	private String convertPath(String path){		
+		String result = null;
+		try {
+			result = getClass().getClassLoader().getResource(path).toURI().toString();
+			if (result.startsWith(URI_PREFIX)){
+				result = result.substring(URI_PREFIX.length());
+			}
+		} catch (URISyntaxException e) {
+			throw new RuntimeException("cannot convert path:"+path);
+		}
+		return result;
+		
+	}
+	private void convertPaths(){
+		huAff = convertPath(huAff);
+		huDic = convertPath(huDic);
+		huDerivatives = convertPath(huDerivatives);
+		huCompounds = convertPath(huCompounds);
+		enAff = convertPath(enAff);
+		enDic = convertPath(enDic);
+	}
+	
 	private void initHuAnalyser() throws IOException, IllegalAccessException,
 			InstantiationException,
 			net.sf.jhunlang.jmorph.parser.ParseException {
@@ -113,7 +137,7 @@ public class AnalyzerProvider {
 
 		try {
 			lemmatizerMap = new HashMap<String, LemmatizerWrapper>();
-
+			convertPaths();
 			initHuAnalyser();
 			initEnAnalyser();
 			AnalyserControl acHu = new AnalyserControl(

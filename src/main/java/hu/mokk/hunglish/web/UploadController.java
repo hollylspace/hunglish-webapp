@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class UploadController {
 
-	private String uploadDir = "fileUpload"; //TODO FIXME this should come from Spring config (property file)
+	private String uploadDir = "WEB-INF/classes/fileUpload"; //TODO FIXME this should come from Spring config (property file)
 
 		
 	@RequestMapping(value = "/upload", method = RequestMethod.POST)
