@@ -5,6 +5,7 @@ import hu.mokk.hunglish.domain.Genre;
 import hu.mokk.hunglish.domain.Upload;
 
 import java.io.File;
+import java.net.URISyntaxException;
 import java.util.Date;
 
 import javax.validation.Valid;
@@ -24,7 +25,20 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class UploadController {
 
-	private String uploadDir = "WEB-INF/classes/fileUpload"; //TODO FIXME this should come from Spring config (property file)
+	private String uploadDir; 
+	private static final String URI_PREFIX = "file:/";
+	private String convertPath(String path){		
+		String result = null;
+		try {
+			result = getClass().getClassLoader().getResource(path).toURI().toString();
+			if (result.startsWith(URI_PREFIX)){
+				result = result.substring(URI_PREFIX.length());
+			}
+		} catch (URISyntaxException e) {
+			throw new RuntimeException("cannot convert path:"+path);
+		}
+		return result;
+	}
 
 		
 	@RequestMapping(value = "/upload", method = RequestMethod.POST)
@@ -50,13 +64,13 @@ public class UploadController {
 	        upload.validate();
 	        
 	        upload.persist();
-
-	        String huFilePath = uploadDir+File.separator + upload.getId()+"_HU."+upload.getHuExtension();
+	        String path = convertPath(uploadDir);
+	        String huFilePath = path+File.separator + upload.getId()+"_HU."+upload.getHuExtension();
 	        File huFile = new File(huFilePath);
 	        upload.getHuFileData().transferTo(huFile);
 	        upload.setHuUploadedFilePath(huFile.getCanonicalPath());
 	        
-	        String enFilePath = uploadDir+File.separator + upload.getId()+"_EN."+upload.getEnExtension();
+	        String enFilePath = path+File.separator + upload.getId()+"_EN."+upload.getEnExtension();
 	        File enFile = new File(enFilePath);
 	        upload.getEnFileData().transferTo(enFile);
 	        upload.setEnUploadedFilePath(enFile.getCanonicalPath());

@@ -214,4 +214,14 @@ public class SearchRequest {
 		this.hunglishSyntax = Boolean.parseBoolean(useHunglishSyntax);
 	}
 
+	
+	public String toString(){
+        StringBuilder sb = new StringBuilder();
+        sb.append("hunglishSyntax: ").append(hunglishSyntax).append(", ");
+        sb.append("huQuery: ").append(huQuery).append(", ");
+        sb.append("enQuery: ").append(enQuery).append(", ");
+        sb.append("enQuery: ").append(enQuery);
+        //TODO add moar fields
+        return sb.toString();
+	}
 }
