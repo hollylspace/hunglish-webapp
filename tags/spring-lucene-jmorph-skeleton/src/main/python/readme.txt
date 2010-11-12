@@ -37,16 +37,7 @@ TODO:
 mvn jetty:run > cout 2> cerr &
 , bar csak parancssorbol, eclipse-bol valamiert nem talalja az eroforrast.
 
-- Most a bisen.is_indexed -et olyanra hasznalom, ami igazibol nem az.
-Ugy kellene csinalni, hogy is_duplicate null jelenti azt, hogy me'g nem tortent duplumszures,
-es ha tortent, akkor mar true vagy false.
-Ennek megfeleloen a ("from Bisen o where o.isIndexed is null and isDuplicate is null") is modositando Bisen.java-ban.
-
-- Most eppen ki van kommentelve bisen.updateIsIndexed(true), mert tul lassu. Valami kotegelt timestampeles kellene ide.
-
-DONE - A hasheles fix stabil percenkent 12.3 darabos sebesseggel tortenik, ez igy 62 nap a hunglish1.nolaw-ra.
-
-DONE - utf8 bug.
+- Lehet, hogy a duplumszures nem csak az ujakra fut?
 
 - Ha ures a qf, akkor most "E"-t jegyez be "L" helyett.
 
@@ -59,27 +50,37 @@ DONE - utf8 bug.
 - Kellene egy save-load script-pa'r, ami a megadott konyvtarba ment
 egy mysqldumpot, egy harness.data es fileUpload konyvtarat es egy lucene indexet.
 
-- old_docid-t kivezetni az uploadtable formatumig. Ha mar az se kezeli, akkor ki kezelje?
-
 - Vegiggondolni, hogy milyen katasztrofakhoz vezet (ha vezet), ha veletlenul
 egyidoben fut ket control_harness peldany. indexelesbol semmikeppen ne fusson.
+Van-e valami komolyabb tranzakcionalitasi problema, tehat peldaul ha elfogy
+az indexelo memoriaja, akkor ertelmes allapotba hozza-e magat a rendszer?
 
-DONE - Atkoltozni a big3-ra.
+- egy biztonsagi mentest kellene csinalni az indexrol, mielott meghivjuk az indexert.
 
-DONE - megepiteni az uploadtable-t a reszkorpuszokhoz, es vegigzavarni a gepet rajta.
+- Kornai feature request-je: A lucene tokenizalo legyen olyan okos,
+hogy a dog's szot is megtalalja, ha a dog-ra keresek.
 
-- WTF Szegyenszemre az alkalmazas konyvtarabol kell inditani a tomcat-et, nem tudom miert:
-daniel@kozel:/srv/tomcat-6.0.20/webapps/hunglish-0.1.0-SNAPSHOT$ sudo /etc/init.d/tomcat6 start
+- Ha ures az indexkonyvtar, akkor epitsen oda egy ures indexet.
 
-- Nagy inkonzisztencia-veszely: Ha a harness adatkonyvtarrendszereben ket fajlnak
-is ugyanaz az azonositoja, de mas a kiterjesztese:
-harness/en/pdf/2.en.pdf harness/en/txt/2.en.txt
-akkor csendben kivalasztja az egyiket, feltehetoleg nem azt, amit igazibol akarsz.
-Mondjuk ha ez eloall, az mar reg rossz, az is igaz.
+ADATBAZISSEMA, MEZOK KITOLTESE:
+
+- Most a bisen.is_indexed -et olyanra hasznalom, ami igazibol nem az.
+Ugy kellene csinalni, hogy is_duplicate null jelenti azt, hogy me'g nem tortent duplumszures,
+es ha tortent, akkor mar true vagy false.
+Ennek megfeleloen a ("from Bisen o where o.isIndexed is null and isDuplicate is null") is modositando Bisen.java-ban.
+
+- Kell valami hivatalosan_jovahagyva flag az upload es doc tablakba.
+
+- A copyright flag mar az upload tablaig sincs visszagorgetve,
+nem hogy a hunglish1.nolaw.uploadtable megalkotasaig.
+
+- old_docid-t kivezetni az uploadtable formatumig. Ha mar az se kezeli, akkor ki kezelje?
+
+HARNESS, HIBAKEZELES:
 
 - srt formatum feltoltese, konverzioja.
 
-Maradtak bent html entitasok valamelyik konverter kimeneteben.
+- Maradtak bent html entitasok valamelyik konverter kimeneteben.
 
 - Tortenetesen a hunglish2 txt resze es a sajtofigyelo egyarant latin2, de
 nemigen lehet meguszni vagy egy autodetect-et, ami a txt-bol raw-ba alakitaskor fut,
@@ -96,22 +97,33 @@ ha rosszak az aranyok mondatra vagy bajtra. (A helye mar megvan.)
 vagy nagyon rossz az aranya a parhuzamositas elotti mondatpar-szamnak.
 (A helye mar megvan.)
 
-NOTDONE - Bug: Hogy a turoba tud 37 masodpercig futni ez a trivialis join:
-select count(*) from bisen,doc where bisen.doc=doc.id and doc.author=63;
-
-- Kell valami hivatalosan_jovahagyva flag az upload es doc tablakba.
-
-- A copyright flag mar az upload tablaig sincs visszagorgetve,
-nem hogy a hunglish1.nolaw.uploadtable megalkotasaig.
-
-- egy biztonsagi mentest kellene csinalni az indexrol, mielott meghivjuk az indexert.
-
-- Kornai feature request-je: A lucene tokenizalo legyen olyan okos,
-hogy a dog's szot is megtalalja, ha a dog-ra keresek.
-
 - A bena felhasznalok nagyon el tudjak csufitani a korpuszt, ha ugyetlenul
 felcserelik az angol es magyar upload mezot, vagy mindket oldalra ugyanazt toltik fel.
 Kell egy nyelvdetektor filter.
+
+LEZART DOLGOK:
+
+NOTDONE - Bug: Hogy a turoba tud 37 masodpercig futni ez a trivialis join:
+select count(*) from bisen,doc where bisen.doc=doc.id and doc.author=63;
+
+- WTF Szegyenszemre az alkalmazas konyvtarabol kell inditani a tomcat-et, nem tudom miert:
+daniel@kozel:/srv/tomcat-6.0.20/webapps/hunglish-0.1.0-SNAPSHOT$ sudo /etc/init.d/tomcat6 start
+
+NOTDONE - Nagy inkonzisztencia-veszely: Ha a harness adatkonyvtarrendszereben ket fajlnak
+is ugyanaz az azonositoja, de mas a kiterjesztese:
+harness/en/pdf/2.en.pdf harness/en/txt/2.en.txt
+akkor csendben kivalasztja az egyiket, feltehetoleg nem azt, amit igazibol akarsz.
+Mondjuk ha ez eloall, az mar reg rossz, az is igaz.
+
+DONE - Atkoltozni a big3-ra.
+
+DONE - megepiteni az uploadtable-t a reszkorpuszokhoz, es vegigzavarni a gepet rajta.
+
+DONE - Most eppen ki van kommentelve bisen.updateIsIndexed(true), mert tul lassu. Valami kotegelt timestampeles kellene ide.
+
+DONE - A hasheles fix stabil percenkent 12.3 darabos sebesseggel tortenik, ez igy 62 nap a hunglish1.nolaw-ra.
+
+DONE - utf8 bug.
 
 ---
 Adatforrasok
@@ -176,9 +188,35 @@ adathalmaznak.
 /big3/Work/HunglishMondattar/harness.data.archive.allexceptnolaw
 
 TODO Ez elavult, mert megvaltozott a sema. A vegen ujracsinalni.
+/big3/Work/HunglishMondattar/hunglish-webapp/src/main/python/nolaw.mysqldump.beforeindex
+harness.data.nolaw
 
 ---
+IGY KELL TELEPITENI JELENLEG
 
-1) database.properties editálás
-2) hiányzó könyvtárak : hunglishIndex, benne az aktuális indexállomány (most kezdetben lehet üres); hunglishIndexTmp üresen, resources-lang, benne van minden, ami a j-morph-nak kell tehát egy-az-egyben kell másolni a projekt alól;
-3) és a lib-ek (ez kicsit el van rejtve de meg lehet találni) közé be kell rakni a j-morph jart (a projekt lib könyvtárából)
+# Build
+cd /big3/Work/HunglishMondattar/hunglish-webapp/
+mvn clean
+# Ezt neha valamiert ketszer kell:
+mvn package
+
+# Repackage
+rm hunglish-0.1.0-SNAPSHOT.war
+rm -rf war
+mkdir war
+cd war
+unzip /big3/Work/HunglishMondattar/hunglish-webapp/target/hunglish-0.1.0-SNAPSHOT.war
+mkdir fileUpload hunglishIndexTmp hunglishIndex
+cp -r /big3/Work/HunglishMondattar/hunglish-webapp/resources-lang .
+cp /big3/Work/HunglishMondattar/hunglish-webapp/lib/net/sf/jhunlang/jmorph/1.0/jmorph-1.0.jar WEB-INF/lib/
+zip -r ../hunglish-0.1.0-SNAPSHOT.war *
+cd ..
+
+# Stop
+http://kozel.mokk.bme.hu:8080/manager/html/stop?path=/hunglish-0.1.0-SNAPSHOT
+
+# Undeploy
+http://kozel.mokk.bme.hu:8080/manager/html/undeploy?path=/hunglish-0.1.0-SNAPSHOT
+
+# Deploy and Start
+http://kozel.mokk.bme.hu:8080/manager/deploy?path=/hunglish-0.1.0-SNAPSHOT&war=file:/big3/Work/HunglishMondattar/hunglish-webapp/hunglish-0.1.0-SNAPSHOT.war
