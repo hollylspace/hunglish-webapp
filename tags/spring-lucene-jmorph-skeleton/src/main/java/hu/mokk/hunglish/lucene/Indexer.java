@@ -106,12 +106,17 @@ public class Indexer {
 	}
 
 	private void reCreateDir(File dir) {
+
+		/*
+		 * int numOfFiles = 0; if (dir.exists() && dir.isDirectory()) {
+		 * numOfFiles = FileUtils.listFiles(dir, null, false).size(); }
+		 */
+
 		try {
-			Collection coll = FileUtils.listFiles(dir, null, false);
-			if (coll.size() > 0) {
-				FileUtils.deleteQuietly(dir);
-				FileUtils.forceMkdir(dir);
-			}
+			// if (numOfFiles >= 0) {
+			FileUtils.deleteQuietly(dir);
+			FileUtils.forceMkdir(dir);
+			// }
 		} catch (IOException e) {
 			throw new RuntimeException("Cannot recreate directory:" + dir, e);
 		}
@@ -126,14 +131,14 @@ public class Indexer {
 		reCreateDir(dir);
 	}
 
-	//TODO get this from properties file 
+	// TODO get this from properties file
 	String url = "jdbc:mysql://localhost:3306/";
 	String db = "hunglishwebapp";
 	String driver = "com.mysql.jdbc.Driver";
 	String user = "hunglish";
 	String pass = "sw6x2the";
 	public static int BATCH_SIZE = 10000;
-	
+
 	private Connection getJdbcConnection() {
 		Connection con = null;
 		try {
@@ -193,13 +198,16 @@ public class Indexer {
 			em = entityManagerFactory.createEntityManager();
 			bisens = em
 					.createQuery(
-							"from Bisen o where o.isIndexed is null and isDuplicate != false") //isDuplicate is null
+							"from Bisen o where o.isIndexed is null and isDuplicate != false") // isDuplicate
+																								// is
+																								// null
 					// This will be isDuplicate=False after I'll modify
 					// control_harness.py.
 					.setMaxResults(BATCH_SIZE).getResultList();
 			result = (bisens != null) && (bisens.size() > 0);
 			if (result) {
-				logger.info("--getResultList() done resultList size:" + bisens.size());
+				logger.info("--getResultList() done resultList size:"
+						+ bisens.size());
 				for (Bisen bisen : bisens) {
 					indexBisen(bisen, iwriter, jdbcStatement);
 				}
@@ -208,8 +216,9 @@ public class Indexer {
 						.info("------indexing batch done in memory. mysql commit phase ...");
 				try {
 					jdbcStatement.executeBatch();
-					//connection.commit(); //conn.setAutoCommit
-					logger.info("------indexing batch done in memory. lucene commit phase ...");
+					// connection.commit(); //conn.setAutoCommit
+					logger
+							.info("------indexing batch done in memory. lucene commit phase ...");
 					iwriter.commit();
 				} catch (Exception e) {
 					logger.error("Indexing batch commit error", e);
@@ -302,7 +311,9 @@ public class Indexer {
 				}
 				logger.info("------indexwriter close done----");
 			} catch (Exception e) {
-				logger.fatal("indexReader/indexWriter close error in Finally block", e);
+				logger.fatal(
+						"indexReader/indexWriter close error in Finally block",
+						e);
 				throw new RuntimeException(e);
 			}
 		}
