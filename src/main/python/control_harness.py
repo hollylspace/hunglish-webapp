@@ -316,10 +316,11 @@ def flagDuplicates(db) :
                     dupIds.append(id)
             prevHashes = hashes
 
+        logg("%d duplicates found in %d new records. total # of records %d" % (len(dupIds),newBisenNum,len(results)) )
+	logg("Marking duplicates...")
         for id in dupIds :
             cursor.execute("update bisen set is_duplicate=True where id=%s" % id )
-
-        logg("%d duplicates found in %d new records. total # of records %d" % (len(dupIds),newBisenNum,len(results)) )
+	logg("Done."
     except Exception, e:
 	logg("ERROR in flagDuplicates()!")
         logg("Exception: "+str(type(e))+" "+str(e))
