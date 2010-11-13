@@ -49,11 +49,13 @@ def main() :
 
     username, password, database = sys.argv[1:]
     db = MySQLdb.connect(host="localhost", user=username, passwd=password, db=database)
+    db.set_character_set("utf8")
+
     try :
 	for l in sys.stdin :
 	    if l=="\n" or l[0]=="#" :
 		continue
-	    record = l.strip().split("\t")
+	    record = l.decode("utf-8").strip().split("\t")
 	    assert len(record)==6
 	    addOne(db,record)
     except :

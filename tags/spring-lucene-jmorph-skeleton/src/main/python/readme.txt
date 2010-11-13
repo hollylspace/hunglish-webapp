@@ -33,19 +33,23 @@ Amikor ez mind lezajlott, akkor egy job queue tablan keresztul uzen a webappnak,
 ---
 TODO:
 
+Zsolt telepitsen legujabb, sun-os javat, es mavent. A tomcat a sun-os java home-ra mutasson.
+De az is lehet, hogy az Aspects JAR problemat megoldja, ha a tomcat es a maven ugyanazzal
+a java-val (openjdk, sun jdk) megy.
+
+atirtam az init.d/tomcat6-ot sun-rol openjdk path-ra!!!!!!!!!!!!
+
+~/.m2/settings.xml -ba beleraktam, hogy lehessen mavenbol deployolni.
+
 - GERGO: Aramvonalasabba kellene tenni a kozel deploy-t. A mac-emen mar teljesen jo:
 mvn jetty:run > cout 2> cerr &
 , bar csak parancssorbol, eclipse-bol valamiert nem talalja az eroforrast.
-
-- Lehet, hogy a duplumszures nem csak az ujakra fut?
 
 - Ha ures a qf, akkor most "E"-t jegyez be "L" helyett.
 
 - harness kimenet logba. datum-uploadId.log
 - indexer kimenet logba. datum.indexer.log
 - maga a control_harness kimenet logba. datum.controller.log
-
-- A metaadatok is utf8-ban legyenek.
 
 - Kellene egy save-load script-pa'r, ami a megadott konyvtarba ment
 egy mysqldumpot, egy harness.data es fileUpload konyvtarat es egy lucene indexet.
@@ -78,7 +82,7 @@ nem hogy a hunglish1.nolaw.uploadtable megalkotasaig.
 
 HARNESS, HIBAKEZELES:
 
-- srt formatum feltoltese, konverzioja.
+- srt formatum feltoltese, konverzioja. UPDATE: Mar csak tesztelni kellene.
 
 - Maradtak bent html entitasok valamelyik konverter kimeneteben.
 
@@ -102,6 +106,8 @@ felcserelik az angol es magyar upload mezot, vagy mindket oldalra ugyanazt tolti
 Kell egy nyelvdetektor filter.
 
 LEZART DOLGOK:
+
+- A metaadatok is utf8-ban legyenek.
 
 NOTDONE - Bug: Hogy a turoba tud 37 masodpercig futni ez a trivialis join:
 select count(*) from bisen,doc where bisen.doc=doc.id and doc.author=63;
