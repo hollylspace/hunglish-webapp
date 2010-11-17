@@ -41,6 +41,14 @@ atirtam az init.d/tomcat6-ot sun-rol openjdk path-ra!!!!!!!!!!!!
 
 ~/.m2/settings.xml -ba beleraktam, hogy lehessen mavenbol deployolni.
 
+- Ne relativ path-on keresse az index es upload konyvtarakat, hanem fixen
+/big3/Work/HunglishMondattar alatt, ahol egyebkent a harness.data is lesz.
+Persze a laptopokon nem big3, legyen valami lokalis conf,
+ami alapjan startup (es nem build) idoben beallithato. Utobbi azert fontos,
+hogy mac-rol is tudjam a kozelen deployolni.
+
+- GERGO: Indexer jdbc eleres parametereit properties fajlbol venni.
+
 - GERGO: Aramvonalasabba kellene tenni a kozel deploy-t. A mac-emen mar teljesen jo:
 mvn jetty:run > cout 2> cerr &
 , bar csak parancssorbol, eclipse-bol valamiert nem talalja az eroforrast.
