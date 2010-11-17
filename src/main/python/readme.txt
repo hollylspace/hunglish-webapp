@@ -59,6 +59,9 @@ mvn jetty:run > cout 2> cerr &
 - indexer kimenet logba. datum.indexer.log
 - maga a control_harness kimenet logba. datum.controller.log
 
+- Harness commandfajl a /big1/Work/Pipeline/cvs -t referalja,
+ami felesleges NFS elerest jelent a kozelrol. Atcuccolni.
+
 - Kellene egy save-load script-pa'r, ami a megadott konyvtarba ment
 egy mysqldumpot, egy harness.data es fileUpload konyvtarat es egy lucene indexet.
 
