@@ -465,6 +465,7 @@
 				<version>1.0-beta-1</version>
 				<configuration>
 				    <server>tomcat</server> <!--DANIEL -->
+				    <url>http://kozel.mokk.bme.hu:8080/manager</url>
 				</configuration>
 			
 			</plugin>
