@@ -7,6 +7,7 @@ public class Utils {
 
 	private static final String URI_PREFIX = "file:";
 	
+	/*
 	public static String convertPath(Class clazz, String path){		
 		String result = null;
 		try {
@@ -22,6 +23,6 @@ public class Utils {
 			throw new RuntimeException("cannot convert path:"+path);
 		}
 		return result;
-	}
+	} //*/
 	
 }

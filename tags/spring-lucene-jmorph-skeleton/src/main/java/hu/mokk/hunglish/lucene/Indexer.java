@@ -63,29 +63,24 @@ public class Indexer {
 
 	// private CreateOrAppend createOrAppend = CreateOrAppend.Create;
 
-	private IndexWriter initIndexer(Boolean create) {
+	private IndexWriter initIndexer(Boolean temporary) {
 		IndexWriter indexWriter;
 		if (analyzerProvider == null) {
 			throw new IllegalStateException(
 					"Cannot create indexWriter. The analyzerProvider is null.");
 		}
-		String dir = create ? tmpIndexDir : indexDir;
+		String dir = temporary ? tmpIndexDir : indexDir;
 		if (dir == null) {
 			throw new IllegalStateException(
 					"Cannot create indexWriter. The directory is null.");
 		}
-		try {
-			if (create) {
-				deleteTmpDirectory();
-			}
-		} catch (IOException e) {
-			throw new RuntimeException(
-					"IOException, cannot delete tmp directory.", e);
+		if (temporary) {
+			deleteTmpDirectory();
 		}
 
 		try {
-			indexWriter = new IndexWriter(new SimpleFSDirectory(new File(dir)),
-					analyzerProvider.getAnalyzer(), create,
+			indexWriter = new IndexWriter(new SimpleFSDirectory( new File(dir)),
+					analyzerProvider.getAnalyzer(), temporary,
 					IndexWriter.MaxFieldLength.UNLIMITED);
 		} catch (CorruptIndexException e) {
 			throw new RuntimeException(
@@ -123,7 +118,8 @@ public class Indexer {
 		}
 	}
 
-	private File getFile(String path){
+	/*
+	public static File getFile(String path){
 		File dir = null;
 		try {
 			dir = new File(getClass().getClassLoader().getResource(tmpIndexDir).toURI());
@@ -133,14 +129,14 @@ public class Indexer {
 			throw new RuntimeException(message, e);
 		}
 		return dir;
-	}
+	} //*/
 	
-	public void deleteTmpDirectory() throws IOException {
-		File dir = getFile(tmpIndexDir);
+	public void deleteTmpDirectory() {
+		File dir = new File(tmpIndexDir);  //getFile(tmpIndexDir);
 		logger.info("exists? " + dir.exists());
 		logger.info("is it a dir? " + dir.isDirectory());
 		logger.info("recreate dir: " + dir.getAbsolutePath());
-		reCreateDir(dir);
+		reCreateDir(dir);		
 	}
 
 	// TODO get this from properties file
@@ -303,9 +299,8 @@ public class Indexer {
 
 			try {
 				indexWriter = initIndexer(false);
-				File tmpDir = null;
-				indexReader = IndexReader.open(new SimpleFSDirectory(getFile(
-						tmpIndexDir)), readOnly);
+				indexReader = IndexReader.open(
+						new SimpleFSDirectory(new File(tmpIndexDir)), readOnly);
 				indexWriter.addIndexes(indexReader);
 				logger.info("------indexreader addIndexes done----");
 

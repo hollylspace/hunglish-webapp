@@ -75,6 +75,7 @@ public class AnalyzerProvider {
 	Analyzer analyzer;
 
 	/*******************************************/
+	/*
 	private void convertPaths(){
 		huAff = Utils.convertPath(getClass(), huAff);
 		huDic = Utils.convertPath(getClass(), huDic);
@@ -82,7 +83,7 @@ public class AnalyzerProvider {
 		huCompounds = Utils.convertPath(getClass(), huCompounds);
 		enAff = Utils.convertPath(getClass(), enAff);
 		enDic = Utils.convertPath(getClass(), enDic);
-	}
+	} //*/
 	
 	private void initHuAnalyser() throws IOException, IllegalAccessException,
 			InstantiationException,
@@ -123,7 +124,7 @@ public class AnalyzerProvider {
 
 		try {
 			lemmatizerMap = new HashMap<String, LemmatizerWrapper>();
-			convertPaths();
+			//convertPaths();
 			initHuAnalyser();
 			initEnAnalyser();
 			AnalyserControl acHu = new AnalyserControl(
