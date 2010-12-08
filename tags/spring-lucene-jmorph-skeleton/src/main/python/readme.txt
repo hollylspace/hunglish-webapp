@@ -91,6 +91,8 @@ nem hogy a hunglish1.nolaw.uploadtable megalkotasaig.
 
 - old_docid-t kivezetni az uploadtable formatumig. Ha mar az se kezeli, akkor ki kezelje?
 
+- Runga ujabb korpuszat betenni.
+
 HARNESS, HIBAKEZELES:
 
 - srt formatum feltoltese, konverzioja. UPDATE: Mar csak tesztelni kellene.
@@ -115,6 +117,17 @@ vagy nagyon rossz az aranya a parhuzamositas elotti mondatpar-szamnak.
 - A bena felhasznalok nagyon el tudjak csufitani a korpuszt, ha ugyetlenul
 felcserelik az angol es magyar upload mezot, vagy mindket oldalra ugyanazt toltik fel.
 Kell egy nyelvdetektor filter.
+UPDATE: Kesz, integralando. ~/big/experiments/textcat.pezo/LM eroforrasnak jo
+helyet talalni. Altalaban, hol legyenek az eroforrasok?
+
+- Tovezes is legyen a pipeline-ban az align elott, hogy ne legyunk rosszabbak, mint
+a regi hunglish.
+
+- Ezt valszeg nem fogjuk megcsinalni, de lenne ertelme:
+A pipeline-t szetszedni ket reszre valahol a sen elott, ugy, hogy az eleje
+baromi gyorsan lefusson, es reszponzivan vissza tudjon kohogni olyanokat,
+hogy "tul hosszu", "nem angol", "tul kulonbozo hosszu" meg ilyesmi.
+A lassu reszek tovabbra is cronban futnanak.
 
 LEZART DOLGOK:
 
