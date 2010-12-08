@@ -64,18 +64,18 @@ public class Searcher {
 	
 	public void initSearcher() {
 		boolean readOnly = true;
-		String inderDirFullPath = Utils.convertPath(getClass(), indexDir); 
+		//String indexDirFullPath = Utils.convertPath(getClass(), indexDir); 
 		if (indexReader == null) {
 			try {
 				indexReader = IndexReader.open(new SimpleFSDirectory(new File(
-						inderDirFullPath)), readOnly);
+						indexDir)), readOnly);
 				searcher = new IndexSearcher(indexReader);
 				luceneQueryBuilder = new LuceneQueryBuilder();
 			} catch (CorruptIndexException e) {
-				throw new RuntimeException("Cannot open index directory:"+indexDir+"; fullpath:"+inderDirFullPath, e);
+				throw new RuntimeException("Cannot open index directory:"+indexDir, e);
 			} catch (IOException e) {
 				indexReader =null;
-				throw new RuntimeException("Cannot open index directory:"+indexDir+"; fullpath:"+inderDirFullPath, e);				
+				throw new RuntimeException("Cannot open index directory:"+indexDir, e);				
 			}
 		}
 	}

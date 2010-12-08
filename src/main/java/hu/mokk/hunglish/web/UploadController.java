@@ -50,7 +50,7 @@ public class UploadController {
 	        upload.validate();
 	        
 	        upload.persist();
-	        String path = Utils.convertPath(getClass(), uploadDir);
+	        String path = uploadDir; //Utils.convertPath(getClass(), uploadDir);
 	        String huFilePath = path+File.separator + upload.getId()+"_HU."+upload.getHuExtension();
 	        File huFile = new File(huFilePath);
 	        upload.getHuFileData().transferTo(huFile);
