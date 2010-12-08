@@ -62,6 +62,8 @@ mvn jetty:run > cout 2> cerr &
 - Harness commandfajl a /big1/Work/Pipeline/cvs -t referalja,
 ami felesleges NFS elerest jelent a kozelrol. Atcuccolni.
 
+- Layout: ROOT/ alabbiak: fileUpload harnessData hunglishIndex logs mysqlDump
+
 - Kellene egy save-load script-pa'r, ami a megadott konyvtarba ment
 egy mysqldumpot, egy harness.data es fileUpload konyvtarat es egy lucene indexet.
 
