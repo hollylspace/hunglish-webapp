@@ -59,9 +59,6 @@ mvn jetty:run > cout 2> cerr &
 - indexer kimenet logba. datum.indexer.log
 - maga a control_harness kimenet logba. datum.controller.log
 
-- Harness commandfajl a /big1/Work/Pipeline/cvs -t referalja,
-ami felesleges NFS elerest jelent a kozelrol. Atcuccolni.
-
 - Layout: ROOT/ alabbiak: fileUpload harnessData hunglishIndex logs mysqlDump
 
 - Kellene egy save-load script-pa'r, ami a megadott konyvtarba ment
@@ -92,8 +89,6 @@ Ennek megfeleloen a ("from Bisen o where o.isIndexed is null and isDuplicate is 
 nem hogy a hunglish1.nolaw.uploadtable megalkotasaig.
 
 - old_docid-t kivezetni az uploadtable formatumig. Ha mar az se kezeli, akkor ki kezelje?
-
-- Runga ujabb korpuszat betenni.
 
 HARNESS, HIBAKEZELES:
 
@@ -133,7 +128,12 @@ A lassu reszek tovabbra is cronban futnanak.
 
 LEZART DOLGOK:
 
-- A metaadatok is utf8-ban legyenek.
+DONE - Runga ujabb korpuszat betenni.
+
+DONE - Harness commandfajl a /big1/Work/Pipeline/cvs -t referalja,
+ami felesleges NFS elerest jelent a kozelrol. Atcuccolni.
+
+DONE - A metaadatok is utf8-ban legyenek.
 
 NOTDONE - Bug: Hogy a turoba tud 37 masodpercig futni ez a trivialis join:
 select count(*) from bisen,doc where bisen.doc=doc.id and doc.author=63;
@@ -189,7 +189,8 @@ TODO
 originally at: ~/big/experiments/runga200 , de azon sokat csiszoltam, mikor idetettem, most mar az itteni a nyero.
 now at: hunglish2
 Igy keszult az uploadtable:
-cat /big3/Work/HunglishMondattar/datasources/hunglish2/master.final.noerikson.txt | cut -f1,2,4,5 | awk 'BEGIN{FS="\t"} (($2!="odt")&&($4!="odt")&&($2!="lit")&&($4!="lit"))' | python master2uploadtable.py /big3/Work/HunglishMondattar/datasources/hunglish2 > /big3/Work/HunglishMondattar/datasources/hunglish2/hunglish2.noerikson.uploadtable
+cat /big3/Work/HunglishMondattar/datasources/hunglish2/master.final.txt | cut -f1,2,4,5 | awk 'BEGIN{FS="\t"} (($2!="odt")&&($4!="odt")&&($2!="lit")&&($4!="lit"))' | python master2uploadtable.py /big3/Work/HunglishMondattar/datasources/hunglish2 > /big3/Work/HunglishMondattar/datasources/hunglish2/hunglish2.uploadtable
+TODO A lit-ekbol txt-t kellene csinalni, ne menjenek ka'rba.
 
 = feliratok.hu
 originally at: /big3/User/zseder/Progs/subs/movies_v3.tar.gz tvshows.tar.gz

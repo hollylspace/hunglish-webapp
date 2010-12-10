@@ -300,17 +300,18 @@ def flagDuplicates(db) :
 	# mar az osszhosszuk szerint rendezi, hogy a sok nemalfanumerikust ne tolja
 	# a felhasznalo arcaba feleslegesen.
         cursor.execute("""select
-	    id,hu_sentence_hash,en_sentence_hash,is_indexed
+	    id,hu_sentence_hash,en_sentence_hash,is_duplicate
 	    from bisen order by
-	    hu_sentence_hash,en_sentence_hash,is_indexed,
+	    hu_sentence_hash,en_sentence_hash,is_duplicate,
 	    CHAR_LENGTH(CONCAT(en_sentence,hu_sentence))""")
         results = cursor.fetchall()
         dupIds = []
         prevHashes = (None,None)
         newBisenNum = 0
-        for (id,huHash,enHash,isIndexed) in results :
+        for (id,huHash,enHash,isDup) in results :
             hashes = (huHash,enHash)
-            if isIndexed==None :
+	    # isDup==None : not yet duplumfiltered
+            if isDup==None :
                 newBisenNum += 1
                 if hashes==prevHashes :
                     dupIds.append(id)
@@ -320,6 +321,11 @@ def flagDuplicates(db) :
 	logg("Marking duplicates...")
         for id in dupIds :
             cursor.execute("update bisen set is_duplicate=True where id=%s" % id )
+
+	# If it wasn't marked dup and is NULL (is new),
+	# then we can set it to non_dup in a single update:
+	cursor.execute("update bisen set is_duplicate=False where is_duplicate is NULL")
+
 	logg("Done.")
     except Exception, e:
 	logg("ERROR in flagDuplicates()!")
