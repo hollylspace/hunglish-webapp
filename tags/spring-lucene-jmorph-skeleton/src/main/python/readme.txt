@@ -39,8 +39,6 @@ a java-val (openjdk, sun jdk) megy.
 
 atirtam az init.d/tomcat6-ot sun-rol openjdk path-ra!!!!!!!!!!!!
 
-~/.m2/settings.xml -ba beleraktam, hogy lehessen mavenbol deployolni.
-
 - Ne relativ path-on keresse az index es upload konyvtarakat, hanem fixen
 /big3/Work/HunglishMondattar alatt, ahol egyebkent a harness.data is lesz.
 Persze a laptopokon nem big3, legyen valami lokalis conf,
@@ -56,8 +54,10 @@ mvn jetty:run > cout 2> cerr &
 - Ha ures a qf, akkor most "E"-t jegyez be "L" helyett.
 
 - harness kimenet logba. datum-uploadId.log
-- indexer kimenet logba. datum.indexer.log
-- maga a control_harness kimenet logba. datum.controller.log
+(megoldva, a control_harness uj opcionalis argja, hogy hova loggoljon)
+- maga a control_harness kimenet logba. datum.controller.log 
+(ez majd a cronjob dolga, aki a fent emlitett argot is szolgaltatni fogja egy
+kozonseges logprefix=$logdir/`date +"%Y%m%d-%H%M%S"` paranccsal.)
 
 - Layout: ROOT/ alabbiak: fileUpload harnessData hunglishIndex logs mysqlDump
 
@@ -96,11 +96,6 @@ HARNESS, HIBAKEZELES:
 
 - Maradtak bent html entitasok valamelyik konverter kimeneteben.
 
-- Tortenetesen a hunglish2 txt resze es a sajtofigyelo egyarant latin2, de
-nemigen lehet meguszni vagy egy autodetect-et, ami a txt-bol raw-ba alakitaskor fut,
-vagy egy kulon utftxt source formatot a txt melle. Az elobbi a kenyelmesebb es
-biztonsagosabb, csak meg kellene csinalni.
-
 - ~/scripts/tcom/nogarbage.sh integralasa, vagy legalabbis a relevansabb reszeinek
 atmentese, ha vannak egyaltalan. A sajtofigyelo mennyire jol megy enelkul?
 
@@ -128,6 +123,14 @@ A lassu reszek tovabbra is cronban futnanak.
 
 LEZART DOLGOK:
 
+DONE - Tortenetesen a hunglish2 txt resze es a sajtofigyelo egyarant latin2, de
+nemigen lehet meguszni vagy egy autodetect-et, ami a txt-bol raw-ba alakitaskor fut,
+vagy egy kulon utftxt source formatot a txt melle. Az elobbi a kenyelmesebb es
+biztonsagosabb, csak meg kellene csinalni.
+
+DONE ~/.m2/settings.xml -ba beleraktam, hogy lehessen mavenbol deployolni.
+
+NOTDONE (Mert a catalina.out-ba is jo lesz) - indexer kimenet logba. datum.indexer.log
 DONE - Runga ujabb korpuszat betenni.
 
 DONE - Harness commandfajl a /big1/Work/Pipeline/cvs -t referalja,
