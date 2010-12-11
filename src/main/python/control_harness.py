@@ -9,6 +9,7 @@ from base import *
 
 g_harnessDataDirectory = ""
 g_harnessAppDir = "/big3/Work/HunglishMondattar/tcg/harness"
+g_logPrefix = None
 
 def moveFileToHarness(rawPath,lang,ext,id) :
     global g_harnessDataDirectory
@@ -56,6 +57,7 @@ def decideIfWorthIndexing(metadata) :
 def runHarness(metadata) :
     global g_harnessAppDir
     global g_harnessDataDirectory
+    global g_logPrefix
     catalogFile = "catalog.tmp"
     
     id = metadata['id']
@@ -68,6 +70,9 @@ def runHarness(metadata) :
     command += "--graph=%s/hunglishstategraph.txt " % g_harnessAppDir
     command += "--commands=%s/hunglishcommands.txt " % g_harnessAppDir
     command += "--root=%s --catalog=%s" % ( g_harnessDataDirectory, catalogFile )
+
+    if g_logPrefix :
+	command += " > %s.%s.cout 2> %s.%s.cerr" % (g_logPrefix,id,g_logPrefix,id)
 
     doIt = True
     if doIt :
@@ -345,14 +350,18 @@ def indexThemLucene(db) :
 
 def main():
     global g_harnessDataDirectory
-    if len(sys.argv)!=5 :
-        logg("Usage: control_harness.py username passwd db harnessDataDir")
+    global g_logPrefix
+    
+    if len(sys.argv) not in (5,6) :
+        logg("Usage: control_harness.py username passwd db harnessDataDir [logprefix]")
         sys.exit(-1)
 
     username = sys.argv[1]
     password = sys.argv[2]
     database = sys.argv[3]
     g_harnessDataDirectory = sys.argv[4]
+    if len(sys.argv)==6 :
+	g_logPrefix = sys.argv[5]
     
     db = MySQLdb.connect( host="localhost",
 	user=username, passwd=password, db=database )
