@@ -56,8 +56,7 @@ mvn jetty:run > cout 2> cerr &
 - harness kimenet logba. datum-uploadId.log
 (megoldva, a control_harness uj opcionalis argja, hogy hova loggoljon)
 - maga a control_harness kimenet logba. datum.controller.log 
-(ez majd a cronjob dolga, aki a fent emlitett argot is szolgaltatni fogja egy
-kozonseges logprefix=$logdir/`date +"%Y%m%d-%H%M%S"` paranccsal.)
+(ez ma'r a harness_cronjob.sh dolga.)
 
 - Layout: ROOT/ alabbiak: fileUpload harnessData hunglishIndex logs mysqlDump
 
@@ -77,11 +76,6 @@ hogy a dog's szot is megtalalja, ha a dog-ra keresek.
 - Ha ures az indexkonyvtar, akkor epitsen oda egy ures indexet.
 
 ADATBAZISSEMA, MEZOK KITOLTESE:
-
-- Most a bisen.is_indexed -et olyanra hasznalom, ami igazibol nem az.
-Ugy kellene csinalni, hogy is_duplicate null jelenti azt, hogy me'g nem tortent duplumszures,
-es ha tortent, akkor mar true vagy false.
-Ennek megfeleloen a ("from Bisen o where o.isIndexed is null and isDuplicate is null") is modositando Bisen.java-ban.
 
 - Kell valami hivatalosan_jovahagyva flag az upload es doc tablakba.
 
@@ -127,6 +121,11 @@ DONE - Tortenetesen a hunglish2 txt resze es a sajtofigyelo egyarant latin2, de
 nemigen lehet meguszni vagy egy autodetect-et, ami a txt-bol raw-ba alakitaskor fut,
 vagy egy kulon utftxt source formatot a txt melle. Az elobbi a kenyelmesebb es
 biztonsagosabb, csak meg kellene csinalni.
+
+DONE - Most a bisen.is_indexed -et olyanra hasznalom, ami igazibol nem az.
+Ugy kellene csinalni, hogy is_duplicate null jelenti azt, hogy me'g nem tortent duplumszures,
+es ha tortent, akkor mar true vagy false.
+Ennek megfeleloen a ("from Bisen o where o.isIndexed is null and isDuplicate is null") is modositando Bisen.java-ban.
 
 DONE ~/.m2/settings.xml -ba beleraktam, hogy lehessen mavenbol deployolni.
 
