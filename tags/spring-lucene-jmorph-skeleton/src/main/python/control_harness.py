@@ -39,7 +39,11 @@ def collectMoreMetadata(metadata,metadataFile) :
     f = file(metadataFile)
     for l in f :
 	a = l.strip("\n").split("\t")
-	metadata[a[0]] = int(a[1])
+	try :
+	    val = int(a[1])
+	except :
+	    val = a[1]
+	metadata[a[0]] = val
     return metadata
 
 def decideIfWorthIndexing(metadata) :
@@ -79,7 +83,7 @@ def runHarness(metadata) :
 	logg( command )
 	status = os.system(command)
 	if status!=0 :
-	    raise Exception( "harness returned with error code"+str(status) )
+	    raise Exception( "harness returned with error code "+str(status) )
     else :
 	# Csak teszteleshez, ha a qf fajl mar korabban a helyere kerult.
 	logg( "NOT EXECUTING!: "+command )
