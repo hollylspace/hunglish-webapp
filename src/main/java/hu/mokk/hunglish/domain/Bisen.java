@@ -1,6 +1,6 @@
 package hu.mokk.hunglish.domain;
 
-import java.util.Date;
+import java.sql.Timestamp;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -62,7 +62,7 @@ public class Bisen {
 
 	private Boolean isDuplicate;
 
-	private Date indexedTimestamp;
+	private Timestamp indexedTimestamp;
 
 	@PersistenceContext
 	transient EntityManager entityManager;
@@ -212,7 +212,7 @@ public class Bisen {
 	public void updateIsIndexed(Boolean value) {
 		this.setIsIndexed(value);
 		// this.setIsDuplicate(!value);
-		this.setIndexedTimestamp(new Date());
+		this.setIndexedTimestamp(new Timestamp(0));
 		this.merge();
 	}
 
@@ -460,11 +460,11 @@ public class Bisen {
 		this.isDuplicate = isDuplicate;
 	}
 
-	public Date getIndexedTimestamp() {
+	public Timestamp getIndexedTimestamp() {
 		return indexedTimestamp;
 	}
 
-	public void setIndexedTimestamp(Date indexedTimestamp) {
+	public void setIndexedTimestamp(Timestamp indexedTimestamp) {
 		this.indexedTimestamp = indexedTimestamp;
 	}
 

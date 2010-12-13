@@ -1,5 +1,6 @@
 package hu.mokk.hunglish.domain;
 
+import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
@@ -70,9 +71,9 @@ public class Upload {
 
     
     // TODO quick hack for the upload view @NotNull
-    private Date createdTimestamp;
+    private Timestamp createdTimestamp;
 
-    private Date harnessedTimestamp;
+    private Timestamp harnessedTimestamp;
 
     
     @Size(max = 255)
@@ -264,17 +265,17 @@ public class Upload {
 	}
 
 
-	public void setCreatedTimestamp(Date createdTimestamp) {
+	public void setCreatedTimestamp(Timestamp createdTimestamp) {
 		this.createdTimestamp = createdTimestamp;
 	}
 
 
-	public Date getHarnessedTimestamp() {
+	public Timestamp getHarnessedTimestamp() {
 		return harnessedTimestamp;
 	}
 
 
-	public void setHarnessedTimestamp(Date harnessedTimestamp) {
+	public void setHarnessedTimestamp(Timestamp harnessedTimestamp) {
 		this.harnessedTimestamp = harnessedTimestamp;
 	}
 
