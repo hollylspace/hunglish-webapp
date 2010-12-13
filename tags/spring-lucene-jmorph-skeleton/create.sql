@@ -95,7 +95,8 @@ CREATE TABLE `doc` (
   `author` bigint(20) not NULL,
   `genre` bigint(20) not NULL,
   `upload` bigint(20) DEFAULT NULL,
-  -- `is_approved` bit(1) DEFAULT 0,  TODO the indexing would not be started automatically on a new doc, but could be triggered by hand on a doc.   
+  `approved` char(1) not null DEFAULT 'N',  -- TODO the indexing would not be started automatically on a new doc, but could be triggered by hand on a doc.   
+  `copyright` char(1) not null DEFAULT 'N',
   PRIMARY KEY (`id`),
   KEY `fk_doc_genre` (`genre`),
   KEY `fk_doc_author` (`author`),
