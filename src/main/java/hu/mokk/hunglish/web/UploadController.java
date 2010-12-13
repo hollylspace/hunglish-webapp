@@ -3,13 +3,16 @@ package hu.mokk.hunglish.web;
 import hu.mokk.hunglish.domain.Author;
 import hu.mokk.hunglish.domain.Genre;
 import hu.mokk.hunglish.domain.Upload;
-import hu.mokk.hunglish.util.Utils;
+import hu.mokk.hunglish.lucene.Indexer;
 
 import java.io.File;
 import java.util.Date;
 
 import javax.validation.Valid;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.roo.addon.web.mvc.controller.RooWebScaffold;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -24,12 +27,30 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping("/upload/**")
 @Controller
 public class UploadController {
+	
+	transient private static Log logger = LogFactory.getLog(UploadController.class);
+	
+	@Autowired
+	private Indexer indexer;
 
-	private String uploadDir; 
-		
+	private String getUploadDir(){
+        String uploadDir = indexer.getUploadDir();
+        File dummy = null;
+        try {
+        	dummy = new File(uploadDir);
+        } catch (Exception e) {
+        	logger.error("uploaddir problem:"+uploadDir, e);
+		}
+    	if ((dummy == null) || (!dummy.isDirectory())){
+    		throw new IllegalArgumentException("An upload directory is required");
+    	}
+    	return uploadDir;
+	}
+	
 	@RequestMapping(value = "/upload", method = RequestMethod.POST)
     public String create(@Valid Upload upload, BindingResult result, ModelMap modelMap) {
-        if (upload == null) throw new IllegalArgumentException("A upload is required");
+        if (upload == null) throw new IllegalArgumentException("An upload is required");
+        
         if (result.hasErrors()) {
 			for (ObjectError r : result.getAllErrors()){
 			}
@@ -38,7 +59,7 @@ public class UploadController {
             modelMap.addAttribute("genres", Genre.findAllGenres());
             return "upload/create";
         }
-
+        String uploadDir = getUploadDir();
         try{        	
 	        upload.setHuOriginalFileName(upload.getHuFileData().getOriginalFilename());
 	        upload.setEnOriginalFileName(upload.getEnFileData().getOriginalFilename());
@@ -50,13 +71,12 @@ public class UploadController {
 	        upload.validate();
 	        
 	        upload.persist();
-	        String path = uploadDir; //Utils.convertPath(getClass(), uploadDir);
-	        String huFilePath = path+File.separator + upload.getId()+"_HU."+upload.getHuExtension();
+	        String huFilePath = uploadDir+File.separator + upload.getId()+"_HU."+upload.getHuExtension();
 	        File huFile = new File(huFilePath);
 	        upload.getHuFileData().transferTo(huFile);
 	        upload.setHuUploadedFilePath(huFile.getCanonicalPath());
 	        
-	        String enFilePath = path+File.separator + upload.getId()+"_EN."+upload.getEnExtension();
+	        String enFilePath = uploadDir+File.separator + upload.getId()+"_EN."+upload.getEnExtension();
 	        File enFile = new File(enFilePath);
 	        upload.getEnFileData().transferTo(enFile);
 	        upload.setEnUploadedFilePath(enFile.getCanonicalPath());
@@ -131,11 +151,4 @@ public class UploadController {
         return "redirect:/upload?page=" + ((page == null) ? "1" : page.toString()) + "&size=" + ((size == null) ? "10" : size.toString());
     }
 
-	public String getUploadDir() {
-		return uploadDir;
-	}
-
-	public void setUploadDir(String uploadDir) {
-		this.uploadDir = uploadDir;
-	}
 }
