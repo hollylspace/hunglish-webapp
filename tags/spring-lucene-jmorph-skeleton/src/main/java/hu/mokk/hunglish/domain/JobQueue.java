@@ -1,7 +1,8 @@
 package hu.mokk.hunglish.domain;
 
-import java.util.Date;
+import java.sql.Timestamp;
 import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -10,13 +11,14 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Version;
-import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.roo.addon.javabean.RooJavaBean;
-import org.springframework.roo.addon.tostring.RooToString;
-import org.springframework.roo.addon.entity.RooEntity;
-import org.springframework.transaction.annotation.Transactional;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.roo.addon.entity.RooEntity;
+import org.springframework.roo.addon.javabean.RooJavaBean;
+import org.springframework.roo.addon.tostring.RooToString;
+import org.springframework.transaction.annotation.Transactional;
 
 @Configurable
 @Entity
@@ -33,11 +35,11 @@ public class JobQueue {
     private String status;
 
     @NotNull
-    private Date requestTimestamp;
+    private Timestamp requestTimestamp;
 	
-    private Date startTimestamp;
+    private Timestamp startTimestamp;
     
-    private Date endTimestamp;
+    private Timestamp endTimestamp;
     
 	@PersistenceContext
     transient EntityManager entityManager;
@@ -131,27 +133,27 @@ public class JobQueue {
 		this.status = status;
 	}
 
-	public Date getRequestTimestamp() {
+	public Timestamp getRequestTimestamp() {
 		return requestTimestamp;
 	}
 
-	public void setRequestTimestamp(Date requestTimestamp) {
+	public void setRequestTimestamp(Timestamp requestTimestamp) {
 		this.requestTimestamp = requestTimestamp;
 	}
 
-	public Date getStartTimestamp() {
+	public Timestamp getStartTimestamp() {
 		return startTimestamp;
 	}
 
-	public void setStartTimestamp(Date startTimestamp) {
+	public void setStartTimestamp(Timestamp startTimestamp) {
 		this.startTimestamp = startTimestamp;
 	}
 
-	public Date getEndTimestamp() {
+	public Timestamp getEndTimestamp() {
 		return endTimestamp;
 	}
 
-	public void setEndTimestamp(Date endTimestamp) {
+	public void setEndTimestamp(Timestamp endTimestamp) {
 		this.endTimestamp = endTimestamp;
 	}
 
