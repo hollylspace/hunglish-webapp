@@ -8,13 +8,11 @@ import hu.mokk.hunglish.jmorph.AnalyzerProvider;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -55,7 +53,8 @@ public class Indexer {
 	private Integer maxBufferedDocs = 1000;
 	private String indexDir;
 	private String tmpIndexDir;
-
+	private String uploadDir;
+	
 	@Autowired
 	private EntityManagerFactory entityManagerFactory;
 
@@ -341,6 +340,14 @@ public class Indexer {
 
 	public void setTmpIndexDir(String tmpIndexDir) {
 		this.tmpIndexDir = tmpIndexDir;
+	}
+
+	public String getUploadDir() {
+		return uploadDir;
+	}
+
+	public void setUploadDir(String uploadDir) {
+		this.uploadDir = uploadDir;
 	}
 
 }

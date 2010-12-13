@@ -106,9 +106,6 @@
 		<property name="maxBufferedDocs" value="${indexer.maxBufferedDocs}" />
 		<property name="indexDir" value="${indexer.indexDir}" />
 		<property name="tmpIndexDir" value="${indexer.tmpIndexDir}" />
-	</bean>
-
-	<bean class="hu.mokk.hunglish.web.UploadController" id="uploadController">
 		<property name="uploadDir" value="${indexer.uploadDir}" />
 	</bean>
 
