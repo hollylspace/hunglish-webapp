@@ -51,6 +51,8 @@ hogy mac-rol is tudjam a kozelen deployolni.
 mvn jetty:run > cout 2> cerr &
 , bar csak parancssorbol, eclipse-bol valamiert nem talalja az eroforrast.
 
+- Az exception-ok informacioit a webapp es a control_harness is elnyelegeti.
+
 - Ha ures a qf, akkor most "E"-t jegyez be "L" helyett.
 
 - harness kimenet logba. datum-uploadId.log
@@ -73,8 +75,6 @@ az indexelo memoriaja, akkor ertelmes allapotba hozza-e magat a rendszer?
 - Kornai feature request-je: A lucene tokenizalo legyen olyan okos,
 hogy a dog's szot is megtalalja, ha a dog-ra keresek.
 
-- Ha ures az indexkonyvtar, akkor epitsen oda egy ures indexet.
-
 ADATBAZISSEMA, MEZOK KITOLTESE:
 
 - Kell valami hivatalosan_jovahagyva flag az upload es doc tablakba.
@@ -93,12 +93,8 @@ HARNESS, HIBAKEZELES:
 - ~/scripts/tcom/nogarbage.sh integralasa, vagy legalabbis a relevansabb reszeinek
 atmentese, ha vannak egyaltalan. A sajtofigyelo mennyire jol megy enelkul?
 
-- egy qfilter a mondatraszegmentalas utanra, ami eldobja az egeszet,
-ha rosszak az aranyok mondatra vagy bajtra. (A helye mar megvan.)
-
-- egy qfilter, ami eldobja az egeszet, ha nagyon keves mondatpar van,
-vagy nagyon rossz az aranya a parhuzamositas elotti mondatpar-szamnak.
-(A helye mar megvan.)
+- control_harness.py:decideIfWorthIndexing() lehetne kicsit kifinomultabb.
+tcg/scripts/filtersen.py szinte'n.
 
 - A bena felhasznalok nagyon el tudjak csufitani a korpuszt, ha ugyetlenul
 felcserelik az angol es magyar upload mezot, vagy mindket oldalra ugyanazt toltik fel.
@@ -116,6 +112,15 @@ hogy "tul hosszu", "nem angol", "tul kulonbozo hosszu" meg ilyesmi.
 A lassu reszek tovabbra is cronban futnanak.
 
 LEZART DOLGOK:
+
+DONE - Ha ures az indexkonyvtar, akkor epitsen oda egy ures indexet.
+
+DONE - egy qfilter a mondatraszegmentalas utanra, ami eldobja az egeszet,
+ha rosszak az aranyok mondatra vagy bajtra. (A helye mar megvan.)
+
+DONE - egy qfilter, ami eldobja az egeszet, ha nagyon keves mondatpar van,
+vagy nagyon rossz az aranya a parhuzamositas elotti mondatpar-szamnak.
+(A helye mar megvan.)
 
 DONE - Tortenetesen a hunglish2 txt resze es a sajtofigyelo egyarant latin2, de
 nemigen lehet meguszni vagy egy autodetect-et, ami a txt-bol raw-ba alakitaskor fut,
@@ -207,6 +212,12 @@ now at: sajtofigyelo
 originally at: /big1/User/nemeth/telekom/telekom_[12]
 Ezt ne zuttyantsuk bele, nem szeretnek a Telekomosok.
 TODO Viszont azert rakjuk rendbe datasources alatt.
+
+= Feliratok 2.0
+originally at: /big3/User/zseder/Progs/subs
+TODO Ezzel me'g dokumentum-szintu parositasi munka is van. A tvshows.tar.gz nem is tudom,
+hogy ugyanolyan formatumu-e. A v2 es v3 kozti kulonbseg is bizonytalan, de
+a v3 talan mar kicsit szukitve van potencialis dokumentum-parositas szempontbol.
 
 ---
 Archivum
