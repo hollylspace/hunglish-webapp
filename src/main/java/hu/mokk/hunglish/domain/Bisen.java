@@ -65,6 +65,13 @@ public class Bisen {
 
 	private Timestamp indexedTimestamp;
 
+	// @NotNull
+	@Size(max = 1)
+	private String approved;
+	// @NotNull
+	@Size(max = 1)
+	private String copyright;
+	
 	@PersistenceContext
 	transient EntityManager entityManager;
 
@@ -288,18 +295,41 @@ public class Bisen {
 	public void indexAll(IndexWriter iwriter) {
 	}
 
+	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("Id: ").append(getId()).append(", ");
-		// sb.append("Version: ").append(getVersion()).append(", ");
-		sb.append("Doc: ").append(getDoc()).append(", ");
-		// sb.append("IsIndexed: ").append(getIsIndexed()).append(", ");
-		sb.append("LineNumber: ").append(getLineNumber()).append(", ");
-		sb.append("Upvotes: ").append(getUpvotes()).append(", ");
-		sb.append("Downvotes: ").append(getDownvotes()).append(", ");
-		sb.append("HuSentence: ").append(getHuSentence()).append(", ");
-		sb.append("EnSentence: ").append(getEnSentence());
-		return sb.toString();
+		StringBuilder builder = new StringBuilder();
+		builder.append("Bisen [doc=");
+		builder.append(doc);
+		builder.append(", isIndexed=");
+		builder.append(isIndexed);
+		builder.append(", lineNumber=");
+		builder.append(lineNumber);
+		builder.append(", upvotes=");
+		builder.append(upvotes);
+		builder.append(", downvotes=");
+		builder.append(downvotes);
+		builder.append(", huSentence=");
+		builder.append(huSentence);
+		builder.append(", enSentence=");
+		builder.append(enSentence);
+		builder.append(", huSentenceHash=");
+		builder.append(huSentenceHash);
+		builder.append(", enSentenceHash=");
+		builder.append(enSentenceHash);
+		builder.append(", isDuplicate=");
+		builder.append(isDuplicate);
+		builder.append(", indexedTimestamp=");
+		builder.append(indexedTimestamp);
+		builder.append(", approved=");
+		builder.append(approved);
+		builder.append(", copyright=");
+		builder.append(copyright);
+		builder.append(", id=");
+		builder.append(id);
+		builder.append(", version=");
+		builder.append(version);
+		builder.append("]");
+		return builder.toString();
 	}
 
 	/**
@@ -483,5 +513,21 @@ public class Bisen {
 
 	public void setEnSentenceView(String enSentenceView) {
 		this.enSentenceView = enSentenceView;
+	}
+
+	public String getApproved() {
+		return approved;
+	}
+
+	public void setApproved(String approved) {
+		this.approved = approved;
+	}
+
+	public String getCopyright() {
+		return copyright;
+	}
+
+	public void setCopyright(String copyright) {
+		this.copyright = copyright;
 	}
 }

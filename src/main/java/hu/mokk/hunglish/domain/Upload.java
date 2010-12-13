@@ -100,6 +100,13 @@ public class Upload {
     private Long enSentenceCount;
 
     private Long alignBisentenceCount;
+
+	// @NotNull
+	@Size(max = 1)
+	private String approved;
+	// @NotNull
+	@Size(max = 1)
+	private String copyright;
     
     @Transient
     private String enExtension;
@@ -431,4 +438,24 @@ public class Upload {
 	public static List<Upload> findUploadEntries(int firstResult, int maxResults) {
         return entityManager().createQuery("select o from Upload o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
+
+
+	public String getApproved() {
+		return approved;
+	}
+
+
+	public void setApproved(String approved) {
+		this.approved = approved;
+	}
+
+
+	public String getCopyright() {
+		return copyright;
+	}
+
+
+	public void setCopyright(String copyright) {
+		this.copyright = copyright;
+	}
 }
