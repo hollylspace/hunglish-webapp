@@ -6,6 +6,7 @@ import hu.mokk.hunglish.domain.Upload;
 import hu.mokk.hunglish.lucene.Indexer;
 
 import java.io.File;
+import java.sql.Timestamp;
 import java.util.Date;
 
 import javax.validation.Valid;
@@ -65,7 +66,7 @@ public class UploadController {
 	        upload.setEnOriginalFileName(upload.getEnFileData().getOriginalFilename());
 	        upload.setHuOriginalFileSize(upload.getHuFileData().getSize());
 	        upload.setEnOriginalFileSize(upload.getEnFileData().getSize());
-	        upload.setCreatedTimestamp(new Date());
+	        upload.setCreatedTimestamp(new Timestamp((new Date()).getTime()));
 	        upload.setIsProcessed("N"); //TODO FIXME
 
 	        upload.validate();
