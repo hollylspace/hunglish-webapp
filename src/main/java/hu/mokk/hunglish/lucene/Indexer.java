@@ -206,11 +206,7 @@ public class Indexer {
 			em = entityManagerFactory.createEntityManager();
 			bisens = em
 					.createQuery(
-							"from Bisen o where o.isIndexed is null and isDuplicate != false") // isDuplicate
-																								// is
-																								// null
-					// This will be isDuplicate=False after I'll modify
-					// control_harness.py.
+							"from Bisen where isIndexed is null and isDuplicate = false") 
 					.setMaxResults(BATCH_SIZE).getResultList();
 			result = (bisens != null) && (bisens.size() > 0);
 			if (result) {
