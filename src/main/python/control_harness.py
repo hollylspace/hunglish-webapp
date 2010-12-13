@@ -93,7 +93,15 @@ def runHarness(metadata) :
 
     metadataFile = "%s/align/bimeta/%s.align.bimeta" % ( g_harnessDataDirectory,str(id) )
     metadata = collectMoreMetadata(metadata,metadataFile)
+
+    # Adds a keep_it key with values true or false, depending
+    # on the bimeta output.
+    # This functionality could be added as a second
+    # harness filter, analogous to filtersen.py.
+    # But that solution means one more unnecessary copy operation,
+    # and gives a bit less control.
     metadata = decideIfWorthIndexing(metadata)
+
     return metadata
 
 def addAuthorIfNeeded(db,author) :
@@ -256,8 +264,9 @@ def updateUploadTable(db,metadata,processedFlag) :
     id = metadata['id']
     hu_raw_file_size = metadata['hu_raw_file_size']
     en_raw_file_size = metadata['en_raw_file_size']
-    hu_sentence_count = metadata['hu_sentence_count']
-    en_sentence_count = metadata['en_sentence_count']
+    # _nondelimiter means that "<p>" paragraph delimiter lines are not counted.
+    hu_sentence_count = metadata['hu_sentence_count_nondelimiter']
+    en_sentence_count = metadata['en_sentence_count_nondelimiter']
     align_bisentence_count = metadata['align_bisentence_count']
 
     cursor.execute("update upload set is_processed=%s, \
@@ -278,6 +287,7 @@ def processOneUpload(db,id) :
 	moveFilesToHarness(metadata)
 	logg("Running harness...")
 	metadata = runHarness(metadata)
+
 	keepIt = metadata['keep_it']=="true"
         if keepIt :
 	    logg("Adding metadata to doc table...")
