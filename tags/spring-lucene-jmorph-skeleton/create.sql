@@ -69,6 +69,9 @@ CREATE TABLE `bisen` (
   `hu_sentence_hash` bigint(20) DEFAULT NULL,
   `is_duplicate` bit(1) DEFAULT NULL,
   `indexed_timestamp` TIMESTAMP ,
+  `approved` char(1) not null DEFAULT 'N',  -- TODO the indexing would not be started automatically on a new doc, but could be triggered by hand on a doc.   
+  `copyright` char(1) not null DEFAULT 'N',
+  
   PRIMARY KEY (`id`),
   KEY `fk_bisen_doc` (`doc`),
   KEY `bisen_hash` (`is_indexed`, `en_sentence_hash`, `hu_sentence_hash`),
@@ -174,7 +177,10 @@ CREATE TABLE `upload` (
   
   `created_timestamp` TIMESTAMP , -- this is filled by the webapp (UploadController) when the files was uploaded
   `harnessed_timestamp` TIMESTAMP , -- this is filled by control_harness.py when the pipe-line is completed
-  
+
+  `approved` char(1) not null DEFAULT 'N',  -- TODO the indexing would not be started automatically on a new doc, but could be triggered by hand on a doc.   
+  `copyright` char(1) not null DEFAULT 'N',
+
   PRIMARY KEY (`id`),
   KEY `fk_upload_genre` (`genre`),
   KEY `fk_upload_author` (`author`),

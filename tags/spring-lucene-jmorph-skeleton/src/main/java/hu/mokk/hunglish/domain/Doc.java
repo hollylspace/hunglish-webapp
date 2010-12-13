@@ -28,6 +28,13 @@ import hu.mokk.hunglish.domain.Author;
 @RooEntity
 public class Doc {
 
+	// @NotNull
+	@Size(max = 1)
+	private String approved;
+	// @NotNull
+	@Size(max = 1)
+	private String copyright;
+	
     @Size(max = 255)
     private String oldDocid;
 
@@ -219,4 +226,20 @@ public class Doc {
 	public void setAlignedFilePath(String alignedFilePath) {
         this.alignedFilePath = alignedFilePath;
     }
+
+	public String getApproved() {
+		return approved;
+	}
+
+	public void setApproved(String approved) {
+		this.approved = approved;
+	}
+
+	public String getCopyright() {
+		return copyright;
+	}
+
+	public void setCopyright(String copyright) {
+		this.copyright = copyright;
+	}
 }
