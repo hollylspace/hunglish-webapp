@@ -25,6 +25,7 @@ public class BisenController {
             modelMap.addAttribute("docs", Doc.findAllDocs());
             return "bisen/create";
         }
+        bisen.setOldDocid("");
         bisen.persist();
         return "redirect:/bisen/" + bisen.getId();
     }

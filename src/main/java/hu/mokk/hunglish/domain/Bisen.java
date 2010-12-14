@@ -72,6 +72,10 @@ public class Bisen {
 	@Size(max = 1)
 	private String copyright;
 	
+	//`old_docid` varchar(255)
+	@Size(max = 255)
+	private String oldDocid; 
+	
 	@PersistenceContext
 	transient EntityManager entityManager;
 
@@ -529,5 +533,13 @@ public class Bisen {
 
 	public void setCopyright(String copyright) {
 		this.copyright = copyright;
+	}
+
+	public String getOldDocid() {
+		return oldDocid;
+	}
+
+	public void setOldDocid(String oldDocid) {
+		this.oldDocid = oldDocid;
 	}
 }

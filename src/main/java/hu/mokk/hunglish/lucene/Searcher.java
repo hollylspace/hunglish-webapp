@@ -37,7 +37,7 @@ import org.springframework.beans.factory.annotation.Configurable;
 @Configurable
 public class Searcher {
 	
-	transient private static Log logger = LogFactory.getLog(Bisen.class);
+	transient private static Log logger = LogFactory.getLog(Searcher.class);
 	private String indexDir;
 	private Integer maxDocumments = 1000;
 	
