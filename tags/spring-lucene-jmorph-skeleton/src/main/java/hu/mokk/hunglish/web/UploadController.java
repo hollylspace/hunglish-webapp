@@ -71,6 +71,8 @@ public class UploadController {
 
 	        upload.validate();
 	        
+	        upload.setOldDocid("");//not null for hunglish1, empty string for hunglish2
+
 	        upload.persist();
 	        String huFilePath = uploadDir+File.separator + upload.getId()+"_HU."+upload.getHuExtension();
 	        File huFile = new File(huFilePath);

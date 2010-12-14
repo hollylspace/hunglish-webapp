@@ -108,6 +108,11 @@ public class Upload {
 	@Size(max = 1)
 	private String copyright;
     
+	//`old_docid` varchar(255) not NULL
+	////not null for hunglish1, empty string for hunglish2
+	@Size(max = 255)
+	private String oldDocid; 
+	
     @Transient
     private String enExtension;
     
@@ -458,4 +463,12 @@ public class Upload {
 	public void setCopyright(String copyright) {
 		this.copyright = copyright;
 	}
+	public String getOldDocid() {
+		return oldDocid;
+	}
+
+	public void setOldDocid(String oldDocid) {
+		this.oldDocid = oldDocid;
+	}
+
 }
