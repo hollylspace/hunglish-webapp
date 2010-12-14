@@ -302,7 +302,9 @@ def processOneUpload(db,id) :
 	logg("Updating upload record with metadata...")
 	updateUploadTable(db,metadata,processedFlag)
     except Exception, e :
-	logg("Exception: "+str(type(e))+" "+str(e))
+	exc_type, exc_obj, exc_tb = sys.exc_info()
+        fname = exc_tb.tb_frame.f_code.co_filename
+        logg("Exception %s: %s in file \"%s\", line %d" % ( str(type(e)), str(e), fname, exc_tb.tb_lineno) )
 	db.rollback()
 	logg("%d (%s) had some error, it could not be loaded into bisen." % (id,metadata['en_title']) )
         processedFlag = "E"
@@ -349,7 +351,9 @@ def flagDuplicates(db) :
 	logg("Done.")
     except Exception, e:
 	logg("ERROR in flagDuplicates()!")
-        logg("Exception: "+str(type(e))+" "+str(e))
+	exc_type, exc_obj, exc_tb = sys.exc_info()
+        fname = exc_tb.tb_frame.f_code.co_filename
+        logg("Exception %s: %s in file \"%s\", line %d" % ( str(type(e)), str(e), fname, exc_tb.tb_lineno) )
         db.rollback()
         logg("Flagging duplicates rolled back.")
     else :
