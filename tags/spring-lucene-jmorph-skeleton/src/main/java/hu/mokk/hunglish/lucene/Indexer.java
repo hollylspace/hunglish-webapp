@@ -44,7 +44,7 @@ public class Indexer {
 	 * 
 	 */
 
-	transient private static Log logger = LogFactory.getLog(Bisen.class);
+	transient private static Log logger = LogFactory.getLog(Indexer.class);
 
 	@Autowired
 	private AnalyzerProvider analyzerProvider;
