@@ -51,7 +51,8 @@ hogy mac-rol is tudjam a kozelen deployolni.
 mvn jetty:run > cout 2> cerr &
 , bar csak parancssorbol, eclipse-bol valamiert nem talalja az eroforrast.
 
-- Az exception-ok informacioit a webapp es a control_harness is elnyelegeti.
+- GERGO: Az exception-ok informacioit a webapp es a control_harness is elnyelegeti.
+UPDATE: a control_harnesst mar megjavitottam.
 
 - harness kimenet logba. datum-uploadId.log
 (megoldva, a control_harness uj opcionalis argja, hogy hova loggoljon)
@@ -87,12 +88,6 @@ atmentese, ha vannak egyaltalan. A sajtofigyelo mennyire jol megy enelkul?
 - control_harness.py:decideIfWorthIndexing() lehetne kicsit kifinomultabb.
 tcg/scripts/filtersen.py szinte'n.
 
-- A bena felhasznalok nagyon el tudjak csufitani a korpuszt, ha ugyetlenul
-felcserelik az angol es magyar upload mezot, vagy mindket oldalra ugyanazt toltik fel.
-Kell egy nyelvdetektor filter.
-UPDATE: Kesz, integralando. ~/big/experiments/textcat.pezo/LM eroforrasnak jo
-helyet talalni. Altalaban, hol legyenek az eroforrasok?
-
 - Tovezes is legyen a pipeline-ban az align elott, hogy ne legyunk rosszabbak, mint
 a regi hunglish.
 
@@ -121,6 +116,12 @@ ha rosszak az aranyok mondatra vagy bajtra. (A helye mar megvan.)
 DONE - egy qfilter, ami eldobja az egeszet, ha nagyon keves mondatpar van,
 vagy nagyon rossz az aranya a parhuzamositas elotti mondatpar-szamnak.
 (A helye mar megvan.)
+
+DONE - A bena felhasznalok nagyon el tudjak csufitani a korpuszt, ha ugyetlenul
+felcserelik az angol es magyar upload mezot, vagy mindket oldalra ugyanazt toltik fel.
+Kell egy nyelvdetektor filter.
+UPDATE: Kesz, integralva. ~/big/experiments/textcat.pezo/LM eroforras
+a $ROOT/resources/textcat.models konyvtarba kerult.
 
 DONE - Tortenetesen a hunglish2 txt resze es a sajtofigyelo egyarant latin2, de
 nemigen lehet meguszni vagy egy autodetect-et, ami a txt-bol raw-ba alakitaskor fut,
