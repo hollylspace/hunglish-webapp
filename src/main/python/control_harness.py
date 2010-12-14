@@ -47,14 +47,15 @@ def collectMoreMetadata(metadata,metadataFile) :
     return metadata
 
 def decideIfWorthIndexing(metadata) :
-    huLines = metadata['hu_sentence_count']
-    enLines = metadata['en_sentence_count']
+    huLines = metadata['hu_sentence_count_nondelimiter']
+    enLines = metadata['en_sentence_count_nondelimiter']
     alignLines = metadata['align_bisentence_count']
-    if alignLines >= min((huLines,enLines))*0.8 :
-	keepIt = True
-    else :
+
+    keepIt = (alignLines>0)
+    
+    if alignLines <= min((huLines,enLines))*0.8 :
 	keepIt = False
-    keepIt = True
+
     metadata['keep_it'] = str(keepIt).lower()
     return metadata
 
@@ -236,11 +237,9 @@ def harnessOutputFileToBisenTable(db,docId,alignedFilePath) :
     bisentences = readAlignFile(alignedFilePath, 'ISO-8859-2')
     hashedBisentences = hashSentences(bisentences)
     cursor = getCursor(db)
-    if len(bisentences) > 0 :
-        cursor.executemany("insert into bisen (doc, line_number, hu_sentence, en_sentence, hu_sentence_hash, en_sentence_hash, version) \
+    cursor.executemany("insert into bisen (doc, line_number, hu_sentence, en_sentence, hu_sentence_hash, en_sentence_hash, version) \
 	values (" +str(docId)+ ", %s,%s,%s,%s,%s,1)", hashedBisentences)
-    else :
-	raise Exception("There should be bisentences in the qf file.")
+    return len(bisententences)
 
 def setUploadTo(db,id,status) :
     cursor = getCursor(db)
@@ -290,11 +289,13 @@ def processOneUpload(db,id) :
 
 	keepIt = metadata['keep_it']=="true"
         if keepIt :
+	    processedFlag = "Y"
 	    logg("Adding metadata to doc table...")
     	    docId = metadataToDoc(db,metadata)
 	    logg("Adding harvested bisentences to bisen table...")
-            harnessOutputFileToBisenTable(db,docId,metadata['aligned_file_path'])
-	    processedFlag = "Y"
+            bisentenceNum = harnessOutputFileToBisenTable(db,docId,metadata['aligned_file_path'])
+	    if bisentenceNum==0 :
+		logg("WARNING: zero bisentences added. keep_it should be false in this case.")
         else :
 	    processedFlag = "L"
 	    logg("Throwing it away.")

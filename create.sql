@@ -69,8 +69,8 @@ CREATE TABLE `bisen` (
   `hu_sentence_hash` bigint(20) DEFAULT NULL,
   `is_duplicate` bit(1) DEFAULT NULL,
   `indexed_timestamp` TIMESTAMP ,
+  `copyright` char(1) not null DEFAULT 'C',
   `approved` char(1) not null DEFAULT 'N',  -- TODO the indexing would not be started automatically on a new doc, but could be triggered by hand on a doc.   
-  `copyright` char(1) not null DEFAULT 'N',
   
   PRIMARY KEY (`id`),
   KEY `fk_bisen_doc` (`doc`),
@@ -98,8 +98,8 @@ CREATE TABLE `doc` (
   `author` bigint(20) not NULL,
   `genre` bigint(20) not NULL,
   `upload` bigint(20) DEFAULT NULL,
+  `copyright` char(1) not null DEFAULT 'C',
   `approved` char(1) not null DEFAULT 'N',  -- TODO the indexing would not be started automatically on a new doc, but could be triggered by hand on a doc.   
-  `copyright` char(1) not null DEFAULT 'N',
   PRIMARY KEY (`id`),
   KEY `fk_doc_genre` (`genre`),
   KEY `fk_doc_author` (`author`),
@@ -175,11 +175,12 @@ CREATE TABLE `upload` (
   -- `hu_sentence` varchar(4000) DEFAULT NULL, -- not used in current implementation
   
   
+  `copyright` char(1) not null DEFAULT 'C',
+  `old_docid` varchar(255) not NULL, -- It is "" if the doc does not come from hunglish1 
+  `approved` char(1) not null DEFAULT 'N',  -- TODO the indexing would not be started automatically on a new doc, but could be triggered by hand on a doc.   
+
   `created_timestamp` TIMESTAMP , -- this is filled by the webapp (UploadController) when the files was uploaded
   `harnessed_timestamp` TIMESTAMP , -- this is filled by control_harness.py when the pipe-line is completed
-
-  `approved` char(1) not null DEFAULT 'N',  -- TODO the indexing would not be started automatically on a new doc, but could be triggered by hand on a doc.   
-  `copyright` char(1) not null DEFAULT 'N',
 
   PRIMARY KEY (`id`),
   KEY `fk_upload_genre` (`genre`),
