@@ -53,8 +53,6 @@ mvn jetty:run > cout 2> cerr &
 
 - Az exception-ok informacioit a webapp es a control_harness is elnyelegeti.
 
-- Ha ures a qf, akkor most "E"-t jegyez be "L" helyett.
-
 - harness kimenet logba. datum-uploadId.log
 (megoldva, a control_harness uj opcionalis argja, hogy hova loggoljon)
 - maga a control_harness kimenet logba. datum.controller.log 
@@ -76,13 +74,6 @@ az indexelo memoriaja, akkor ertelmes allapotba hozza-e magat a rendszer?
 hogy a dog's szot is megtalalja, ha a dog-ra keresek.
 
 ADATBAZISSEMA, MEZOK KITOLTESE:
-
-- Kell valami hivatalosan_jovahagyva flag az upload es doc tablakba.
-
-- A copyright flag mar az upload tablaig sincs visszagorgetve,
-nem hogy a hunglish1.nolaw.uploadtable megalkotasaig.
-
-- old_docid-t kivezetni az uploadtable formatumig. Ha mar az se kezeli, akkor ki kezelje?
 
 HARNESS, HIBAKEZELES:
 
@@ -112,6 +103,15 @@ hogy "tul hosszu", "nem angol", "tul kulonbozo hosszu" meg ilyesmi.
 A lassu reszek tovabbra is cronban futnanak.
 
 LEZART DOLGOK:
+
+DONE - Kell valami hivatalosan_jovahagyva flag az upload es doc tablakba. UPDATE: az approved nevet kapta.
+
+DONE - A copyright flag mar az upload tablaig sincs visszagorgetve,
+nem hogy a hunglish1.nolaw.uploadtable megalkotasaig.
+
+DONE - old_docid-t kivezetni az uploadtable formatumig. Ha mar az se kezeli, akkor ki kezelje?
+
+DONE - Ha ures a qf, akkor most "E"-t jegyez be "L" helyett.
 
 DONE - Ha ures az indexkonyvtar, akkor epitsen oda egy ures indexet.
 
