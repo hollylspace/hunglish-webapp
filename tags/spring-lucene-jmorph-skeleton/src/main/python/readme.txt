@@ -47,6 +47,10 @@ hogy mac-rol is tudjam a kozelen deployolni.
 
 - GERGO: Indexer jdbc eleres parametereit properties fajlbol venni.
 
+- GERGO: Leakel.
+
+- DANIEL: Masodpeldany van a deployment konyvtarban a cronjob-bol.
+
 - GERGO: Aramvonalasabba kellene tenni a kozel deploy-t. A mac-emen mar teljesen jo:
 mvn jetty:run > cout 2> cerr &
 , bar csak parancssorbol, eclipse-bol valamiert nem talalja az eroforrast.
