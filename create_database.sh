@@ -9,6 +9,8 @@ echo "create database hunglishwebapp default character set = UTF8;" | mysql -uro
 
 echo "GRANT ALL PRIVILEGES ON *.* TO 'hunglish'@'localhost' WITH GRANT OPTION;" | mysql -uroot -psw6x2the 
 
+cat create.sql | mysql -uroot -psw6x2the --default-character-set=utf8 hunglishwebapp
 
 cat create.sql | mysql -uhunglish -psw6x2the --default-character-set=utf8 hunglishwebapp
 
+# minidump /big3/Work/HunglishMondattar/hunglish-webapp/src/main/python/mini.mysqldump.beforeindex
