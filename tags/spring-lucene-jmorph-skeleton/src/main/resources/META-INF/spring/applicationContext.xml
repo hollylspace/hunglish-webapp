@@ -107,6 +107,7 @@
 		<property name="indexDir" value="${indexer.indexDir}" />
 		<property name="tmpIndexDir" value="${indexer.tmpIndexDir}" />
 		<property name="uploadDir" value="${indexer.uploadDir}" />
+		<property name="uploadJobPath" value="${uploadjob.path}" />
 	</bean>
 
 	<bean class="hu.mokk.hunglish.lucene.Searcher" id="searcher"

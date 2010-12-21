@@ -4,7 +4,6 @@
 package hu.mokk.hunglish.lucene;
 
 import hu.mokk.hunglish.domain.Bisen;
-import hu.mokk.hunglish.util.Utils;
 
 import java.io.File;
 import java.io.IOException;
