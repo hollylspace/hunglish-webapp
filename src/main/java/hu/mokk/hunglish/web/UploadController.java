@@ -111,7 +111,9 @@ public class UploadController {
 	        upload.setHuOriginalFileSize(upload.getHuFileData().getSize());
 	        upload.setEnOriginalFileSize(upload.getEnFileData().getSize());
 	        upload.setCreatedTimestamp(new Timestamp((new Date()).getTime()));
-	        upload.setIsProcessed("N"); //TODO FIXME
+	        upload.setIsProcessed("N"); 
+	        upload.setApproved("N");
+	        upload.setCopyright("C");
 
 	        upload.validate();
 	        
