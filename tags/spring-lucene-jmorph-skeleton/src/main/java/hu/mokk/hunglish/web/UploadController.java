@@ -87,6 +87,7 @@ public class UploadController {
 		}
 		
 		// Schedule the job with the trigger
+		logger.info("scheduling upload job ...");
 		scheduler.scheduleJob(job, trigger);
 		
 		scheduler.standby();
@@ -130,8 +131,9 @@ public class UploadController {
 	        upload.getEnFileData().transferTo(enFile);
 	        upload.setEnUploadedFilePath(enFile.getCanonicalPath());
 	        upload.merge();
-	        
+	        logger.info("upload saved in db. starting upload job ...");
 	        startUploadJob();
+	        logger.info("upload job started.");
         } catch (Exception e) {
         	if (upload.getId() != null){
         		upload.remove();
