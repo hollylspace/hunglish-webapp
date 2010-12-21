@@ -90,7 +90,7 @@ public class UploadController {
 		logger.info("scheduling upload job ...");
 		scheduler.scheduleJob(job, trigger);
 		
-		scheduler.standby();
+		//scheduler.standby();
 	}
 	
 	@RequestMapping(value = "/upload", method = RequestMethod.POST)
