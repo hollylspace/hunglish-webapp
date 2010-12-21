@@ -47,14 +47,23 @@ def collectMoreMetadata(metadata,metadataFile) :
     return metadata
 
 def decideIfWorthIndexing(metadata) :
+    id = metadata['id']
     huLines = metadata['hu_sentence_count_nondelimiter']
     enLines = metadata['en_sentence_count_nondelimiter']
     alignLines = metadata['align_bisentence_count']
 
-    keepIt = (alignLines>0)
-    
-    if alignLines <= min((huLines,enLines))*0.8 :
+    keepIt = True
+
+    if not (alignLines>0) :
 	keepIt = False
+	logg("Zero aligned bisentences found. Throwing away upload #%s." % id)
+    elif alignLines <= min((huLines,enLines))*0.6 :
+	keepIt = False
+	logg("The ratio of unaligned sentences is too large. (huLines:%d,enLines:%d,alignLines:%d). Throwing away upload #%s."
+	    % (huLines,enLines,alignLines,id) )
+
+    if keepIt :
+	logg("Upload #%s successfully passed decideIfWorthIndexing()." % id)
 
     metadata['keep_it'] = str(keepIt).lower()
     return metadata
@@ -89,8 +98,6 @@ def runHarness(metadata) :
 	# Csak teszteleshez, ha a qf fajl mar korabban a helyere kerult.
 	logg( "NOT EXECUTING!: "+command )
 	status = 0
-
-    # TODO Cso"ro:zzu:k at a kimenetet valami $LOGDIR/$id.log fajlba.
 
     metadataFile = "%s/align/bimeta/%s.align.bimeta" % ( g_harnessDataDirectory,str(id) )
     metadata = collectMoreMetadata(metadata,metadataFile)
@@ -239,7 +246,7 @@ def harnessOutputFileToBisenTable(db,docId,alignedFilePath) :
     cursor = getCursor(db)
     cursor.executemany("insert into bisen (doc, line_number, hu_sentence, en_sentence, hu_sentence_hash, en_sentence_hash, version) \
 	values (" +str(docId)+ ", %s,%s,%s,%s,%s,1)", hashedBisentences)
-    return len(bisententences)
+    return len(bisentences)
 
 def setUploadTo(db,id,status) :
     cursor = getCursor(db)

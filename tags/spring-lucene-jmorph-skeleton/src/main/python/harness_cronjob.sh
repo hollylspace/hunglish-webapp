@@ -1,15 +1,16 @@
 #!/bin/bash
 
-# control_control_harness.sh
+# control_control_harness.sh kellene legyen a neve.
 # Ez a shell mar kozvetlenul elindithato cronjob-bol.
 
-rootdir=/big3/Work/HunglishMondattar
+appdata_rootdir=/big3/Work/HunglishMondattar/deployment
+appcode_rootdir=/big3/Work/HunglishMondattar/hunglish-webapp
 
-logdir=$rootdir/logs
+logdir=$appdata_rootdir/logs
 logprefix=$logdir/`date +"%Y%m%d-%H%M%S"`
 
-harnessdatadir=$rootdir/harness.data
+harnessdatadir=$appdata_rootdir/harness.data
 
-codedir=$rootdir/hunglish-webapp/src/main/python
+codedir=$appcode_rootdir/src/main/python
 
 python $codedir/control_harness.py hunglish sw6x2the hunglishwebapp $harnessdatadir $logprefix > $logprefix.cout 2> $logprefix.cerr
