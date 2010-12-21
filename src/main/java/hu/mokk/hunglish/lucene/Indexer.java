@@ -54,6 +54,7 @@ public class Indexer {
 	private String indexDir;
 	private String tmpIndexDir;
 	private String uploadDir;
+	private String uploadJobPath;
 	
 	@Autowired
 	private EntityManagerFactory entityManagerFactory;
@@ -348,6 +349,14 @@ public class Indexer {
 
 	public void setUploadDir(String uploadDir) {
 		this.uploadDir = uploadDir;
+	}
+
+	public String getUploadJobPath() {
+		return uploadJobPath;
+	}
+
+	public void setUploadJobPath(String uploadJobPath) {
+		this.uploadJobPath = uploadJobPath;
 	}
 
 }

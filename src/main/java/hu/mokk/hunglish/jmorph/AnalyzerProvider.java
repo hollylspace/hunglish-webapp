@@ -5,7 +5,6 @@ package hu.mokk.hunglish.jmorph;
 
 import hu.mokk.hunglish.domain.Bisen;
 import hu.mokk.hunglish.lucene.analysis.StemmerAnalyzer;
-import hu.mokk.hunglish.util.Utils;
 
 import java.io.IOException;
 import java.util.HashMap;

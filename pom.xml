@@ -299,13 +299,12 @@
 		    <version>3.0.1</version>
 		</dependency>
 		
-		<!-- 
 		<dependency>
-		   <groupId>commons-fileupload</groupId>
-		   <artifactId>commons-fileupload</artifactId>
-		   <version>1.2.1</version>
-		</dependency>
-		 -->		
+            <groupId>org.quartz-scheduler</groupId>
+            <artifactId>quartz</artifactId>
+            <version>1.8.3</version>
+        </dependency>
+        
 	</dependencies>
 
 	<build>
@@ -466,7 +465,8 @@
 				<configuration>
 				    <server>tomcat</server> <!--DANIEL -->
 				    <!-- <url>http://192.168.10.175:8080/manager</url>  -->
-				    <url>http://kozel.mokk.bme.hu:8080/manager</url>
+				    <!--<url>http://kozel.mokk.bme.hu:8080/manager</url> -->
+				    <url>http://localhost:8080/manager</url>
 				</configuration>
 			
 			</plugin>

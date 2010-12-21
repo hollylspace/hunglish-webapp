@@ -3,6 +3,7 @@ package hu.mokk.hunglish.web;
 import hu.mokk.hunglish.domain.Author;
 import hu.mokk.hunglish.domain.Genre;
 import hu.mokk.hunglish.domain.Upload;
+import hu.mokk.hunglish.job.UploadJob;
 import hu.mokk.hunglish.lucene.Indexer;
 
 import java.io.File;
@@ -13,6 +14,12 @@ import javax.validation.Valid;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.quartz.JobDetail;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.quartz.SimpleTrigger;
+import org.quartz.Trigger;
+import org.quartz.impl.StdSchedulerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.roo.addon.web.mvc.controller.RooWebScaffold;
 import org.springframework.stereotype.Controller;
@@ -23,6 +30,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RooWebScaffold(path = "upload", automaticallyMaintainView = true, formBackingObject = Upload.class)
 @RequestMapping("/upload/**")
@@ -46,6 +54,42 @@ public class UploadController {
     		throw new IllegalArgumentException("An upload directory is required");
     	}
     	return uploadDir;
+	}
+	
+/*	
+	public static void scheduleOnce(int delay) {
+		try {
+			Date now = new Date();
+			Date sdate = new Date(now.getTime() + delay);
+			Scheduler sched = StdSchedulerFactory.getDefaultScheduler();
+			JobDetail job = new JobDetail("SingleSendEventsJob", "HPOM group", EmJob.class);
+			Trigger trg = new SimpleTrigger("SingleRunTrigger", "HPOM group", sdate);
+			sched.scheduleJob(job, trg);
+			log.info("EventManager scheduled to run at " + sdate.toString());
+		} catch (Exception e) {
+			log.error("Failed to schedule non-periodic EventManager task. Cause: " + e.getMessage());
+		}		
+	}
+*/
+	
+	private void startUploadJob() throws SchedulerException{
+		//get the Quartz scheduler
+		Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
+		
+		// Define job instance
+		JobDetail job = new JobDetail("job1", "group1", UploadJob.class);
+			
+		// Define a Trigger that will fire "now"
+		Trigger trigger = new SimpleTrigger("trigger1", "group1", new Date());
+		
+		if (!scheduler.isStarted()){
+			scheduler.start();
+		}
+		
+		// Schedule the job with the trigger
+		scheduler.scheduleJob(job, trigger);
+		
+		scheduler.standby();
 	}
 	
 	@RequestMapping(value = "/upload", method = RequestMethod.POST)
@@ -84,15 +128,17 @@ public class UploadController {
 	        upload.getEnFileData().transferTo(enFile);
 	        upload.setEnUploadedFilePath(enFile.getCanonicalPath());
 	        upload.merge();
+	        
+	        startUploadJob();
         } catch (Exception e) {
         	if (upload.getId() != null){
         		upload.remove();
         	}
         	result.reject("ERROR", e.getLocalizedMessage());
         	//TODO
-        	e.printStackTrace();
-        	throw new IllegalArgumentException(e);
-        	//return "upload/create";
+        	logger.error("Error while creating upload", e);
+        	//throw new IllegalArgumentException(e);
+        	return "upload/create";
 		}
         return "redirect:/upload/" + upload.getId();
     }
