@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public class UploadJob implements Job {
 	private Log log = LogFactory.getLog(UploadJob.class);
+	
 	@Autowired
 	private Indexer indexer;
 
@@ -18,7 +19,13 @@ public class UploadJob implements Job {
 	public void execute(JobExecutionContext jc) throws JobExecutionException {
 		try {
 			log.debug("Executing upload processing job ... ");
-			SystemCall.execute(indexer.getUploadJobPath());
+			if (indexer == null){
+				//throw new RuntimeException("indexer is null in UploadJob");
+				log.error("WTF, indexer is null! Spring, why do not you inject this !?");
+				SystemCall.execute(null);
+			} else {
+				SystemCall.execute(indexer.getUploadJobPath());
+			}
 			log.debug("Executed upload processing job!");			
 		} catch (Exception e) {
 			log.error("Failed to execute upload processing job.", e);
