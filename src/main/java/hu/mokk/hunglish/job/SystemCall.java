@@ -7,15 +7,16 @@ import org.apache.commons.logging.LogFactory;
 
 public class SystemCall{
 	
-	private static String defaultCommad = "/big3/Work/HunglishMondattar/hunglish-webapp/src/main/python/harness_cronjob.sh";
+	private static String defaultCommand = "/big3/Work/HunglishMondattar/deployment/harness_cronjob.sh";
+	// private static String defaultCommand = "bash /big3/Work/HunglishMondattar/hunglish-webapp/src/main/python/harness_cronjob.sh";
 	
 	private static Log logger = LogFactory.getLog(SystemCall.class);
 	
     public static int execute(String command) {
     	int result = 0;
     	if (command == null){
-    		logger.error("Command is null, using default command: "+defaultCommad);
-    		command = defaultCommad;
+    		logger.error("Command is null, using default command: "+defaultCommand);
+    		command = defaultCommand;
     	}
         Runtime r = Runtime.getRuntime();
 
