@@ -78,6 +78,8 @@ az indexelo memoriaja, akkor ertelmes allapotba hozza-e magat a rendszer?
 - Kornai feature request-je: A lucene tokenizalo legyen olyan okos,
 hogy a dog's szot is megtalalja, ha a dog-ra keresek.
 
+- hunglish2.justlaw uploadtable, teszteles.
+
 ADATBAZISSEMA, MEZOK KITOLTESE:
 
 HARNESS, HIBAKEZELES:
@@ -179,9 +181,12 @@ reszkorpusz        #doc   #bisen   futasido perc
 hunglish1.nolaw     606  1143848   112
 hunglish1.justlaw 10270   958086   713
 hunglish2           185  1088991   113
-sajtofigyelo       1475    96557    76 
+sajtofigyelo       1475    96557    76
+hunglish2.justlaw  4204   839863?    ? (egyelore becsult ertekek TODO)
 ------------------------------------------------
-total             12536  3287482  1014 (~17 ora)
+total-h2.law      12536  3287482  1014 (~17 ora)
+t. incl. h2.law   16740  4127345  1300 (~22 ora) (egyelore becsult ertekek TODO)
+
 
 = Hunglish 1.0 no Law
 originally at: ~/big/experiments/hunglish.webservice/importolddata/doclist.nolaw , bar ez (maga is generalt fajl) Voa-t tartalmazott VOA helyett.
@@ -197,12 +202,18 @@ originally at: ~/big/experiments/hunglish.webservice/importolddata/doclist.justl
 now at: hunglish1.justlaw
 TODO
 
-= Hunglish 2.0 (Runga)
+= Hunglish 2.0 no Law (Runga)
 originally at: ~/big/experiments/runga200 , de azon sokat csiszoltam, mikor idetettem, most mar az itteni a nyero.
 now at: hunglish2
 Igy keszult az uploadtable:
 cat /big3/Work/HunglishMondattar/datasources/hunglish2/master.final.txt | cut -f1,2,4,5 | awk 'BEGIN{FS="\t"} (($2!="odt")&&($4!="odt")&&($2!="lit")&&($4!="lit"))' | python master2uploadtable.py /big3/Work/HunglishMondattar/datasources/hunglish2 > /big3/Work/HunglishMondattar/datasources/hunglish2/hunglish2.uploadtable
 TODO A lit-ekbol txt-t kellene csinalni, ne menjenek ka'rba.
+
+= Hunglish 2.0 Law (Farkas Andras)
+originally at: hunglish2.justlaw/zips (andras.farkas@yahoo.com, 2011 jan 1 levele nyoman)
+now at: hunglish2.justlaw
+Igy keszult az uploadtable:
+TODO Me'g sehogy. Esetleg beszerezni a 2005-2006 jogszabalyokat is.
 
 = feliratok.hu
 originally at: /big3/User/zseder/Progs/subs/movies_v3.tar.gz tvshows.tar.gz
