@@ -40,8 +40,8 @@ def addOne(db,record) :
 	hu_uploaded_file_path, en_uploaded_file_path, \
 	hu_original_file_name, en_original_file_name, \
 	copyright, old_docid, approved, \
-	created_timestamp, version ) \
-	values ( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, now(), 1 )",
+	created_timestamp, harnessed_timestamp, version ) \
+	values ( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, now(), now(), 1 )",
 	( author_name, hu_title, en_title, genre,
 	hu_uploaded_file_path, en_uploaded_file_path,
 	hu_original_file_name, en_original_file_name,

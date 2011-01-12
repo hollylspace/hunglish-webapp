@@ -45,9 +45,25 @@ Persze a laptopokon nem big3, legyen valami lokalis conf,
 ami alapjan startup (es nem build) idoben beallithato. Utobbi azert fontos,
 hogy mac-rol is tudjam a kozelen deployolni.
 
+- Az alkalmazas nem tudja a recordbol letrehozni az upload objektumot,
+ha nem hazudok be egy kitoltott harnessed_timestamp mezot.
+Gergo szedje ki ezt a hulye checket, Daniel utana mar kiszedheti
+a behazudast a machine_upload-bol.
+
 - GERGO: Indexer jdbc eleres parametereit properties fajlbol venni.
 
-- GERGO: Leakel.
+- GERGO: Valami ronda nagy (quartz?) leak, ami miatt ujra kell inditgatni a tomcat-et.
+
+- A quartz finnyas arra, hogy honnan kell inditania a cronjobot.
+
+- Me'g mindig nem igaz az, hogy az ures hunglishIndex konyvarat eszlelve megcsinalja a lucene az ures indexet.
+
+- Az indexelot kulon kell kerni, hogy indexeljen, ahelyett, hogy a quartz hivna azt is.
+
+- Ha nem akarok csak emiatt feltolteni egy kamu dokumentumpart, akkor nem tudom
+triggerelni a rendszeren belul a harness elinditasat. Jo, nem nagy gond,
+tomcat6 user elinditja a /big3/Work/HunglishMondattar/deployment/harness_cronjob.sh 
+progit. De akkor is.
 
 - DANIEL: Masodpeldany van a deployment konyvtarban a cronjob-bol.
 
@@ -57,11 +73,6 @@ mvn jetty:run > cout 2> cerr &
 
 - GERGO: Az exception-ok informacioit a webapp es a control_harness is elnyelegeti.
 UPDATE: a control_harnesst mar megjavitottam.
-
-- harness kimenet logba. datum-uploadId.log
-(megoldva, a control_harness uj opcionalis argja, hogy hova loggoljon)
-- maga a control_harness kimenet logba. datum.controller.log 
-(ez ma'r a harness_cronjob.sh dolga.)
 
 - Layout: ROOT/ alabbiak: fileUpload harnessData hunglishIndex logs mysqlDump
 
@@ -77,6 +88,16 @@ az indexelo memoriaja, akkor ertelmes allapotba hozza-e magat a rendszer?
 
 - Kornai feature request-je: A lucene tokenizalo legyen olyan okos,
 hogy a dog's szot is megtalalja, ha a dog-ra keresek.
+
+- Lehetseges, hogy hosszu tavon a machine_upload-nak masolnia kellene
+fileUpload-ba helyben-referalas helyett. Goreny bugokhoz vezethez,
+ha csak a felhasznalok feltoltesei vannak ott, a tobbi szerteszejjel.
+
+- Baromira megragni, hogy milyen problemakhoz vezet, hogy
+a spring (aki cache-el valszeg) olvassa az objektumokat, mikozben
+a harness irja az adatbazist. Me'g ennel is jobban megragni
+ugyanezt harness vs. UploadController parositasban, hiszen
+ok egyszerre irjak az adatbazist.
 
 - hunglish2.justlaw uploadtable, teszteles.
 
@@ -104,6 +125,12 @@ hogy "tul hosszu", "nem angol", "tul kulonbozo hosszu" meg ilyesmi.
 A lassu reszek tovabbra is cronban futnanak.
 
 LEZART DOLGOK:
+
+DONE - harness kimenet logba. datum-uploadId.log
+(megoldva, a control_harness uj opcionalis argja, hogy hova loggoljon)
+
+DONE - maga a control_harness kimenet logba. datum.controller.log 
+(ez ma'r a harness_cronjob.sh dolga.)
 
 DONE - Kell valami hivatalosan_jovahagyva flag az upload es doc tablakba. UPDATE: az approved nevet kapta.
 
@@ -184,7 +211,7 @@ hunglish2           185  1088991   113
 sajtofigyelo       1475    96557    76
 hunglish2.justlaw  4204   839863?    ? (egyelore becsult ertekek TODO)
 ------------------------------------------------
-total-h2.law      12536  3287482  1014 (~17 ora)
+total - h2.law    12536  3287482  1014 (~17 ora)
 t. incl. h2.law   16740  4127345  1300 (~22 ora) (egyelore becsult ertekek TODO)
 
 
@@ -215,10 +242,6 @@ now at: hunglish2.justlaw
 Igy keszult az uploadtable:
 TODO Me'g sehogy. Esetleg beszerezni a 2005-2006 jogszabalyokat is.
 
-= feliratok.hu
-originally at: /big3/User/zseder/Progs/subs/movies_v3.tar.gz tvshows.tar.gz
-TODO Ezt me'g fajl szinten is parositani kellene, align minoseg alapjan kidobalva a mismatcheket.
-
 = Telekom sajtofigyelo
 originally at: /big1/User/nemeth/telekom/EVSZAM/txt/{en,hu}
 (Figyelem, van egy nemeth/Telekom konyvtar is, abban ugyanez van kicsit tovabbfeldolgozva, nekunk most nem kell.)
@@ -229,8 +252,8 @@ originally at: /big1/User/nemeth/telekom/telekom_[12]
 Ezt ne zuttyantsuk bele, nem szeretnek a Telekomosok.
 TODO Viszont azert rakjuk rendbe datasources alatt.
 
-= Feliratok 2.0
-originally at: /big3/User/zseder/Progs/subs
+= Feliratok 2
+originally at: /big3/User/zseder/Progs/subs/movies_v3.tar.gz tvshows.tar.gz
 TODO Ezzel me'g dokumentum-szintu parositasi munka is van. A tvshows.tar.gz nem is tudom,
 hogy ugyanolyan formatumu-e. A v2 es v3 kozti kulonbseg is bizonytalan, de
 a v3 talan mar kicsit szukitve van potencialis dokumentum-parositas szempontbol.
