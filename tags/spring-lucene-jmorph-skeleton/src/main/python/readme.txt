@@ -281,31 +281,27 @@ TODO Ez elavult, mert megvaltozott a sema. A vegen ujracsinalni.
 harness.data.nolaw
 
 ---
-IGY KELL TELEPITENI JELENLEG
+IGY KELL LEGYALULNI NULLARA AZ OSSZES ADATOT A RENDSZERBOL,
+HOGY AZTAN EGY SZUZ ADATBAZIST PISZKOLHASSUNK OSSZE
 
-# Build
-cd /big3/Work/HunglishMondattar/hunglish-webapp/
-mvn clean
-# Ezt neha valamiert ketszer kell:
-mvn package
+mvn tomcat:stop # mac
 
-# Repackage
-rm hunglish-0.1.0-SNAPSHOT.war
-rm -rf war
-mkdir war
-cd war
-unzip /big3/Work/HunglishMondattar/hunglish-webapp/target/hunglish-0.1.0-SNAPSHOT.war
-mkdir fileUpload hunglishIndexTmp hunglishIndex
-cp -r /big3/Work/HunglishMondattar/hunglish-webapp/resources-lang .
-cp /big3/Work/HunglishMondattar/hunglish-webapp/lib/net/sf/jhunlang/jmorph/1.0/jmorph-1.0.jar WEB-INF/lib/
-zip -r ../hunglish-0.1.0-SNAPSHOT.war *
-cd ..
+cat /big3/Work/HunglishMondattar/hunglish-webapp/create.sql | mysql -uhunglish -psw6x2the --default-character-set=utf8 hunglishwebapp
+sudo su tomcat6
+cd /big3/Work/HunglishMondattar/deployment/
+rm fileUpload/*
+rm logs/*
+rm harness.data/*/*/*
+rm hunglishIndex/*
+rm hunglishIndexTmp/*
+cp /big3/Work/HunglishMondattar/hunglish-webapp/src/main/resources/hunglishIndex/* hunglishIndex/
+exit # su tomcat6, ujra daniel
 
-# Stop
-http://kozel.mokk.bme.hu:8080/manager/html/stop?path=/hunglish-0.1.0-SNAPSHOT
+cd /big3/Work/HunglishMondattar/hunglish-webapp/src/main/python/
+cat /big3/Work/HunglishMondattar/datasources/hunglish1.nolaw/hunglish1.nolaw.uploadtable | python machine_upload.py hunglish sw6x2the hunglishwebapp
 
-# Undeploy
-http://kozel.mokk.bme.hu:8080/manager/html/undeploy?path=/hunglish-0.1.0-SNAPSHOT
+mvn tomcat:start # mac
 
-# Deploy and Start
-http://kozel.mokk.bme.hu:8080/manager/deploy?path=/hunglish-0.1.0-SNAPSHOT&war=file:/big3/Work/HunglishMondattar/hunglish-webapp/hunglish-0.1.0-SNAPSHOT.war
+sudo su tomcat6
+cd  /big3/Work/HunglishMondattar/deployment/
+nohup bash /big3/Work/HunglishMondattar/deployment/harness_cronjob.sh &
