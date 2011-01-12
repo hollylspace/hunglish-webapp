@@ -62,7 +62,8 @@ a behazudast a machine_upload-bol.
 
 - Ha nem akarok csak emiatt feltolteni egy kamu dokumentumpart, akkor nem tudom
 triggerelni a rendszeren belul a harness elinditasat. Jo, nem nagy gond,
-tomcat6 user elinditja a /big3/Work/HunglishMondattar/deployment/harness_cronjob.sh 
+tomcat6 user elinditja a
+nohup bash /big3/Work/HunglishMondattar/deployment/harness_cronjob.sh &
 progit. De akkor is.
 
 - DANIEL: Masodpeldany van a deployment konyvtarban a cronjob-bol.
@@ -93,7 +94,10 @@ hogy a dog's szot is megtalalja, ha a dog-ra keresek.
 fileUpload-ba helyben-referalas helyett. Goreny bugokhoz vezethez,
 ha csak a felhasznalok feltoltesei vannak ott, a tobbi szerteszejjel.
 
-- Baromira megragni, hogy milyen problemakhoz vezet, hogy
+- Nekem ugy tunt (Wed, Jan 12, 2011 at 10:45 PM level), hogy
+a spring nem frissitette egy darabig a doc-ot a webes adminfeluleten,
+mikozben a harness nagyban irta. A bisen-nel nem ez tortent.
+Baromira megragni, hogy milyen problemakhoz vezet, hogy
 a spring (aki cache-el valszeg) olvassa az objektumokat, mikozben
 a harness irja az adatbazist. Me'g ennel is jobban megragni
 ugyanezt harness vs. UploadController parositasban, hiszen
