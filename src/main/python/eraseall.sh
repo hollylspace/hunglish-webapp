@@ -2,6 +2,8 @@
 
 # Sets the server to a consistent clean, empty state.
 
+set -e
+
 pushd /big3/Work/HunglishMondattar/hunglish-webapp/ > "/dev/null"
 mvn tomcat:stop
 popd > "/dev/null"

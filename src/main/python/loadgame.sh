@@ -2,6 +2,8 @@
 
 # Restores the full server state from a specified savegame directory.
 
+set -e
+
 dir=$1
 
 if [ ! -d $dir ]

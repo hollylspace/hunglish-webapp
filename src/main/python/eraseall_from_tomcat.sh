@@ -1,7 +1,24 @@
+#!/bin/bash
+
+set -e
+
 cat /big3/Work/HunglishMondattar/hunglish-webapp/create.sql | mysql -uhunglish -psw6x2the --default-character-set=utf8 hunglishwebapp
+
 cd /big3/Work/HunglishMondattar/deployment/
-rm fileUpload/*
-rm logs/*
-rm -rf harness.data/*/*
-rm hunglishIndex/*
-rm hunglishIndexTmp/*
+
+rm -rf fileUpload
+mkdir fileUpload
+
+rm -rf logs
+mkdir logs
+
+rm -rf harness.data
+mkdir harness.data
+mkdir harness.data/hu
+mkdir harness.data/en
+mkdir harness.data/align
+
+rm -rf hunglishIndex
+mkdir hunglishIndex
+rm -rf hunglishIndexTmp
+mkdir hunglishIndexTmp
