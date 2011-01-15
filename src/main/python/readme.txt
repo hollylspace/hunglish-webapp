@@ -39,6 +39,10 @@ a java-val (openjdk, sun jdk) megy.
 
 atirtam az init.d/tomcat6-ot sun-rol openjdk path-ra!!!!!!!!!!!!
 
+- Sajnos van egy kulon doc.id, ahelyett, hogy megorokolne' az upload.id-t.
+Ez nem jo igy, nagyon nehezkes debuggolaskor osszenezni a harness logokat
+a mysql tablakkal.
+
 - Ne relativ path-on keresse az index es upload konyvtarakat, hanem fixen
 /big3/Work/HunglishMondattar alatt, ahol egyebkent a harness.data is lesz.
 Persze a laptopokon nem big3, legyen valami lokalis conf,
@@ -103,9 +107,10 @@ a harness irja az adatbazist. Me'g ennel is jobban megragni
 ugyanezt harness vs. UploadController parositasban, hiszen
 ok egyszerre irjak az adatbazist.
 
-- hunglish2.justlaw uploadtable, teszteles.
-
-ADATBAZISSEMA, MEZOK KITOLTESE:
+- Modositottam /etc/mysql/my.cnf konfigot ezzel a sorral:
+wait_timeout=604800
+Ez kesobb valszeg nem is fog kelleni. Kiszedni, kulonosen
+ha esetleg kiderul, hogy rizikoforras.
 
 HARNESS, HIBAKEZELES:
 
@@ -129,6 +134,8 @@ hogy "tul hosszu", "nem angol", "tul kulonbozo hosszu" meg ilyesmi.
 A lassu reszek tovabbra is cronban futnanak.
 
 LEZART DOLGOK:
+
+DONE - hunglish2.justlaw uploadtable, teszteles.
 
 DONE - harness kimenet logba. datum-uploadId.log
 (megoldva, a control_harness uj opcionalis argja, hogy hova loggoljon)
