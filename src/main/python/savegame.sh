@@ -5,6 +5,8 @@
 
 set -e
 
+dep=/big3/Work/HunglishMondattar/deployment
+
 dir=$1
 
 if [ -f $dir ]
@@ -13,6 +15,6 @@ then
     exit -1
 fi
 
-cp -r /big3/Work/HunglishMondattar/deployment $dir
+cp -r --preserve=timestamps $dep $dir
 
 mysqldump -uhunglish -psw6x2the --default-character-set=utf8 hunglishwebapp > $dir/mysqldump
