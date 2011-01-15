@@ -97,7 +97,7 @@ public class Indexer {
 		} catch (FileNotFoundException e) {
 			//reCreateDir(dir);
 			try {
-				logger.error("Error while opening index. Now trying to create new empty index.", e);
+				logger.warn("Error while opening index. Now trying to create new empty index.", e);
 				indexWriter = new IndexWriter(new SimpleFSDirectory( new File(dir)),
 						analyzerProvider.getAnalyzer(), true,
 						IndexWriter.MaxFieldLength.UNLIMITED);
@@ -309,18 +309,29 @@ public class Indexer {
 			logger.info("------indexing batch done in memory.");
 		
 		} finally {
-			closeIndexWriter(indexWriter, false);
+			closeIndexWriter(indexWriter);
 			logger.info("-------temporary index written to disk done-----");
 		}
 		
 	}
 	
-	private void closeIndexWriter(IndexWriter indexWriter, boolean withOptimize){
+	public void optimizeIndex(){
+		IndexWriter indexWriter = initIndexer(false);
+		try {
+			indexWriter.optimize();
+		} catch (CorruptIndexException e) {
+			logger.fatal("CorruptIndexException while optimizing index", e);
+			throw new RuntimeException(e);
+		} catch (IOException e) {
+			logger.fatal("IOException while optimizing index", e);
+			throw new RuntimeException(e);
+		}
+		closeIndexWriter(indexWriter);
+	}
+	
+	private void closeIndexWriter(IndexWriter indexWriter){
 		try {
 			if (indexWriter != null) {
-				if (withOptimize){
-					indexWriter.optimize();
-				}
 				indexWriter.commit();
 				indexWriter.close();
 			}
@@ -359,7 +370,9 @@ public class Indexer {
 						* BATCH_SIZE);
 			}
 			logger.info("-----indexing ::: all batches done--");
-
+			
+			optimizeIndex();
+			
 		} finally {
 			closeConnection(jdbcConnection);
 			logger.info("db connection closed");
@@ -396,7 +409,7 @@ public class Indexer {
 				throw new RuntimeException(e);
 			}
 		} finally {
-			closeIndexWriter(indexWriter, true);
+			closeIndexWriter(indexWriter);
 			try {
 				if (indexReader != null) {
 					indexReader.close();
