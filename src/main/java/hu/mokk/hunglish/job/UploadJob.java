@@ -20,19 +20,11 @@ public class UploadJob implements Job {
 	// @ Autowired
 	// private Searcher searcher;
 
-	private ApplicationContext getContext() {
-		ApplicationContext context = new ClassPathXmlApplicationContext(
-				new String[] { "applicationContext.xml" });
-		return context;
-	}
-
 	@Override
 	public void execute(JobExecutionContext jc) throws JobExecutionException {
 		try {
-			ApplicationContext context = getContext();
-			Indexer indexer = (Indexer) context.getBean("indexer");
-			Searcher searcher = (Searcher) context.getBean("searcher");
-
+			Indexer indexer = Indexer.getInstance();
+			Searcher searcher = Searcher.getInstance();
 			log.debug("Executing upload processing job ... ");
 			if (indexer != null && searcher != null) {
 				SystemCall.execute(indexer.getUploadJobPath());

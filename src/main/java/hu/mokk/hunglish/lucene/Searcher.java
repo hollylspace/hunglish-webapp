@@ -49,6 +49,15 @@ public class Searcher {
 	@Autowired
 	private LuceneQueryBuilder luceneQueryBuilder;
 
+	private static Searcher instance;
+	public Searcher(){
+		if (instance == null){
+			instance = this;
+		} else {
+			throw new IllegalStateException("Indexer is singleton");
+		}
+	}
+	
 	
 	public void reInitSearcher(){
 		if (indexReader != null){
@@ -228,6 +237,11 @@ public class Searcher {
 		//if (Boolean.parseBoolean(useHunglishSyntax)){
 		//	setHunglishSyntax = true;
 		//}
+	}
+
+
+	public static Searcher getInstance() {
+		return instance;
 	}
 
 

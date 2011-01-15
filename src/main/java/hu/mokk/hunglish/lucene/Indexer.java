@@ -47,6 +47,7 @@ public class Indexer {
 
 	transient private static Log logger = LogFactory.getLog(Indexer.class);
 
+	
 	@Autowired
 	private AnalyzerProvider analyzerProvider;
 
@@ -60,11 +61,21 @@ public class Indexer {
 	@Autowired
 	private EntityManagerFactory entityManagerFactory;
 
+	private static Indexer instance;
+	public Indexer(){
+		if (instance == null){
+			instance = this;
+		} else {
+			throw new IllegalStateException("Indexer is singleton");
+		}
+	}
+	
 	// private IndexWriter indexWriter;
 
 	// private CreateOrAppend createOrAppend = CreateOrAppend.Create;
 
 	private IndexWriter initIndexer(Boolean temporary) {
+		
 		IndexWriter indexWriter = null;
 		if (analyzerProvider == null) {
 			throw new IllegalStateException(
@@ -434,6 +445,10 @@ public class Indexer {
 
 	public void setUploadJobPath(String uploadJobPath) {
 		this.uploadJobPath = uploadJobPath;
+	}
+
+	public static Indexer getInstance() {
+		return instance;
 	}
 
 }
