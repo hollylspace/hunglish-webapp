@@ -100,8 +100,13 @@ public class Genre {
         return (Long) entityManager().createQuery("select count(o) from Genre o").getSingleResult();
     }
 
+	
+	private static List<Genre> allGenres;
 	public static List<Genre> findAllGenres() {
-        return entityManager().createQuery("select o from Genre o").getResultList();
+		if (allGenres == null){
+			allGenres = entityManager().createQuery("select o from Genre o").getResultList();
+		}
+        return allGenres;
     }
 
 	public static Genre findGenre(Long id) {
