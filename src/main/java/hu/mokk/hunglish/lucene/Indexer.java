@@ -7,6 +7,7 @@ import hu.mokk.hunglish.domain.Bisen;
 import hu.mokk.hunglish.jmorph.AnalyzerProvider;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -64,7 +65,7 @@ public class Indexer {
 	// private CreateOrAppend createOrAppend = CreateOrAppend.Create;
 
 	private IndexWriter initIndexer(Boolean temporary) {
-		IndexWriter indexWriter;
+		IndexWriter indexWriter = null;
 		if (analyzerProvider == null) {
 			throw new IllegalStateException(
 					"Cannot create indexWriter. The analyzerProvider is null.");
@@ -82,6 +83,18 @@ public class Indexer {
 			indexWriter = new IndexWriter(new SimpleFSDirectory( new File(dir)),
 					analyzerProvider.getAnalyzer(), temporary,
 					IndexWriter.MaxFieldLength.UNLIMITED);
+		} catch (FileNotFoundException e) {
+			//reCreateDir(dir);
+			try {
+				logger.error("Error while opening index. Now trying to create new empty index.", e);
+				indexWriter = new IndexWriter(new SimpleFSDirectory( new File(dir)),
+						analyzerProvider.getAnalyzer(), true,
+						IndexWriter.MaxFieldLength.UNLIMITED);
+			} catch (Exception e1) {
+				throw new RuntimeException(
+						"Previous index not found. Cannot create new empty index: "+ dir, e1);
+			} 
+			
 		} catch (CorruptIndexException e) {
 			throw new RuntimeException(
 					"CorruptIndexException, cannot open index directory: "
@@ -101,20 +114,25 @@ public class Indexer {
 		return indexWriter;
 	}
 
-	private void reCreateDir(File dir) {
-
+	private void reCreateDir(String theDir) {
 		/*
 		 * int numOfFiles = 0; if (dir.exists() && dir.isDirectory()) {
 		 * numOfFiles = FileUtils.listFiles(dir, null, false).size(); }
 		 */
-
+		File dir = null;
 		try {
+			dir = new File(theDir);
+			logger.info("recreating dorectory:"+theDir);
+			logger.info("exists? " + dir.exists());
+			logger.info("is it a dir? " + dir.isDirectory());
+			logger.info("recreate dir: " + dir.getAbsolutePath());
+			
 			// if (numOfFiles >= 0) {
 			FileUtils.deleteQuietly(dir);
 			FileUtils.forceMkdir(dir);
 			// }
 		} catch (IOException e) {
-			throw new RuntimeException("Cannot recreate directory:" + dir, e);
+			throw new RuntimeException("Cannot recreate directory:" + theDir, e);
 		}
 	}
 
@@ -132,11 +150,7 @@ public class Indexer {
 	} //*/
 	
 	public void deleteTmpDirectory() {
-		File dir = new File(tmpIndexDir);  //getFile(tmpIndexDir);
-		logger.info("exists? " + dir.exists());
-		logger.info("is it a dir? " + dir.isDirectory());
-		logger.info("recreate dir: " + dir.getAbsolutePath());
-		reCreateDir(dir);		
+		reCreateDir(tmpIndexDir);
 	}
 
 	// TODO get this from properties file
@@ -145,14 +159,14 @@ public class Indexer {
 	String driver = "com.mysql.jdbc.Driver";
 	String user = "hunglish";
 	String pass = "sw6x2the";
-	public static int BATCH_SIZE = 10000;
+	public static int BATCH_SIZE = 20000;
 
 	private Connection getJdbcConnection() {
 		Connection con = null;
 		try {
 			Class.forName(driver);
 			con = DriverManager.getConnection(url + db, user, pass);
-			con.setAutoCommit(true);
+			con.setAutoCommit(false);
 		} catch (Exception e) {
 			logger.error("Cannot create connection", e);
 			throw new RuntimeException(e);
@@ -164,7 +178,6 @@ public class Indexer {
 
 		Statement st = null;
 		try {
-			st = con.createStatement();
 			st = con.createStatement();// java.sql.ResultSet.TYPE_FORWARD_ONLY,java.sql.ResultSet.CONCUR_READ_ONLY);
 			// st.setFetchSize(Integer.MIN_VALUE);
 		} catch (SQLException e) {
@@ -195,43 +208,60 @@ public class Indexer {
 		}
 	}
 
+	/**
+	 * index the next batch of size BATCH_SIZE 
+	 * 1) get the next batch of Bisens from database, continue if not empty
+	 * 2) clear the temporary index dir, and initialize indexWriter on the temporary directory
+	 * 3) call indexBisen for all Bisens and store corresponding database updates in a batch jdbcStatement 
+	 * 4) finalyze temporary index and merge it into main index
+	 * 5) execute database batch updates
+	 * @param jdbcConnection
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
-	private boolean indexBatch(IndexWriter iwriter, Connection connection) {
-		Statement jdbcStatement = null;
+	public boolean indexBatch(Connection jdbcConnection) {
+		 //the batch statement
+		Statement jdbcStatement = getJdbcStatement(jdbcConnection);
+
 		EntityManager em = null;
 		boolean result = false;
 		List<Bisen> bisens = new ArrayList<Bisen>(1);
 		try {
-			jdbcStatement = getJdbcStatement(connection);
+			//1) get the next batch from database 
 			em = entityManagerFactory.createEntityManager();
-			bisens = em
-					.createQuery(
-							"from Bisen where isIndexed is null and isDuplicate = false") 
+			bisens = em.createQuery(
+					"from Bisen where isIndexed is null and isDuplicate = false order by id") 
 					.setMaxResults(BATCH_SIZE).getResultList();
 			result = (bisens != null) && (bisens.size() > 0);
+			logger.info("get the next batch from database done resultList size:"+ bisens.size());
+			
 			if (result) {
-				logger.info("--getResultList() done resultList size:"
-						+ bisens.size());
-				for (Bisen bisen : bisens) {
-					indexBisen(bisen, iwriter, jdbcStatement);
-				}
-
-				logger
-						.info("------indexing batch done in memory. mysql commit phase ...");
-				try {
-					jdbcStatement.executeBatch();
-					// connection.commit(); //conn.setAutoCommit
-					logger
-							.info("------indexing batch done in memory. lucene commit phase ...");
-					iwriter.commit();
-				} catch (Exception e) {
-					logger.error("Indexing batch commit error", e);
-					throw new RuntimeException(e);
-				}
-				logger.info("------indexing batch commited to disk ");
-
+				//2) clear the temporary index dir, and initialize indexWriter on the temporary directory
+				//+
+				//3) call indexBisen for all Bisens and store corresponding database updates in a batch jdbcStatement
+				//4) finalyze temporary index 
+				indexBisens(bisens, jdbcStatement);
+				
+				//4) cont... merge temporary index into main index
+				mergeTmpIndex();
+				
+				//5) execute database batch updates
+				executeBatchUpdate(jdbcConnection, jdbcStatement);
 			}
 		} finally {
+			closeStatement(jdbcStatement);
+			bisens.clear();
+			bisens = null;
+			if (em != null) {
+				em.clear();
+				em.close();
+			}
+		}
+		return result;
+	}
+
+	private void closeStatement(Statement jdbcStatement){
+		if (jdbcStatement != null){
 			try {
 				jdbcStatement.close();
 			} catch (SQLException e) {
@@ -241,53 +271,103 @@ public class Indexer {
 				throw new RuntimeException(
 						"Finally block Cannot close JDBC statement", e);
 			}
-			bisens.clear();
-			if (em != null) {
-				em.clear();
-				em.close();
-			}
 		}
-		return result;
 	}
-
+	
+	private void executeBatchUpdate(Connection jdbcConnection, Statement jdbcStatement){
+		try {
+			jdbcStatement.executeBatch();
+			jdbcConnection.commit(); 
+			logger.info("------Indexing batch updates commited ...");
+		} catch (Exception e) {
+			logger.error("Indexing batch commit error", e);
+			throw new RuntimeException(e);
+		}		
+	}
+	
+	private void indexBisens(List<Bisen> bisens, Statement jdbcStatement){
+		IndexWriter indexWriter = initIndexer(true);
+		logger.info("-------clear the temporary index dir, and initialize indexWriter on the temporary directory done-----");
+		
+		try {
+		
+			for (Bisen bisen : bisens) {
+				indexBisen(bisen, indexWriter, jdbcStatement);
+			}
+			logger.info("-------call indexBisen for all Bisens and store corresponding database updates in a batch jdbcStatement done-----");
+			logger.info("------indexing batch done in memory.");
+		
+		} finally {
+			closeIndexWriter(indexWriter, false);
+			logger.info("-------temporary index written to disk done-----");
+		}
+		
+	}
+	
+	private void closeIndexWriter(IndexWriter indexWriter, boolean withOptimize){
+		try {
+			if (indexWriter != null) {
+				if (withOptimize){
+					indexWriter.optimize();
+				}
+				indexWriter.commit();
+				indexWriter.close();
+			}
+		} catch (OutOfMemoryError e) {
+			logger.fatal("indexWriter close OutOfMemoryError", e);
+			try {
+				indexWriter.close();
+			} catch (Exception e1) {
+				logger.fatal("after OutOfMemoryError indexWriter close error", e);
+				throw new RuntimeException(e);
+			}
+			throw new RuntimeException(e);
+		} catch (Exception e) {
+			logger.fatal("indexWriter close error", e);
+			throw new RuntimeException(e);
+		}
+		
+	}
+	
 	/* true=temp that is index will be created in hunglishIndexTmp, false=main */
-	synchronized public void indexAll(boolean create) {
+	/**
+	 * Create a jdbcConnection
+	 * calls indexBatch until it returns false using the connection
+	 * clear up connection
+	 */
+	synchronized public void indexAll() {
 		Connection jdbcConnection = null;
-		IndexWriter indexWriter = null;
 		try {
 			jdbcConnection = getJdbcConnection();
-			indexWriter = initIndexer(create);
-			logger.info("----init indexer done--");
+			logger.info("db connection initialized");
 			int batchIndex = 0;
-			while (indexBatch(indexWriter, jdbcConnection)) {
+			boolean keepIndexingOn=true;
+			while (keepIndexingOn) {
+				keepIndexingOn = indexBatch(jdbcConnection);
 				logger.info("<<<<<< finished indexing batch at " + ++batchIndex
 						* BATCH_SIZE);
 			}
-			logger.info("-----index all batches done--");
-			try {
-				indexWriter.optimize();
-			} catch (Exception e) {
-				logger.error("indexWriter optimize error", e);
-				throw new RuntimeException(e);
-			}
-			logger.info("-------optimize done-----");
+			logger.info("-----indexing ::: all batches done--");
 
 		} finally {
-			try {
-				if (indexWriter != null) {
-					indexWriter.close();
-				}
-				if (jdbcConnection != null) {
-					jdbcConnection.close();
-				}
-			} catch (Exception e) {
-				logger.fatal("indexWriter close error", e);
-				throw new RuntimeException(e);
-			}
+			closeConnection(jdbcConnection);
+			logger.info("db connection closed");
 		}
 	}
 
-	synchronized public void mergeTmpIndex() {
+	private void closeConnection(Connection jdbcConnection){
+		try {
+			if (jdbcConnection != null) {
+				jdbcConnection.close();
+			}
+		} catch (Exception e) {
+			logger.fatal("connection close error", e);
+			throw new RuntimeException(e);
+		}
+		
+	}
+	
+	synchronized private void mergeTmpIndex() {
 		boolean readOnly = true;
 		IndexWriter indexWriter = null;
 		IndexReader indexReader = null;
@@ -305,18 +385,15 @@ public class Indexer {
 				throw new RuntimeException(e);
 			}
 		} finally {
+			closeIndexWriter(indexWriter, true);
 			try {
 				if (indexReader != null) {
 					indexReader.close();
 				}
 				logger.info("------indexreader close done----");
-				if (indexWriter != null) {
-					indexWriter.close();
-				}
-				logger.info("------indexwriter close done----");
 			} catch (Exception e) {
 				logger.fatal(
-						"indexReader/indexWriter close error in Finally block",
+						"indexReader close error in Finally block",
 						e);
 				throw new RuntimeException(e);
 			}

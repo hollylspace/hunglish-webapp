@@ -14,3 +14,6 @@ cat create.sql | mysql -uroot -psw6x2the --default-character-set=utf8 hunglishwe
 cat create.sql | mysql -uhunglish -psw6x2the --default-character-set=utf8 hunglishwebapp
 
 # minidump /big3/Work/HunglishMondattar/hunglish-webapp/src/main/python/mini.mysqldump.beforeindex
+
+----
+mysqldump -uroot -psw6x2the --default-character-set=utf8 --no-data hunglishwebapp > hunglishwebapp.sql
