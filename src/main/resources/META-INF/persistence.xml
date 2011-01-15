@@ -8,6 +8,7 @@
         <class>hu.mokk.hunglish.domain.Doc</class>
         <class>hu.mokk.hunglish.domain.Genre</class>
         <class>hu.mokk.hunglish.domain.Upload</class>
+        <class>hu.mokk.hunglish.domain.JobQueue</class>
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>
             <!--value='create' to build a new database on each run; value='update' to modify an existing database; value='create-drop' means the same as 'create' but also drops tables when Hibernate closes; value='validate' makes no changes to the database-->
@@ -15,6 +16,7 @@
             <property name="hibernate.ejb.naming_strategy" value="org.hibernate.cfg.ImprovedNamingStrategy"/>
             <property name="hibernate.jdbc.batch_size" value="256"/> <!-- this is set for batches of size 1000 -->
 			<property name="hibernate.connection.zeroDateTimeBehavior" value="convertToNull" />        
+			<property name="hibernate.show_sql" value="true"/>
         </properties>
     </persistence-unit>
 </persistence>

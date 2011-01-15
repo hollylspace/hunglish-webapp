@@ -51,19 +51,22 @@ public class Searcher {
 
 	
 	public void reInitSearcher(){
-		try {
-			indexReader.close();
-		} catch (IOException e) {
-			throw new RuntimeException("Error while closing indexreader.", e);
+		if (indexReader != null){
+			try {
+				indexReader.close();
+			} catch (IOException e) {
+				throw new RuntimeException("Error while closing indexreader.", e);
+			}
 		}
 		indexReader = null;
-		luceneQueryBuilder.deleteSourceFilterCache();
+		if (luceneQueryBuilder != null){
+			luceneQueryBuilder.deleteSourceFilterCache();
+		}
 		initSearcher();
 	}
 	
 	public void initSearcher() {
 		boolean readOnly = true;
-		//String indexDirFullPath = Utils.convertPath(getClass(), indexDir); 
 		if (indexReader == null) {
 			try {
 				indexReader = IndexReader.open(new SimpleFSDirectory(new File(
@@ -74,7 +77,8 @@ public class Searcher {
 				throw new RuntimeException("Cannot open index directory:"+indexDir, e);
 			} catch (IOException e) {
 				indexReader =null;
-				throw new RuntimeException("Cannot open index directory:"+indexDir, e);				
+				//throw new RuntimeException("Cannot open index directory:"+indexDir, e);
+				//TODO what to do when you have no index? 
 			}
 		}
 	}
@@ -164,7 +168,7 @@ public class Searcher {
 			//public static List<Bisen> findBisenEntries(List<Long> ids)
 			Bisen bisen = Bisen.toBisen(d);
 
-			if (request.nonEmptyHuQuery()) { // && request.getHighlightHu()
+			if (bisen != null && request.nonEmptyHuQuery() && request.getHighlightHu() && indexReader != null) {
 				try {
 					TokenStream huTokens = TokenSources.getTokenStream(
 							indexReader, docId, Bisen.huSentenceFieldName);
@@ -176,7 +180,7 @@ public class Searcher {
 				}
 			}
 
-			if (request.nonEmptyEnQuery()) { // && request.getHighlightEn()
+			if (bisen != null && request.nonEmptyHuQuery() && request.getHighlightEn() && indexReader != null) {
 				try {
 					TokenStream enTokens = TokenSources.getTokenStream(
 							indexReader, docId, Bisen.enSentenceFieldName);
