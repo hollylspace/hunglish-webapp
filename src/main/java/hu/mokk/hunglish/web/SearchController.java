@@ -19,13 +19,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class SearchController {
 
+	public static final int PAGE_SIZE = 20;
+	
 	@Autowired
 	private Searcher searcher;
 
 	@RequestMapping(value = "/search", method = RequestMethod.GET)
 	public String search(
-			@RequestParam(value = "start", required = false) Integer start,
-			@RequestParam(value = "n", required = false) Integer size,
+			//@RequestParam(value = "start", required = false) Integer start,
+			//@RequestParam(value = "n", required = false) Integer size,
+    		@RequestParam(value = "page", required = false) Integer page, 
+    		@RequestParam(value = "size", required = false) Integer size, 
 			// @Valid
 			Bisen bisen,
 			// BindingResult result,
@@ -36,8 +40,8 @@ public class SearchController {
 
 		modelMap.addAttribute("genres", Genre.findAllGenres());
 
-		int sizeNo = size == null ? 10 : size.intValue();
-		int startNo = start == null ? 0 : start.intValue();
+        int sizeNo = size == null ? PAGE_SIZE : size.intValue();
+        int pageNo = page == null ? 1 : page.intValue();
 		SearchRequest request = new SearchRequest();
 		
 		request.setEnQuery(bisen.getEnSentence());
@@ -46,32 +50,20 @@ public class SearchController {
 				&& bisen.getDoc().getGenre().getId() != null) {
 			request.setSourceId(bisen.getDoc().getGenre().getId().toString());
 		}
+		
 		request.setMaxResults(sizeNo);
-		request.setStartOffset(startNo);
+		request.setStartOffset((pageNo-1)*sizeNo);
 		
 		request.setHunglishSyntax(true);
 		modelMap.addAttribute("request", request);
 
 		SearchResult result = searcher.search(request);
 
-		//int resultSize = result.getHitList().size();
-		//modelMap.addAttribute("resultSize", resultSize);
-		//if (ressize > 0) {
-		//}
-		modelMap.addAttribute("result", result);
-		modelMap.addAttribute("bisens", result.getHitList());
+        float nrOfPages = (float) result.getHitList().size() / sizeNo;
+        modelMap.addAttribute("maxPages", (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages));
 		
-		//////one more search to compare different search syntaxes
-		// float nrOfPages = (float) Bisen.countBisens() / sizeNo;
-		// modelMap.addAttribute("maxPages", (int) ((nrOfPages > (int) nrOfPages
-		// || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages));
-
-		//request.setHunglishSyntax(true);
-		//SearchResult resultHunglishSyntax = searcher.search(request);
-		//ressize = resultHunglishSyntax.getHitList().size();
-		//if (ressize > 0) {
-		//}
-		//modelMap.addAttribute("resultHunglishSyntax", resultHunglishSyntax);
+        modelMap.addAttribute("result", result);
+		
 
 		return "search/list";
 	}
