@@ -81,9 +81,6 @@ UPDATE: a control_harnesst mar megjavitottam.
 
 - Layout: ROOT/ alabbiak: fileUpload harnessData hunglishIndex logs mysqlDump
 
-- Kellene egy save-load script-pa'r, ami a megadott konyvtarba ment
-egy mysqldumpot, egy harness.data es fileUpload konyvtarat es egy lucene indexet.
-
 - Vegiggondolni, hogy milyen katasztrofakhoz vezet (ha vezet), ha veletlenul
 egyidoben fut ket control_harness peldany. indexelesbol semmikeppen ne fusson.
 Van-e valami komolyabb tranzakcionalitasi problema, tehat peldaul ha elfogy
@@ -134,6 +131,9 @@ hogy "tul hosszu", "nem angol", "tul kulonbozo hosszu" meg ilyesmi.
 A lassu reszek tovabbra is cronban futnanak.
 
 LEZART DOLGOK:
+
+DONE - Kellene egy save-load script-pa'r, ami a megadott konyvtarba ment
+egy mysqldumpot, egy harness.data es fileUpload konyvtarat es egy lucene indexet.
 
 DONE - hunglish2.justlaw uploadtable, teszteles.
 

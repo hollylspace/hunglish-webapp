@@ -3,6 +3,8 @@
 # Save the full server state to a specified savegame directory.
 # Note: Does not stop the server.
 
+set -e
+
 dir=$1
 
 if [ -f $dir ]

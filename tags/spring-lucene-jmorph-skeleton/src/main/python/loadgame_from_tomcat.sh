@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 dir=$1
 
 dep=/big3/Work/HunglishMondattar/deployment
