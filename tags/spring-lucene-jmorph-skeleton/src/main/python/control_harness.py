@@ -72,7 +72,7 @@ def runHarness(metadata) :
     global g_harnessAppDir
     global g_harnessDataDirectory
     global g_logPrefix
-    catalogFile = "catalog.tmp"
+    catalogFile = g_harnessDataDirectory+"/catalog.tmp"
     
     id = metadata['id']
     

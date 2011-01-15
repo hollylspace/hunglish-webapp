@@ -4,6 +4,8 @@
 
 set -e
 
+mavendir=/big3/Work/HunglishMondattar/hunglish-webapp/
+
 dir=$1
 
 if [ ! -d $dir ]
@@ -18,7 +20,7 @@ then
     exit -1
 fi
 
-pushd /big3/Work/HunglishMondattar/hunglish-webapp/ > "/dev/null"
+pushd $mavendir > "/dev/null"
 mvn tomcat:stop
 popd > "/dev/null"
 
@@ -29,6 +31,6 @@ sudo -u tomcat6 bash loadgame_from_tomcat.sh $dir
 echo Loading database dump $dir/mysqldump
 mysql -uhunglish -psw6x2the --default-character-set=utf8 hunglishwebapp < $dir/mysqldump
 
-pushd /big3/Work/HunglishMondattar/hunglish-webapp/ > "/dev/null"
+pushd $mavendir > "/dev/null"
 mvn tomcat:start
 popd > "/dev/null"

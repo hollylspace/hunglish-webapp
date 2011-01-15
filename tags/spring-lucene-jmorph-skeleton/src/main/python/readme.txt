@@ -60,15 +60,14 @@ a behazudast a machine_upload-bol.
 
 - A quartz finnyas arra, hogy honnan kell inditania a cronjobot.
 
-- Me'g mindig nem igaz az, hogy az ures hunglishIndex konyvarat eszlelve megcsinalja a lucene az ures indexet.
-
-- Az indexelot kulon kell kerni, hogy indexeljen, ahelyett, hogy a quartz hivna azt is.
-
 - Ha nem akarok csak emiatt feltolteni egy kamu dokumentumpart, akkor nem tudom
 triggerelni a rendszeren belul a harness elinditasat. Jo, nem nagy gond,
 tomcat6 user elinditja a
 nohup bash /big3/Work/HunglishMondattar/deployment/harness_cronjob.sh &
 progit. De akkor is.
+
+- A loadgame-savegame annyira kozel-specifikusak, hogy Gergonek nincs
+sok haszna egyelore beloluk.
 
 - DANIEL: Masodpeldany van a deployment konyvtarban a cronjob-bol.
 
@@ -131,6 +130,15 @@ hogy "tul hosszu", "nem angol", "tul kulonbozo hosszu" meg ilyesmi.
 A lassu reszek tovabbra is cronban futnanak.
 
 LEZART DOLGOK:
+
+DONE - /srv/tomcat6/conf/server.xml Fajlban a Connector-nak
+meg kell mondani, hogy URIEncoding="UTF-8"
+
+DONE - Me'g mindig nem igaz az, hogy az ures hunglishIndex konyvarat
+eszlelve megcsinalja a lucene az ures indexet.
+
+DONE - Az indexelot kulon kell kerni, hogy indexeljen, ahelyett, hogy
+a quartz hivna azt is.
 
 DONE - Kellene egy save-load script-pa'r, ami a megadott konyvtarba ment
 egy mysqldumpot, egy harness.data es fileUpload konyvtarat es egy lucene indexet.
