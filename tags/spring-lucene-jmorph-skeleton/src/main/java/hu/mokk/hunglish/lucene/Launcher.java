@@ -17,8 +17,7 @@ public class Launcher {
 					new String[] { "applicationContext.xml" });
 			
 			Indexer indexer = (Indexer)context.getBean("indexer");
-			indexer.indexAll(true/*true=temp that is index will be created in hunglishIndexTmp, false=main*/);
-			indexer.mergeTmpIndex();
+			indexer.indexAll();
 		} catch (Exception e) {
 			System.err.println("------------FATAL ERROR------------");
 			e.printStackTrace();

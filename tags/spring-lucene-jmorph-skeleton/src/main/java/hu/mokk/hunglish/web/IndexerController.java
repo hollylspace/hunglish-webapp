@@ -29,18 +29,17 @@ public class IndexerController {
     		ModelMap modelMap) {
 
 		if ("666".equals(magic)){
-			/*true=temp that is index will be created in hunglishIndexTmp, false=main*/
-			boolean create = true;
-			indexer.indexAll(create);
-			indexer.mergeTmpIndex();
+			indexer.indexAll();
 			searcher.reInitSearcher();
 		}
+		
+		/*
 		if ("777".equals(magic)){
-			/*true=temp that is index will be created in hunglishIndexTmp, false=main*/
-			boolean create = false;
+			boolean create = false; //true=temp that is index will be created in hunglishIndexTmp, false=main
 			indexer.indexAll(create);
 			searcher.reInitSearcher();
 		}
+		*/
 		
         return "indexer";
     }
