@@ -8,7 +8,7 @@ import org.apache.commons.logging.LogFactory;
 public class SystemCall{
 	
 	private static String defaultCommand = "/big3/Work/HunglishMondattar/deployment/harness_cronjob.sh";
-	// private static String defaultCommand = "bash /big3/Work/HunglishMondattar/hunglish-webapp/src/main/python/harness_cronjob.sh";
+	// private static String defaultCommand = "/bin/bash /big3/Work/HunglishMondattar/hunglish-webapp/src/main/python/harness_cronjob.sh";
 	
 	private static Log logger = LogFactory.getLog(SystemCall.class);
 	

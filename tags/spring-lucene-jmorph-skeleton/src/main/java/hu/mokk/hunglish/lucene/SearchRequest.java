@@ -21,12 +21,12 @@ public class SearchRequest {
 	/**
 	 * The search terms should be highlighted in HU (that is the left search box) results 
 	 */
-	protected Boolean highlightHu;
+	protected Boolean highlightHu = true;
 	
 	/**
 	 * The search terms should be highlighted in EN (that is the right search box) results 
 	 */
-	protected Boolean highlightEn;
+	protected Boolean highlightEn = true;
 
 	/**
      * Baloldali query string
