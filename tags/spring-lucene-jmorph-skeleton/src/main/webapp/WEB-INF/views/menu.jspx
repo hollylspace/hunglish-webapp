@@ -110,14 +110,14 @@
         
     <li id="web_mvc_jsp_search_category">
             <h2>
-                <spring:message code="menu.category.web_mvc_jsp_genre_category.label"/>
+                <spring:message code="menu.category.web_mvc_jsp_search_category.label"/>
             </h2>
             <ul>
                 <li id="web_mvc_jsp_search_menu_item">
                     <spring:url value="/search" var="web_mvc_jsp_search_menu_item_url"/>
                     <a href="${web_mvc_jsp_search_menu_item_url}">
                         <spring:message code="label.search" var="label_search"/>
-                        <spring:message arguments="${label_genre}" code="global.menu.list"/>
+                        <spring:message arguments="${label_search}" code="global.menu.list"/>
                     </a>
                 </li>            
             </ul>
