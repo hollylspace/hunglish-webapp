@@ -33,6 +33,8 @@ Amikor ez mind lezajlott, akkor egy job queue tablan keresztul uzen a webappnak,
 ---
 TODO:
 
+Legyen a fileUpload fajlnev kozelebb a harness szabvanyhoz.
+
 Zsolt telepitsen legujabb, sun-os javat, es mavent. A tomcat a sun-os java home-ra mutasson.
 De az is lehet, hogy az Aspects JAR problemat megoldja, ha a tomcat es a maven ugyanazzal
 a java-val (openjdk, sun jdk) megy.
@@ -67,7 +69,8 @@ nohup bash /big3/Work/HunglishMondattar/deployment/harness_cronjob.sh &
 progit. De akkor is.
 
 - A loadgame-savegame annyira kozel-specifikusak, hogy Gergonek nincs
-sok haszna egyelore beloluk.
+sok haszna egyelore beloluk. A savegame addig nem lesz ipari szintu,
+amig nem allitja le a service-t.
 
 - DANIEL: Masodpeldany van a deployment konyvtarban a cronjob-bol.
 
@@ -130,6 +133,14 @@ hogy "tul hosszu", "nem angol", "tul kulonbozo hosszu" meg ilyesmi.
 A lassu reszek tovabbra is cronban futnanak.
 
 LEZART DOLGOK:
+
+- Nem mukodik a duplumszures. Ez peldaul egy olyan mondatpar rogton, amit
+ki kellett volna:
+http://kozel.mokk.bme.hu:8080/hunglish/search?huSentence=&enSentence=%22come+on+claire%22&doc.genre=-10
+Ugyanaz a hashuk:
+select en_sentence,id,hu_sentence_hash,en_sentence_hash,is_duplicate
+ from bisen order by hu_sentence_hash,en_sentence_hash,is_duplicate,
+ CHAR_LENGTH(CONCAT(en_sentence,hu_sentence)) limit 2;
 
 DONE - /srv/tomcat6/conf/server.xml Fajlban a Connector-nak
 meg kell mondani, hogy URIEncoding="UTF-8"
