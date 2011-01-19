@@ -27,9 +27,8 @@ def extension(filename) :
     assert len(a)>1
     return a[-1]
 
-#TODO 'srt'
 def isExtensionWeLike(ext) :
-    return ext in ( 'doc','htm','html','pdf', 'rtf', 'txt', )
+    return ext in ( 'doc','htm','html','pdf', 'rtf', 'txt', 'srt' )
 
 def lookup(db,tableName,fieldName,value) :
     cursor = getCursor(db)

@@ -325,13 +325,19 @@ def flagDuplicates(db) :
     logg("Flagging duplicates...")
     try :
         cursor = db.cursor(MySQLdb.cursors.Cursor)
+	# Az is_duplicate is NULL szerinti rendezes garantalja,
+	# hogy az egyforma hash-uek kozul a vegere keruljenek
+	# azok, akik me'g nem estek at soha duplumszuresen.
+	#
 	# Az itt a jopofa trukk, hogy az egyforma hash-ueket (es indexeltsegueket)
 	# mar az osszhosszuk szerint rendezi, hogy a sok nemalfanumerikust ne tolja
-	# a felhasznalo arcaba feleslegesen.
+	# a felhasznalo arcaba feleslegesen. De ha ket kulonbozo turnusban
+	# futnak be, akkor akkor is a korabbi valik reprezentanssa, ha o a
+	# nagyobb karakterszamu.
         cursor.execute("""select
 	    id,hu_sentence_hash,en_sentence_hash,is_duplicate
 	    from bisen order by
-	    hu_sentence_hash,en_sentence_hash,is_duplicate,
+	    hu_sentence_hash,en_sentence_hash,is_duplicate is NULL,
 	    CHAR_LENGTH(CONCAT(en_sentence,hu_sentence))""")
         results = cursor.fetchall()
         dupIds = []
