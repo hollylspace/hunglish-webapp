@@ -33,9 +33,26 @@ Amikor ez mind lezajlott, akkor egy job queue tablan keresztul uzen a webappnak,
 ---
 TODO:
 
+Session management bug: HP Sat, Jan 22, 2011 at 2:35 AM levele.
+
+List all bisens szejjelterheli, pedig nem kellene.
+
+Vegre kigondoltam, hogy hogyan nem lesz szerzoi jogi balhe abbol, hogy
+hozzaferheto az alignment. Az UploadController hasheli az id es a szerzo
+konkatenaciojat (tesztben eleg ehelyett az unobfuscated id), es ebbol ad egy url-t.
+Amig upload.is_processed=N, addig csak egy "bocs, turelmet kerek" uzenetet ad.
+Ha processed, akkor megnezi, hogy now()-harnessed_timestamp tobb-e, mint egy nap.
+Ha igen, akkor azt mondja, hogy "eroforras elavult".
+Ha nem, akkor egyetlen weboldalra kidumpolja a kerdeses alignment
+metaadatait, es a bisen-eket. (Ha nem fogadtuk el a doksit, akkor
+persze csak a metaadatokat.)
+
 Legyen a fileUpload fajlnev kozelebb a harness szabvanyhoz.
 
-Zsolt telepitsen legujabb, sun-os javat, es mavent. A tomcat a sun-os java home-ra mutasson.
+- Feltolteskor ha mar fut egy quartz job, akkor a quartz nem moge-schedule-olja
+az ujat, hanem bejelenti, hogy most nem tud inditani.
+
+- Zsolt telepitsen legujabb, sun-os javat, es mavent. A tomcat a sun-os java home-ra mutasson.
 De az is lehet, hogy az Aspects JAR problemat megoldja, ha a tomcat es a maven ugyanazzal
 a java-val (openjdk, sun jdk) megy.
 
@@ -79,9 +96,19 @@ mvn jetty:run > cout 2> cerr &
 , bar csak parancssorbol, eclipse-bol valamiert nem talalja az eroforrast.
 
 - GERGO: Az exception-ok informacioit a webapp es a control_harness is elnyelegeti.
-UPDATE: a control_harnesst mar megjavitottam.
+UPDATE: a control_harnesst mar megjavitottam, de nem teljesen, mert nem derul ki
+a legalso szint.
+
+- control_harness nyugodtan logoljon tobbmindent, ne kelljen innen-onnan
+osszeneznie, hogy mi a fajlpa'r vagy hogy hany bimondat kerult be.
+A redundencianak semmi hatranya itt.
+
+- Legyen kovetkezetesen hasznalva a control_harness logolasaban az INFO,WARN,ERROR.
 
 - Layout: ROOT/ alabbiak: fileUpload harnessData hunglishIndex logs mysqlDump
+
+- Most mar lassan ideje elgondolkozni azon, hogy hogyan fog tortenni egy
+dokumentum utolagos letiltasa.
 
 - Vegiggondolni, hogy milyen katasztrofakhoz vezet (ha vezet), ha veletlenul
 egyidoben fut ket control_harness peldany. indexelesbol semmikeppen ne fusson.
