@@ -33,11 +33,18 @@ Amikor ez mind lezajlott, akkor egy job queue tablan keresztul uzen a webappnak,
 ---
 TODO:
 
-Session management bug: HP Sat, Jan 22, 2011 at 2:35 AM levele.
+- Session management bug: HP Sat, Jan 22, 2011 at 2:35 AM levele.
 
-List all bisens szejjelterheli, pedig nem kellene.
+- Az ismeretlen szavakat a jmorph nem veszi fel sajat tovukkent.
+Ergo minden ismeretlen szora automatice nulla talalatot kapunk.
+http://kozel.mokk.bme.hu:8080/hunglish/search?huSentence=keletkezett&enSentence=happened&doc.genre=-10
+http://kozel.mokk.bme.hu:8080/hunglish/search?huSentence=Daala&enSentence=&doc.genre=-10
 
-Vegre kigondoltam, hogy hogyan nem lesz szerzoi jogi balhe abbol, hogy
+822 (Trenntre) doksiban szerepel a Trenntre szo, a kereseskor megsem adja erre.
+Nem lehet, hogy ez valami alapveto index-jmorph szintu bug, es semmilyen
+ismeretlen szot nem kezel?
+
+- Vegre kigondoltam, hogy hogyan nem lesz szerzoi jogi balhe abbol, hogy
 hozzaferheto az alignment. Az UploadController hasheli az id es a szerzo
 konkatenaciojat (tesztben eleg ehelyett az unobfuscated id), es ebbol ad egy url-t.
 Amig upload.is_processed=N, addig csak egy "bocs, turelmet kerek" uzenetet ad.
@@ -47,10 +54,12 @@ Ha nem, akkor egyetlen weboldalra kidumpolja a kerdeses alignment
 metaadatait, es a bisen-eket. (Ha nem fogadtuk el a doksit, akkor
 persze csak a metaadatokat.)
 
-Legyen a fileUpload fajlnev kozelebb a harness szabvanyhoz.
+- Legyen a fileUpload fajlnev kozelebb a harness szabvanyhoz.
 
 - Feltolteskor ha mar fut egy quartz job, akkor a quartz nem moge-schedule-olja
 az ujat, hanem bejelenti, hogy most nem tud inditani.
+
+- Miert ragad bent ket darab 100%-on futo mysqld_safe processz?
 
 - Zsolt telepitsen legujabb, sun-os javat, es mavent. A tomcat a sun-os java home-ra mutasson.
 De az is lehet, hogy az Aspects JAR problemat megoldja, ha a tomcat es a maven ugyanazzal
@@ -140,7 +149,12 @@ ha esetleg kiderul, hogy rizikoforras.
 
 HARNESS, HIBAKEZELES:
 
-- srt formatum feltoltese, konverzioja. UPDATE: Mar csak tesztelni kellene.
+- Sajnos a txt2raw idonkent IBM855-et detektal, es hazavagja a kodolast.
+Talan bele kellene valahogy drotozni, hogy csak utf-et vagy
+latin-1-2-t szabad talalnia.
+cat /big3/Work/HunglishMondattar/deployment/harness.data/hu/txt/290.hu.txt | python /big3/Work/HunglishMondattar/tcg/scripts/txt2raw.py hu
+UPDATE: Mon, Jan 24, 2011 at 1:02 AM levelemben leirtam, hogy ez tenyleg nagyon gyakori a filmes korpuszon.
+./txt2raw.bugs -ban gyulik, hogy mibol mit csinalt a magyar txt-k kozul.
 
 - Maradtak bent html entitasok valamelyik konverter kimeneteben.
 
@@ -161,7 +175,9 @@ A lassu reszek tovabbra is cronban futnanak.
 
 LEZART DOLGOK:
 
-- Nem mukodik a duplumszures. Ez peldaul egy olyan mondatpar rogton, amit
+DONE - srt formatum feltoltese, konverzioja. Mar csak tesztelni kellene.
+
+DONE - Nem mukodik a duplumszures. Ez peldaul egy olyan mondatpar rogton, amit
 ki kellett volna:
 http://kozel.mokk.bme.hu:8080/hunglish/search?huSentence=&enSentence=%22come+on+claire%22&doc.genre=-10
 Ugyanaz a hashuk:
