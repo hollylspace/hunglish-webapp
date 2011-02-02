@@ -293,6 +293,9 @@ def processOneUpload(db,id) :
 	moveFilesToHarness(metadata)
 	logg("Running harness...")
 	metadata = runHarness(metadata)
+	logg("Results:")
+	for k,v in sorted(metadata.iteritems()) :
+	    logg( "%s\t%s" % (k,str(v)) )
 
 	keepIt = metadata['keep_it']=="true"
         if keepIt :

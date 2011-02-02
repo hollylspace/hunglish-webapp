@@ -33,16 +33,33 @@ Amikor ez mind lezajlott, akkor egy job queue tablan keresztul uzen a webappnak,
 ---
 TODO:
 
+- Brutalis hibalehetoseg: az ujrainditas utan ugy latom nem tomcat6 userkent fut
+a service, hanem root-kent. Ez nem csak azert brutal, mert security hole, hanem
+azert is, mert nem lesz joga a tomcat-nek bolygatni a root altal letrehozott
+fajlokat.
+
+- Hogy kerul oda egy regesregi fileUpload/824_HU.srt , amikor ott elvileg me'g soha nem
+tartott az upload.id kurzor? A logokban sincs nyoma, hogy harnesselte volna.
+
+- http://kozel.mokk.bme.hu:8080/hunglish/doc URL (a size attributum nelkul meghivva)
+kilistazza mind a sokszazat. Ki se merem probalni, hogy a hunglish/bisen mit csinal.
+
+- Tunjenek el azok a menupontok, amik semmi masra nem jok, csak hogy inkonzisztensse
+tegyek az adatbazist.
+
+- A duplumszures eleg lassu. Amikor mar jo nagy az adatbazis, akkor egy rovid doksi
+feltoltesetol kezdve igy jonnek a fazisok:
+1. par masodperc harness.
+2. 2 min 30 sec duplumfilter (Lehet, hogy jobb, ha az adatbazis helyett a python vegzi a rendezest?)
+3. 3 min 20 sec indexeles (Tulindexeles bug: futott egy teljesen felesleges kort egy
+masodik 20000-es batch-csel, aminek nulla eleme volt, de igy is 50 sec-et szotymorgott vele.)
+
 - Session management bug: HP Sat, Jan 22, 2011 at 2:35 AM levele.
 
 - Az ismeretlen szavakat a jmorph nem veszi fel sajat tovukkent.
 Ergo minden ismeretlen szora automatice nulla talalatot kapunk.
 http://kozel.mokk.bme.hu:8080/hunglish/search?huSentence=keletkezett&enSentence=happened&doc.genre=-10
 http://kozel.mokk.bme.hu:8080/hunglish/search?huSentence=Daala&enSentence=&doc.genre=-10
-
-822 (Trenntre) doksiban szerepel a Trenntre szo, a kereseskor megsem adja erre.
-Nem lehet, hogy ez valami alapveto index-jmorph szintu bug, es semmilyen
-ismeretlen szot nem kezel?
 
 - Vegre kigondoltam, hogy hogyan nem lesz szerzoi jogi balhe abbol, hogy
 hozzaferheto az alignment. Az UploadController hasheli az id es a szerzo
@@ -59,7 +76,7 @@ persze csak a metaadatokat.)
 - Feltolteskor ha mar fut egy quartz job, akkor a quartz nem moge-schedule-olja
 az ujat, hanem bejelenti, hogy most nem tud inditani.
 
-- Miert ragad bent ket darab 100%-on futo mysqld_safe processz?
+- Miert ragadt bent ket darab 100%-on futo mysqld_safe processz?
 
 - Zsolt telepitsen legujabb, sun-os javat, es mavent. A tomcat a sun-os java home-ra mutasson.
 De az is lehet, hogy az Aspects JAR problemat megoldja, ha a tomcat es a maven ugyanazzal
@@ -146,6 +163,13 @@ ok egyszerre irjak az adatbazist.
 wait_timeout=604800
 Ez kesobb valszeg nem is fog kelleni. Kiszedni, kulonosen
 ha esetleg kiderul, hogy rizikoforras.
+
+
+- Integralni a hunglish2.justlaw-ba Nemeth Andras legujabb gyujteset
+a koztes idobol:
+/big3/Work/HunglishMondattar/datasources/hunglish2.justlaw/zips
+2005_L_R_HTML.rar 2006_L_R_HTML.rar 2007_L_R_HTML.zip
+
 
 HARNESS, HIBAKEZELES:
 
