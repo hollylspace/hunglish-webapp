@@ -33,6 +33,11 @@ Amikor ez mind lezajlott, akkor egy job queue tablan keresztul uzen a webappnak,
 ---
 TODO:
 
+mac:~/drafts/hunglish.install.rtf
+
+- SystemCall.java defaultCommand vagy quartz.properties:uploadjob.path adja a cronjob helyet?
+Csak az egyik adja!
+
 - Brutalis hibalehetoseg: az ujrainditas utan ugy latom nem tomcat6 userkent fut
 a service, hanem root-kent. Ez nem csak azert brutal, mert security hole, hanem
 azert is, mert nem lesz joga a tomcat-nek bolygatni a root altal letrehozott
@@ -40,6 +45,8 @@ fajlokat.
 
 - Hogy kerul oda egy regesregi fileUpload/824_HU.srt , amikor ott elvileg me'g soha nem
 tartott az upload.id kurzor? A logokban sincs nyoma, hogy harnesselte volna.
+-rw-r--r-- 1 tomcat6 tomcat6 19029 2011-01-24 11:46 /big3/Work/HunglishMondattar/deployment/fileUpload/825_EN.txt
+-rw-r--r-- 1 tomcat6 tomcat6 34279 2011-01-24 11:46 /big3/Work/HunglishMondattar/deployment/fileUpload/825_HU.srt
 
 - http://kozel.mokk.bme.hu:8080/hunglish/doc URL (a size attributum nelkul meghivva)
 kilistazza mind a sokszazat. Ki se merem probalni, hogy a hunglish/bisen mit csinal.
@@ -169,7 +176,7 @@ ha esetleg kiderul, hogy rizikoforras.
 a koztes idobol:
 /big3/Work/HunglishMondattar/datasources/hunglish2.justlaw/zips
 2005_L_R_HTML.rar 2006_L_R_HTML.rar 2007_L_R_HTML.zip
-
+EU_acquis_4reszben_tabsep.rar
 
 HARNESS, HIBAKEZELES:
 
@@ -190,6 +197,9 @@ tcg/scripts/filtersen.py szinte'n.
 
 - Tovezes is legyen a pipeline-ban az align elott, hogy ne legyunk rosszabbak, mint
 a regi hunglish.
+
+- Kicsiket hianyzik a pipeline-bol, hogy parhuzamositott mondatraszegmentalt
+adatot (forditomemoria) is bele lehessen tolni.
 
 - Ezt valszeg nem fogjuk megcsinalni, de lenne ertelme:
 A pipeline-t szetszedni ket reszre valahol a sen elott, ugy, hogy az eleje
