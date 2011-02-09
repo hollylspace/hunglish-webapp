@@ -44,7 +44,7 @@ public class LemmatizerWrapper {
 			if (returnOrig) {
 				results.add(word);
 			}
-			boolean isFirst = true;
+			//boolean isFirst = true;
 			for (Lemma lemma : lemmas) {
 				String stemmedText;
 				if (returnPOS) {

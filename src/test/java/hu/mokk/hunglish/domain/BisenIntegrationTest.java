@@ -32,7 +32,7 @@ public class BisenIntegrationTest {
 		hu.mokk.hunglish.domain.Bisen bisen = hu.mokk.hunglish.domain.Bisen
 				.findBisen(new Long(23324));
 		System.out.println(bisen);
-		System.out.println("countDuplicates:" + bisen.countDuplicates());
+		//System.out.println("countDuplicates:" + bisen.countDuplicates());
 	}
 
 	@Test

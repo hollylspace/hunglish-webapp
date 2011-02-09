@@ -140,10 +140,10 @@ public class AnalyzerProvider {
 			Lemmatizer enLemmatizer = new net.sf.jhunlang.jmorph.lemma.LemmatizerImpl(
 					enAnalyser, enStripDerivates, analyserContextEn);
 
-			LemmatizerWrapper huLemmatizerWrapper = new LemmatizerWrapper(huLemmatizer,false/*returnOOVOrig*/,true/*returnOrig*/,false/*returnPOS*/);
+			LemmatizerWrapper huLemmatizerWrapper = new LemmatizerWrapper(huLemmatizer,true/*returnOOVOrig*/,true/*returnOrig*/,false/*returnPOS*/);
 			lemmatizerMap.put(Bisen.huSentenceStemmedFieldName, huLemmatizerWrapper);
 
-			LemmatizerWrapper enLemmatizerWrapper = new LemmatizerWrapper(enLemmatizer,false/*returnOOVOrig*/,true/*returnOrig*/,false/*returnPOS*/);
+			LemmatizerWrapper enLemmatizerWrapper = new LemmatizerWrapper(enLemmatizer,true/*returnOOVOrig*/,true/*returnOrig*/,false/*returnPOS*/);
 			lemmatizerMap.put(Bisen.enSentenceStemmedFieldName, enLemmatizerWrapper);
 
 			StemmerAnalyzer stemmerAnalyzer = new StemmerAnalyzer(Version.LUCENE_30, lemmatizerMap);

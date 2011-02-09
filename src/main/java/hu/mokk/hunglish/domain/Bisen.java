@@ -158,6 +158,7 @@ public class Bisen {
 	 * 
 	 * @return count of Bisentences which are a duplicate of this
 	 */
+/* commented out for good
 	public long countDuplicates() {
 		Long result = (Long) entityManager().createQuery(
 				"select count(o) from Bisen o where "
@@ -169,7 +170,8 @@ public class Bisen {
 						this.id).getSingleResult();
 		return result;
 	}
-
+*/
+	
 	public static List<Bisen> findAllBisens() {
 		throw new RuntimeException(new IllegalAccessException());
 		// return
