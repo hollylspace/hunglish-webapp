@@ -59,22 +59,22 @@ CREATE TABLE `bisen` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `version` int(11) DEFAULT NULL,
   `downvotes` bigint(20) DEFAULT NULL,
+  `upvotes` bigint(20) DEFAULT NULL,
   `en_sentence` varchar(4000) DEFAULT NULL,
   `hu_sentence` varchar(4000) DEFAULT NULL,
-  `is_indexed` bit(1) DEFAULT NULL, -- TODO maybe a three-way flag would be better: N-not indexed, T-indexed into a temp index, Y-temp index merged into main index
   `line_number` int(11) DEFAULT NULL,
-  `upvotes` bigint(20) DEFAULT NULL,
   `doc` bigint(20) DEFAULT NULL,
   `en_sentence_hash` bigint(20) DEFAULT NULL,
   `hu_sentence_hash` bigint(20) DEFAULT NULL,
   `is_duplicate` bit(1) DEFAULT NULL,
   `indexed_timestamp` TIMESTAMP ,
   `copyright` varchar(1) not null DEFAULT 'C',
-  `approved` varchar(1) not null DEFAULT 'N',  -- TODO the indexing would not be started automatically on a new doc, but could be triggered by hand on a doc.   
-  
+  `approved` varchar(1) not null DEFAULT 'N',  -- TODO the indexing would not be started automatically on a new doc, but could be triggered by hand on a doc.     
+  `state` char(1) not NULL default 'D', -- N nothing to do, D duplicate filter to do, I to be added to index, R to be reindexed, E to be ereased from index, O nothing to do but there was an Error
   PRIMARY KEY (`id`),
   KEY `fk_bisen_doc` (`doc`),
-  KEY `bisen_hash` (`is_indexed`, `en_sentence_hash`, `hu_sentence_hash`),
+  KEY `duplicate_key` (`hu_sentence_hash`, `en_sentence_hash`, `is_duplicate`),
+  KEY `state_key` (`state`),
   UNIQUE KEY `i_bisen_uniq` (`doc`, `line_number`),
   CONSTRAINT `fk_bisen_doc` FOREIGN KEY (`doc`) REFERENCES `doc` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
