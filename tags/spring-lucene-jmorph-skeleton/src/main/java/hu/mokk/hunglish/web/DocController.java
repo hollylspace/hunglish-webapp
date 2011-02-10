@@ -49,14 +49,16 @@ public class DocController {
 
 	@RequestMapping(value = "/doc", method = RequestMethod.GET)
     public String list(@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, ModelMap modelMap) {
-        if (page != null || size != null) {
-            int sizeNo = size == null ? 10 : size.intValue();
-            modelMap.addAttribute("docs", Doc.findDocEntries(page == null ? 0 : (page.intValue() - 1) * sizeNo, sizeNo));
-            float nrOfPages = (float) Doc.countDocs() / sizeNo;
-            modelMap.addAttribute("maxPages", (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages));
-        } else {
-            modelMap.addAttribute("docs", Doc.findAllDocs());
-        }
+		if (page == null){
+			page = 0;
+		}
+		if (size == null){
+			size = 20;
+		}
+        int sizeNo = size == null ? 10 : size.intValue();
+        modelMap.addAttribute("docs", Doc.findDocEntries(page == null ? 0 : (page.intValue() - 1) * sizeNo, sizeNo));
+        float nrOfPages = (float) Doc.countDocs() / sizeNo;
+        modelMap.addAttribute("maxPages", (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages));
         return "doc/list";
     }
 
