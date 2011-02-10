@@ -18,6 +18,7 @@ import org.springframework.stereotype.Controller;
 @Controller
 public class DocController {
 
+	/*
 	@RequestMapping(value = "/doc", method = RequestMethod.POST)
     public String create(@Valid Doc doc, BindingResult result, ModelMap modelMap) {
         if (doc == null) throw new IllegalArgumentException("A doc is required");
@@ -29,7 +30,7 @@ public class DocController {
         }
         doc.persist();
         return "redirect:/doc/" + doc.getId();
-    }
+    } */
 
 	@RequestMapping(value = "/doc/form", method = RequestMethod.GET)
     public String createForm(ModelMap modelMap) {
@@ -59,6 +60,7 @@ public class DocController {
         return "doc/list";
     }
 
+	/*
 	@RequestMapping(method = RequestMethod.PUT)
     public String update(@Valid Doc doc, BindingResult result, ModelMap modelMap) {
         if (doc == null) throw new IllegalArgumentException("A doc is required");
@@ -70,7 +72,7 @@ public class DocController {
         }
         doc.merge();
         return "redirect:/doc/" + doc.getId();
-    }
+    } */
 
 	@RequestMapping(value = "/doc/{id}/form", method = RequestMethod.GET)
     public String updateForm(@PathVariable("id") Long id, ModelMap modelMap) {
@@ -81,10 +83,12 @@ public class DocController {
         return "doc/update";
     }
 
+	/*
 	@RequestMapping(value = "/doc/{id}", method = RequestMethod.DELETE)
     public String delete(@PathVariable("id") Long id, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size) {
         if (id == null) throw new IllegalArgumentException("An Identifier is required");
         Doc.findDoc(id).remove();
         return "redirect:/doc?page=" + ((page == null) ? "1" : page.toString()) + "&size=" + ((size == null) ? "10" : size.toString());
-    }
+    } */
+	
 }

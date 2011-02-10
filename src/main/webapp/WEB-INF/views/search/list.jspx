@@ -119,20 +119,18 @@ English:
                     </tr>
                 </c:forEach>
             </table>
-        </c:if>
+			<!-- <div id="pager">
+			       <c:if test="${not empty maxPages}">
+			         <roo:pagination  maxPages="${maxPages}" page="${param.page}" size="${param.size}" />
+			     </c:if>
+                <c:forEach items="${result.paginationLinks}" var="link">
+                	<a href="http://szotar.mokk.bme.hu/hunglish/search/corpus?ql=lap&qr=&n=20&source=all&start=20">2</a> 
+                        ${link}
+                </c:forEach>			   
+			 </div> -->
 
-<!--         
-                        <c:if test="${not empty maxPages}">
-                            <roo:pagination maxPages="${maxPages}" page="${param.page}" size="${param.size}"/>
-                        </c:if>
- -->
-         
-        <!-- 
-        <c:if test="${empty result.hitList}">
-            <spring:message arguments="${entity_label_plural}" code="entity.not.found"/>            
         </c:if>
-         -->
-         
         
     </div>
+ 
 </div>

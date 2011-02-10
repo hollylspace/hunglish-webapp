@@ -93,12 +93,15 @@ public class Doc {
         this.version = version;
     }
 
+	
+	/*
 	@Transactional
     public void persist() {
         if (this.entityManager == null) this.entityManager = entityManager();
         this.entityManager.persist(this);
-    }
+    } */
 
+	/*
 	@Transactional
     public void remove() {
         if (this.entityManager == null) this.entityManager = entityManager();
@@ -108,21 +111,23 @@ public class Doc {
             Doc attached = this.entityManager.find(Doc.class, this.id);
             this.entityManager.remove(attached);
         }
-    }
+    } */
 
+	/*
 	@Transactional
     public void flush() {
         if (this.entityManager == null) this.entityManager = entityManager();
         this.entityManager.flush();
-    }
+    } */
 
+	/*
 	@Transactional
     public void merge() {
         if (this.entityManager == null) this.entityManager = entityManager();
         Doc merged = this.entityManager.merge(this);
         this.entityManager.flush();
         this.id = merged.getId();
-    }
+    } */
 
 	public static final EntityManager entityManager() {
         EntityManager em = new Doc().entityManager;

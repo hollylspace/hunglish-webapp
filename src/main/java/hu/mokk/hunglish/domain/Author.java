@@ -63,8 +63,9 @@ public class Author {
     public void persist() {
         if (this.entityManager == null) this.entityManager = entityManager();
         this.entityManager.persist(this);
-    }
+    } 
 
+	/*
 	@Transactional
     public void remove() {
         if (this.entityManager == null) this.entityManager = entityManager();
@@ -74,7 +75,7 @@ public class Author {
             Author attached = this.entityManager.find(Author.class, this.id);
             this.entityManager.remove(attached);
         }
-    }
+    } */
 
 	@Transactional
     public void flush() {

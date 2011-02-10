@@ -236,7 +236,7 @@ public class Indexer {
 
 		EntityManager em = null;
 		boolean result = false;
-		List<Bisen> bisens = new ArrayList<Bisen>(1);
+		List<Bisen> bisens = new ArrayList<Bisen>();
 		try {
 			//1) get the next batch from database 
 			em = entityManagerFactory.createEntityManager();

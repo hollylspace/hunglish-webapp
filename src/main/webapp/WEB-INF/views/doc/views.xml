@@ -7,10 +7,10 @@
     <definition extends="default" name="doc/show">
         <put-attribute name="body" value="/WEB-INF/views/doc/show.jspx"/>
     </definition>
-    <definition extends="default" name="doc/create">
+    <!--<definition extends="default" name="doc/create">
         <put-attribute name="body" value="/WEB-INF/views/doc/create.jspx"/>
-    </definition>
-    <definition extends="default" name="doc/update">
+    </definition> -->
+    <!-- <definition extends="default" name="doc/update">
         <put-attribute name="body" value="/WEB-INF/views/doc/update.jspx"/>
-    </definition>
+    </definition> -->
 </tiles-definitions>
