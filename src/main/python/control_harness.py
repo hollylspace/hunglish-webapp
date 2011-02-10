@@ -166,22 +166,22 @@ def metadataFromUpload(db,id) :
     return metadata
 
 def metadataToDoc(db,metadata) :
-# (id, old_docid, genre, author, en_title, hu_title,
-# is_open_content, aligned_file_path)
-
+    # Figyelem, az ujabb verzioban nem autonkrementalt doc.id plusz
+    # upload.id-tol orokolt doc.upload van, hanem a doc.id manualisan
+    # egyenlo"ve' van teve az upload.id-val, es nincs kulon doc.upload.
+    # Remelhetoleg a mysql dob egy exceptiont ha valami brutalis
+    # hiba miatt a doc.id mar foglalt.
     m = metadata
     cursor = getCursor(db)
     cursor.execute("insert into doc \
-	(old_docid, genre, author, en_title, hu_title, \
-	is_open_content, aligned_file_path, upload, version) \
+	(id, old_docid, genre, author, en_title, hu_title, \
+	is_open_content, aligned_file_path, version) \
 	values (%s, %s, %s, %s, %s, %s, %s, %s, 1)",
-	(m['old_docid'], m['genre'], m['author'],
+	(m['id'], m['old_docid'], m['genre'], m['author'],
          m['en_title'],m['hu_title'],
 	 m['is_open_content'],
-         m['aligned_file_path'], m['id'] )
+         m['aligned_file_path'] )
     )
-    docId = cursor.lastrowid
-    return docId
 
 '''file -> lines of the file'''
 def readfile(path, enc):
@@ -237,15 +237,15 @@ def hashSentences(bisentences) :
 	hashedBisentences.append( (line_number, hu_sentence, en_sentence, hu_sentence_hash, en_sentence_hash) )
     return hashedBisentences
 
-# docId nem tevesztendo ossze id-vel, az utobbit az upload tabla
-# adja autoincrementtel, az elobbit a doc.
-def harnessOutputFileToBisenTable(db,docId,alignedFilePath) :
+def harnessOutputFileToBisenTable(db,id,alignedFilePath) :
     logg( "Loading into database: "+alignedFilePath )
     bisentences = readAlignFile(alignedFilePath, 'ISO-8859-2')
     hashedBisentences = hashSentences(bisentences)
     cursor = getCursor(db)
-    cursor.executemany("insert into bisen (doc, line_number, hu_sentence, en_sentence, hu_sentence_hash, en_sentence_hash, version) \
-	values (" +str(docId)+ ", %s,%s,%s,%s,%s,1)", hashedBisentences)
+    # state='D' means that the next task for this bisen is duplumfiltering.
+    cursor.executemany("insert into bisen (doc, state, \
+	line_number, hu_sentence, en_sentence, hu_sentence_hash, en_sentence_hash, version) \
+	values (" +str(id)+ ",'D', %s,%s,%s,%s,%s,1)", hashedBisentences)
     return len(bisentences)
 
 def setUploadTo(db,id,status) :
@@ -301,9 +301,9 @@ def processOneUpload(db,id) :
         if keepIt :
 	    processedFlag = "Y"
 	    logg("Adding metadata to doc table...")
-    	    docId = metadataToDoc(db,metadata)
+    	    metadataToDoc(db,metadata)
 	    logg("Adding harvested bisentences to bisen table...")
-            bisentenceNum = harnessOutputFileToBisenTable(db,docId,metadata['aligned_file_path'])
+            bisentenceNum = harnessOutputFileToBisenTable(db,id,metadata['aligned_file_path'])
 	    if bisentenceNum==0 :
 		logg("WARNING: zero bisentences added. keep_it should be false in this case.")
         else :
@@ -328,9 +328,9 @@ def flagDuplicates(db) :
     logg("Flagging duplicates...")
     try :
         cursor = db.cursor(MySQLdb.cursors.Cursor)
-	# Az is_duplicate is NULL szerinti rendezes garantalja,
-	# hogy az egyforma hash-uek kozul a vegere keruljenek
-	# azok, akik me'g nem estek at soha duplumszuresen.
+	# A (state='D') (regebben: is_duplicate is NULL) szerinti
+	# rendezes garantalja, hogy az egyforma hash-uek kozul a vegere
+	# keruljenek azok, akik me'g nem estek at soha duplumszuresen.
 	#
 	# Az itt a jopofa trukk, hogy az egyforma hash-ueket (es indexeltsegueket)
 	# mar az osszhosszuk szerint rendezi, hogy a sok nemalfanumerikust ne tolja
@@ -338,31 +338,41 @@ def flagDuplicates(db) :
 	# futnak be, akkor akkor is a korabbi valik reprezentanssa, ha o a
 	# nagyobb karakterszamu.
         cursor.execute("""select
-	    id,hu_sentence_hash,en_sentence_hash,is_duplicate
+	    id,hu_sentence_hash,en_sentence_hash,state,is_duplicate
 	    from bisen order by
-	    hu_sentence_hash,en_sentence_hash,is_duplicate is NULL,
+	    hu_sentence_hash,en_sentence_hash,state='D',
 	    CHAR_LENGTH(CONCAT(en_sentence,hu_sentence))""")
         results = cursor.fetchall()
         dupIds = []
         prevHashes = (None,None)
         newBisenNum = 0
-        for (id,huHash,enHash,isDup) in results :
+        exampleAlreadyGiven = False
+        for (id,huHash,enHash,state,isDup) in results :
             hashes = (huHash,enHash)
-	    # isDup==None : not yet duplumfiltered
-            if isDup==None :
+
+	    # Normalis uzemmenet mellett ez a ketto egybeesik:
+	    toBeFiltered = (state=='D')
+	    neverFiltered = (isDup==None)
+
+	    if (toBeFiltered!=neverFiltered) and not exampleAlreadyGiven :
+		logg("WARNING: Serious inconsistency: state=%s, is_duplicate=%s for bisen #%d" % (state,str(isDup),id) )
+		exampleAlreadyGiven = True
+
+	    if toBeFiltered :        	    
                 newBisenNum += 1
                 if hashes==prevHashes :
                     dupIds.append(id)
             prevHashes = hashes
 
         logg("%d duplicates found in %d new records. total # of records %d" % (len(dupIds),newBisenNum,len(results)) )
+
+	logg("Marking non-duplicates and setting states to 'I'.")
+	# Actually, marking all, and being corrected in the next phase.
+	cursor.execute("update bisen set is_duplicate=False, state='I' where state='D' ")
+
 	logg("Marking duplicates...")
         for id in dupIds :
             cursor.execute("update bisen set is_duplicate=True where id=%s" % id )
-
-	# If it wasn't marked dup and is NULL (is new),
-	# then we can set it to non_dup in a single update:
-	cursor.execute("update bisen set is_duplicate=False where is_duplicate is NULL")
 
 	logg("Done.")
     except Exception, e:
