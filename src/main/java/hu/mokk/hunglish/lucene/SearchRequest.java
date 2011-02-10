@@ -56,16 +56,19 @@ public class SearchRequest {
     
     /**
      * The first returned bisentence (used to implement a pager)
+     * param page
      */
     protected int startOffset = 0;
     
     /**
      * The number of max returned bisentences (used to implement a pager)
+     * param size
      */
     protected int maxResults = 20;
     
     /**
      * Restrict search to a specified source
+     * Doc.id
      */
     protected String sourceId = null;
     
