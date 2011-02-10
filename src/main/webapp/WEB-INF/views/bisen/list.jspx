@@ -14,6 +14,7 @@
                         <th>Doc</th>
                         <!--th>Is Indexed</th -->
                         <th>Line Number</th>
+                        <th>State</th>
                         <!-- th>Upvotes</th>
                         <th>Downvotes</th -->
                         <th>Hu Sentence</th>
@@ -29,9 +30,6 @@
                         <td>
                             <c:out value="${fn:substring(bisen.doc, 0, 15)}"/>
                         </td>
-                        <!-- td>
-                            <c:out value="${fn:substring(bisen.isIndexed, 0, 10)}"/>
-                        </td -->
                         <td>
                             <c:out value="${fn:substring(bisen.lineNumber, 0, 10)}"/>
                         </td>
@@ -41,6 +39,9 @@
                         <td>
                             <c:out value="${fn:substring(bisen.downvotes, 0, 10)}"/>
                         </td -->
+                        <td>
+                            <c:out value="${bisen.state}"/>
+                        </td>
                         <td>
                             <c:out value="${fn:substring(bisen.huSentence, 0, 300)}"/>
                         </td>

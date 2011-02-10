@@ -25,6 +25,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.index.Term;
 import org.apache.lucene.store.LockObtainFailedException;
 import org.apache.lucene.store.SimpleFSDirectory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -198,17 +199,41 @@ public class Indexer {
 		return st;
 	}
 
+	private void deleteBisenFromIndex(Bisen bisen, IndexWriter iwriter,
+			Statement jdbcStatement) {
+		try {
+			Term term = new Term(Bisen.idFieldName, bisen.getId().toString());
+			iwriter.deleteDocuments(term);
+			String newState = "N";
+			if ("R".equals(bisen.getState())){
+				newState = "I";
+			}
+			jdbcStatement.addBatch(
+					"update bisen set state = '"+newState+"' where id=" + bisen.getId());
+		} catch (Exception e) {
+			try {
+				jdbcStatement.addBatch("update bisen "
+						+ "set state = 'O' where id=" + bisen.getId());
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+				logger.fatal("Exception in Catch block for "
+						+ "Indexing error for bisen:", e1);
+			}
+			logger.error("Indexing error for bisen:" + bisen, e);
+			throw new RuntimeException(e);
+		}
+	}
+	
 	private void indexBisen(Bisen bisen, IndexWriter iwriter,
 			Statement jdbcStatement) {
 		try {
 			iwriter.addDocument(bisen.toLucene());
-			jdbcStatement
-					.addBatch("update bisen set is_indexed = true where id="
-							+ bisen.getId());
+			jdbcStatement.addBatch(
+					"update bisen set state = 'N' where id=" + bisen.getId());
 		} catch (Exception e) {
 			try {
 				jdbcStatement.addBatch("update bisen "
-						+ "set is_indexed = false where id=" + bisen.getId());
+						+ "set state = 'O' where id=" + bisen.getId());
 			} catch (SQLException e1) {
 				e1.printStackTrace();
 				logger.fatal("Exception in Catch block for "
@@ -219,6 +244,60 @@ public class Indexer {
 		}
 	}
 
+	private List<Bisen> getBisensByState(EntityManager em, String state){
+		return em.createQuery("from Bisen where state = '"+state+"' order by id") 
+			.setMaxResults(BATCH_SIZE).getResultList();
+	}
+	
+	/**
+	 * index the next batch of size BATCH_SIZE 
+	 * 1) get the next batch of Bisens from database, continue if not empty
+	 * 2) for all bisen: delete from index, add update statement to batch
+	 * 3) execute database batch updates 
+	 * @param jdbcConnection
+	 * @param indexWriter
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public boolean deleteBatch(Connection jdbcConnection, IndexWriter indexWriter) {
+		 //the batch statement
+		Statement jdbcStatement = getJdbcStatement(jdbcConnection);
+
+		EntityManager em = null;
+		boolean result = false;
+		List<Bisen> bisens = new ArrayList<Bisen>();
+		try {
+			//1) get the next batch from database 
+			em = entityManagerFactory.createEntityManager();
+			bisens =getBisensByState(em, "E");
+			result = (bisens != null) && (bisens.size() > 0);
+			if (!result){
+				bisens =getBisensByState(em, "R");
+				result = (bisens != null) && (bisens.size() > 0);
+			}
+			logger.info("DELETE FROM INDEX get the next batch from database done resultList size:"+ bisens.size());
+			
+			if (result) {
+				//2) for all bisen: delete from index, add update statement to batch
+				for (Bisen bisen : bisens) {
+					deleteBisenFromIndex(bisen, indexWriter, jdbcStatement);
+				}
+				//3) execute database batch updates
+				executeBatchUpdate(jdbcConnection, jdbcStatement);
+			}
+		} finally {
+			closeStatement(jdbcStatement);
+			bisens.clear();
+			bisens = null;
+			if (em != null) {
+				em.clear();
+				em.close();
+			}
+		}
+		return result;
+	}
+	
+	
 	/**
 	 * index the next batch of size BATCH_SIZE 
 	 * 1) get the next batch of Bisens from database, continue if not empty
@@ -240,9 +319,7 @@ public class Indexer {
 		try {
 			//1) get the next batch from database 
 			em = entityManagerFactory.createEntityManager();
-			bisens = em.createQuery(
-					"from Bisen where isIndexed is null and isDuplicate = false order by id") 
-					.setMaxResults(BATCH_SIZE).getResultList();
+			bisens = getBisensByState(em, "I"); 
 			result = (bisens != null) && (bisens.size() > 0);
 			logger.info("get the next batch from database done resultList size:"+ bisens.size());
 			
@@ -314,6 +391,7 @@ public class Indexer {
 		}
 		
 	}
+
 	
 	public void optimizeIndex(){
 		IndexWriter indexWriter = initIndexer(false);
@@ -362,14 +440,10 @@ public class Indexer {
 		try {
 			jdbcConnection = getJdbcConnection();
 			logger.info("db connection initialized");
-			int batchIndex = 0;
-			boolean keepIndexingOn=true;
-			while (keepIndexingOn) {
-				keepIndexingOn = indexBatch(jdbcConnection);
-				logger.info("<<<<<< finished indexing batch at " + ++batchIndex
-						* BATCH_SIZE);
-			}
-			logger.info("-----indexing ::: all batches done--");
+			
+			deleteAllFromIndex(jdbcConnection);
+
+			addAllToIndex(jdbcConnection);						
 			
 			optimizeIndex();
 			
@@ -379,6 +453,39 @@ public class Indexer {
 		}
 	}
 
+	private void addAllToIndex(Connection jdbcConnection){
+		int batchIndex = 0;
+		boolean keepItOn=true;
+		while (keepItOn) {
+			keepItOn = indexBatch(jdbcConnection);
+			logger.info("<<<<<< finished indexing batch at " + ++batchIndex
+					* BATCH_SIZE);
+		}
+		logger.info("-----indexing ::: all batches done--");
+	}
+	
+	public void deleteAllFromIndex(Connection jdbcConnection){
+		IndexWriter indexWriter = initIndexer(false);
+		boolean keepItOn = true;
+		int batchIndex = 0;
+		try {
+			while (keepItOn){
+				keepItOn = deleteBatch(jdbcConnection, indexWriter);
+				logger.info("<<<<<< DELETE FROM INDEX batch at " + ++batchIndex
+						* BATCH_SIZE);
+				
+			}
+			logger.info("-----DELETE FROM INDEX ::: all batches done--");
+			closeIndexWriter(indexWriter);
+			logger.info("-----DELETE FROM INDEX ::: indexwriter closed --");
+		} catch (Exception e) {
+			logger.fatal("DELETE FROM INDEX Exception while optimizing index", e);
+			throw new RuntimeException(e);
+		}		
+	}
+	
+	
+	
 	private void closeConnection(Connection jdbcConnection){
 		try {
 			if (jdbcConnection != null) {

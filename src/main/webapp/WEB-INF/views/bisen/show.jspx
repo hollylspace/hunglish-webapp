@@ -13,12 +13,7 @@
                 </div>
             </div>
             <br/>
-            <div id="roo_bisen_isIndexed">
-                <label for="_isIndexed_id">Is Indexed:</label>
-                <div class="box" id="_isIndexed_id">
-                    <c:out value="${bisen.isIndexed}"/>
-                </div>
-            </div>
+
             <br/>
             <div id="roo_bisen_lineNumber">
                 <label for="_lineNumber_id">Line Number:</label>
@@ -41,6 +36,14 @@
                 </div>
             </div>
             <br/>
+
+            <div id="roo_bisen_state">
+                <label for="_state">State (N nothing to do, D duplicate filter to do, I to be added to index, R to be reindexed, E to be ereased from index, O nothing to do but there was an error):</label>
+                <div class="box" id="_state">
+                    <c:out value="${bisen.state}"/>
+                </div>
+            </div>
+
             <div id="roo_bisen_huSentence">
                 <label for="_huSentence_id">Hu Sentence:</label>
                 <div class="box" id="_huSentence_id">
