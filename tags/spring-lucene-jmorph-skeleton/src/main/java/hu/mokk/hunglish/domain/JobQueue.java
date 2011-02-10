@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.roo.addon.entity.RooEntity;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.tostring.RooToString;
-import org.springframework.transaction.annotation.Transactional;
 
 @Configurable
 @Entity
@@ -69,12 +68,14 @@ public class JobQueue {
         this.version = version;
     }
 
+	/*
 	@Transactional
     public void persist() {
         if (this.entityManager == null) this.entityManager = entityManager();
         this.entityManager.persist(this);
-    }
+    } */
 
+	/*
 	@Transactional
     public void remove() {
         if (this.entityManager == null) this.entityManager = entityManager();
@@ -84,24 +85,26 @@ public class JobQueue {
             Genre attached = this.entityManager.find(Genre.class, this.id);
             this.entityManager.remove(attached);
         }
-    }
+    } */
 
+	/*
 	@Transactional
     public void flush() {
         if (this.entityManager == null) this.entityManager = entityManager();
         this.entityManager.flush();
-    }
+    } */
 
+	/*
 	@Transactional
     public void merge() {
         if (this.entityManager == null) this.entityManager = entityManager();
         JobQueue merged = this.entityManager.merge(this);
         this.entityManager.flush();
         this.id = merged.getId();
-    }
+    } */
 
 	public static final EntityManager entityManager() {
-        EntityManager em = new Genre().entityManager;
+        EntityManager em = new JobQueue().entityManager;
         if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
         return em;
     }
@@ -110,7 +113,7 @@ public class JobQueue {
         return (Long) entityManager().createQuery("select count(o) from JobQueue o").getSingleResult();
     }
 
-	public static List<Genre> findAllJobQueues() {
+	public static List<JobQueue> findAllJobQueues() {
         return entityManager().createQuery("select o from JobQueue o").getResultList();
     }
 
@@ -119,7 +122,7 @@ public class JobQueue {
         return entityManager().find(JobQueue.class, id);
     }
 
-	public static List<Genre> findJobQueueEntries(int firstResult, int maxResults) {
+	public static List<JobQueue> findJobQueueEntries(int firstResult, int maxResults) {
         return entityManager().createQuery("select o from JobQueue o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 

@@ -71,10 +71,12 @@ public class AuthorController {
         return "author/update";
     }
 
+	/*
 	@RequestMapping(value = "/author/{id}", method = RequestMethod.DELETE)
     public String delete(@PathVariable("id") Long id, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size) {
         if (id == null) throw new IllegalArgumentException("An Identifier is required");
         Author.findAuthor(id).remove();
         return "redirect:/author?page=" + ((page == null) ? "1" : page.toString()) + "&size=" + ((size == null) ? "10" : size.toString());
-    }
+    } */
+	
 }

@@ -26,6 +26,7 @@
 
         
         <intercept-url pattern="/resources/**" access="permitAll" />
+        <intercept-url pattern="/indexer/**" access="isAuthenticated()" />
         <intercept-url pattern="/search/**" access="permitAll" />
         <intercept-url pattern="/static/**" access="permitAll" />
         <intercept-url pattern="/login" access="permitAll" />

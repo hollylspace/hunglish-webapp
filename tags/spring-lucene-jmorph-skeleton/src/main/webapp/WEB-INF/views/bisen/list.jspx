@@ -19,8 +19,8 @@
                         <th>Hu Sentence</th>
                         <th>En Sentence</th>
                         <th/>
-                        <th/>
-                        <th/>
+                        <!-- <th/> -->
+                        <!-- <th/> -->
                     </tr>
                 </thead>
                 <c:forEach items="${bisens}" var="bisen">
@@ -55,15 +55,15 @@
                                 <input alt="${show_label}" class="image" src="${show_image_url}" title="${show_label}" type="image" value="${show_label}"/>
                             </form:form>
                         </td>
-                        <td>
+                        <!-- <td>
                             <spring:url value="/bisen/${bisen.id}/form" var="update_form_url"/>
                             <spring:url value="/static/images/update.png" var="update_image_url"/>
                             <form:form action="${update_form_url}" method="GET">
                                 <spring:message arguments="${entity_label}" code="entity.update" var="update_label"/>
                                 <input alt="${update_label}" class="image" src="${update_image_url}" title="${update_label}" type="image" value="${update_label}"/>
                             </form:form>
-                        </td>
-                        <td>
+                        </td> -->
+                        <!-- <td>
                             <spring:url value="/bisen/${bisen.id}" var="delete_form_url"/>
                             <spring:url value="/static/images/delete.png" var="delete_image_url"/>
                             <form:form action="${delete_form_url}" method="DELETE">
@@ -75,20 +75,20 @@
                                 <c:if test="${not empty param.size}">
                                     <input name="size" type="hidden" value="${param.size}"/>
                                 </c:if>
-                            </form:form>
-                        </td>
+                            </form:form> 
+                        </td> -->
                     </tr>
                 </c:forEach>
                 <tr class="footer">
                     <td colspan="11">
-                        <span class="new">
+                        <!-- <span class="new">
                             <spring:url value="/bisen/form" var="create_url"/>
                             <a href="${create_url}">
                                 <spring:url value="/static/images/add.png" var="create_img_url"/>
                                 <spring:message arguments="${entity_label}" code="global.menu.new" var="add_message"/>
                                 <img alt="${add_message}" src="${create_img_url}" title="${add_message}"/>
                             </a>
-                        </span>
+                        </span> -->
                         <c:if test="${not empty maxPages}">
                             <roo:pagination maxPages="${maxPages}" page="${param.page}" size="${param.size}"/>
                         </c:if>

@@ -71,10 +71,11 @@ public class GenreController {
         return "genre/update";
     }
 
+	/*
 	@RequestMapping(value = "/genre/{id}", method = RequestMethod.DELETE)
     public String delete(@PathVariable("id") Long id, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size) {
         if (id == null) throw new IllegalArgumentException("An Identifier is required");
         Genre.findGenre(id).remove();
         return "redirect:/genre?page=" + ((page == null) ? "1" : page.toString()) + "&size=" + ((size == null) ? "10" : size.toString());
-    }
+    } */
 }

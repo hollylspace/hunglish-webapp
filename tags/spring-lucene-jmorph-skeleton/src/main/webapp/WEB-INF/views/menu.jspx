@@ -28,6 +28,7 @@
                 <spring:message code="menu.category.web_mvc_jsp_doc_category.label"/>
             </h2>
             <ul>
+               <!--
                 <li id="web_mvc_jsp_create_doc_menu_item">
                     <spring:url value="/doc/form" var="web_mvc_jsp_create_doc_menu_item_url"/>
                     <a href="${web_mvc_jsp_create_doc_menu_item_url}">
@@ -35,6 +36,7 @@
                         <spring:message arguments="${label_doc}" code="global.menu.new"/>
                     </a>
                 </li>
+                -->
             <li id="web_mvc_jsp_list_doc_menu_item">
                     <spring:url value="/doc?page=1&amp;amp;size=10" var="web_mvc_jsp_list_doc_menu_item_url"/>
                     <a href="${web_mvc_jsp_list_doc_menu_item_url}">
@@ -70,6 +72,7 @@
                 <spring:message code="menu.category.web_mvc_jsp_bisen_category.label"/>
             </h2>
             <ul>
+            <!--
                 <li id="web_mvc_jsp_create_bisen_menu_item">
                     <spring:url value="/bisen/form" var="web_mvc_jsp_create_bisen_menu_item_url"/>
                     <a href="${web_mvc_jsp_create_bisen_menu_item_url}">
@@ -77,6 +80,7 @@
                         <spring:message arguments="${label_bisen}" code="global.menu.new"/>
                     </a>
                 </li>
+                -->
             <li id="web_mvc_jsp_list_bisen_menu_item">
                     <spring:url value="/bisen?page=1&amp;amp;size=10" var="web_mvc_jsp_list_bisen_menu_item_url"/>
                     <a href="${web_mvc_jsp_list_bisen_menu_item_url}">

@@ -19,7 +19,7 @@
                         <th>Is Processed</th>
                         <th/>
                         <th/>
-                        <th/>
+                        <!-- <th/> -->
                     </tr>
                 </thead>
                 <c:forEach items="${uploads}" var="upload">
@@ -51,15 +51,15 @@
                                 <input alt="${show_label}" class="image" src="${show_image_url}" title="${show_label}" type="image" value="${show_label}"/>
                             </form:form>
                         </td>
-                        <td>
+                        <!--  <td>
                             <spring:url value="/upload/${upload.id}/form" var="update_form_url"/>
                             <spring:url value="/static/images/update.png" var="update_image_url"/>
                             <form:form action="${update_form_url}" method="GET">
                                 <spring:message arguments="${entity_label}" code="entity.update" var="update_label"/>
                                 <input alt="${update_label}" class="image" src="${update_image_url}" title="${update_label}" type="image" value="${update_label}"/>
                             </form:form>
-                        </td>
-                        <td>
+                        </td> -->
+                        <!-- <td>
                             <spring:url value="/upload/${upload.id}" var="delete_form_url"/>
                             <spring:url value="/static/images/delete.png" var="delete_image_url"/>
                             <form:form action="${delete_form_url}" method="DELETE">
@@ -72,7 +72,7 @@
                                     <input name="size" type="hidden" value="${param.size}"/>
                                 </c:if>
                             </form:form>
-                        </td>
+                        </td> -->
                     </tr>
                 </c:forEach>
                 <tr class="footer">

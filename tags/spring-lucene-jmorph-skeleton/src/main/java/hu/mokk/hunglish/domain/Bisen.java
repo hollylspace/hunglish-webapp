@@ -110,12 +110,14 @@ public class Bisen {
 			this.entityManager = entityManager();
 	}
 
+	/*
 	@Transactional
 	public void persist() {
 		getEntityManager();
 		this.entityManager.persist(this);
-	}
+	}*/
 
+	/*
 	@Transactional
 	public void remove() {
 		getEntityManager();
@@ -125,21 +127,25 @@ public class Bisen {
 			Bisen attached = this.entityManager.find(Bisen.class, this.id);
 			this.entityManager.remove(attached);
 		}
-	}
+	} */
 
+	//TODO tulajdonképpen lehetne módosítani javítás céljából, de 
+	//ahhoz kell egy flag, hogy ujraindexelés szükséges
+	/*
 	@Transactional
 	public void flush() {
 		getEntityManager();
 		this.entityManager.flush();
-	}
+	}*/
 
+	/*
 	@Transactional
 	public void merge() {
 		getEntityManager();
 		Bisen merged = this.entityManager.merge(this);
 		this.entityManager.flush();
-		this.id = merged.getId(); // */
-	}
+		this.id = merged.getId(); 
+	} */
 
 	public static final EntityManager entityManager() {
 		EntityManager em = new Bisen().entityManager;
@@ -207,6 +213,7 @@ public class Bisen {
 				.setParameter("ids", ids).getResultList();
 	}
 
+	/*
 	@Transactional
 	public void updateHashCode() {
 		if (this.getEnSentenceHash() == null
@@ -217,16 +224,18 @@ public class Bisen {
 					this.getEnSentence()).hashCode());
 			this.merge();
 		}
-	}
+	} */
 
+	/*
 	@Transactional
 	public void updateIsIndexed(Boolean value) {
 		this.setIsIndexed(value);
 		// this.setIsDuplicate(!value);
 		this.setIndexedTimestamp(new Timestamp((new Date()).getTime()));
 		this.merge();
-	}
+	} */
 
+	/*
 	@Transactional
 	public static void batchUpdateIsIndexed(List<Long> ids, Boolean value) {
 		EntityManager em = entityManager();
@@ -237,7 +246,7 @@ public class Bisen {
 						+ "where id in (?) ").setParameter(1, value)
 				.setParameter(2, ids).executeUpdate();
 		em.getTransaction().commit();
-	}
+	} */
 
 	/*
 	 * @SuppressWarnings("unchecked") public static void updateHashCodes() {
@@ -278,6 +287,7 @@ public class Bisen {
 	 * This is going to be a full table scan All bisen record not already hashed
 	 * will get hashcodes
 	 */
+	/*
 	@SuppressWarnings("unchecked")
 	@Transactional
 	public static boolean updateHashCodeAll() {
@@ -291,12 +301,8 @@ public class Bisen {
 			bisen.updateHashCode();
 		}
 		return result;
-	}
+	} */
 
-
-	@SuppressWarnings("unchecked")
-	public void indexAll(IndexWriter iwriter) {
-	}
 
 	@Override
 	public String toString() {
@@ -383,10 +389,9 @@ public class Bisen {
 	public Document toLucene() {
 		Document result = new Document();
 
-		result
-				.add(new Field(idFieldName, this.getId().toString(),
-						Field.Store.YES, Field.Index.NOT_ANALYZED,
-						Field.TermVector.NO));
+		result.add(new Field(idFieldName, this.getId().toString(),
+				Field.Store.YES, Field.Index.NOT_ANALYZED,
+				Field.TermVector.NO));
 
 		result.add(new Field(genreFieldName, this.doc.getGenre().getId()
 				.toString(), Field.Store.YES, Field.Index.NOT_ANALYZED,
