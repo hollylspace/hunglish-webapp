@@ -70,7 +70,7 @@ CREATE TABLE `bisen` (
   `indexed_timestamp` TIMESTAMP ,
   `copyright` varchar(1) not null DEFAULT 'C',
   `approved` varchar(1) not null DEFAULT 'N',  -- TODO the indexing would not be started automatically on a new doc, but could be triggered by hand on a doc.     
-  `state` char(1) not NULL default 'D', -- N nothing to do, D duplicate filter to do, I to be added to index, R to be reindexed, E to be ereased from index, O nothing to do but there was an Error
+  `state` varchar(1) not NULL default 'D', -- N nothing to do, D duplicate filter to do, I to be added to index, R to be reindexed, E to be ereased from index, O nothing to do but there was an Error
   PRIMARY KEY (`id`),
   KEY `fk_bisen_doc` (`doc`),
   KEY `duplicate_key` (`hu_sentence_hash`, `en_sentence_hash`, `is_duplicate`),
