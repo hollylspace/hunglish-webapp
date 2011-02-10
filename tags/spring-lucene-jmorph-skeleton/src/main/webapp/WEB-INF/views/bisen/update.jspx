@@ -18,10 +18,6 @@
                 </c:if>
             </div>
             <br/>
-            <div id="roo_bisen_isIndexed">
-                <label for="_isIndexed_id">Is Indexed:</label>
-                <form:checkbox id="_isIndexed_id" path="isIndexed"/>
-            </div>
             <br/>
             <div id="roo_bisen_lineNumber">
                 <label for="_lineNumber_id">Line Number:</label>

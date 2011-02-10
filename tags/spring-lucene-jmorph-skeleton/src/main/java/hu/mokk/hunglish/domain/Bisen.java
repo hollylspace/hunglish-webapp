@@ -43,7 +43,7 @@ public class Bisen {
 	private Doc doc;
 
 	@NotNull
-	private Boolean isIndexed;
+	private String state;
 
 	private Integer lineNumber;
 
@@ -160,24 +160,6 @@ public class Bisen {
 				"select count(o) from Bisen o").getSingleResult();
 	}
 
-	/**
-	 * 
-	 * @return count of Bisentences which are a duplicate of this
-	 */
-/* commented out for good
-	public long countDuplicates() {
-		Long result = (Long) entityManager().createQuery(
-				"select count(o) from Bisen o where "
-						+ "o.isIndexed = true and "
-						+ "o.huSentenceHash = :huhash and "
-						+ "o.enSentenceHash = :enhash and " + "o.id != :id")
-				.setParameter("huhash", this.huSentenceHash).setParameter(
-						"enhash", this.enSentenceHash).setParameter("id",
-						this.id).getSingleResult();
-		return result;
-	}
-*/
-	
 	public static List<Bisen> findAllBisens() {
 		throw new RuntimeException(new IllegalAccessException());
 		// return
@@ -225,41 +207,6 @@ public class Bisen {
 			this.merge();
 		}
 	} */
-
-	/*
-	@Transactional
-	public void updateIsIndexed(Boolean value) {
-		this.setIsIndexed(value);
-		// this.setIsDuplicate(!value);
-		this.setIndexedTimestamp(new Timestamp((new Date()).getTime()));
-		this.merge();
-	} */
-
-	/*
-	@Transactional
-	public static void batchUpdateIsIndexed(List<Long> ids, Boolean value) {
-		EntityManager em = entityManager();
-		em.setFlushMode(FlushModeType.COMMIT);
-		em.getTransaction().begin();
-		entityManager().createNativeQuery(
-				"update bisen set is_indexed = ?, indexed_timestamp = now() "
-						+ "where id in (?) ").setParameter(1, value)
-				.setParameter(2, ids).executeUpdate();
-		em.getTransaction().commit();
-	} */
-
-	/*
-	 * @SuppressWarnings("unchecked") public static void updateHashCodes() {
-	 * List<Bisen> bisens = entityManager().createQuery("from Bisen o")
-	 * .getResultList(); for (Bisen bisen : bisens) { bisen.updateHashCode(); }
-	 * }
-	 */
-
-	// public static void index(Bisen bisen, IndexWriter iwriter) throws
-	// CorruptIndexException, IOException {
-	// iwriter.addDocument(bisen.toLucene());
-	// //bisen.updateIsIndexed(true);
-	// }
 
 	// @SuppressWarnings("unchecked")
 	/*
@@ -309,8 +256,8 @@ public class Bisen {
 		StringBuilder builder = new StringBuilder();
 		builder.append("Bisen [doc=");
 		builder.append(doc);
-		builder.append(", isIndexed=");
-		builder.append(isIndexed);
+		builder.append(", state=");
+		builder.append(state);
 		builder.append(", lineNumber=");
 		builder.append(lineNumber);
 		builder.append(", upvotes=");
@@ -427,14 +374,6 @@ public class Bisen {
 		this.doc = doc;
 	}
 
-	public Boolean getIsIndexed() {
-		return this.isIndexed;
-	}
-
-	public void setIsIndexed(Boolean isIndexed) {
-		this.isIndexed = isIndexed;
-	}
-
 	public Integer getLineNumber() {
 		return this.lineNumber;
 	}
@@ -537,6 +476,14 @@ public class Bisen {
 
 	public void setCopyright(String copyright) {
 		this.copyright = copyright;
+	}
+
+	public String getState() {
+		return state;
+	}
+
+	public void setState(String state) {
+		this.state = state;
 	}
 
 }
