@@ -24,6 +24,8 @@ import javax.validation.constraints.Size;
 @RooEntity
 public class Genre {
 
+	private static final Long allGenresId = new Long(-10);
+	
     @NotNull
     @Size(max = 255)
     private String name;
