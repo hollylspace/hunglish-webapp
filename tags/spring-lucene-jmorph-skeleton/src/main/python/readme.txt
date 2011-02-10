@@ -7,13 +7,13 @@ Igy tesztelem:
 rm -rf /big3/Work/HunglishMondattar/harness.data/*/*
 
 # Legyalulom a tablat, es letrehozom a zsanereket:
-cat ../../../create.sql demo.sql | mysql -uhunglish -psw6x2the --default-character-set=utf8 hunglishwebapp
+cat ../../../create.sql | mysql -uhunglish -psw6x2the --default-character-set=utf8 hunglishwebapp
 
-# Beleteszek egy teszt-fajlpart az upload tablaba:
-python machine_upload.py hunglish sw6x2the hunglishwebapp < uploadtable.txt 
+# Beleteszek ket teszt-fajlpart az upload tablaba:
+cat /big3/Work/HunglishMondattar/datasources/hunglish1.nolaw/hunglish1.nolaw.uploadtable | head -2 | python machine_upload.py hunglish sw6x2the hunglishwebapp
 
 # Maga az alkalmazas:
-python control_harness.py hunglish sw6x2the hunglishwebapp /big3/Work/HunglishMondattar/harness.data
+python control_harness.py hunglish sw6x2the hunglishwebapp harness.data logprefix
 
 ---
 Mit csinal ez?
@@ -63,11 +63,6 @@ masodik 20000-es batch-csel, aminek nulla eleme volt, de igy is 50 sec-et szotym
 
 - Session management bug: HP Sat, Jan 22, 2011 at 2:35 AM levele.
 
-- Az ismeretlen szavakat a jmorph nem veszi fel sajat tovukkent.
-Ergo minden ismeretlen szora automatice nulla talalatot kapunk.
-http://kozel.mokk.bme.hu:8080/hunglish/search?huSentence=keletkezett&enSentence=happened&doc.genre=-10
-http://kozel.mokk.bme.hu:8080/hunglish/search?huSentence=Daala&enSentence=&doc.genre=-10
-
 - Vegre kigondoltam, hogy hogyan nem lesz szerzoi jogi balhe abbol, hogy
 hozzaferheto az alignment. Az UploadController hasheli az id es a szerzo
 konkatenaciojat (tesztben eleg ehelyett az unobfuscated id), es ebbol ad egy url-t.
@@ -82,8 +77,6 @@ persze csak a metaadatokat.)
 
 - Feltolteskor ha mar fut egy quartz job, akkor a quartz nem moge-schedule-olja
 az ujat, hanem bejelenti, hogy most nem tud inditani.
-
-- Miert ragadt bent ket darab 100%-on futo mysqld_safe processz?
 
 - Zsolt telepitsen legujabb, sun-os javat, es mavent. A tomcat a sun-os java home-ra mutasson.
 De az is lehet, hogy az Aspects JAR problemat megoldja, ha a tomcat es a maven ugyanazzal
@@ -132,16 +125,7 @@ mvn jetty:run > cout 2> cerr &
 UPDATE: a control_harnesst mar megjavitottam, de nem teljesen, mert nem derul ki
 a legalso szint.
 
-- control_harness nyugodtan logoljon tobbmindent, ne kelljen innen-onnan
-osszeneznie, hogy mi a fajlpa'r vagy hogy hany bimondat kerult be.
-A redundencianak semmi hatranya itt.
-
 - Legyen kovetkezetesen hasznalva a control_harness logolasaban az INFO,WARN,ERROR.
-
-- Layout: ROOT/ alabbiak: fileUpload harnessData hunglishIndex logs mysqlDump
-
-- Most mar lassan ideje elgondolkozni azon, hogy hogyan fog tortenni egy
-dokumentum utolagos letiltasa.
 
 - Vegiggondolni, hogy milyen katasztrofakhoz vezet (ha vezet), ha veletlenul
 egyidoben fut ket control_harness peldany. indexelesbol semmikeppen ne fusson.
@@ -170,7 +154,6 @@ ok egyszerre irjak az adatbazist.
 wait_timeout=604800
 Ez kesobb valszeg nem is fog kelleni. Kiszedni, kulonosen
 ha esetleg kiderul, hogy rizikoforras.
-
 
 - Integralni a hunglish2.justlaw-ba Nemeth Andras legujabb gyujteset
 a koztes idobol:
@@ -201,13 +184,40 @@ a regi hunglish.
 - Kicsiket hianyzik a pipeline-bol, hogy parhuzamositott mondatraszegmentalt
 adatot (forditomemoria) is bele lehessen tolni.
 
+
+FUTURE FEJLESZTESI IGENYEK:
+
+- Most mar lassan ideje elgondolkozni azon, hogy hogyan fog tortenni egy
+dokumentum utolagos letiltasa.
+
+- Vegiggondoltuk, hogy nem kell teljesen feldulni a rendszert akkor sem,
+ha megengedjuk a bisen-ek modositasat. Felvenni egy flaget, hogy modositott,
+atirni a szovegmezot, torolni az indexbol es feljegyezni, hogy indexeletlen.
+
 - Ezt valszeg nem fogjuk megcsinalni, de lenne ertelme:
 A pipeline-t szetszedni ket reszre valahol a sen elott, ugy, hogy az eleje
 baromi gyorsan lefusson, es reszponzivan vissza tudjon kohogni olyanokat,
 hogy "tul hosszu", "nem angol", "tul kulonbozo hosszu" meg ilyesmi.
 A lassu reszek tovabbra is cronban futnanak.
 
+- Szegyen hogy menet kozben mennyire nem voltunk unit-test based-ek, de
+me'g a vegen sem lenne haszontalan par tesztet megcsinalni legalabb a Java
+reszehez.
+
+
 LEZART DOLGOK:
+
+NOTDONE (Maradjon ez rejtely, tobbszor nem fordult elo.) - Miert ragadt
+bent ket darab 100%-on futo mysqld_safe processz?
+
+DONE - Az ismeretlen szavakat a jmorph nem veszi fel sajat tovukkent.
+Ergo minden ismeretlen szora automatice nulla talalatot kapunk.
+http://kozel.mokk.bme.hu:8080/hunglish/search?huSentence=keletkezett&enSentence=happened&doc.genre=-10
+http://kozel.mokk.bme.hu:8080/hunglish/search?huSentence=Daala&enSentence=&doc.genre=-10
+
+DONE - control_harness nyugodtan logoljon tobbmindent, ne kelljen innen-onnan
+osszeneznie, hogy mi a fajlpa'r vagy hogy hany bimondat kerult be.
+A redundencianak semmi hatranya itt.
 
 DONE - srt formatum feltoltese, konverzioja. Mar csak tesztelni kellene.
 
@@ -230,6 +240,8 @@ a quartz hivna azt is.
 
 DONE - Kellene egy save-load script-pa'r, ami a megadott konyvtarba ment
 egy mysqldumpot, egy harness.data es fileUpload konyvtarat es egy lucene indexet.
+
+DONE - Layout: ROOT/ alabbiak: fileUpload harnessData hunglishIndex logs mysqlDump
 
 DONE - hunglish2.justlaw uploadtable, teszteles.
 
