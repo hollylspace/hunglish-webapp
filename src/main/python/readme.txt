@@ -35,6 +35,8 @@ TODO:
 
 mac:~/drafts/hunglish.install.rtf
 
+- Nagybetus keresokulcsszavakat nem kezel le. ('James bug')
+
 - SystemCall.java defaultCommand vagy quartz.properties:uploadjob.path adja a cronjob helyet?
 Csak az egyik adja!
 
@@ -50,9 +52,6 @@ tartott az upload.id kurzor? A logokban sincs nyoma, hogy harnesselte volna.
 
 - http://kozel.mokk.bme.hu:8080/hunglish/doc URL (a size attributum nelkul meghivva)
 kilistazza mind a sokszazat. Ki se merem probalni, hogy a hunglish/bisen mit csinal.
-
-- Tunjenek el azok a menupontok, amik semmi masra nem jok, csak hogy inkonzisztensse
-tegyek az adatbazist.
 
 - A duplumszures eleg lassu. Amikor mar jo nagy az adatbazis, akkor egy rovid doksi
 feltoltesetol kezdve igy jonnek a fazisok:
@@ -83,10 +82,6 @@ De az is lehet, hogy az Aspects JAR problemat megoldja, ha a tomcat es a maven u
 a java-val (openjdk, sun jdk) megy.
 
 atirtam az init.d/tomcat6-ot sun-rol openjdk path-ra!!!!!!!!!!!!
-
-- Sajnos van egy kulon doc.id, ahelyett, hogy megorokolne' az upload.id-t.
-Ez nem jo igy, nagyon nehezkes debuggolaskor osszenezni a harness logokat
-a mysql tablakkal.
 
 - Ne relativ path-on keresse az index es upload konyvtarakat, hanem fixen
 /big3/Work/HunglishMondattar alatt, ahol egyebkent a harness.data is lesz.
@@ -206,6 +201,15 @@ reszehez.
 
 
 LEZART DOLGOK:
+
+DONE - Rossz volt a normalizalo, ezert gondolatjeles mondatokat nem duplumszurt.
+
+DONE - Tunjenek el azok a menupontok, amik semmi masra nem jok, csak hogy inkonzisztensse
+tegyek az adatbazist.
+
+DONE - Sajnos van egy kulon doc.id, ahelyett, hogy megorokolne' az upload.id-t.
+Ez nem jo igy, nagyon nehezkes debuggolaskor osszenezni a harness logokat
+a mysql tablakkal.
 
 NOTDONE (Maradjon ez rejtely, tobbszor nem fordult elo.) - Miert ragadt
 bent ket darab 100%-on futo mysqld_safe processz?

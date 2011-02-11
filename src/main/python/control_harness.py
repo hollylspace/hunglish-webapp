@@ -210,18 +210,17 @@ def readAlignFile(path, enc):
 class LowQualityException(Exception) :
     pass
 
+# Eleg bena, de 2m mondatra 140sec a futasideje, ugyhogy kit erdekel.
 def normalizeSentence(sentence) :
     s = sentence.lower()
-    
+
+    s = "".join([ c for c in s if c==" " or c.isalnum() ])
+
     # I'm sorry.
     a = s.split(" ")
     s = " ".join( [ w for w in a if w!="" ] )
-    
-    a = []
-    for c in s :
-	if c==" " or c.isalnum() :
-	    a.append(c)
-    return u"".join(a)
+
+    return s
 
 def normalizedHash(sentence) :
     norm = normalizeSentence(sentence)
@@ -372,7 +371,7 @@ def flagDuplicates(db) :
 
 	logg("Marking duplicates...")
         for id in dupIds :
-            cursor.execute("update bisen set is_duplicate=True where id=%s" % id )
+            cursor.execute("update bisen set is_duplicate=True, state='N' where id=%s" % id )
 
 	logg("Done.")
     except Exception, e:
