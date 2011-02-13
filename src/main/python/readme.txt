@@ -33,17 +33,10 @@ Amikor ez mind lezajlott, akkor egy job queue tablan keresztul uzen a webappnak,
 ---
 TODO:
 
-mac:~/drafts/hunglish.install.rtf
-
 - Nagybetus keresokulcsszavakat nem kezel le. ('James bug')
 
 - SystemCall.java defaultCommand vagy quartz.properties:uploadjob.path adja a cronjob helyet?
 Csak az egyik adja!
-
-- Brutalis hibalehetoseg: az ujrainditas utan ugy latom nem tomcat6 userkent fut
-a service, hanem root-kent. Ez nem csak azert brutal, mert security hole, hanem
-azert is, mert nem lesz joga a tomcat-nek bolygatni a root altal letrehozott
-fajlokat.
 
 - Hogy kerul oda egy regesregi fileUpload/824_HU.srt , amikor ott elvileg me'g soha nem
 tartott az upload.id kurzor? A logokban sincs nyoma, hogy harnesselte volna.
@@ -52,6 +45,8 @@ tartott az upload.id kurzor? A logokban sincs nyoma, hogy harnesselte volna.
 
 - http://kozel.mokk.bme.hu:8080/hunglish/doc URL (a size attributum nelkul meghivva)
 kilistazza mind a sokszazat. Ki se merem probalni, hogy a hunglish/bisen mit csinal.
+UPDATE: Ugy tunik most mar ez default 10-re lett atallitva, de &size=100000 attributummal
+azert me'g mindig hagyja megszivatni magat.
 
 - A duplumszures eleg lassu. Amikor mar jo nagy az adatbazis, akkor egy rovid doksi
 feltoltesetol kezdve igy jonnek a fazisok:
@@ -76,12 +71,6 @@ persze csak a metaadatokat.)
 
 - Feltolteskor ha mar fut egy quartz job, akkor a quartz nem moge-schedule-olja
 az ujat, hanem bejelenti, hogy most nem tud inditani.
-
-- Zsolt telepitsen legujabb, sun-os javat, es mavent. A tomcat a sun-os java home-ra mutasson.
-De az is lehet, hogy az Aspects JAR problemat megoldja, ha a tomcat es a maven ugyanazzal
-a java-val (openjdk, sun jdk) megy.
-
-atirtam az init.d/tomcat6-ot sun-rol openjdk path-ra!!!!!!!!!!!!
 
 - Ne relativ path-on keresse az index es upload konyvtarakat, hanem fixen
 /big3/Work/HunglishMondattar alatt, ahol egyebkent a harness.data is lesz.
@@ -132,38 +121,20 @@ az indexelo memoriaja, akkor ertelmes allapotba hozza-e magat a rendszer?
 - Kornai feature request-je: A lucene tokenizalo legyen olyan okos,
 hogy a dog's szot is megtalalja, ha a dog-ra keresek.
 
-- Lehetseges, hogy hosszu tavon a machine_upload-nak masolnia kellene
-fileUpload-ba helyben-referalas helyett. Goreny bugokhoz vezethez,
-ha csak a felhasznalok feltoltesei vannak ott, a tobbi szerteszejjel.
+- A machine_upload-nak masolnia kellene fileUpload-ba
+helyben-referalas helyett. Goreny bugokhoz vezethez, ha csak
+a felhasznalok feltoltesei vannak ott, a tobbi szerteszejjel.
 
-- Nekem ugy tunt (Wed, Jan 12, 2011 at 10:45 PM level), hogy
-a spring nem frissitette egy darabig a doc-ot a webes adminfeluleten,
-mikozben a harness nagyban irta. A bisen-nel nem ez tortent.
-Baromira megragni, hogy milyen problemakhoz vezet, hogy
-a spring (aki cache-el valszeg) olvassa az objektumokat, mikozben
-a harness irja az adatbazist. Me'g ennel is jobban megragni
-ugyanezt harness vs. UploadController parositasban, hiszen
-ok egyszerre irjak az adatbazist.
+HARNESS, HIBAKEZELES:
 
-- Modositottam /etc/mysql/my.cnf konfigot ezzel a sorral:
-wait_timeout=604800
-Ez kesobb valszeg nem is fog kelleni. Kiszedni, kulonosen
-ha esetleg kiderul, hogy rizikoforras.
+- Tul szigoru a minosegszures, rettenetes mennyisegu hunglish1.nolaw
+anyag bukott meg rajta. Beloni pontosabban.
 
 - Integralni a hunglish2.justlaw-ba Nemeth Andras legujabb gyujteset
 a koztes idobol:
 /big3/Work/HunglishMondattar/datasources/hunglish2.justlaw/zips
 2005_L_R_HTML.rar 2006_L_R_HTML.rar 2007_L_R_HTML.zip
 EU_acquis_4reszben_tabsep.rar
-
-HARNESS, HIBAKEZELES:
-
-- Sajnos a txt2raw idonkent IBM855-et detektal, es hazavagja a kodolast.
-Talan bele kellene valahogy drotozni, hogy csak utf-et vagy
-latin-1-2-t szabad talalnia.
-cat /big3/Work/HunglishMondattar/deployment/harness.data/hu/txt/290.hu.txt | python /big3/Work/HunglishMondattar/tcg/scripts/txt2raw.py hu
-UPDATE: Mon, Jan 24, 2011 at 1:02 AM levelemben leirtam, hogy ez tenyleg nagyon gyakori a filmes korpuszon.
-./txt2raw.bugs -ban gyulik, hogy mibol mit csinalt a magyar txt-k kozul.
 
 - Maradtak bent html entitasok valamelyik konverter kimeneteben.
 
@@ -178,6 +149,37 @@ a regi hunglish.
 
 - Kicsiket hianyzik a pipeline-bol, hogy parhuzamositott mondatraszegmentalt
 adatot (forditomemoria) is bele lehessen tolni.
+
+
+ADMIN:
+
+- mac:~/drafts/hunglish.install.rtf becsekkolasa.
+
+- Brutalis hibalehetoseg: az ujrainditas utan ugy latom nem tomcat6 userkent fut
+a service, hanem root-kent. Ez nem csak azert brutal, mert security hole, hanem
+azert is, mert nem lesz joga a tomcat-nek bolygatni a root altal letrehozott
+fajlokat.
+
+- Tomcat access logoljon a virtualis gepen is.
+
+- Zsolt telepitsen legujabb, sun-os javat, es mavent. A tomcat a sun-os java home-ra mutasson.
+De az is lehet, hogy az Aspects JAR problemat megoldja, ha a tomcat es a maven ugyanazzal
+a java-val (openjdk, sun jdk) megy.
+
+- atirtam az init.d/tomcat6-ot sun-rol openjdk path-ra!!!!!!!!!!!!
+
+- Modositottam /etc/mysql/my.cnf konfigot ezzel a sorral:
+wait_timeout=604800
+Ez kesobb valszeg nem is fog kelleni. Kiszedni, kulonosen
+ha esetleg kiderul, hogy rizikoforras.
+
+- Ez nem bugreport, csak egy megjegyzes:
+Ha leallitom control_harness kozben a tomcat-et a feje folul, akkor szeme se
+rebben, csinalgatja tovabb a fajlokat. Ha tenyleg le akarom loni azt is,
+akkor a control_harness-t (es nem a harness_cronjob.sh-t) kell leloni.
+Semmilyen problemat nem latszik okozni, mert a felbeszakadtat elorol kezdi,
+az adatbazisba nem kerul be hogy E, hanem marad N, az pedig nem gond,
+hogy irt mar par fajlt a harness.data-ba, majd felulirja oket sajat magukkal.
 
 
 FUTURE FEJLESZTESI IGENYEK:
@@ -201,6 +203,25 @@ reszehez.
 
 
 LEZART DOLGOK:
+
+NOTDONE (Valszeg vaklarma volt)
+- Nekem ugy tunt (Wed, Jan 12, 2011 at 10:45 PM level), hogy
+a spring nem frissitette egy darabig a doc-ot a webes adminfeluleten,
+mikozben a harness nagyban irta. A bisen-nel nem ez tortent.
+Baromira megragni, hogy milyen problemakhoz vezet, hogy
+a spring (aki cache-el valszeg) olvassa az objektumokat, mikozben
+a harness irja az adatbazist. Me'g ennel is jobban megragni
+ugyanezt harness vs. UploadController parositasban, hiszen
+ok egyszerre irjak az adatbazist.
+
+DONE - Sajnos a txt2raw idonkent IBM855-et detektal, es hazavagja a kodolast.
+Talan bele kellene valahogy drotozni, hogy csak utf-et vagy
+latin-1-2-t szabad talalnia. cat /big3/Work/HunglishMondattar/deployment/harness.data/hu/txt/290.hu.txt | python /big3/Work/HunglishMondattar/tcg/scripts/txt2raw.py hu
+UPDATE: Mon, Jan 24, 2011 at 1:02 AM levelemben leirtam, hogy ez tenyleg nagyon gyakori a filmes korpuszon.
+./txt2raw.bugs -ban gyulik, hogy mibol mit csinalt a magyar txt-k kozul.
+UPDATE2: Javitva, egy eleg kifinomulatlan modon:
+ha nem utf-8-at detektal, akkor feltetelezi, hogy a
+kimeno latin kodolas az ervenyes, tehat nem csinal semmit.
 
 DONE - Rossz volt a normalizalo, ezert gondolatjeles mondatokat nem duplumszurt.
 
