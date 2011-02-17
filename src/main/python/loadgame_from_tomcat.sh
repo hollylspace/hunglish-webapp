@@ -16,5 +16,6 @@ cp -r --preserve=timestamps $dir/fileUpload $dep/
 cp -r --preserve=timestamps $dir/harness.data $dep/
 cp -r --preserve=timestamps $dir/hunglishIndex $dep/
 cp -r --preserve=timestamps $dir/hunglishIndexTmp $dep/
+cp -r --preserve=timestamps $dir/logs $dep/
 
 echo Done.

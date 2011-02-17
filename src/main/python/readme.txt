@@ -31,9 +31,33 @@ Ez alapjan beallitja a duplum flaget az uj bisentence-ekre.
 Amikor ez mind lezajlott, akkor egy job queue tablan keresztul uzen a webappnak, hogy indexelheti az uj ES nemduplum mondatparokat.
 
 ---
-TODO:
+Futasidok
+
+3m rekord, konkretan a ket irodalmi es az elso jogi.
+
+a ket irodalmi korpusz harness-elese : 5 ora 30 perc
+a jogi korpusz harness-elese : 13 ora
+duplumszures : 8 ora (a duplumok megtalalasa 8 perc, a tobbi az sql update)
+indexeles : 2 ora 30 perc
+
+az indexeles 20000-es kotegekbol all, egy koteg futasideje:
+15 sec  - get the next batch from database done resultList size:20000
+20 sec  - call indexBisen for all Bisens and store corresponding database updates in a batch jdbcStatement done
+104 sec - indexreader addIndexes done
+14 sec  - Indexing batch updates commited
+
+Ezt most el is mentettem /big3/Work/HunglishMondattar/hunglish-webapp/src/main/python/lit12law1.sav ala.
+
+---
+TODO
+
+- Marhasag: a mysql interpreter miert nem jeleniti meg a bool ertekueket, mint az is_duplicate?
 
 - Nagybetus keresokulcsszavakat nem kezel le. ('James bug')
+
+- Nem latom, hogy a fileUpload tenyleg lekezelne azt, amikor ma'r ismeri az authort,
+es csak az id-re kellene referenciat raknia. Most jobban belegondolva az author-authorId
+rendszer eleg primitiv a mi celjainkra, lehet, hogy le kellene mondani rola.
 
 - SystemCall.java defaultCommand vagy quartz.properties:uploadjob.path adja a cronjob helyet?
 Csak az egyik adja!
@@ -54,6 +78,7 @@ feltoltesetol kezdve igy jonnek a fazisok:
 2. 2 min 30 sec duplumfilter (Lehet, hogy jobb, ha az adatbazis helyett a python vegzi a rendezest?)
 3. 3 min 20 sec indexeles (Tulindexeles bug: futott egy teljesen felesleges kort egy
 masodik 20000-es batch-csel, aminek nulla eleme volt, de igy is 50 sec-et szotymorgott vele.)
+UPDATE: Ezt ujra kellene merni az uj create.sql-en, valszeg javult a helyzet valamennyit.
 
 - Session management bug: HP Sat, Jan 22, 2011 at 2:35 AM levele.
 
@@ -121,25 +146,23 @@ az indexelo memoriaja, akkor ertelmes allapotba hozza-e magat a rendszer?
 - Kornai feature request-je: A lucene tokenizalo legyen olyan okos,
 hogy a dog's szot is megtalalja, ha a dog-ra keresek.
 
-- A machine_upload-nak masolnia kellene fileUpload-ba
-helyben-referalas helyett. Goreny bugokhoz vezethez, ha csak
-a felhasznalok feltoltesei vannak ott, a tobbi szerteszejjel.
-
 HARNESS, HIBAKEZELES:
+
+- A barom html2text meghagyja utf8-nak a tenylegesen utf8 szoveget,
+viszont a html entitasokat lelkesen atkonvertalja latin-1-re. Az
+eredmeny a jogi szovegek eseteben egy olyan keverek, ahol a fejlec
+latin-1, a test utf8. A CELEX-nel me'g be lehetne drotozni, hogy utf8
+es kesz, de a nagyvilagban persze vannak latin-2 html-ek.
+UPDATE: A CELEX-re kezzel megcsinaltam egy elo-konverziot latin2-re.
+
+- A control_harness legalabb a fontosabb fordulopontokon jegyezze fel
+a datumot. Az kulonosen bosszanto, hogy nem tudom mikor kezdte el
+a duplumszures harom munkafazisat.
 
 - Tul szigoru a minosegszures, rettenetes mennyisegu hunglish1.nolaw
 anyag bukott meg rajta. Beloni pontosabban.
 
-- Integralni a hunglish2.justlaw-ba Nemeth Andras legujabb gyujteset
-a koztes idobol:
-/big3/Work/HunglishMondattar/datasources/hunglish2.justlaw/zips
-2005_L_R_HTML.rar 2006_L_R_HTML.rar 2007_L_R_HTML.zip
-EU_acquis_4reszben_tabsep.rar
-
 - Maradtak bent html entitasok valamelyik konverter kimeneteben.
-
-- ~/scripts/tcom/nogarbage.sh integralasa, vagy legalabbis a relevansabb reszeinek
-atmentese, ha vannak egyaltalan. A sajtofigyelo mennyire jol megy enelkul?
 
 - control_harness.py:decideIfWorthIndexing() lehetne kicsit kifinomultabb.
 tcg/scripts/filtersen.py szinte'n.
@@ -184,6 +207,13 @@ hogy irt mar par fajlt a harness.data-ba, majd felulirja oket sajat magukkal.
 
 FUTURE FEJLESZTESI IGENYEK:
 
+- Nem lenne olyan nagy ugy a duplumszureskor felvenni a vezerpeldanyhoz,
+hogy hany tarsa veszett el a duplum-harcmezon, es aztan ezzel indexeleskor
+felpontozni.
+
+- Szivesen felpontoznam aszerint is, hogy mi a korpusz, mi a zsaner, vagy
+akar ki a felvivo.
+
 - Most mar lassan ideje elgondolkozni azon, hogy hogyan fog tortenni egy
 dokumentum utolagos letiltasa.
 
@@ -203,6 +233,27 @@ reszehez.
 
 
 LEZART DOLGOK:
+
+DONE - qualityfilter: tablazatok, szamoszlopok, nullbajtos mondatok.
+
+NOTDONE (Sokkal erosebbeket csinaltam, amik kivaltjak.)
+- ~/scripts/tcom/nogarbage.sh integralasa, vagy legalabbis a relevansabb reszeinek
+atmentese, ha vannak egyaltalan. A sajtofigyelo mennyire jol megy enelkul?
+
+DONE - A hunglish2 celex szovegek utf8 kodolasuak, meglepodik rajtuk a harness.
+(Raadasul a fejlecuk latin1.)
+
+DONE - Integralni a hunglish2.justlaw-ba Nemeth Andras legujabb gyujteset
+a koztes idobol:
+/big3/Work/HunglishMondattar/datasources/hunglish2.justlaw/zips
+2005_L_R_HTML.rar 2006_L_R_HTML.rar 2007_L_R_HTML.zip
+EU_acquis_4reszben_tabsep.rar
+
+NOTDONE - A duplumszures harom munkafazisa nem olyan koltsegu, mint szeretnem,
+bar valoszinuleg ebbe bele kell nyugodnom. 8 perc a komplex select.
+Aztan van a gigantikus batch update 3m rekordon, es 400k dup bisen rekord
+egyenkenti bejegyezgetese. A ketto egyutt eppen 8 ora. Sokallom. Sajnos nem
+jegyezzuk fel, hogy mennyi belole az egyik meg a masik.
 
 NOTDONE (Valszeg vaklarma volt)
 - Nekem ugy tunt (Wed, Jan 12, 2011 at 10:45 PM level), hogy
