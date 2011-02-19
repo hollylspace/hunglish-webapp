@@ -4,9 +4,12 @@
 package hu.mokk.hunglish.lucene;
 
 import hu.mokk.hunglish.domain.Bisen;
+import hu.mokk.hunglish.util.Pair;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -157,13 +160,10 @@ public class Searcher {
 		}
 		result.setEndOffset(end);
 
-		// kiemeleshez
-		// String queryTerms[] = SimpleQueryTermExtractor.getTerms(query);
-		// Highlighter highlighter = new Highlighter("b", null);
-		// */
-
 		// kiolvassuk az aktualis lapon levo dokumentumokat, csinalunk beloluk
 		// bimondatot, plusz adunk hozza highlightingot
+		
+		List<Pair<Document, Integer>> docs = new ArrayList<Pair<Document,Integer>>();
 		for (int i = request.getStartOffset(); i < end; i++) {
 			Document d;
 			int docId = hits[i].doc;
@@ -172,15 +172,32 @@ public class Searcher {
 			} catch (IOException ioe) {
 				throw new RuntimeException(ioe);
 			}
-
-			//TODO FIXME request Bisens from the db in one batch, that is: where id in (<idlist>)
-			//public static List<Bisen> findBisenEntries(List<Long> ids)
-			Bisen bisen = Bisen.toBisen(d);
-
+			docs.add(new Pair<Document, Integer>(d, docId));
+		}
+		
+		List<Bisen> resultBisens = Bisen.toBisens(docs);
+		
+		if (request.getHighlightHu() || request.getHighlightEn()){
+			highlightBisens(request, resultBisens, query);
+		}
+		
+		result.addToHits(resultBisens);
+		return result;
+		
+	}
+	
+	private void highlightBisens(SearchRequest request, List<Bisen> bisens, Query query){
+		// kiemeleshez
+		// String queryTerms[] = SimpleQueryTermExtractor.getTerms(query);
+		// Highlighter highlighter = new Highlighter("b", null);
+		// */
+		
+		for (Bisen bisen : bisens){
+			
 			if (bisen != null && request.nonEmptyHuQuery() && request.getHighlightHu() && indexReader != null) {
 				try {
 					TokenStream huTokens = TokenSources.getTokenStream(
-							indexReader, docId, Bisen.huSentenceFieldName);
+							indexReader, bisen.getLuceneDocId(), Bisen.huSentenceFieldName);
 					bisen.setHuSentenceView((highlightField(huTokens, query,
 							Bisen.huSentenceFieldName, bisen.getHuSentence())));
 				} catch (Exception e) {
@@ -188,22 +205,20 @@ public class Searcher {
 					//throw new RuntimeException("error while highlighting", e);
 				}
 			}
-
+	
 			if (bisen != null && request.nonEmptyHuQuery() && request.getHighlightEn() && indexReader != null) {
 				try {
 					TokenStream enTokens = TokenSources.getTokenStream(
-							indexReader, docId, Bisen.enSentenceFieldName);
+							indexReader, bisen.getLuceneDocId(), Bisen.enSentenceFieldName);
 					bisen.setEnSentenceView((highlightField(enTokens, query,
 							Bisen.enSentenceFieldName, bisen.getEnSentence())));
 				} catch (Exception e) {
 					e.printStackTrace(); //TODO FIXME
 					//throw new RuntimeException("error while highlighting", e);
 				}
-			}
-			result.addToHits(bisen);
+			}	
+			
 		}
-		return result;
-		
 	}
 	
 	public void setIndexDir(String indexDir) {

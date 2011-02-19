@@ -53,6 +53,11 @@ public class SearchResult {
 	public void addToHits(Bisen doc) {
 		this.hitList.add(doc);
 	}
+
+	public void addToHits(List<Bisen> docs) {
+		this.hitList.addAll(docs);
+	}
+	
 	
 	public Bisen getHit(int i) {
 		return hitList.get(i);
