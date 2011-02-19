@@ -88,12 +88,30 @@ English:
 </c:if>
  -->
  
-<c:if test="${not empty result}">
-<p> Results ${result.startOffset+1} - ${result.endOffset} of ${result.totalCount}<br/>
-</p>
-</c:if>
+ 			<div id="pager">            
+			<c:if test="${not empty result.hitList}">
+			<p> Page ${page}  of ${maxPages } pages  |  Results ${result.startOffset+1} - ${result.endOffset} of ${result.totalCount}<br/></p>
 
-         
+                <p><c:forEach items="${result.paginationLinks}" var="link">
+                	<a href="${form_url}${link.first}">  ${link.second}  </a>
+                </c:forEach></p>
+			
+                <!--<p> c:forEach items="${result.paginationLinks}" var="link">
+                   ${page } == ${link.second} |  
+                	<c:if test="${link.second  == page} ">
+                	<a href="${form_url}${link.first}"> | ${link.second} | </a>
+                	</c:if>
+                	<c:if test="${link.second  != page} ">
+                	<a href="${form_url}${link.first}"> - ${link.second} - </a>
+                	</c:if> 
+                </c:forEach></p> -->
+			
+			</c:if>
+			</div>
+ 
+ 
+
+         <div id="results">
         <c:if test="${not empty result.hitList}">
             <table width="500px">
                 <thead>
@@ -110,25 +128,24 @@ English:
                         <td>
                             <c:out value="${fn:substring(bisen.doc, 0, 30)}"/>
                         </td>
-                        <td>
-                            <c:out value="${bisen.huSentence}"/>
+                        <td>${bisen.huSentence}
+                            <!-- c:out value="${bisen.huSentence}"/> -->
                         </td>
-                        <td>
-                            <c:out value="${bisen.enSentence}"/>
+                        <td>${bisen.enSentence}
+                            <!-- c:out value="${bisen.enSentence}"/> -->
                         </td>
                     </tr>
                 </c:forEach>
             </table>
-                <p>
-                <c:forEach items="${result.paginationLinks}" var="link">
-                	<a href="${form_url}${link.first}">  ${link.second}  </a> 
-                </c:forEach>
-                </p>
             </c:if>
+			</div>
+			
+            
 			<!-- <div id="pager">
 			       <c:if test="${not empty maxPages}">
 			         <roo:pagination  maxPages="${maxPages}" page="${param.page}" size="${param.size}" />
-			     </c:if> -->
+			     </c:if> 
+			     </div>-->
 		</div> 
 
         

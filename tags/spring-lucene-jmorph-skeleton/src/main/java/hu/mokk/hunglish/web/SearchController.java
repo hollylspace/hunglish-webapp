@@ -77,12 +77,13 @@ public class SearchController {
         
         logger.warn("!!!!!!!!!!!!!!!!!!!!!!! maxPages:"+maxPages);
         modelMap.addAttribute("maxPages", maxPages);
-		
+        modelMap.addAttribute("page", pageNo);
+        
         String baseUrl = getBaseUrl(bisen) +"&size="+sizeNo;
-        List<Pair<String, Integer>> linx = new ArrayList<Pair<String, Integer>>();
+        List<Pair<String, String>> linx = new ArrayList<Pair<String, String>>();
         for (int i = 1; i <= maxPages; i++){
         	String url =baseUrl+"&page="+i;        	
-        	linx.add(new Pair<String, Integer>(url, i));
+        	linx.add(new Pair<String, String>(url, new Integer(i).toString()));
         }
         result.setPaginationLinks(linx);
         modelMap.addAttribute("result", result);
@@ -99,7 +100,7 @@ public class SearchController {
 		 }
 		 baseUrl += "&enSentence=";
 		 if (bisen.getEnSentence() != null){
-			 baseUrl += bisen.getHuSentence();
+			 baseUrl += bisen.getEnSentence();
 		 }
 		 return baseUrl;
 	}
