@@ -88,7 +88,7 @@ DROP TABLE IF EXISTS `doc`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `doc` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) NOT NULL, -- no more AUTO_INCREMENT, the ID will be the same as the upload ID 
   `version` int(11) DEFAULT NULL,
   `aligned_file_path` varchar(255) DEFAULT NULL,
   `en_title` varchar(255) not NULL,
