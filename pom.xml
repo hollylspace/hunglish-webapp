@@ -463,7 +463,7 @@
 				<artifactId>tomcat-maven-plugin</artifactId>
 				<version>1.0-beta-1</version>
 				<configuration>
-				    <server>tomcat</server> <!--DANIEL -->
+				    <server>tomcat</server> <!-- DANIEL -->
 				    <!-- <url>http://192.168.10.175:8080/manager</url>  -->
 				    <url>http://kozel.mokk.bme.hu:8080/manager</url>
 				    <!-- <url>http://localhost:8080/manager</url> -->
