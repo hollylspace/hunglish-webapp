@@ -108,7 +108,7 @@ English:
                     <tr>
                         <td>${bisen.id}</td>
                         <td>
-                            <c:out value="${fn:substring(bisen.doc, 0, 15)}"/>
+                            <c:out value="${fn:substring(bisen.doc, 0, 30)}"/>
                         </td>
                         <td>
                             <c:out value="${bisen.huSentence}"/>
@@ -119,18 +119,18 @@ English:
                     </tr>
                 </c:forEach>
             </table>
+                <p>
+                <c:forEach items="${result.paginationLinks}" var="link">
+                	<a href="${form_url}${link.first}">  ${link.second}  </a> 
+                </c:forEach>
+                </p>
+            </c:if>
 			<!-- <div id="pager">
 			       <c:if test="${not empty maxPages}">
 			         <roo:pagination  maxPages="${maxPages}" page="${param.page}" size="${param.size}" />
-			     </c:if>
-                <c:forEach items="${result.paginationLinks}" var="link">
-                	<a href="http://szotar.mokk.bme.hu/hunglish/search/corpus?ql=lap&qr=&n=20&source=all&start=20">2</a> 
-                        ${link}
-                </c:forEach>			   
-			 </div> -->
+			     </c:if> -->
+		</div> 
 
-        </c:if>
         
     </div>
  
-</div>

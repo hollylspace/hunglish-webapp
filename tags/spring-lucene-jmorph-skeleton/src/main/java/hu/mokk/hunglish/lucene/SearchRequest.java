@@ -68,9 +68,9 @@ public class SearchRequest {
     
     /**
      * Restrict search to a specified source
-     * Doc.id
+     * Doc.genre.id
      */
-    protected String sourceId = null;
+    protected String genreId = null;
     
     
     public SearchRequest() {
@@ -125,14 +125,14 @@ public class SearchRequest {
     /**
      * @return Returns the sourceId.
      */
-    public String getSourceId() {
-        return sourceId;
+    public String getGenreId() {
+        return genreId;
     }
     /**
      * @param sourceId The sourceId to set.
      */
-    public void setSourceId(String sourceId) {
-        this.sourceId = sourceId;
+    public void setGenreId(String sourceId) {
+        this.genreId = sourceId;
     }
     /**
      * @return Returns the startOffset.

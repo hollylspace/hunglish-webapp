@@ -1,5 +1,6 @@
 package hu.mokk.hunglish.lucene;
 import hu.mokk.hunglish.domain.Bisen;
+import hu.mokk.hunglish.util.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +18,8 @@ public class SearchResult {
 	private int endOffset;
 	
 	private List<Bisen> hitList;
+	
+	private List<Pair<String, Integer>> paginationLinks;
 	
 	public SearchResult(int totalCount, int start, int end) {
 		this.totalCount = totalCount;
@@ -85,6 +88,14 @@ public class SearchResult {
 	 */
 	public void setTotalCount(int totalCount) {
 		this.totalCount = totalCount;
+	}
+
+	public List<Pair<String, Integer>> getPaginationLinks() {
+		return paginationLinks;
+	}
+
+	public void setPaginationLinks(List<Pair<String, Integer>> paginationLinks) {
+		this.paginationLinks = paginationLinks;
 	}
 
 }
