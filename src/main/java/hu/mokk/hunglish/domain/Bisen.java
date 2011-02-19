@@ -344,18 +344,23 @@ public class Bisen {
 	}
 	
 	public static List<Bisen> toBisens(List<Pair<Document, Integer>> docs) {
-		List<Long> ids = new ArrayList<Long>(docs.size());
-		for (Pair<Document, Integer> doc : docs){
-			//document.
-			ids.add(new Long(doc.getFirst().getField(idFieldName).stringValue()));
-		}
-		List<Bisen> tmpResult = findBisenEntries(ids); 
-		//result.setLuceneDocId(id);
-		List<Bisen> result = new ArrayList<Bisen>(tmpResult.size());
-		for (Pair<Document, Integer> doc : docs){
-			Bisen bisen = findInList(tmpResult, new Long(doc.getFirst().getField(idFieldName).stringValue()));
-			bisen.setLuceneDocId(doc.getSecond());
-			result.add(bisen);
+		List<Bisen> result = new ArrayList<Bisen>();
+		if (docs.size() > 0){
+			List<Long> ids = new ArrayList<Long>();
+			for (Pair<Document, Integer> doc : docs){
+				ids.add(new Long(doc.getFirst().getField(idFieldName).stringValue()));
+			}
+			//rebuild the list with the original order
+			if (ids.size() > 0){
+				List<Bisen> tmpResult = findBisenEntries(ids); 
+				for (Pair<Document, Integer> doc : docs){
+					Bisen bisen = findInList(tmpResult, new Long(doc.getFirst().getField(idFieldName).stringValue()));
+					if (bisen != null){
+						bisen.setLuceneDocId(doc.getSecond());
+						result.add(bisen);
+					}
+				}
+			}
 		}
 		return result;
 	}
