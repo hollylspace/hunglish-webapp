@@ -19,7 +19,7 @@ public class SearchResult {
 	
 	private List<Bisen> hitList;
 	
-	private List<Pair<String, Integer>> paginationLinks;
+	private List<Pair<String, String>> paginationLinks;
 	
 	public SearchResult(int totalCount, int start, int end) {
 		this.totalCount = totalCount;
@@ -90,11 +90,11 @@ public class SearchResult {
 		this.totalCount = totalCount;
 	}
 
-	public List<Pair<String, Integer>> getPaginationLinks() {
+	public List<Pair<String, String>> getPaginationLinks() {
 		return paginationLinks;
 	}
 
-	public void setPaginationLinks(List<Pair<String, Integer>> paginationLinks) {
+	public void setPaginationLinks(List<Pair<String, String>> paginationLinks) {
 		this.paginationLinks = paginationLinks;
 	}
 
