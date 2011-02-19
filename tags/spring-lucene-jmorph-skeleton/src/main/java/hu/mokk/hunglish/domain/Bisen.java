@@ -1,13 +1,14 @@
 package hu.mokk.hunglish.domain;
 
+import hu.mokk.hunglish.util.Pair;
+
 import java.sql.Timestamp;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
-import javax.persistence.FlushModeType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -22,12 +23,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.apache.lucene.index.IndexWriter;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.roo.addon.entity.RooEntity;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.tostring.RooToString;
-import org.springframework.transaction.annotation.Transactional;
 
 @Configurable
 @Entity
@@ -80,6 +79,8 @@ public class Bisen {
 	transient String huSentenceView;
 	transient String enSentenceView;
 
+	transient int luceneDocId;
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "id")
@@ -295,6 +296,8 @@ public class Bisen {
 	 * @param s
 	 * @return
 	 */
+	//this is commented out since it's done by control_harness.py
+	/*
 	private static String stripPunctuation(String s) {
 		StringBuffer sb = new StringBuffer();
 		if (s.length() > 0) {
@@ -307,7 +310,7 @@ public class Bisen {
 		}
 		// and finally reduce spaces
 		return sb.toString().replaceAll(" +", " ").trim();
-	}
+	} */
 
 	public static String idFieldName = "id";
 	public static String genreFieldName = "doc.genre.id";
@@ -329,8 +332,39 @@ public class Bisen {
 		return res;
 	}
 
-	public static Bisen toBisen(Document document) {
-		return findBisen(new Long(document.getField(idFieldName).stringValue()));
+	private static Bisen findInList(List<Bisen> bisens, Long id){
+		Bisen result = null;
+		for (Bisen bisen : bisens){
+			if (bisen.getId().equals(id)){
+				result = bisen;
+				break;
+			}
+		}
+		return result;
+	}
+	
+	public static List<Bisen> toBisens(List<Pair<Document, Integer>> docs) {
+		List<Long> ids = new ArrayList<Long>(docs.size());
+		for (Pair<Document, Integer> doc : docs){
+			//document.
+			ids.add(new Long(doc.getFirst().getField(idFieldName).stringValue()));
+		}
+		List<Bisen> tmpResult = findBisenEntries(ids); 
+		//result.setLuceneDocId(id);
+		List<Bisen> result = new ArrayList<Bisen>(tmpResult.size());
+		for (Pair<Document, Integer> doc : docs){
+			Bisen bisen = findInList(tmpResult, new Long(doc.getFirst().getField(idFieldName).stringValue()));
+			bisen.setLuceneDocId(doc.getSecond());
+			result.add(bisen);
+		}
+		return result;
+	}
+	
+	
+	public static Bisen toBisen(Document document, int id) {
+		Bisen result = findBisen(new Long(document.getField(idFieldName).stringValue())); 
+		result.setLuceneDocId(id);
+		return result;
 	}
 
 	public Document toLucene() {
@@ -484,6 +518,14 @@ public class Bisen {
 
 	public void setState(String state) {
 		this.state = state;
+	}
+
+	public int getLuceneDocId() {
+		return luceneDocId;
+	}
+
+	public void setLuceneDocId(int luceneDocId) {
+		this.luceneDocId = luceneDocId;
 	}
 
 }
