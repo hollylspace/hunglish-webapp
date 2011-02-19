@@ -68,20 +68,20 @@ public class LuceneQueryBuilder {
 			throw new RuntimeException("query couldn't be parsed", e);
 		}
 
-		if (request.getSourceId() != null) {
+		if (request.getGenreId() != null) {
 			Integer genreId = -1;
 			try {
 				// the String to int conversion happens here
-				genreId = Integer.parseInt(request.getSourceId().trim());
+				genreId = Integer.parseInt(request.getGenreId().trim());
 			} catch (NumberFormatException nfe) {
 				genreId = -1;
 				logger.error(
 						"NumberFormatException: cannot convert source id to number:"
-								+ request.getSourceId(), nfe);
+								+ request.getGenreId(), nfe);
 			}
 			if (genreId > 0) {
 				query = addSourceFilter(query, Bisen.genreFieldName, request
-						.getSourceId());
+						.getGenreId());
 			}
 		}
 

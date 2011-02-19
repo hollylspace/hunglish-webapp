@@ -5,7 +5,13 @@ import hu.mokk.hunglish.domain.Genre;
 import hu.mokk.hunglish.lucene.SearchRequest;
 import hu.mokk.hunglish.lucene.SearchResult;
 import hu.mokk.hunglish.lucene.Searcher;
+import hu.mokk.hunglish.util.Pair;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.roo.addon.web.mvc.controller.RooWebScaffold;
 import org.springframework.stereotype.Controller;
@@ -18,7 +24,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping("/search/**")
 @Controller
 public class SearchController {
-
+	private static Log logger = LogFactory.getLog(SearchController.class);
+	
 	public static final int PAGE_SIZE = 20;
 	
 	@Autowired
@@ -48,7 +55,7 @@ public class SearchController {
 		request.setHuQuery(bisen.getHuSentence());
 		if (bisen.getDoc() != null && bisen.getDoc().getGenre() != null
 				&& bisen.getDoc().getGenre().getId() != null) {
-			request.setSourceId(bisen.getDoc().getGenre().getId().toString());
+			request.setGenreId(bisen.getDoc().getGenre().getId().toString());
 		}
 		
 		request.setMaxResults(sizeNo);
@@ -58,13 +65,42 @@ public class SearchController {
 		modelMap.addAttribute("request", request);
 
 		SearchResult result = searcher.search(request);
-
-        float nrOfPages = (float) result.getHitList().size() / sizeNo;
-        modelMap.addAttribute("maxPages", (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages));
 		
+		logger.warn("!!!!!!!!!!!!!!!!!!!!!!! result.getTotalCount():"+result.getTotalCount());
+		logger.warn("!!!!!!!!!!!!!!!!!!!!!!! sizeNo:"+sizeNo);
+		
+        float nrOfPages = (float) result.getTotalCount() / sizeNo;
+        
+        logger.warn("!!!!!!!!!!!!!!!!!!!!!!! nrOfPages:"+nrOfPages);
+        
+        int maxPages = (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages);
+        
+        logger.warn("!!!!!!!!!!!!!!!!!!!!!!! maxPages:"+maxPages);
+        modelMap.addAttribute("maxPages", maxPages);
+		
+        String baseUrl = getBaseUrl(bisen) +"&size="+sizeNo;
+        List<Pair<String, Integer>> linx = new ArrayList<Pair<String, Integer>>();
+        for (int i = 1; i <= maxPages; i++){
+        	String url =baseUrl+"&page="+i;        	
+        	linx.add(new Pair<String, Integer>(url, i));
+        }
+        result.setPaginationLinks(linx);
         modelMap.addAttribute("result", result);
 		
-
+        //logger.warn("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! form URL:"+modelMap.get("form_url"));
+                
 		return "search/list";
+	}
+	
+	private String getBaseUrl(Bisen bisen){
+		 String baseUrl = "?huSentence=";
+		 if (bisen.getHuSentence() != null){
+			 baseUrl += bisen.getHuSentence();
+		 }
+		 baseUrl += "&enSentence=";
+		 if (bisen.getEnSentence() != null){
+			 baseUrl += bisen.getHuSentence();
+		 }
+		 return baseUrl;
 	}
 }
