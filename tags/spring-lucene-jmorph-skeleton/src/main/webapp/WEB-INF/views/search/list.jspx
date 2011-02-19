@@ -88,25 +88,32 @@ English:
 </c:if>
  -->
  
- 			<div id="pager">            
-			<c:if test="${not empty result.hitList}">
-			<p> Page ${page}  of ${maxPages } pages  |  Results ${result.startOffset+1} - ${result.endOffset} of ${result.totalCount}<br/></p>
+ 			<div id="pager">
+				<c:choose>
+				<c:when test="${not empty result.hitList}">
+					<p> Page ${page}  of ${maxPages } pages  |  Results ${result.startOffset+1} - ${result.endOffset} of ${result.totalCount}<br/></p>
 
-                <p><c:forEach items="${result.paginationLinks}" var="link">
-                	<a href="${form_url}${link.first}">  ${link.second}  </a>
-                </c:forEach></p>
+                	<p>Pages:
+	                <c:forEach items="${result.paginationLinks}" var="link">
+	                	<a href="${form_url}${link.first}">  ${link.second}  </a>
+	                </c:forEach></p>
 			
-                <!--<p> c:forEach items="${result.paginationLinks}" var="link">
-                   ${page } == ${link.second} |  
-                	<c:if test="${link.second  == page} ">
-                	<a href="${form_url}${link.first}"> | ${link.second} | </a>
-                	</c:if>
-                	<c:if test="${link.second  != page} ">
-                	<a href="${form_url}${link.first}"> - ${link.second} - </a>
-                	</c:if> 
-                </c:forEach></p> -->
-			
-			</c:if>
+	                <!--<p> c:forEach items="${result.paginationLinks}" var="link">
+							<c:choose>
+							<c:when test="${link.second  == page}">
+								<a href="${form_url}${link.first}"> | ${link.second} | </a>		
+							</c:when>
+							<c:otherwise>
+								<a href="${form_url}${link.first}"> - ${link.second} - </a>		
+							</c:otherwise>
+							</c:choose>
+	                </c:forEach></p> -->
+	                
+					</c:when>
+					<c:otherwise>
+						<p>No results</p>
+					</c:otherwise>
+					</c:choose> 	 			            
 			</div>
  
  
