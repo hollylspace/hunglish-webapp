@@ -114,6 +114,7 @@
 		init-method="initSearcher">
 		<property name="luceneQueryBuilder" ref="luceneQueryBuilder" />
 		<property name="indexDir" value="${indexer.indexDir}" />
+		<property name="maxDocuments" value="${searcher.maxDocuments}" />
 		<property name="useHunglishSyntax" value="${searcher.useHunglishSyntax}" />
 	</bean>
 

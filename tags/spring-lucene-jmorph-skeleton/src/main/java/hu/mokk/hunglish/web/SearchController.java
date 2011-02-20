@@ -66,30 +66,26 @@ public class SearchController {
 
 		SearchResult result = searcher.search(request);
 		
-		logger.warn("!!!!!!!!!!!!!!!!!!!!!!! result.getTotalCount():"+result.getTotalCount());
-		logger.warn("!!!!!!!!!!!!!!!!!!!!!!! sizeNo:"+sizeNo);
-		
         float nrOfPages = (float) result.getTotalCount() / sizeNo;
         
-        logger.warn("!!!!!!!!!!!!!!!!!!!!!!! nrOfPages:"+nrOfPages);
-        
         int maxPages = (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages);
+
+        float nrOfPagesLimited = (float) searcher.getMaxDocuments() / sizeNo;
+        int maxPagesLimited = (int) nrOfPagesLimited; 
         
-        logger.warn("!!!!!!!!!!!!!!!!!!!!!!! maxPages:"+maxPages);
+        
         modelMap.addAttribute("maxPages", maxPages);
         modelMap.addAttribute("page", pageNo);
         
         String baseUrl = getBaseUrl(bisen) +"&size="+sizeNo;
         List<Pair<String, String>> linx = new ArrayList<Pair<String, String>>();
-        for (int i = 1; i <= maxPages; i++){
+        for (int i = 1; i <= (int)Math.min(maxPagesLimited, maxPages); i++){
         	String url =baseUrl+"&page="+i;        	
         	linx.add(new Pair<String, String>(url, new Integer(i).toString()));
         }
         result.setPaginationLinks(linx);
         modelMap.addAttribute("result", result);
 		
-        //logger.warn("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! form URL:"+modelMap.get("form_url"));
-                
 		return "search/list";
 	}
 	
