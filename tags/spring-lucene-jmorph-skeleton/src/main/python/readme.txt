@@ -51,21 +51,22 @@ Ezt most el is mentettem /big3/Work/HunglishMondattar/hunglish-webapp/src/main/p
 ---
 TODO
 
+- Az adatbazissema sulyos hibaja, hogy ha megserul a lucene index, akkor nagyon nehez
+kimazsolazni, hogy melyik bisen-eket kell ujraepiteskor belerakni.
+
 - Marhasag: a mysql interpreter miert nem jeleniti meg a bool ertekueket, mint az is_duplicate?
 
 - Nagybetus keresokulcsszavakat nem kezel le. ('James bug')
 
+- Highlight search results.
+
 - Nem latom, hogy a fileUpload tenyleg lekezelne azt, amikor ma'r ismeri az authort,
-es csak az id-re kellene referenciat raknia. Most jobban belegondolva az author-authorId
-rendszer eleg primitiv a mi celjainkra, lehet, hogy le kellene mondani rola.
+es csak az id-re kellene referenciat raknia.
+
+- Autocomplete az author-ra. Ha ez van, akkor nem is kell dropdown menu.
 
 - SystemCall.java defaultCommand vagy quartz.properties:uploadjob.path adja a cronjob helyet?
 Csak az egyik adja!
-
-- Hogy kerul oda egy regesregi fileUpload/824_HU.srt , amikor ott elvileg me'g soha nem
-tartott az upload.id kurzor? A logokban sincs nyoma, hogy harnesselte volna.
--rw-r--r-- 1 tomcat6 tomcat6 19029 2011-01-24 11:46 /big3/Work/HunglishMondattar/deployment/fileUpload/825_EN.txt
--rw-r--r-- 1 tomcat6 tomcat6 34279 2011-01-24 11:46 /big3/Work/HunglishMondattar/deployment/fileUpload/825_HU.srt
 
 - http://kozel.mokk.bme.hu:8080/hunglish/doc URL (a size attributum nelkul meghivva)
 kilistazza mind a sokszazat. Ki se merem probalni, hogy a hunglish/bisen mit csinal.
@@ -98,7 +99,7 @@ persze csak a metaadatokat.)
 az ujat, hanem bejelenti, hogy most nem tud inditani.
 
 - Ne relativ path-on keresse az index es upload konyvtarakat, hanem fixen
-/big3/Work/HunglishMondattar alatt, ahol egyebkent a harness.data is lesz.
+/big3/Work/HunglishMondattar/deployment alatt.
 Persze a laptopokon nem big3, legyen valami lokalis conf,
 ami alapjan startup (es nem build) idoben beallithato. Utobbi azert fontos,
 hogy mac-rol is tudjam a kozelen deployolni.
@@ -108,9 +109,10 @@ ha nem hazudok be egy kitoltott harnessed_timestamp mezot.
 Gergo szedje ki ezt a hulye checket, Daniel utana mar kiszedheti
 a behazudast a machine_upload-bol.
 
-- GERGO: Indexer jdbc eleres parametereit properties fajlbol venni.
+- Indexer jdbc eleres parametereit properties fajlbol venni.
 
-- GERGO: Valami ronda nagy (quartz?) leak, ami miatt ujra kell inditgatni a tomcat-et.
+- Valami ronda nagy (quartz?) leak, ami miatt ujra kell inditgatni
+a tomcat-et nehany tomcat:deploy utan.
 
 - A quartz finnyas arra, hogy honnan kell inditania a cronjobot.
 
@@ -124,21 +126,23 @@ progit. De akkor is.
 sok haszna egyelore beloluk. A savegame addig nem lesz ipari szintu,
 amig nem allitja le a service-t.
 
-- DANIEL: Masodpeldany van a deployment konyvtarban a cronjob-bol.
+- Masodpeldany van a deployment konyvtarban a cronjob-bol.
 
-- GERGO: Aramvonalasabba kellene tenni a kozel deploy-t. A mac-emen mar teljesen jo:
+- Aramvonalasabba kellene tenni a kozel deploy-t. A mac-emen mar teljesen jo:
 mvn jetty:run > cout 2> cerr &
 , bar csak parancssorbol, eclipse-bol valamiert nem talalja az eroforrast.
 
-- GERGO: Az exception-ok informacioit a webapp es a control_harness is elnyelegeti.
+- Az exception-ok informacioit a webapp es a control_harness is elnyelegeti.
 UPDATE: a control_harnesst mar megjavitottam, de nem teljesen, mert nem derul ki
 a legalso szint.
 
 - Legyen kovetkezetesen hasznalva a control_harness logolasaban az INFO,WARN,ERROR.
 
-- Vegiggondolni, hogy milyen katasztrofakhoz vezet (ha vezet), ha veletlenul
-egyidoben fut ket control_harness peldany. indexelesbol semmikeppen ne fusson.
-Van-e valami komolyabb tranzakcionalitasi problema, tehat peldaul ha elfogy
+- control_harness-bol es indexelesbol semmikeppen ne fusson ketto egyszerre,
+az nagyon durva inkonzisztenciakhoz vezet. Lock-oljuk valami munkanaplo tablaban,
+arra az esetre, ha a quartz elszurna, es megis megengedne kettot.
+
+- Van-e valami komolyabb tranzakcionalitasi problema, tehat peldaul ha elfogy
 az indexelo memoriaja, akkor ertelmes allapotba hozza-e magat a rendszer?
 
 - egy biztonsagi mentest kellene csinalni az indexrol, mielott meghivjuk az indexert.
@@ -207,6 +211,16 @@ hogy irt mar par fajlt a harness.data-ba, majd felulirja oket sajat magukkal.
 
 FUTURE FEJLESZTESI IGENYEK:
 
+- Menjem vegig UTF8 alatt is. Nagyon sok kis gonosz minosegellenorzesi lepes
+tamaszkodik az egybajtos kodolasra, de semmi olyan, ami lecserelhetetlen lenne.
+
+- Clusteresites. harnessbol mar most is futhatna tobb parhuzamosan
+(bar a catalog.tmp-t fel kellene szamolni) a duplumszures eredendoen
+egy szalra korlatozando, de az indexelest megintcsak van ertelme
+szetosztani, mert a tmp megepitese a fo futasido, a mergeles gyorsabb.
+
+
+
 - Nem lenne olyan nagy ugy a duplumszureskor felvenni a vezerpeldanyhoz,
 hogy hany tarsa veszett el a duplum-harcmezon, es aztan ezzel indexeleskor
 felpontozni.
@@ -219,7 +233,10 @@ dokumentum utolagos letiltasa.
 
 - Vegiggondoltuk, hogy nem kell teljesen feldulni a rendszert akkor sem,
 ha megengedjuk a bisen-ek modositasat. Felvenni egy flaget, hogy modositott,
-atirni a szovegmezot, torolni az indexbol es feljegyezni, hogy indexeletlen.
+atirni a szovegmezot, torolni az indexbol es feljegyezni, hogy duplumszuretlen.
+Persze az eredeti peldany duplumat elvileg ekkor fel kellene szabaditani.
+Ez akkor gond, ha nagyon fontos szotari tetelnek (igen-yes) eppen a nemduplum
+tetelet irja at valaki, es nem marad reprezentans.
 
 - Ezt valszeg nem fogjuk megcsinalni, de lenne ertelme:
 A pipeline-t szetszedni ket reszre valahol a sen elott, ugy, hogy az eleje
@@ -233,6 +250,11 @@ reszehez.
 
 
 LEZART DOLGOK:
+
+NOTDONE (Ez most maradjon rejtely) - Hogy kerul oda egy regesregi fileUpload/824_HU.srt , amikor ott elvileg me'g soha nem
+tartott az upload.id kurzor? A logokban sincs nyoma, hogy harnesselte volna.
+-rw-r--r-- 1 tomcat6 tomcat6 19029 2011-01-24 11:46 /big3/Work/HunglishMondattar/deployment/fileUpload/825_EN.txt
+-rw-r--r-- 1 tomcat6 tomcat6 34279 2011-01-24 11:46 /big3/Work/HunglishMondattar/deployment/fileUpload/825_HU.srt
 
 DONE - qualityfilter: tablazatok, szamoszlopok, nullbajtos mondatok.
 
