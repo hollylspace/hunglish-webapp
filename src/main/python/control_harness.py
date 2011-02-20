@@ -136,6 +136,12 @@ def metadataFromUpload(db,id) :
 
     r = recordToDict(db,id)
 
+    # Ezt csak abban a nagyon rendkivuli esetben vesszuk at, ha
+    # azt mondja, hogy egy masik control_harness peldany mar
+    # elhappolta az orrunk elol. Bugnak a jele.
+    if r['is_processed']!='N' :
+	metadata['is_processed'] = r['is_processed']
+
     # Izombol atemeljuk:
     # id, hu_title, en_title, genre
     # doc.hu_raw_file_path = upload.hu_file_path, ue. en
@@ -287,7 +293,18 @@ def updateUploadTable(db,metadata,processedFlag) :
 def processOneUpload(db,id) :
     try :
 	logg("Looking up data from update table...")
+        cursor = db.cursor(MySQLdb.cursors.Cursor)
         metadata = metadataFromUpload(db,id)
+
+	if 'is_processed' in metadata :
+	    # Nagyon furcsa helyzet, egy parhuzamosan futo control_harness
+	    # elhappolta az orrunk elol a bemenetet.
+	    logg("ERROR: for id %s, is_processed=%s. Another harness is already working on the data. We will not do anything with this upload."
+		% (id,metadata['is_processed']) )
+
+	logg("Marking ducument as under processing...")
+        cursor.execute("update upload set is_processed='P' where id=%s" % id )
+
 	logg("Moving document files to harness...")
 	moveFilesToHarness(metadata)
 	logg("Running harness...")
@@ -367,6 +384,8 @@ def flagDuplicates(db) :
 
 	logg("Marking non-duplicates and setting states to 'I'.")
 	# Actually, marking all, and being corrected in the next phase.
+	# Ez a control_harness egyetlen olyan sora, ami miatt semmikeppen sem
+	# szabad ket control_harness-nek egyszerre futnia.
 	cursor.execute("update bisen set is_duplicate=False, state='I' where state='D' ")
 
 	logg("Marking duplicates...")
