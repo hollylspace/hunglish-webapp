@@ -77,12 +77,12 @@ public class SearcherTest {
 		
 		String useTheHunglishSyn = "true";
 		System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++++++useTheHunglishSyn:"+useTheHunglishSyn);
-		searcher.setUseHunglishSyntax(useTheHunglishSyn);
+		//searcher.setUseHunglishSyntax(useTheHunglishSyn);
 		testSearch();
 		
 		useTheHunglishSyn = "false";
 		System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++++++useTheHunglishSyn:"+useTheHunglishSyn);
-		searcher.setUseHunglishSyntax(useTheHunglishSyn);
+		//searcher.setUseHunglishSyntax(useTheHunglishSyn);
 		testSearch();
 		
 	}

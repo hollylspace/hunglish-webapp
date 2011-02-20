@@ -41,7 +41,7 @@ public class Searcher {
 	
 	transient private static Log logger = LogFactory.getLog(Searcher.class);
 	private String indexDir;
-	private Integer maxDocumments = 1000;
+	private Integer maxDocuments;
 	
 	private IndexSearcher searcher;
 	private IndexReader indexReader;
@@ -132,6 +132,11 @@ public class Searcher {
 		if (requestIsEmpty(request)){
 			return result;
 		}
+		int end = request.getStartOffset() + request.getMaxResults();
+		if (end > maxDocuments){
+			return result;
+		}
+		
 		Query query = null;
 		try {
 			query = luceneQueryBuilder.parseRequest(request);
@@ -142,7 +147,7 @@ public class Searcher {
 		
 		// Collect enough docs to show 1 pages
 		TopScoreDocCollector collector = TopScoreDocCollector.create(
-				maxDocumments, false);
+				maxDocuments, false);
 
 		try {
 			searcher.search(query, collector);
@@ -154,7 +159,7 @@ public class Searcher {
 		result.setTotalCount(totalHits);
 
 		result.setStartOffset(request.getStartOffset());
-		int end = request.getStartOffset() + request.getMaxResults();
+		
 		if (end > totalHits) {
 			end = totalHits;
 		}
@@ -257,6 +262,16 @@ public class Searcher {
 
 	public static Searcher getInstance() {
 		return instance;
+	}
+
+
+	public Integer getMaxDocuments() {
+		return maxDocuments;
+	}
+
+
+	public void setMaxDocuments(Integer maxDocuments) {
+		this.maxDocuments = maxDocuments;
 	}
 
 
