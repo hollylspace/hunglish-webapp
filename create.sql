@@ -70,7 +70,7 @@ CREATE TABLE `bisen` (
   `indexed_timestamp` TIMESTAMP ,
   `copyright` varchar(1) not null DEFAULT 'C',
   `approved` varchar(1) not null DEFAULT 'N',  -- TODO the indexing would not be started automatically on a new doc, but could be triggered by hand on a doc.     
-  `state` varchar(1) not NULL default 'D', -- N nothing to do, D duplicate filter to do, I to be added to index, R to be reindexed, E to be ereased from index, O nothing to do but there was an Error
+  `state` varchar(1) not NULL default 'D', -- N nothing to do; X nothing to do, it is in the index, in case of reindexing, it should be set to I; D duplicate filter to do; I to be added to index; R to be reindexed; E to be ereased from index; O nothing to do but there was an Error
   PRIMARY KEY (`id`),
   KEY `fk_bisen_doc` (`doc`),
   KEY `duplicate_key` (`hu_sentence_hash`, `en_sentence_hash`, `is_duplicate`),
@@ -173,15 +173,12 @@ CREATE TABLE `upload` (
   `genre` bigint(20) not NULL, -- this is user input via the webapp (UploadController)
   -- `en_sentence` varchar(4000) DEFAULT NULL, -- not used in current implementation
   -- `hu_sentence` varchar(4000) DEFAULT NULL, -- not used in current implementation
-  
-  
   `copyright` varchar(1) not null DEFAULT 'C',
   `old_docid` varchar(255) not NULL, -- It is "" if the doc does not come from hunglish1 
   `approved` varchar(1) not null DEFAULT 'N',  -- TODO the indexing would not be started automatically on a new doc, but could be triggered by hand on a doc.   
-
+  
   `created_timestamp` TIMESTAMP , -- this is filled by the webapp (UploadController) when the files was uploaded
   `harnessed_timestamp` TIMESTAMP , -- this is filled by control_harness.py when the pipe-line is completed
-
   PRIMARY KEY (`id`),
   KEY `fk_upload_genre` (`genre`),
   KEY `fk_upload_author` (`author`),
