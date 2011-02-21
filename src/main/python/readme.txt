@@ -60,6 +60,8 @@ kimazsolazni, hogy melyik bisen-eket kell ujraepiteskor belerakni.
 
 - Highlight search results.
 
+- FileUpload-nal ne lehessen kivalasztani az All-t zsanerkent. (Ne csak a frontend tiltsa le.)
+
 - Nem latom, hogy a fileUpload tenyleg lekezelne azt, amikor ma'r ismeri az authort,
 es csak az id-re kellene referenciat raknia.
 
@@ -72,6 +74,10 @@ Csak az egyik adja!
 kilistazza mind a sokszazat. Ki se merem probalni, hogy a hunglish/bisen mit csinal.
 UPDATE: Ugy tunik most mar ez default 10-re lett atallitva, de &size=100000 attributummal
 azert me'g mindig hagyja megszivatni magat.
+
+- Use case: Utolag rajovok, hogy egy kis bash scriptet bele kellene tenni a qualityfilterbe.
+Megteszem, de visszamenoleg is meg kellene tenni. Eszkoz: dumpoljuk ki id-vel az osszes
+bisen-t, es ha fennakad a scripten, akkor tiltsuk le.
 
 - A duplumszures eleg lassu. Amikor mar jo nagy az adatbazis, akkor egy rovid doksi
 feltoltesetol kezdve igy jonnek a fazisok:
