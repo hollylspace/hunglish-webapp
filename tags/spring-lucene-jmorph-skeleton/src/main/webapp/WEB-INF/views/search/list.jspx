@@ -93,21 +93,16 @@ English:
 				<c:when test="${not empty result.hitList}">
 					<p> Page ${page}  of ${maxPages } pages  |  Results ${result.startOffset+1} - ${result.endOffset} of ${result.totalCount}<br/></p>
 
-                	<p>Pages:
-	                <c:forEach items="${result.paginationLinks}" var="link">
-	                	<a href="${form_url}${link.first}">  ${link.second}  </a>
-	                </c:forEach></p>
-			
-	                <!--<p> c:forEach items="${result.paginationLinks}" var="link">
+	                <p>Pages: <c:forEach items="${result.paginationLinks}" var="link">
 							<c:choose>
 							<c:when test="${link.second  == page}">
-								<a href="${form_url}${link.first}"> | ${link.second} | </a>		
+								${link.second}
 							</c:when>
 							<c:otherwise>
-								<a href="${form_url}${link.first}"> - ${link.second} - </a>		
+								<a href="${form_url}${link.first}"> ${link.second} </a>
 							</c:otherwise>
 							</c:choose>
-	                </c:forEach></p> -->
+	                </c:forEach></p>
 	                
 					</c:when>
 					<c:otherwise>
@@ -148,6 +143,19 @@ English:
 			</div>
 			
             
+        <c:if test="${not empty result.hitList}">
+	                <p>Pages: <c:forEach items="${result.paginationLinks}" var="link">
+							<c:choose>
+							<c:when test="${link.second  == page}">
+								${link.second}
+							</c:when>
+							<c:otherwise>
+								<a href="${form_url}${link.first}"> ${link.second} </a>
+							</c:otherwise>
+							</c:choose>
+	                </c:forEach></p>
+        </c:if>
+
 			<!-- <div id="pager">
 			       <c:if test="${not empty maxPages}">
 			         <roo:pagination  maxPages="${maxPages}" page="${param.page}" size="${param.size}" />
@@ -157,4 +165,3 @@ English:
 
         
     </div>
- 
