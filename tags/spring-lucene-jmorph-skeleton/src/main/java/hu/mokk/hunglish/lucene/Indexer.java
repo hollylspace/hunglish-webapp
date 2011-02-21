@@ -38,26 +38,29 @@ import org.springframework.beans.factory.annotation.Configurable;
 @Configurable
 public class Indexer {
 
-	/**
-	 * create a new index in the tmp dir or append docs to an index already
-	 * existing in the main index dir
-	 * 
-	 * @author bpgergo
-	 * 
-	 */
-
 	transient private static Log logger = LogFactory.getLog(Indexer.class);
 
 	
 	@Autowired
 	private AnalyzerProvider analyzerProvider;
 
-	private Integer mergeFactor = 100;
-	private Integer maxBufferedDocs = 1000;
+	private Integer mergeFactor;
+	private Integer mergeFactorTemp;
+	private Integer maxBufferedDocs;
 	private String indexDir;
 	private String tmpIndexDir;
 	private String uploadDir;
 	private String uploadJobPath;
+
+	/**
+	 *besides JPA/Hibernate, indexer also uses  pure JDBC, for updating bisen table 
+	 */
+	private String dbUrl;
+	private String dbDriver;
+	private String dbUser;
+	private String dbPassword;
+	private Integer dbBatchSize;
+
 	
 	@Autowired
 	private EntityManagerFactory entityManagerFactory;
@@ -71,10 +74,6 @@ public class Indexer {
 		}
 	}
 	
-	// private IndexWriter indexWriter;
-
-	// private CreateOrAppend createOrAppend = CreateOrAppend.Create;
-
 	private IndexWriter initIndexer(Boolean temporary) {
 		
 		IndexWriter indexWriter = null;
@@ -96,7 +95,6 @@ public class Indexer {
 					analyzerProvider.getAnalyzer(), temporary,
 					IndexWriter.MaxFieldLength.UNLIMITED);
 		} catch (FileNotFoundException e) {
-			//reCreateDir(dir);
 			try {
 				logger.warn("Error while opening index. Now trying to create new empty index.", e);
 				indexWriter = new IndexWriter(new SimpleFSDirectory( new File(dir)),
@@ -119,65 +117,42 @@ public class Indexer {
 			throw new RuntimeException(
 					"IOException, cannot open index directory: " + dir, e);
 		}
-		if (mergeFactor != null) {
-			indexWriter.setMergeFactor(mergeFactor);
+		if (temporary){
+			if (mergeFactor != null) {
+				indexWriter.setMergeFactor(mergeFactorTemp);
+			}
+		} else {
+			if (mergeFactor != null) {
+				indexWriter.setMergeFactor(mergeFactor);
+			}
 		}
-		indexWriter.setMaxBufferedDocs(maxBufferedDocs);
+		if (maxBufferedDocs != null){
+			indexWriter.setMaxBufferedDocs(maxBufferedDocs);
+		}
 		return indexWriter;
 	}
 
 	private void reCreateDir(String theDir) {
-		/*
-		 * int numOfFiles = 0; if (dir.exists() && dir.isDirectory()) {
-		 * numOfFiles = FileUtils.listFiles(dir, null, false).size(); }
-		 */
 		File dir = null;
 		try {
 			dir = new File(theDir);
-			logger.info("recreating dorectory:"+theDir);
-			logger.info("exists? " + dir.exists());
-			logger.info("is it a dir? " + dir.isDirectory());
-			logger.info("recreate dir: " + dir.getAbsolutePath());
-			
-			// if (numOfFiles >= 0) {
 			FileUtils.deleteQuietly(dir);
 			FileUtils.forceMkdir(dir);
-			// }
 		} catch (IOException e) {
 			throw new RuntimeException("Cannot recreate directory:" + theDir, e);
 		}
 	}
 
-	/*
-	public static File getFile(String path){
-		File dir = null;
-		try {
-			dir = new File(getClass().getClassLoader().getResource(tmpIndexDir).toURI());
-		} catch (URISyntaxException e) {
-			String message = "Temp index dir cannot be resolved:"+tmpIndexDir;
-			logger.error(message, e);
-			throw new RuntimeException(message, e);
-		}
-		return dir;
-	} //*/
-	
 	public void deleteTmpDirectory() {
 		reCreateDir(tmpIndexDir);
 	}
 
-	// TODO get this from properties file
-	String url = "jdbc:mysql://localhost:3306/";
-	String db = "hunglishwebapp";
-	String driver = "com.mysql.jdbc.Driver";
-	String user = "hunglish";
-	String pass = "sw6x2the";
-	public static int BATCH_SIZE = 20000;
 
 	private Connection getJdbcConnection() {
 		Connection con = null;
 		try {
-			Class.forName(driver);
-			con = DriverManager.getConnection(url + db, user, pass);
+			Class.forName(dbDriver);
+			con = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
 			con.setAutoCommit(false);
 		} catch (Exception e) {
 			logger.error("Cannot create connection", e);
@@ -229,7 +204,7 @@ public class Indexer {
 		try {
 			iwriter.addDocument(bisen.toLucene());
 			jdbcStatement.addBatch(
-					"update bisen set state = 'N' where id=" + bisen.getId());
+					"update bisen set state = 'X' where id=" + bisen.getId());
 		} catch (Exception e) {
 			try {
 				jdbcStatement.addBatch("update bisen "
@@ -246,11 +221,11 @@ public class Indexer {
 
 	private List<Bisen> getBisensByState(EntityManager em, String state){
 		return em.createQuery("from Bisen where state = '"+state+"' order by id") 
-			.setMaxResults(BATCH_SIZE).getResultList();
+			.setMaxResults(dbBatchSize).getResultList();
 	}
 	
 	/**
-	 * index the next batch of size BATCH_SIZE 
+	 * delete from the index the next batch of size BATCH_SIZE 
 	 * 1) get the next batch of Bisens from database, continue if not empty
 	 * 2) for all bisen: delete from index, add update statement to batch
 	 * 3) execute database batch updates 
@@ -376,9 +351,7 @@ public class Indexer {
 	private void indexBisens(List<Bisen> bisens, Statement jdbcStatement){
 		IndexWriter indexWriter = initIndexer(true);
 		logger.info("-------clear the temporary index dir, and initialize indexWriter on the temporary directory done-----");
-		
 		try {
-		
 			for (Bisen bisen : bisens) {
 				indexBisen(bisen, indexWriter, jdbcStatement);
 			}
@@ -396,7 +369,9 @@ public class Indexer {
 	public void optimizeIndex(){
 		IndexWriter indexWriter = initIndexer(false);
 		try {
+			logger.debug("index optimize start");
 			indexWriter.optimize();
+			logger.debug("index optimize finished");
 		} catch (CorruptIndexException e) {
 			logger.fatal("CorruptIndexException while optimizing index", e);
 			throw new RuntimeException(e);
@@ -414,19 +389,12 @@ public class Indexer {
 				indexWriter.close();
 			}
 		} catch (OutOfMemoryError e) {
-			logger.fatal("indexWriter close OutOfMemoryError", e);
-			try {
-				indexWriter.close();
-			} catch (Exception e1) {
-				logger.fatal("after OutOfMemoryError indexWriter close error", e);
-				throw new RuntimeException(e);
-			}
+			logger.fatal("indexWriter close OutOfMemoryError. Index writes rolled back.", e);
 			throw new RuntimeException(e);
 		} catch (Exception e) {
 			logger.fatal("indexWriter close error", e);
 			throw new RuntimeException(e);
-		}
-		
+		}		
 	}
 	
 	/* true=temp that is index will be created in hunglishIndexTmp, false=main */
@@ -459,7 +427,7 @@ public class Indexer {
 		while (keepItOn) {
 			keepItOn = indexBatch(jdbcConnection);
 			logger.info("<<<<<< finished indexing batch at " + ++batchIndex
-					* BATCH_SIZE);
+					* dbBatchSize);
 		}
 		logger.info("-----indexing ::: all batches done--");
 	}
@@ -472,7 +440,7 @@ public class Indexer {
 			while (keepItOn){
 				keepItOn = deleteBatch(jdbcConnection, indexWriter);
 				logger.info("<<<<<< DELETE FROM INDEX batch at " + ++batchIndex
-						* BATCH_SIZE);
+						* dbBatchSize);
 				
 			}
 			logger.info("-----DELETE FROM INDEX ::: all batches done--");
@@ -569,6 +537,54 @@ public class Indexer {
 
 	public static Indexer getInstance() {
 		return instance;
+	}
+
+	public Integer getMergeFactorTemp() {
+		return mergeFactorTemp;
+	}
+
+	public void setMergeFactorTemp(Integer mergeFactorTemp) {
+		this.mergeFactorTemp = mergeFactorTemp;
+	}
+
+	public String getDbUrl() {
+		return dbUrl;
+	}
+
+	public void setDbUrl(String dbUrl) {
+		this.dbUrl = dbUrl;
+	}
+
+	public String getDbDriver() {
+		return dbDriver;
+	}
+
+	public void setDbDriver(String dbDriver) {
+		this.dbDriver = dbDriver;
+	}
+
+	public String getDbUser() {
+		return dbUser;
+	}
+
+	public void setDbUser(String dbUser) {
+		this.dbUser = dbUser;
+	}
+
+	public String getDbPassword() {
+		return dbPassword;
+	}
+
+	public void setDbPassword(String dbPassword) {
+		this.dbPassword = dbPassword;
+	}
+
+	public Integer getDbBatchSize() {
+		return dbBatchSize;
+	}
+
+	public void setDbBatchSize(Integer dbBatchSize) {
+		this.dbBatchSize = dbBatchSize;
 	}
 
 }

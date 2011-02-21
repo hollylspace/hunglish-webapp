@@ -80,7 +80,7 @@
 
 	<bean id="multipartResolver"
 		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
-		<!-- the maximum file size in bytes : thid id 10 Megs for now -->
+		<!-- the maximum file size in bytes : this is 10 Megs for now -->
 		<property name="maxUploadSize" value="10000000" />
 	</bean>
 
@@ -99,15 +99,23 @@
 		<property name="enRecursionDepth" value="${stemmer.enRecursionDepth}" />
 	</bean>
 
-	<bean class="hu.mokk.hunglish.lucene.Indexer" id="indexer">   <!-- init-method="initIndexer" -->
+	<bean class="hu.mokk.hunglish.lucene.Indexer" id="indexer"> 
 		<property name="analyzerProvider" ref="analyzerProvider" />
 
 		<property name="mergeFactor" value="${indexer.mergeFactor}" />
-		<property name="maxBufferedDocs" value="${indexer.maxBufferedDocs}" />
+		<property name="mergeFactorTemp" value="${indexer.mergeFactorTemp}" />
+		<!-- property name="maxBufferedDocs" value="${indexer.maxBufferedDocs}" / -->
 		<property name="indexDir" value="${indexer.indexDir}" />
 		<property name="tmpIndexDir" value="${indexer.tmpIndexDir}" />
 		<property name="uploadDir" value="${indexer.uploadDir}" />
 		<property name="uploadJobPath" value="${uploadjob.path}" />
+		<!-- besides JPA/Hibernate, indexer also uses  pure JDBC, for updating bisen table-->
+		<property name="dbUrl" value="${database.url}" />
+		<property name="dbDriver" value="${database.driverClassName}" />
+		<property name="dbUser" value="${database.username}" />
+		<property name="dbPassword" value="${database.password}" />
+		<property name="dbBatchSize" value="${indexer.dbBatchSize}" />
+		
 	</bean>
 
 	<bean class="hu.mokk.hunglish.lucene.Searcher" id="searcher"
