@@ -10,13 +10,16 @@ xmlns:roo="urn:jsptagdir:/WEB-INF/tags" xmlns:spring="http://www.springframework
             <!-- <form:errors cssClass="errors" delimiter="&lt;p/&gt;"/>
             -->
             <div id="roo_bisen_huSentence">
-                <!-- <label for="_huSentence_id">Hungarian:</label>  -->
+                <!-- <label for="_huSentence_id">Hungarian:</label> -->
+                Hungarian:
                 <form:input cssStyle="width:200px" id="_huSentence_id" path="huSentence"/>
                 <!-- <label for="_enSentence_id">English:</label> -->
+                English:
                 <form:input cssStyle="width:200px" id="_enSentence_id" path="enSentence"/>
                 
                 <c:if test="${not empty genres}">
                     <!-- <label for="_genre_id">Genre:</label>  -->
+		    in genre:
                     <form:select cssStyle="width:200px" id="_genre_id" path="doc.genre">
                         <form:options itemValue="id" itemLabel="description" items="${genres}"/>
                     </form:select>
@@ -119,9 +122,9 @@ English:
                 <thead>
                     <tr>
                         <th>Id</th>
-                        <th>Doc</th>
-                        <th>Hu Sentence</th>
-                        <th>En Sentence</th>
+                        <th>Document</th>
+                        <th>Hungarian sentence</th>
+                        <th>English sentence</th>
                     </tr>
                 </thead>
                 <c:forEach items="${result.hitList}" var="bisen">

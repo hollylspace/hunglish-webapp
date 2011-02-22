@@ -58,8 +58,8 @@ public class LuceneQueryBuilder {
 		try {
 			if (request.getHunglishSyntax()) {
 				query = new BooleanQuery();
-				query = queryParser.parse(request.getHuQuery(), request
-						.getEnQuery());
+				query = queryParser.parse(request.getHuQuery().toLowerCase(),
+						request.getEnQuery().toLowerCase());
 			} else {
 				query = simpleParseSearchRequest(request);
 			}
