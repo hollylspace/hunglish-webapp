@@ -51,21 +51,21 @@ Ezt most el is mentettem /big3/Work/HunglishMondattar/hunglish-webapp/src/main/p
 ---
 TODO
 
+- A timestamp fogalmat rosszul hasznaljuk. Egyes helyeken, mint bisen.indexed_timestamp kiirtando,
+mas helyeken, mint job_queue es upload, lecserelendo egy rendes datumra.
+Ez is emiatt van:
+- Az alkalmazas nem tudja a recordbol letrehozni az upload objektumot,
+ha nem hazudok be egy kitoltott harnessed_timestamp mezot.
+Gergo szedje ki ezt a hulye checket, Daniel utana mar kiszedheti
+a behazudast a machine_upload-bol.
+
 - Az adatbazissema sulyos hibaja, hogy ha megserul a lucene index, akkor nagyon nehez
-kimazsolazni, hogy melyik bisen-eket kell ujraepiteskor belerakni.
-
-- Marhasag: a mysql interpreter miert nem jeleniti meg a bool ertekueket, mint az is_duplicate?
-
-- Nagybetus keresokulcsszavakat nem kezel le. ('James bug')
+kimazsolazni, hogy melyik bisen-eket kell ujraepiteskor belerakni. Legyen egy state, ami ezt fejezi ki.
 
 - Highlight search results.
 
-- FileUpload-nal ne lehessen kivalasztani az All-t zsanerkent. (Ne csak a frontend tiltsa le.)
-
 - Nem latom, hogy a fileUpload tenyleg lekezelne azt, amikor ma'r ismeri az authort,
 es csak az id-re kellene referenciat raknia.
-
-- Autocomplete az author-ra. Ha ez van, akkor nem is kell dropdown menu.
 
 - SystemCall.java defaultCommand vagy quartz.properties:uploadjob.path adja a cronjob helyet?
 Csak az egyik adja!
@@ -99,8 +99,6 @@ Ha nem, akkor egyetlen weboldalra kidumpolja a kerdeses alignment
 metaadatait, es a bisen-eket. (Ha nem fogadtuk el a doksit, akkor
 persze csak a metaadatokat.)
 
-- Legyen a fileUpload fajlnev kozelebb a harness szabvanyhoz.
-
 - Feltolteskor ha mar fut egy quartz job, akkor a quartz nem moge-schedule-olja
 az ujat, hanem bejelenti, hogy most nem tud inditani.
 
@@ -109,13 +107,6 @@ az ujat, hanem bejelenti, hogy most nem tud inditani.
 Persze a laptopokon nem big3, legyen valami lokalis conf,
 ami alapjan startup (es nem build) idoben beallithato. Utobbi azert fontos,
 hogy mac-rol is tudjam a kozelen deployolni.
-
-- Az alkalmazas nem tudja a recordbol letrehozni az upload objektumot,
-ha nem hazudok be egy kitoltott harnessed_timestamp mezot.
-Gergo szedje ki ezt a hulye checket, Daniel utana mar kiszedheti
-a behazudast a machine_upload-bol.
-
-- Indexer jdbc eleres parametereit properties fajlbol venni.
 
 - Valami ronda nagy (quartz?) leak, ami miatt ujra kell inditgatni
 a tomcat-et nehany tomcat:deploy utan.
@@ -134,10 +125,6 @@ amig nem allitja le a service-t.
 
 - Masodpeldany van a deployment konyvtarban a cronjob-bol.
 
-- Aramvonalasabba kellene tenni a kozel deploy-t. A mac-emen mar teljesen jo:
-mvn jetty:run > cout 2> cerr &
-, bar csak parancssorbol, eclipse-bol valamiert nem talalja az eroforrast.
-
 - Az exception-ok informacioit a webapp es a control_harness is elnyelegeti.
 UPDATE: a control_harnesst mar megjavitottam, de nem teljesen, mert nem derul ki
 a legalso szint.
@@ -151,10 +138,10 @@ arra az esetre, ha a quartz elszurna, es megis megengedne kettot.
 - Van-e valami komolyabb tranzakcionalitasi problema, tehat peldaul ha elfogy
 az indexelo memoriaja, akkor ertelmes allapotba hozza-e magat a rendszer?
 
-- egy biztonsagi mentest kellene csinalni az indexrol, mielott meghivjuk az indexert.
-
 - Kornai feature request-je: A lucene tokenizalo legyen olyan okos,
 hogy a dog's szot is megtalalja, ha a dog-ra keresek.
+
+- SearchRequest legyen Bisen helyett az, amiben halad a searchreuquest. A Bisen raeroltetett. (Low priority.)
 
 HARNESS, HIBAKEZELES:
 
@@ -180,7 +167,7 @@ tcg/scripts/filtersen.py szinte'n.
 - Tovezes is legyen a pipeline-ban az align elott, hogy ne legyunk rosszabbak, mint
 a regi hunglish.
 
-- Kicsiket hianyzik a pipeline-bol, hogy parhuzamositott mondatraszegmentalt
+- Kicsit hianyzik a pipeline-bol, hogy parhuzamositott mondatraszegmentalt
 adatot (forditomemoria) is bele lehessen tolni.
 
 
@@ -217,6 +204,8 @@ hogy irt mar par fajlt a harness.data-ba, majd felulirja oket sajat magukkal.
 
 FUTURE FEJLESZTESI IGENYEK:
 
+- Autocomplete az author-ra. Ha ez van, akkor nem is kell dropdown menu.
+
 - Menjem vegig UTF8 alatt is. Nagyon sok kis gonosz minosegellenorzesi lepes
 tamaszkodik az egybajtos kodolasra, de semmi olyan, ami lecserelhetetlen lenne.
 
@@ -225,14 +214,12 @@ tamaszkodik az egybajtos kodolasra, de semmi olyan, ami lecserelhetetlen lenne.
 egy szalra korlatozando, de az indexelest megintcsak van ertelme
 szetosztani, mert a tmp megepitese a fo futasido, a mergeles gyorsabb.
 
-
-
 - Nem lenne olyan nagy ugy a duplumszureskor felvenni a vezerpeldanyhoz,
 hogy hany tarsa veszett el a duplum-harcmezon, es aztan ezzel indexeleskor
 felpontozni.
 
 - Szivesen felpontoznam aszerint is, hogy mi a korpusz, mi a zsaner, vagy
-akar ki a felvivo.
+aka'r ki a felvivo.
 
 - Most mar lassan ideje elgondolkozni azon, hogy hogyan fog tortenni egy
 dokumentum utolagos letiltasa.
@@ -241,7 +228,7 @@ dokumentum utolagos letiltasa.
 ha megengedjuk a bisen-ek modositasat. Felvenni egy flaget, hogy modositott,
 atirni a szovegmezot, torolni az indexbol es feljegyezni, hogy duplumszuretlen.
 Persze az eredeti peldany duplumat elvileg ekkor fel kellene szabaditani.
-Ez akkor gond, ha nagyon fontos szotari tetelnek (igen-yes) eppen a nemduplum
+Ez csak akkor gond, ha nagyon fontos szotari tetelnek (igen-yes) eppen a nemduplum
 tetelet irja at valaki, es nem marad reprezentans.
 
 - Ezt valszeg nem fogjuk megcsinalni, de lenne ertelme:
@@ -250,12 +237,32 @@ baromi gyorsan lefusson, es reszponzivan vissza tudjon kohogni olyanokat,
 hogy "tul hosszu", "nem angol", "tul kulonbozo hosszu" meg ilyesmi.
 A lassu reszek tovabbra is cronban futnanak.
 
+- A kisbetusites miatt nem rakja feljebb azokat a talalatokat, amiknek
+azonos a kapitalizacioja a keresokulcsszoval.
+
 - Szegyen hogy menet kozben mennyire nem voltunk unit-test based-ek, de
 me'g a vegen sem lenne haszontalan par tesztet megcsinalni legalabb a Java
 reszehez.
 
 
 LEZART DOLGOK:
+
+NOTDONE - egy biztonsagi mentest kellene csinalni az indexrol, mielott meghivjuk az indexert.
+
+NOTDONE - Aramvonalasabba kellene tenni a kozel deploy-t. A mac-emen mar teljesen jo:
+mvn jetty:run > cout 2> cerr &
+, bar csak parancssorbol, eclipse-bol valamiert nem talalja az eroforrast.
+
+NOTDONE - Marhasag: a mysql interpreter miert nem jeleniti meg a bool ertekueket, mint az is_duplicate?
+UPDATE: select cast(is_duplicate as signed),bisen.* from bisen limit 2 ; megoldja.
+
+DONE - Legyen a fileUpload fajlnev kozelebb a harness szabvanyhoz.
+
+DONE - Indexer jdbc eleres parametereit properties fajlbol venni.
+
+DONE - FileUpload-nal ne lehessen kivalasztani az All-t zsanerkent. (Ne csak a frontend tiltsa le.)
+
+DONE - Nagybetus keresokulcsszavakat nem kezel le. ('James bug')
 
 NOTDONE (Ez most maradjon rejtely) - Hogy kerul oda egy regesregi fileUpload/824_HU.srt , amikor ott elvileg me'g soha nem
 tartott az upload.id kurzor? A logokban sincs nyoma, hogy harnesselte volna.
