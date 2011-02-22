@@ -1,5 +1,6 @@
 package hu.mokk.hunglish.domain;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -23,6 +24,7 @@ import javax.validation.constraints.Size;
 @RooToString
 @RooEntity
 public class Author {
+	transient public static Long dummyAuthorId = new Long(-666);
 
     @NotNull
     @Size(max = 255)
@@ -99,6 +101,16 @@ public class Author {
 
 	public static long countAuthors() {
         return (Long) entityManager().createQuery("select count(o) from Author o").getSingleResult();
+    }
+
+	public static List<Author> findAllAuthorsWithDummy() {
+		List<Author> result = new ArrayList<Author>();
+		Author dummy = new Author();
+		dummy.setId(dummyAuthorId);
+		dummy.setName(" pick an author");
+		result.add(dummy);
+        result.addAll(entityManager().createQuery("select o from Author o order by o.name").getResultList());
+        return result;
     }
 
 	public static List<Author> findAllAuthors() {

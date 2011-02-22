@@ -104,11 +104,14 @@ public class Genre {
         return (Long) entityManager().createQuery("select count(o) from Genre o").getSingleResult();
     }
 
+	public static List<Genre> findAllGenresNoDummy() {
+		return entityManager().createQuery("select o from Genre o where o.id >= 0  order by o.name").getResultList();
+    }
 	
 	private static List<Genre> allGenres;
 	public static List<Genre> findAllGenres() {
 		if (allGenres == null){
-			allGenres = entityManager().createQuery("select o from Genre o").getResultList();
+			allGenres = entityManager().createQuery("select o from Genre o order by o.name").getResultList();
 		}
         return allGenres;
     }

@@ -139,6 +139,9 @@ public class Upload {
 		if (!validExtensions.contains(this.huExtension)){
 			throw new IllegalArgumentException("Invalid Hungarian file extension:"+this.huExtension);
 		}
+		if (this.authorName == null && (this.author.getId() == null || Author.dummyAuthorId.equals(this.author.getId()))){
+			throw new IllegalArgumentException("Choose an existing Author or provide a name for a new one");			
+		}
 	}
 	
     
