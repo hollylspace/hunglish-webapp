@@ -9,12 +9,12 @@
         <form:form action="${form_url}" method="POST" modelAttribute="upload" enctype="multipart/form-data">
             <form:errors cssClass="errors" delimiter="&lt;p/&gt;"/>
             <div id="roo_upload_enFileData">
-                    <form:label for="_upload_enFileData" path="enFileData">English File</form:label>
+                    <form:label for="_upload_enFileData" path="enFileData">English file:</form:label>
                     <form:input path="enFileData" type="file"/>
             </div>
             <br/>
             <div id="roo_upload_huFileData">
-                    <form:label for="_upload_huFileData" path="huFileData">Hungarian File</form:label>
+                    <form:label for="_upload_huFileData" path="huFileData">Hungarian file:</form:label>
                     <form:input path="huFileData" type="file"/>
             </div>
             <br/>
@@ -39,7 +39,7 @@
             </div>
             <br/>
             <div id="roo_upload_authorName">
-                <label for="_authorName_id">Author name:</label>
+                <label for="_authorName_id">Author (if not in drop-down menu above):</label>
                 <form:textarea cssStyle="width:250px" id="_authorName_id" path="authorName"/>
                 <script type="text/javascript">Spring.addDecoration(new Spring.ElementDecoration({elementId : '_authorName_id', widgetType: 'dijit.form.SimpleTextarea', widgetAttrs: {}})); </script>
                 <br/>
@@ -47,7 +47,7 @@
             </div>
             <br/>
             <div id="roo_upload_enTitle">
-                <label for="_enTitle_id">En Title:</label>
+                <label for="_enTitle_id">English title:</label>
                 <form:textarea cssStyle="width:250px" id="_enTitle_id" path="enTitle"/>
                 <script type="text/javascript">Spring.addDecoration(new Spring.ElementDecoration({elementId : '_enTitle_id', widgetType: 'dijit.form.SimpleTextarea', widgetAttrs: {}})); </script>
                 <br/>
@@ -55,7 +55,7 @@
             </div>
             <br/>
             <div id="roo_upload_huTitle">
-                <label for="_huTitle_id">Hu Title:</label>
+                <label for="_huTitle_id">Hungarian title:</label>
                 <form:textarea cssStyle="width:250px" id="_huTitle_id" path="huTitle"/>
                 <script type="text/javascript">Spring.addDecoration(new Spring.ElementDecoration({elementId : '_huTitle_id', widgetType: 'dijit.form.SimpleTextarea', widgetAttrs: {}})); </script>
                 <br/>
