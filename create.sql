@@ -48,6 +48,8 @@ CREATE TABLE `author` (
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+insert into author (id, name,description) values (-10, "unknown",   "unknown") ;
+
 --
 -- Table structure for table `bisen`
 --

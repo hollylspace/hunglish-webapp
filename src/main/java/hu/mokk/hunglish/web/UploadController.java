@@ -56,21 +56,6 @@ public class UploadController {
     	return uploadDir;
 	}
 	
-/*	
-	public static void scheduleOnce(int delay) {
-		try {
-			Date now = new Date();
-			Date sdate = new Date(now.getTime() + delay);
-			Scheduler sched = StdSchedulerFactory.getDefaultScheduler();
-			JobDetail job = new JobDetail("SingleSendEventsJob", "HPOM group", EmJob.class);
-			Trigger trg = new SimpleTrigger("SingleRunTrigger", "HPOM group", sdate);
-			sched.scheduleJob(job, trg);
-			log.info("EventManager scheduled to run at " + sdate.toString());
-		} catch (Exception e) {
-			log.error("Failed to schedule non-periodic EventManager task. Cause: " + e.getMessage());
-		}		
-	}
-*/
 	
 	private void startUploadJob() throws SchedulerException{
 		//get the Quartz scheduler
@@ -99,10 +84,11 @@ public class UploadController {
         
         if (result.hasErrors()) {
 			for (ObjectError r : result.getAllErrors()){
+				//TODO
 			}
             modelMap.addAttribute("upload", upload);
-            modelMap.addAttribute("authors", Author.findAllAuthors());
-            modelMap.addAttribute("genres", Genre.findAllGenres());
+            modelMap.addAttribute("authors", Author.findAllAuthorsWithDummy());
+            modelMap.addAttribute("genres", Genre.findAllGenresNoDummy());
             return "upload/create";
         }
         String uploadDir = getUploadDir();
@@ -121,12 +107,12 @@ public class UploadController {
 	        upload.setOldDocid("");//not null for hunglish1, empty string for hunglish2
 
 	        upload.persist();
-	        String huFilePath = uploadDir+File.separator + upload.getId()+"_HU."+upload.getHuExtension();
+	        String huFilePath = uploadDir+File.separator + upload.getId()+".hu."+upload.getHuExtension();
 	        File huFile = new File(huFilePath);
 	        upload.getHuFileData().transferTo(huFile);
 	        upload.setHuUploadedFilePath(huFile.getCanonicalPath());
 	        
-	        String enFilePath = uploadDir+File.separator + upload.getId()+"_EN."+upload.getEnExtension();
+	        String enFilePath = uploadDir+File.separator + upload.getId()+".en."+upload.getEnExtension();
 	        File enFile = new File(enFilePath);
 	        upload.getEnFileData().transferTo(enFile);
 	        upload.setEnUploadedFilePath(enFile.getCanonicalPath());
@@ -150,8 +136,8 @@ public class UploadController {
 	@RequestMapping(value = "/upload/form", method = RequestMethod.GET)
     public String createForm(ModelMap modelMap) {
         modelMap.addAttribute("upload", new Upload());
-        modelMap.addAttribute("authors", Author.findAllAuthors());
-        modelMap.addAttribute("genres", Genre.findAllGenres());
+        modelMap.addAttribute("authors", Author.findAllAuthorsWithDummy());
+        modelMap.addAttribute("genres", Genre.findAllGenresNoDummy());
         return "upload/create";
     }
 
@@ -180,8 +166,8 @@ public class UploadController {
         if (upload == null) throw new IllegalArgumentException("A upload is required");
         if (result.hasErrors()) {
             modelMap.addAttribute("upload", upload);
-            modelMap.addAttribute("authors", Author.findAllAuthors());
-            modelMap.addAttribute("genres", Genre.findAllGenres());
+            modelMap.addAttribute("authors", Author.findAllAuthorsWithDummy());
+            modelMap.addAttribute("genres", Genre.findAllGenresNoDummy());
             return "upload/update";
         }
         upload.merge();
@@ -192,8 +178,8 @@ public class UploadController {
     public String updateForm(@PathVariable("id") Long id, ModelMap modelMap) {
         if (id == null) throw new IllegalArgumentException("An Identifier is required");
         modelMap.addAttribute("upload", Upload.findUpload(id));
-        modelMap.addAttribute("authors", Author.findAllAuthors());
-        modelMap.addAttribute("genres", Genre.findAllGenres());
+        modelMap.addAttribute("authors", Author.findAllAuthorsWithDummy());
+        modelMap.addAttribute("genres", Genre.findAllGenresNoDummy());
         return "upload/update";
     }
 
