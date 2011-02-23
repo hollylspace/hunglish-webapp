@@ -292,6 +292,7 @@ def updateUploadTable(db,metadata,processedFlag) :
 
 def processOneUpload(db,id) :
     try :
+	loggnow("starting processOneUpload")
 	logg("Looking up data from update table...")
         cursor = db.cursor(MySQLdb.cursors.Cursor)
         metadata = metadataFromUpload(db,id)
@@ -301,6 +302,7 @@ def processOneUpload(db,id) :
 	    # elhappolta az orrunk elol a bemenetet.
 	    logg("ERROR: for id %s, is_processed=%s. Another harness is already working on the data. We will not do anything with this upload."
 		% (id,metadata['is_processed']) )
+	    return
 
 	logg("Marking ducument as under processing...")
         cursor.execute("update upload set is_processed='P' where id=%s" % id )
@@ -342,6 +344,7 @@ def processOneUpload(db,id) :
 
 def flagDuplicates(db) :
     logg("Flagging duplicates...")
+    loggnow("select started.")
     try :
         cursor = db.cursor(MySQLdb.cursors.Cursor)
 	# A (state='D') (regebben: is_duplicate is NULL) szerinti
@@ -359,6 +362,9 @@ def flagDuplicates(db) :
 	    hu_sentence_hash,en_sentence_hash,state='D',
 	    CHAR_LENGTH(CONCAT(en_sentence,hu_sentence))""")
         results = cursor.fetchall()
+
+	loggnow("select executed.")
+
         dupIds = []
         prevHashes = (None,None)
         newBisenNum = 0
@@ -381,16 +387,19 @@ def flagDuplicates(db) :
             prevHashes = hashes
 
         logg("%d duplicates found in %d new records. total # of records %d" % (len(dupIds),newBisenNum,len(results)) )
+	loggnow("duplicated found.")
 
 	logg("Marking non-duplicates and setting states to 'I'.")
 	# Actually, marking all, and being corrected in the next phase.
 	# Ez a control_harness egyetlen olyan sora, ami miatt semmikeppen sem
 	# szabad ket control_harness-nek egyszerre futnia.
 	cursor.execute("update bisen set is_duplicate=False, state='I' where state='D' ")
+	loggnow("non-duplicates marked.")
 
 	logg("Marking duplicates...")
         for id in dupIds :
             cursor.execute("update bisen set is_duplicate=True, state='N' where id=%s" % id )
+	loggnow("duplicates marked.")
 
 	logg("Done.")
     except Exception, e:

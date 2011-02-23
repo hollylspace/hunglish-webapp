@@ -4,9 +4,13 @@ import MySQLdb
 import sys
 import os
 import shutil
+import datetime
 
 def logg(s) :
     sys.stderr.write(str(s)+"\n")
+
+def loggnow(s) :
+    sys.stderr.write( str(datetime.datetime.now()) + " : " + s + "\n" )
 
 def mkdir(f) :
     try :

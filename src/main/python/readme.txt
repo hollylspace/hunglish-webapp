@@ -87,6 +87,13 @@ feltoltesetol kezdve igy jonnek a fazisok:
 masodik 20000-es batch-csel, aminek nulla eleme volt, de igy is 50 sec-et szotymorgott vele.)
 UPDATE: Ezt ujra kellene merni az uj create.sql-en, valszeg javult a helyzet valamennyit.
 
+- Egy nagy machine_upload utan a duplumszures rettenetesen lassu. Ahogy irtam is:
+duplumszures : 8 ora (a duplumok megtalalasa 8 perc, a tobbi az sql update)
+Erre a szep megoldas az lehet talan, amit itt ir:
+http://maisonbisson.com/blog/post/12159/optimizing-insertsupdates-on-mysql-tables/
+, de ehhez eloszor ki kell gyujteni egy tablaba az update-elendoket, kulonben
+belezavarodik szegeny mysql.
+
 - Session management bug: HP Sat, Jan 22, 2011 at 2:35 AM levele.
 
 - Vegre kigondoltam, hogy hogyan nem lesz szerzoi jogi balhe abbol, hogy
@@ -141,7 +148,18 @@ az indexelo memoriaja, akkor ertelmes allapotba hozza-e magat a rendszer?
 - Kornai feature request-je: A lucene tokenizalo legyen olyan okos,
 hogy a dog's szot is megtalalja, ha a dog-ra keresek.
 
-- SearchRequest legyen Bisen helyett az, amiben halad a searchreuquest. A Bisen raeroltetett. (Low priority.)
+- SearchRequest legyen Bisen helyett az, amiben halad a searchrequest. A Bisen raeroltetett. (Low priority.)
+
+- A jelenlegi setupban kulonosen undorito feladat a kovetkezo:
+Valaszd ki az uploadtable-bol azokat a sorokat, amelyekre
+1. 'L' lett a minosegflag a beloluk keletkezett align.qf fajlnak 50-nel kevesebb sora van.
+Az alabbi script a valasz. Ez nagyon trukkos es torekeny, azt az ezer dokumentumot adja,
+amik a legtobb bisen-nel jarulnak hozza az adatbazishoz, figyelembe veve a decideIfWorthIndexing
+miatti eldobast is:
+cat logs/20110213-022008.cerr logs/20110215-211535.cerr | grep "en_uploaded_file_path\|align_bisentence_count\|en_sentence_count_nondelimiter\|hu_sentence_count_nondelimiter\|Throwing away upload\|decideIfWorthIndexing" | awk '{ if ($1=="align_bisentence_count") { c=$2 } else if ($1=="en_uploaded_file_path") { print c "\t" $2 } }' | sort -nr | awk '{ s+=$1 ; print s "\t" $0 }' | less -M
+cat logs/20110213-022008.cerr logs/20110215-211535.cerr | grep "en_uploaded_file_path\|align_bisentence_count\|en_sentence_count_nondelimiter\|hu_sentence_count_nondelimiter\|Throwing away upload\|decideIfWorthIndexing" | awk '{ if ($4=="unaligned") { p="F" } else if ($4=="passed") { p="T" } else if ($1=="align_bisentence_count") { c=$2 } else if ($1=="en_uploaded_file_path") { print p "\t" c "\t" $2 } }' | grep "^T" | cut -f2- | sort -nr | head -1000 | cut -f2 > /tmp/biggestones
+ls /big3/Work/HunglishMondattar/datasources/hunglish1.nolaw/hunglish1.nolaw.uploadtable /big3/Work/HunglishMondattar/datasources/hunglish2/hunglish2.uploadtable /big3/Work/HunglishMondattar/datasources/hunglish1.justlaw/hunglish1.justlaw.uploadtable /big3/Work/HunglishMondattar/datasources/hunglish2.justlaw/hunglish2.justlaw.uploadtable | while read ut ; do cat $ut | awk 'BEGIN{ FS="\t" ; while (getline < "/tmp/biggestones" ) {m[$0]=1} }  ($6 in m)' > $ut.filtered ; done
+cat /big3/Work/HunglishMondattar/datasources/hunglish1.nolaw/hunglish1.nolaw.uploadtable.filtered /big3/Work/HunglishMondattar/datasources/hunglish2/hunglish2.uploadtable.filtered /big3/Work/HunglishMondattar/datasources/hunglish1.justlaw/hunglish1.justlaw.uploadtable.filtered /big3/Work/HunglishMondattar/datasources/hunglish2.justlaw/hunglish2.justlaw.uploadtable.filtered | python machine_upload.py hunglish sw6x2the hunglishwebapp
 
 HARNESS, HIBAKEZELES:
 
@@ -174,6 +192,10 @@ adatot (forditomemoria) is bele lehessen tolni.
 ADMIN:
 
 - mac:~/drafts/hunglish.install.rtf becsekkolasa.
+
+Ha a sudo me'g nem timeoutolt, akkor az eraseall.sh megkerdezi hogy are you
+fucking sure?, de a valaszt nem megvarva elkezdi a torlest. Egyebkent is,
+amit a webapp stop-pal meg start-tal csinal, az lehet, hogy felesleges.
 
 - Brutalis hibalehetoseg: az ujrainditas utan ugy latom nem tomcat6 userkent fut
 a service, hanem root-kent. Ez nem csak azert brutal, mert security hole, hanem
