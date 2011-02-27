@@ -33,8 +33,7 @@ Amikor ez mind lezajlott, akkor egy job queue tablan keresztul uzen a webappnak,
 ---
 Futasidok
 
-3m rekord, konkretan a ket irodalmi es az elso jogi.
-
+3m rekord, konkretan a ket irodalmi es az elso jogi:
 a ket irodalmi korpusz harness-elese : 5 ora 30 perc
 a jogi korpusz harness-elese : 13 ora
 duplumszures : 8 ora (a duplumok megtalalasa 8 perc, a tobbi az sql update)
@@ -48,8 +47,27 @@ az indexeles 20000-es kotegekbol all, egy koteg futasideje:
 
 Ezt most el is mentettem /big3/Work/HunglishMondattar/hunglish-webapp/src/main/python/lit12law1.sav ala.
 
+2.4m bisen, a negy korpusz uniojanak top 1000 dokumentumparja
+(abban merve, hogy hany bisen-t adnak az adatbazishoz.)
+220414 duplicates found in 2408103 new records.
+1000 jo nagy dokumentum harnesselese: 6 ora 30 perc
+duplumok megtalalasa: 6 perc
+nemduplumok bejegyzese: 3 ora 30 perc
+duplumok bejegyzese: 30 perc
+indexeles: 1 ora 15 perc
+(savegame: 15 perc)
+
+a whole.top1000.sav elkeszitesekor az indexeles mar 40000-es kotegekbol all, egy koteg futasideje:
+(a volt azt adja meg, hogy a regi verzio meddig csinalta ezt egy 20000-es (!) kotegen.)
+bisen-el lekerese:      10-15 sec (volt 15sec)
+indexeles:              20-24 sec (volt 20sec)
+indexreader addIndexes: 14-31 sec (volt 104sec)
+Indexing batch updates commited: 12-13 sec (volt 13sec)
+
 ---
 TODO
+
+- Highlight search results.
 
 - A timestamp fogalmat rosszul hasznaljuk. Egyes helyeken, mint bisen.indexed_timestamp kiirtando,
 mas helyeken, mint job_queue es upload, lecserelendo egy rendes datumra.
@@ -60,9 +78,8 @@ Gergo szedje ki ezt a hulye checket, Daniel utana mar kiszedheti
 a behazudast a machine_upload-bol.
 
 - Az adatbazissema sulyos hibaja, hogy ha megserul a lucene index, akkor nagyon nehez
-kimazsolazni, hogy melyik bisen-eket kell ujraepiteskor belerakni. Legyen egy state, ami ezt fejezi ki.
-
-- Highlight search results.
+kimazsolazni, hogy melyik bisen-eket kell ujraepiteskor belerakni. Legyen egy state, ami
+ezt fejezi ki.
 
 - Nem latom, hogy a fileUpload tenyleg lekezelne azt, amikor ma'r ismeri az authort,
 es csak az id-re kellene referenciat raknia.
@@ -94,6 +111,13 @@ http://maisonbisson.com/blog/post/12159/optimizing-insertsupdates-on-mysql-table
 , de ehhez eloszor ki kell gyujteni egy tablaba az update-elendoket, kulonben
 belezavarodik szegeny mysql.
 
+- Lehet, hogy le kellene valasztani a duplumszurest a control_harness-rol?
+
+- Egy lehetseges modell, hogy a duplumszures elott mar megtortenik
+az indexeles, es az aszinkron, kesleltetett duplumszures csak kitorli
+az indexbol azokat, akik fennakadnak rajta. Me'g ha nem is igy csinaljuk,
+gondoljuk vegig ugy, hogy kesobb ne legyen nehez igy csinalni.
+
 - Session management bug: HP Sat, Jan 22, 2011 at 2:35 AM levele.
 
 - Vegre kigondoltam, hogy hogyan nem lesz szerzoi jogi balhe abbol, hogy
@@ -105,6 +129,9 @@ Ha igen, akkor azt mondja, hogy "eroforras elavult".
 Ha nem, akkor egyetlen weboldalra kidumpolja a kerdeses alignment
 metaadatait, es a bisen-eket. (Ha nem fogadtuk el a doksit, akkor
 persze csak a metaadatokat.)
+
+- properties-bol allithato legyen, hogy idozitesre vagy fileUpload triggerre
+induljon el a pipeline.
 
 - Feltolteskor ha mar fut egy quartz job, akkor a quartz nem moge-schedule-olja
 az ujat, hanem bejelenti, hogy most nem tud inditani.
@@ -119,6 +146,17 @@ hogy mac-rol is tudjam a kozelen deployolni.
 a tomcat-et nehany tomcat:deploy utan.
 
 - A quartz finnyas arra, hogy honnan kell inditania a cronjobot.
+
+- Erdekes, ugy latszik nem csak a quartz-nak vannak problemai a threadek leolesevel:
+SEVERE: The web application [/hunglish] appears to have started a thread named [MySQL Statement Cancellation Timer] but has failed to stop it. This is very likely to create a memory leak.
+SEVERE: The web application [/hunglish] registered the JBDC driver [com.mysql.jdbc.Driver] but failed to unregister it when the web application was stopped. To prevent a memory leak, the JDBC Driver has been forcibly unregistered.
+Gergo azt mondja, hogy tudja mit kell ujracsinalni, hogy ez elmuljon.
+
+- Ezek optimalis beallitasok? (Ne feledjuk, hogy a jdbc turkalja a dolgot a hibernate alatt.)
+INFO  org.hibernate.cfg.SettingsFactory - Default batch fetch size: 1
+INFO  org.hibernate.cfg.SettingsFactory - JDBC batch size: 256
+INFO  org.hibernate.cfg.SettingsFactory - Query cache: disabled
+INFO  org.hibernate.cfg.SettingsFactory - Optimize cache for minimal puts: disabled
 
 - Ha nem akarok csak emiatt feltolteni egy kamu dokumentumpart, akkor nem tudom
 triggerelni a rendszeren belul a harness elinditasat. Jo, nem nagy gond,
@@ -161,7 +199,29 @@ cat logs/20110213-022008.cerr logs/20110215-211535.cerr | grep "en_uploaded_file
 ls /big3/Work/HunglishMondattar/datasources/hunglish1.nolaw/hunglish1.nolaw.uploadtable /big3/Work/HunglishMondattar/datasources/hunglish2/hunglish2.uploadtable /big3/Work/HunglishMondattar/datasources/hunglish1.justlaw/hunglish1.justlaw.uploadtable /big3/Work/HunglishMondattar/datasources/hunglish2.justlaw/hunglish2.justlaw.uploadtable | while read ut ; do cat $ut | awk 'BEGIN{ FS="\t" ; while (getline < "/tmp/biggestones" ) {m[$0]=1} }  ($6 in m)' > $ut.filtered ; done
 cat /big3/Work/HunglishMondattar/datasources/hunglish1.nolaw/hunglish1.nolaw.uploadtable.filtered /big3/Work/HunglishMondattar/datasources/hunglish2/hunglish2.uploadtable.filtered /big3/Work/HunglishMondattar/datasources/hunglish1.justlaw/hunglish1.justlaw.uploadtable.filtered /big3/Work/HunglishMondattar/datasources/hunglish2.justlaw/hunglish2.justlaw.uploadtable.filtered | python machine_upload.py hunglish sw6x2the hunglishwebapp
 
+- Talan be kellene kapcsolni a Hibernate cache-t, ami magukat a weboldalakat tarolja
+par masodpercig. Csak akkor erdekes, ha kikerul a webre egy rank mutato link, es
+szazak kattintanak ra.
+
+- A vegleges release-nel at kell majd irni a jelszavakat, ne lehessen az svn-bol kiszedni.
+
+
 HARNESS, HIBAKEZELES:
+
+- Meglepetes ennyi ev utan: a huntoken html entitasokka
+kodolja azokat, akik nincsenek benne a latin2 tablaban.
+Me'g egyszer, lassabban: a hu.sen.one.sh kimenete latin2 kodolasu,
+html entitasokkal augmentalt szoveg. Szerencsere me'g ezeken
+sem all teljesen fejre a hunalign, es aztan a frontend ma'r szepen
+megjeleniti oket. Mindenesetre nem lenne szep kidobalni minosegszureskor
+az entitasokat tartalmazo mondatokat, mert van beloluk vagy 220,000.
+Pelda olyanra, amit tele van ezzel:
+datasources/hunglish2/en/hemingway-across_the_river_and_into_the_trees.txt 
+, aminek az az oka, hogy rosszul lettek ocr-ezve az aposztrofok.
+Ha majd utf8 lesz a pipeline, azt valoszinuleg nem eli tul a huntoken.
+
+- Meg kellene patch-elni a hunalign-t, hogy az entitasokat egy karakternek
+szamolja.
 
 - A barom html2text meghagyja utf8-nak a tenylegesen utf8 szoveget,
 viszont a html entitasokat lelkesen atkonvertalja latin-1-re. Az
@@ -169,10 +229,6 @@ eredmeny a jogi szovegek eseteben egy olyan keverek, ahol a fejlec
 latin-1, a test utf8. A CELEX-nel me'g be lehetne drotozni, hogy utf8
 es kesz, de a nagyvilagban persze vannak latin-2 html-ek.
 UPDATE: A CELEX-re kezzel megcsinaltam egy elo-konverziot latin2-re.
-
-- A control_harness legalabb a fontosabb fordulopontokon jegyezze fel
-a datumot. Az kulonosen bosszanto, hogy nem tudom mikor kezdte el
-a duplumszures harom munkafazisat.
 
 - Tul szigoru a minosegszures, rettenetes mennyisegu hunglish1.nolaw
 anyag bukott meg rajta. Beloni pontosabban.
@@ -187,6 +243,9 @@ a regi hunglish.
 
 - Kicsit hianyzik a pipeline-bol, hogy parhuzamositott mondatraszegmentalt
 adatot (forditomemoria) is bele lehessen tolni.
+
+harness.py ne irja ki azokat az alkonyvarakat, ahol nem csinal semmit.
+harness.py ne irjon a cout-ra.
 
 
 ADMIN:
@@ -225,6 +284,8 @@ hogy irt mar par fajlt a harness.data-ba, majd felulirja oket sajat magukkal.
 
 
 FUTURE FEJLESZTESI IGENYEK:
+
+- Beuzemelni valami elborult, egybajtosan nem kodolhato nyelvparra.
 
 - Autocomplete az author-ra. Ha ez van, akkor nem is kell dropdown menu.
 
@@ -268,6 +329,13 @@ reszehez.
 
 
 LEZART DOLGOK:
+
+DONE - legyen logs/ alatt egy harness/ konyvtar, es az individualis harness futasok
+inkabb oda keruljenek, hogy konnyebb legyen megtalalni a control_harness logokat.
+
+DONE - A control_harness legalabb a fontosabb fordulopontokon jegyezze fel
+a datumot. Az kulonosen bosszanto, hogy nem tudom mikor kezdte el
+a duplumszures harom munkafazisat.
 
 NOTDONE - egy biztonsagi mentest kellene csinalni az indexrol, mielott meghivjuk az indexert.
 

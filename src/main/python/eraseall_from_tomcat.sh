@@ -11,6 +11,9 @@ mkdir fileUpload
 
 rm -rf logs
 mkdir logs
+mkdir logs/harness
+mkdir logs/cout
+mkdir logs/harness/cout
 
 rm -rf harness.data
 mkdir harness.data
