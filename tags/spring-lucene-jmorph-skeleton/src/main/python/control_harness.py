@@ -9,7 +9,8 @@ from base import *
 
 g_harnessDataDirectory = ""
 g_harnessAppDir = "/big3/Work/HunglishMondattar/tcg/harness"
-g_logPrefix = None
+g_logDir = None
+g_logDate = None
 
 def moveFileToHarness(rawPath,lang,ext,id) :
     global g_harnessDataDirectory
@@ -71,7 +72,8 @@ def decideIfWorthIndexing(metadata) :
 def runHarness(metadata) :
     global g_harnessAppDir
     global g_harnessDataDirectory
-    global g_logPrefix
+    global g_logDir
+    global g_logDate
     catalogFile = g_harnessDataDirectory+"/catalog.tmp"
     
     id = metadata['id']
@@ -85,8 +87,9 @@ def runHarness(metadata) :
     command += "--commands=%s/hunglishcommands.txt " % g_harnessAppDir
     command += "--root=%s --catalog=%s" % ( g_harnessDataDirectory, catalogFile )
 
-    if g_logPrefix :
-	command += " > %s.%s.cout 2> %s.%s.cerr" % (g_logPrefix,id,g_logPrefix,id)
+    if g_logDir :
+	command += " > %s/cout/%s.%s.cout" % (g_logDir,g_logDate,id)
+	command += " 2> %s/%s.%s.cerr" % (g_logDir,g_logDate,id)
 
     doIt = True
     if doIt :
@@ -422,19 +425,28 @@ def indexThemLucene(db) :
 
 def main():
     global g_harnessDataDirectory
-    global g_logPrefix
+    global g_logDir
+    global g_logDate
     
-    if len(sys.argv) not in (5,6) :
-        logg("Usage: control_harness.py username passwd db harnessDataDir [logprefix]")
+    if len(sys.argv) not in (5,7) :
+        logg("Usage: control_harness.py username passwd db harnessDataDir [ logDir logDate ]")
+	logg("If you omit the last two arguments, harness instances will log the stdout/stderr.")
+	logg("If you provide them, they will log to:")
+	logg(" > logDir/cout/logDate.uploadId.cout 2> logDir/logDate.uploadId.cerr")
+	logg("NOTE: logDir will normally be deployment/logs/harness, NOT deployment/logs .")
         sys.exit(-1)
 
     username = sys.argv[1]
     password = sys.argv[2]
     database = sys.argv[3]
     g_harnessDataDirectory = sys.argv[4]
-    if len(sys.argv)==6 :
-	g_logPrefix = sys.argv[5]
-    
+    if len(sys.argv)==7 :
+    	g_logDir = sys.argv[5]
+	g_logDate = sys.argv[6]
+	# Jobb ketszer mint soha.
+	mkdir(g_logDir)
+	mkdir(g_logDir+"/cout")
+	
     db = MySQLdb.connect( host="localhost",
 	user=username, passwd=password, db=database )
     db.set_character_set("utf8")
