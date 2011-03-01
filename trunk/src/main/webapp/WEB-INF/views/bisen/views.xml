@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 2.1//EN" "http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
+<tiles-definitions>
+    <definition extends="default" name="bisen/list">
+        <put-attribute name="body" value="/WEB-INF/views/bisen/list.jspx"/>
+    </definition>
+    <definition extends="default" name="bisen/show">
+        <put-attribute name="body" value="/WEB-INF/views/bisen/show.jspx"/>
+    </definition>
+    <!-- <definition extends="default" name="bisen/create">
+        <put-attribute name="body" value="/WEB-INF/views/bisen/create.jspx"/>
+    </definition> -->
+    <!-- <definition extends="default" name="bisen/update">
+        <put-attribute name="body" value="/WEB-INF/views/bisen/update.jspx"/>
+    </definition> -->
+</tiles-definitions>

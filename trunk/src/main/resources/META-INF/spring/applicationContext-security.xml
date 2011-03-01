@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+    xmlns:beans="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+                        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.xsd">
+
+	<!-- HTTP security configurations -->
+    <http auto-config="true" use-expressions="true">
+    	<form-login login-processing-url="/static/j_spring_security_check" login-page="/login" authentication-failure-url="/login?login_error=t"/>
+        <logout logout-url="/static/j_spring_security_logout"/>
+        
+        <!-- Configure these elements to secure URIs in your application -->
+<!--         
+        <intercept-url pattern="/choice/**" access="hasRole('ROLE_ADMIN')"/>
+        <intercept-url pattern="/indexer/**" access="hasRole('ROLE_ADMIN')"/>
+        <intercept-url pattern="/member/**" access="isAuthenticated()" />
+        
+        <intercept-url pattern="/bisen/**" access="isAuthenticated()" />
+        <intercept-url pattern="/author/**" access="isAuthenticated()" />
+        <intercept-url pattern="/doc/**" access="isAuthenticated()" />
+        <intercept-url pattern="/genre/**" access="isAuthenticated()" />
+ -->        
+        <!--intercept-url pattern="/upload/**" access="isAuthenticated()" /-->
+
+        
+        <intercept-url pattern="/resources/**" access="permitAll" />
+        <intercept-url pattern="/indexer/**" access="isAuthenticated()" />
+        <intercept-url pattern="/search/**" access="permitAll" />
+        <intercept-url pattern="/static/**" access="permitAll" />
+        <intercept-url pattern="/login" access="permitAll" />
+        <intercept-url pattern="/**" access="permitAll" />
+    </http>
+
+	<!-- Configure Authentication mechanism -->
+    <authentication-manager alias="authenticationManager">
+    	<!-- SHA-256 values can be produced using 'echo -n your_desired_password | sha256sum' (using normal *nix environments) -->
+    	<authentication-provider>
+	    	<password-encoder hash="sha-256"/>
+	        <user-service>
+	        	<!-- mokka -->
+	            <user name="admin" password="dc26689c7902e7ca8943a02d4993e654fa16e4af994326f569b8cd6e31254e9c" authorities="ROLE_ADMIN"/>
+		        
+		        <!-- mokk -->
+		        <user name="user" password="e514fd37d1da17be3d763f4d5ac2d49f82d997a224bc5e7c31cf584ac8e9b689" authorities="ROLE_USER"/>
+		        
+		    </user-service>
+    	</authentication-provider>
+	</authentication-manager>
+
+</beans:beans>

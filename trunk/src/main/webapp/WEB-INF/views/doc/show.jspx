@@ -1,0 +1,70 @@
+<div xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:fmt="http://java.sun.com/jsp/jstl/fmt" xmlns:form="http://www.springframework.org/tags/form" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:spring="http://www.springframework.org/tags" version="2.0">
+    <jsp:output omit-xml-declaration="yes"/>
+    <script type="text/javascript">dojo.require('dijit.TitlePane');</script>
+    <div id="_title_div">
+        <spring:message code="label.doc" var="entity_label"/>
+        <spring:message arguments="${entity_label}" code="entity.show" var="title_msg"/>
+        <script type="text/javascript">Spring.addDecoration(new Spring.ElementDecoration({elementId : '_title_div', widgetType : 'dijit.TitlePane', widgetAttrs : {title: '${title_msg}'}})); </script>
+        <c:if test="${not empty doc}">
+            <div id="roo_doc_oldDocid">
+                <label for="_oldDocid_id">Old Docid:</label>
+                <div class="box" id="_oldDocid_id">
+                    <c:out value="${doc.oldDocid}"/>
+                </div>
+            </div>
+            <br/>
+            <div id="roo_doc_genre">
+                <label for="_genre_id">Genre:</label>
+                <div class="box" id="_genre_id">
+                    <c:out value="${doc.genre}"/>
+                </div>
+            </div>
+            <br/>
+            <div id="roo_doc_author">
+                <label for="_author_id">Author:</label>
+                <div class="box" id="_author_id">
+                    <c:out value="${doc.author}"/>
+                </div>
+            </div>
+            <br/>
+            <div id="roo_doc_upload">
+                <label for="_upload_id">Upload:</label>
+                <div class="box" id="_upload_id">
+                    <c:out value="${doc.upload}"/>
+                </div>
+            </div>
+            <br/>
+            <div id="roo_doc_enTitle">
+                <label for="_enTitle_id">En Title:</label>
+                <div class="box" id="_enTitle_id">
+                    <c:out value="${doc.enTitle}"/>
+                </div>
+            </div>
+            <br/>
+            <div id="roo_doc_huTitle">
+                <label for="_huTitle_id">Hu Title:</label>
+                <div class="box" id="_huTitle_id">
+                    <c:out value="${doc.huTitle}"/>
+                </div>
+            </div>
+            <br/>
+            <div id="roo_doc_isOpenContent">
+                <label for="_isOpenContent_id">Is Open Content:</label>
+                <div class="box" id="_isOpenContent_id">
+                    <c:out value="${doc.isOpenContent}"/>
+                </div>
+            </div>
+            <br/>
+            <div id="roo_doc_alignedFilePath">
+                <label for="_alignedFilePath_id">Aligned File Path:</label>
+                <div class="box" id="_alignedFilePath_id">
+                    <c:out value="${doc.alignedFilePath}"/>
+                </div>
+            </div>
+            <br/>
+        </c:if>
+        <c:if test="${empty doc}">
+            <spring:message arguments="${entity_label}" code="entity.not.found.single"/>
+        </c:if>
+    </div>
+</div>

@@ -1,0 +1,16 @@
+adott
+megöl
+megöl
+megöl -ember
+emberét megölte
+emberét.megölte
+ember.megöl
+ember megöl
+"emberét megölte"
+<emberét.megölte>
+kisebb
+<kisebb>
+"kisebb"
+gyémántjaim
+gyémánt
+Kisebb
