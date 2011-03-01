@@ -23,7 +23,7 @@ public class LemmatizerWrapper {
 		lemmatizer = lemmatizer_;
 		returnOOVOrig = returnOOVOrig_;
 		returnOrig = returnOrig_;
-		returnPOS_ = returnPOS_;
+		returnPOS = returnPOS_;
 	}
 
 	public List<String> lemmatize( String word ) {
