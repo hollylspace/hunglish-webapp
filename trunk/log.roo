@@ -1,0 +1,247 @@
+// Spring Roo 1.0.2.RELEASE [rev 638] log opened at 2010-03-09 17:20:51
+quit
+// Spring Roo 1.0.2.RELEASE [rev 638] log closed at 2010-03-09 17:20:52
+// Spring Roo 1.0.2.RELEASE [rev 638] log opened at 2010-03-10 23:01:47
+project --topLevelPackage hu.mokk.hunglish
+persistence setup --provider HIBERNATE --database MYSQL
+database properties set --key database.url --value jdbc:mysql://localhost:3306/hunglishwebapp
+database properties set --key database.username --value root
+database properties set --key database.password --value password
+entity --class ~.domain.Author --testAutomatically
+field string --notNull --fieldName name --sizeMax 255
+field string --fieldName description --sizeMax 255
+entity --class ~.domain.Genre --testAutomatically
+field string --notNull --fieldName name --sizeMax 255
+field string --fieldName description --sizeMax 255
+entity --class ~.domain.Doc --testAutomatically
+field string --fieldName oldDocid --sizeMax 255
+field reference --notNull --fieldName genre --type ~.domain.Genre
+field reference --notNull --fieldName author --type ~.domain.Author
+field string --notNull --fieldName enTitle --sizeMax 255
+field string --fieldName huTitle --sizeMax 255
+field boolean --fieldName isOpenContent
+field string --fieldName huRawFilePath --sizeMax 255
+field string --fieldName enRawFilePath --sizeMax 255
+field string --notNull --fieldName alignedFilePath --sizeMax 255
+entity --class ~.domain.Upload --testAutomatically
+field reference --notNull --fieldName genre --type ~.domain.Genre
+field reference --notNull --fieldName author --type ~.domain.Author
+field string --notNull --fieldName enTitle --sizeMax 255
+field string --fieldName huTitle --sizeMax 255
+field boolean --fieldName isProcessed
+field boolean --fieldName isApproved
+field string --fieldName huFilePath --sizeMax 255
+field string --fieldName enFilePath --sizeMax 255
+field string --fieldName huSentence --sizeMax 4000
+field string --fieldName enSentence --sizeMax 4000
+entity --class ~.domain.Bisen --testAutomatically
+field reference --notNull --fieldName doc --type ~.domain.Doc
+field boolean --notNull --fieldName isIndexed
+// [failed] script hunglishwebapp.roo
+quit
+// Spring Roo 1.0.2.RELEASE [rev 638] log closed at 2010-03-10 23:04:14
+// Spring Roo 1.0.2.RELEASE [rev 638] log opened at 2010-03-10 23:04:32
+project --topLevelPackage hu.mokk.hunglish
+persistence setup --provider HIBERNATE --database MYSQL
+database properties set --key database.url --value jdbc:mysql://localhost:3306/hunglishwebapp
+database properties set --key database.username --value root
+database properties set --key database.password --value password
+entity --class ~.domain.Author --testAutomatically
+field string --notNull --fieldName name --sizeMax 255
+field string --fieldName description --sizeMax 255
+entity --class ~.domain.Genre --testAutomatically
+field string --notNull --fieldName name --sizeMax 255
+field string --fieldName description --sizeMax 255
+entity --class ~.domain.Doc --testAutomatically
+field string --fieldName oldDocid --sizeMax 255
+field reference --notNull --fieldName genre --type ~.domain.Genre
+field reference --notNull --fieldName author --type ~.domain.Author
+field string --notNull --fieldName enTitle --sizeMax 255
+field string --fieldName huTitle --sizeMax 255
+field boolean --fieldName isOpenContent
+field string --fieldName huRawFilePath --sizeMax 255
+field string --fieldName enRawFilePath --sizeMax 255
+field string --notNull --fieldName alignedFilePath --sizeMax 255
+entity --class ~.domain.Upload --testAutomatically
+field reference --notNull --fieldName genre --type ~.domain.Genre
+field reference --notNull --fieldName author --type ~.domain.Author
+field string --notNull --fieldName enTitle --sizeMax 255
+field string --fieldName huTitle --sizeMax 255
+field boolean --fieldName isProcessed
+field boolean --fieldName isApproved
+field string --fieldName huFilePath --sizeMax 255
+field string --fieldName enFilePath --sizeMax 255
+field string --fieldName huSentence --sizeMax 4000
+field string --fieldName enSentence --sizeMax 4000
+entity --class ~.domain.Bisen --testAutomatically
+field reference --notNull --fieldName doc --type ~.domain.Doc
+field boolean --notNull --fieldName isIndexed
+field number --fieldName lineNumber --type Integer
+field number --fieldName upvotes --type Long
+field number --fieldName downvotes --type Long
+field string --fieldName huSentence --sizeMax 4000
+field string --fieldName enSentence --sizeMax 4000
+finder list --class ~.domain.Doc
+finder list --class ~.domain.Author
+finder list --class ~.domain.Genre
+finder list --class ~.domain.Upload
+finder list --class ~.domain.Bisen
+// [failed] finder add --finderName findBisenByDocAndLineNumber --class ~.domain.Bisen
+// [failed] script hunglishwebapp.roo
+quit
+// Spring Roo 1.0.2.RELEASE [rev 638] log closed at 2010-03-10 23:05:37
+// Spring Roo 1.0.2.RELEASE [rev 638] log opened at 2010-03-10 23:06:27
+project --topLevelPackage hu.mokk.hunglish
+persistence setup --provider HIBERNATE --database MYSQL
+database properties set --key database.url --value jdbc:mysql://localhost:3306/hunglishwebapp
+database properties set --key database.username --value root
+database properties set --key database.password --value password
+entity --class ~.domain.Author --testAutomatically
+field string --notNull --fieldName name --sizeMax 255
+field string --fieldName description --sizeMax 255
+entity --class ~.domain.Genre --testAutomatically
+field string --notNull --fieldName name --sizeMax 255
+field string --fieldName description --sizeMax 255
+entity --class ~.domain.Doc --testAutomatically
+field string --fieldName oldDocid --sizeMax 255
+field reference --notNull --fieldName genre --type ~.domain.Genre
+field reference --notNull --fieldName author --type ~.domain.Author
+field string --notNull --fieldName enTitle --sizeMax 255
+field string --fieldName huTitle --sizeMax 255
+field boolean --fieldName isOpenContent
+field string --fieldName huRawFilePath --sizeMax 255
+field string --fieldName enRawFilePath --sizeMax 255
+field string --notNull --fieldName alignedFilePath --sizeMax 255
+entity --class ~.domain.Upload --testAutomatically
+field reference --notNull --fieldName genre --type ~.domain.Genre
+field reference --notNull --fieldName author --type ~.domain.Author
+field string --notNull --fieldName enTitle --sizeMax 255
+field string --fieldName huTitle --sizeMax 255
+field boolean --fieldName isProcessed
+field boolean --fieldName isApproved
+field string --fieldName huFilePath --sizeMax 255
+field string --fieldName enFilePath --sizeMax 255
+field string --fieldName huSentence --sizeMax 4000
+field string --fieldName enSentence --sizeMax 4000
+entity --class ~.domain.Bisen --testAutomatically
+field reference --notNull --fieldName doc --type ~.domain.Doc
+field boolean --notNull --fieldName isIndexed
+field number --fieldName lineNumber --type Integer
+field number --fieldName upvotes --type Long
+field number --fieldName downvotes --type Long
+field string --fieldName huSentence --sizeMax 4000
+field string --fieldName enSentence --sizeMax 4000
+finder list --class ~.domain.Doc
+finder list --class ~.domain.Author
+finder list --class ~.domain.Genre
+finder list --class ~.domain.Upload
+finder list --class ~.domain.Bisen
+// [failed] finder add --finderName findBisenByDoc --class ~.domain.Bisen
+// [failed] script hunglishwebapp.roo
+quit
+// Spring Roo 1.0.2.RELEASE [rev 638] log closed at 2010-03-10 23:07:16
+// Spring Roo 1.0.2.RELEASE [rev 638] log opened at 2010-03-10 23:07:29
+project --topLevelPackage hu.mokk.hunglish
+persistence setup --provider HIBERNATE --database MYSQL
+database properties set --key database.url --value jdbc:mysql://localhost:3306/hunglishwebapp
+database properties set --key database.username --value root
+database properties set --key database.password --value password
+entity --class ~.domain.Author --testAutomatically
+field string --notNull --fieldName name --sizeMax 255
+field string --fieldName description --sizeMax 255
+entity --class ~.domain.Genre --testAutomatically
+field string --notNull --fieldName name --sizeMax 255
+field string --fieldName description --sizeMax 255
+entity --class ~.domain.Doc --testAutomatically
+field string --fieldName oldDocid --sizeMax 255
+field reference --notNull --fieldName genre --type ~.domain.Genre
+field reference --notNull --fieldName author --type ~.domain.Author
+field string --notNull --fieldName enTitle --sizeMax 255
+field string --fieldName huTitle --sizeMax 255
+field boolean --fieldName isOpenContent
+field string --fieldName huRawFilePath --sizeMax 255
+field string --fieldName enRawFilePath --sizeMax 255
+field string --notNull --fieldName alignedFilePath --sizeMax 255
+entity --class ~.domain.Upload --testAutomatically
+field reference --notNull --fieldName genre --type ~.domain.Genre
+field reference --notNull --fieldName author --type ~.domain.Author
+field string --notNull --fieldName enTitle --sizeMax 255
+field string --fieldName huTitle --sizeMax 255
+field boolean --fieldName isProcessed
+field boolean --fieldName isApproved
+field string --fieldName huFilePath --sizeMax 255
+field string --fieldName enFilePath --sizeMax 255
+field string --fieldName huSentence --sizeMax 4000
+field string --fieldName enSentence --sizeMax 4000
+entity --class ~.domain.Bisen --testAutomatically
+field reference --notNull --fieldName doc --type ~.domain.Doc
+field boolean --notNull --fieldName isIndexed
+field number --fieldName lineNumber --type Integer
+field number --fieldName upvotes --type Long
+field number --fieldName downvotes --type Long
+field string --fieldName huSentence --sizeMax 4000
+field string --fieldName enSentence --sizeMax 4000
+finder list --class ~.domain.Doc
+finder list --class ~.domain.Author
+finder list --class ~.domain.Genre
+finder list --class ~.domain.Upload
+finder list --class ~.domain.Bisen
+controller all --package ~.web
+logging setup --level DEBUG
+security setup
+// script hunglishwebapp.roo
+quit
+// Spring Roo 1.0.2.RELEASE [rev 638] log closed at 2010-03-10 23:10:32
+// Spring Roo 1.0.2.RELEASE [rev 638] log opened at 2010-03-10 23:10:44
+project --topLevelPackage hu.mokk.hunglish
+persistence setup --provider HIBERNATE --database MYSQL
+database properties set --key database.url --value jdbc:mysql://localhost:3306/hunglishwebapp
+database properties set --key database.username --value root
+database properties set --key database.password --value password
+entity --class ~.domain.Author --testAutomatically
+field string --notNull --fieldName name --sizeMax 255
+field string --fieldName description --sizeMax 255
+entity --class ~.domain.Genre --testAutomatically
+field string --notNull --fieldName name --sizeMax 255
+field string --fieldName description --sizeMax 255
+entity --class ~.domain.Doc --testAutomatically
+field string --fieldName oldDocid --sizeMax 255
+field reference --notNull --fieldName genre --type ~.domain.Genre
+field reference --notNull --fieldName author --type ~.domain.Author
+field string --notNull --fieldName enTitle --sizeMax 255
+field string --fieldName huTitle --sizeMax 255
+field boolean --fieldName isOpenContent
+field string --fieldName huRawFilePath --sizeMax 255
+field string --fieldName enRawFilePath --sizeMax 255
+field string --notNull --fieldName alignedFilePath --sizeMax 255
+entity --class ~.domain.Upload --testAutomatically
+field reference --notNull --fieldName genre --type ~.domain.Genre
+field reference --notNull --fieldName author --type ~.domain.Author
+field string --notNull --fieldName enTitle --sizeMax 255
+field string --fieldName huTitle --sizeMax 255
+field boolean --fieldName isProcessed
+field boolean --fieldName isApproved
+field string --fieldName huFilePath --sizeMax 255
+field string --fieldName enFilePath --sizeMax 255
+field string --fieldName huSentence --sizeMax 4000
+field string --fieldName enSentence --sizeMax 4000
+entity --class ~.domain.Bisen --testAutomatically
+field reference --notNull --fieldName doc --type ~.domain.Doc
+field boolean --notNull --fieldName isIndexed
+field number --fieldName lineNumber --type java.lang.Integer
+field number --fieldName upvotes --type java.lang.Long
+field number --fieldName downvotes --type java.lang.Long
+field string --fieldName huSentence --sizeMax 4000
+field string --fieldName enSentence --sizeMax 4000
+finder list --class ~.domain.Doc --filter enTitle,equ
+finder list --class ~.domain.Author --filter name,equ
+finder list --class ~.domain.Genre --filter name,equ
+finder list --class ~.domain.Upload
+finder list --class ~.domain.Bisen
+controller all --package ~.web
+logging setup --level DEBUG
+security setup
+// script hunglishwebapp.roo
+perform eclipse 
+quit
+// Spring Roo 1.0.2.RELEASE [rev 638] log closed at 2010-03-11 00:29:18
