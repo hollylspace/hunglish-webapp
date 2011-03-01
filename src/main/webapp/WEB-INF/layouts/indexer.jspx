@@ -1,0 +1,38 @@
+<html 
+ 	xmlns:jsp="http://java.sun.com/JSP/Page"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:tiles="http://tiles.apache.org/tags-tiles"
+	xmlns:form="http://www.springframework.org/tags/form"
+	xmlns:spring="http://www.springframework.org/tags"
+	xmlns:roo="urn:jsptagdir:/WEB-INF/tags" >  
+	
+	<jsp:directive.page contentType="text/html;charset=UTF-8" />  
+		
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=8" />		
+		<spring:theme code="styleSheet" var="roo_css"/>	
+		<spring:url value="/${roo_css}" var="roo_css_url"/>
+		<spring:url value="/resources/dijit/themes/tundra/tundra.css" var="tundra_url"/>
+		
+		<spring:url value="/static/images/favicon.ico" var="favicon" />
+		
+		<link rel="stylesheet" type="text/css" media="screen" href="${roo_css_url}"><!-- //required for FF3 and Opera --></link>
+		<link rel="stylesheet" type="text/css" href="${tundra_url}"><!-- //required for FF3 and Opera --></link>	
+		<link rel="SHORTCUT ICON" href="${favicon}" />
+		
+		<title>Hunglish Search</title>
+	</head>
+   	<body class="tundra spring">
+   		<div id="wrapper">
+
+	    	<div id="main">
+	    		<!-- <tiles:insertAttribute name="body" /> -->
+		        <form method="GET">
+		        	<input type="text" value="" name="magic"/>
+					<input type="submit" value="Start indexer"/>         
+		        </form>
+			</div>
+		</div>
+	</body>
+</html>

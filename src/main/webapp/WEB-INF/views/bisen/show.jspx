@@ -1,0 +1,88 @@
+<div xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:fmt="http://java.sun.com/jsp/jstl/fmt" xmlns:form="http://www.springframework.org/tags/form" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:spring="http://www.springframework.org/tags" version="2.0">
+    <jsp:output omit-xml-declaration="yes"/>
+    <script type="text/javascript">dojo.require('dijit.TitlePane');</script>
+    <div id="_title_div">
+        <spring:message code="label.bisen" var="entity_label"/>
+        <spring:message arguments="${entity_label}" code="entity.show" var="title_msg"/>
+        <script type="text/javascript">Spring.addDecoration(new Spring.ElementDecoration({elementId : '_title_div', widgetType : 'dijit.TitlePane', widgetAttrs : {title: '${title_msg}'}})); </script>
+        <c:if test="${not empty bisen}">
+            <div id="roo_bisen_doc">
+                <label for="_doc_id">Doc:</label>
+                <div class="box" id="_doc_id">
+                    <c:out value="${bisen.doc}"/>
+                </div>
+            </div>
+            <br/>
+
+            <br/>
+            <div id="roo_bisen_lineNumber">
+                <label for="_lineNumber_id">Line Number:</label>
+                <div class="box" id="_lineNumber_id">
+                    <c:out value="${bisen.lineNumber}"/>
+                </div>
+            </div>
+            <br/>
+            <div id="roo_bisen_upvotes">
+                <label for="_upvotes_id">Upvotes:</label>
+                <div class="box" id="_upvotes_id">
+                    <c:out value="${bisen.upvotes}"/>
+                </div>
+            </div>
+            <br/>
+            <div id="roo_bisen_downvotes">
+                <label for="_downvotes_id">Downvotes:</label>
+                <div class="box" id="_downvotes_id">
+                    <c:out value="${bisen.downvotes}"/>
+                </div>
+            </div>
+            <br/>
+
+            <div id="roo_bisen_state">
+                <label for="_state">State (N nothing to do, D duplicate filter to do, I to be added to index, R to be reindexed, E to be ereased from index, O nothing to do but there was an error):</label>
+                <div class="box" id="_state">
+                    <c:out value="${bisen.state}"/>
+                </div>
+            </div>
+
+            <div id="roo_bisen_huSentence">
+                <label for="_huSentence_id">Hu Sentence:</label>
+                <div class="box" id="_huSentence_id">
+                    <c:out value="${bisen.huSentence}"/>
+                </div>
+            </div>
+            <br/>
+            <div id="roo_bisen_enSentence">
+                <label for="_enSentence_id">En Sentence:</label>
+                <div class="box" id="_enSentence_id">
+                    <c:out value="${bisen.enSentence}"/>
+                </div>
+            </div>
+            <br/>
+            <div id="roo_bisen_enSentenceHash">
+                <label for="_enSentenceHash_id">En hash:</label>
+                <div class="box" id="_enSentenceHash_id">
+                    <c:out value="${bisen.enSentenceHash}"/>
+                </div>
+            </div>
+            <br/>
+            <div id="roo_bisen_huSentenceHash">
+                <label for="_huSentenceHash_id">Hu hash:</label>
+                <div class="box" id="_huSentenceHash_id">
+                    <c:out value="${bisen.huSentenceHash}"/>
+                </div>
+            </div>
+            <br/>
+            <div id="roo_bisen_isDuplicate">
+                <label for="_isDuplicate_id">Is Duplicate:</label>
+                <div class="box" id="_isDuplicate_id">
+                    <c:out value="${bisen.isDuplicate}"/>
+                </div>
+            </div>
+            <br/>
+            
+        </c:if>
+        <c:if test="${empty bisen}">
+            <spring:message arguments="${entity_label}" code="entity.not.found.single"/>
+        </c:if>
+    </div>
+</div>
