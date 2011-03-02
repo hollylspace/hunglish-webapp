@@ -141,6 +141,10 @@
 		<property name="analyzerProvider" ref="analyzerProvider" />
 	</bean>
 
+	<bean id="bisenController" class="hu.mokk.hunglish.web.BisenController">
+		<property name="maxResultSetSize" value="${bisen.maxResultSetSize}"	/>
+	</bean>
+
 	<!-- http://code.google.com/p/hunglish-webapp/issues/detail?id=43 -->
 	<!-- scheduling -->
 
