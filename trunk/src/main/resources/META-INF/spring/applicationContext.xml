@@ -2,8 +2,13 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd   http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd   http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd   http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.0.xsd   http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.0.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
 	<!-- This will automatically locate any and all property files you have 
 		within your classpath, provided they fall under the META-INF/spring directory. 
@@ -59,7 +64,6 @@
 		<property name="minEvictableIdleTimeMillis" value="1800000" />
 		<property name="timeBetweenEvictionRunsMillis" value="1800000" />
 		<property name="numTestsPerEvictionRun" value="3" />
-		<!-- test the connection while its idle, before borrow and return it -->
 		<property name="testOnBorrow" value="true" />
 		<property name="testWhileIdle" value="true" />
 		<property name="testOnReturn" value="true" />
@@ -113,11 +117,9 @@
 		<property name="uploadDir" value="${indexer.uploadDir}" />
 		<property name="uploadJobPath" value="${uploadjob.path}" />
 		<!-- besides JPA/Hibernate, indexer also uses pure JDBC, for updating bisen 
-			table -->
-		<property name="dbUrl" value="${database.url}" />
-		<property name="dbDriver" value="${database.driverClassName}" />
-		<property name="dbUser" value="${database.username}" />
-		<property name="dbPassword" value="${database.password}" />
+			table <property name="dbUrl" value="${database.url}" /> <property name="dbDriver" 
+			value="${database.driverClassName}" /> <property name="dbUser" value="${database.username}" 
+			/> <property name="dbPassword" value="${database.password}" /> -->
 		<property name="dbBatchSize" value="${indexer.dbBatchSize}" />
 
 	</bean>
@@ -138,5 +140,16 @@
 		id="queryParser">
 		<property name="analyzerProvider" ref="analyzerProvider" />
 	</bean>
+
+	<!-- http://code.google.com/p/hunglish-webapp/issues/detail?id=43 -->
+	<!-- scheduling -->
+
+	<bean id="uploadController" class="hu.mokk.hunglish.web.UploadController" />
+
+	<task:scheduler id="scheduler" pool-size="1" />
+	<task:scheduled-tasks scheduler="scheduler">
+		<task:scheduled ref="uploadController" method="startUploadJob"
+			cron="${uploadjob.cronexpression}" />
+	</task:scheduled-tasks>
 
 </beans>
