@@ -67,9 +67,15 @@ Indexing batch updates commited: 12-13 sec (volt 13sec)
 ---
 TODO
 
-- Highlight search results.
+- Az oldal cime mindig Welcome to Hunglish.
 
-- A timestamp fogalmat rosszul hasznaljuk. Egyes helyeken, mint bisen.indexed_timestamp kiirtando,
+- A nemregisztralt felhasznalok soha ne lassak a dokumentumok cimet. Copyright.
+
+- A fileUpload ne engedje meg, hogy a menubol is es a textboxbol is megadjunk authort.
+
+- (Issue 13) Highlight search results.
+
+- (Issue 41) A timestamp fogalmat rosszul hasznaljuk. Egyes helyeken, mint bisen.indexed_timestamp kiirtando,
 mas helyeken, mint job_queue es upload, lecserelendo egy rendes datumra.
 Ez is emiatt van:
 - Az alkalmazas nem tudja a recordbol letrehozni az upload objektumot,
@@ -77,17 +83,10 @@ ha nem hazudok be egy kitoltott harnessed_timestamp mezot.
 Gergo szedje ki ezt a hulye checket, Daniel utana mar kiszedheti
 a behazudast a machine_upload-bol.
 
-- Az adatbazissema sulyos hibaja, hogy ha megserul a lucene index, akkor nagyon nehez
-kimazsolazni, hogy melyik bisen-eket kell ujraepiteskor belerakni. Legyen egy state, ami
-ezt fejezi ki.
+- (Issue 44) SystemCall.java defaultCommand vagy quartz.properties:uploadjob.path
+adja a cronjob helyet? Csak az egyik adja!
 
-- Nem latom, hogy a fileUpload tenyleg lekezelne azt, amikor ma'r ismeri az authort,
-es csak az id-re kellene referenciat raknia.
-
-- SystemCall.java defaultCommand vagy quartz.properties:uploadjob.path adja a cronjob helyet?
-Csak az egyik adja!
-
-- http://kozel.mokk.bme.hu:8080/hunglish/doc URL (a size attributum nelkul meghivva)
+- (Issue 47) http://kozel.mokk.bme.hu:8080/hunglish/doc URL (a size attributum nelkul meghivva)
 kilistazza mind a sokszazat. Ki se merem probalni, hogy a hunglish/bisen mit csinal.
 UPDATE: Ugy tunik most mar ez default 10-re lett atallitva, de &size=100000 attributummal
 azert me'g mindig hagyja megszivatni magat.
@@ -118,9 +117,9 @@ az indexeles, es az aszinkron, kesleltetett duplumszures csak kitorli
 az indexbol azokat, akik fennakadnak rajta. Me'g ha nem is igy csinaljuk,
 gondoljuk vegig ugy, hogy kesobb ne legyen nehez igy csinalni.
 
-- Session management bug: HP Sat, Jan 22, 2011 at 2:35 AM levele.
+- (Issue 36) Session management bug: HP Sat, Jan 22, 2011 at 2:35 AM levele.
 
-- Vegre kigondoltam, hogy hogyan nem lesz szerzoi jogi balhe abbol, hogy
+- (Issue 42) Vegre kigondoltam, hogy hogyan nem lesz szerzoi jogi balhe abbol, hogy
 hozzaferheto az alignment. Az UploadController hasheli az id es a szerzo
 konkatenaciojat (tesztben eleg ehelyett az unobfuscated id), es ebbol ad egy url-t.
 Amig upload.is_processed=N, addig csak egy "bocs, turelmet kerek" uzenetet ad.
@@ -130,22 +129,28 @@ Ha nem, akkor egyetlen weboldalra kidumpolja a kerdeses alignment
 metaadatait, es a bisen-eket. (Ha nem fogadtuk el a doksit, akkor
 persze csak a metaadatokat.)
 
-- properties-bol allithato legyen, hogy idozitesre vagy fileUpload triggerre
+- (Issue 43) properties-bol allithato legyen, hogy idozitesre vagy fileUpload triggerre
 induljon el a pipeline.
 
-- Feltolteskor ha mar fut egy quartz job, akkor a quartz nem moge-schedule-olja
+- (Issue 43) Feltolteskor ha mar fut egy quartz job, akkor a quartz nem moge-schedule-olja
 az ujat, hanem bejelenti, hogy most nem tud inditani.
 
-- Ne relativ path-on keresse az index es upload konyvtarakat, hanem fixen
+- (Issue 43) control_harness-bol es indexelesbol semmikeppen ne fusson ketto egyszerre,
+az nagyon durva inkonzisztenciakhoz vezet. Lock-oljuk valami munkanaplo tablaban,
+arra az esetre, ha a quartz elszurna, es megis megengedne kettot.
+
+- (Issue 44) Ne relativ path-on keresse az index es upload konyvtarakat, hanem fixen
 /big3/Work/HunglishMondattar/deployment alatt.
 Persze a laptopokon nem big3, legyen valami lokalis conf,
 ami alapjan startup (es nem build) idoben beallithato. Utobbi azert fontos,
 hogy mac-rol is tudjam a kozelen deployolni.
 
-- Valami ronda nagy (quartz?) leak, ami miatt ujra kell inditgatni
+- (Issue 35) Valami ronda nagy (quartz?) leak, ami miatt ujra kell inditgatni
 a tomcat-et nehany tomcat:deploy utan.
 
 - A quartz finnyas arra, hogy honnan kell inditania a cronjobot.
+
+- Masodpeldany van a deployment konyvtarban a cronjob-bol.
 
 - Erdekes, ugy latszik nem csak a quartz-nak vannak problemai a threadek leolesevel:
 SEVERE: The web application [/hunglish] appears to have started a thread named [MySQL Statement Cancellation Timer] but has failed to stop it. This is very likely to create a memory leak.
@@ -158,7 +163,7 @@ INFO  org.hibernate.cfg.SettingsFactory - JDBC batch size: 256
 INFO  org.hibernate.cfg.SettingsFactory - Query cache: disabled
 INFO  org.hibernate.cfg.SettingsFactory - Optimize cache for minimal puts: disabled
 
-- Ha nem akarok csak emiatt feltolteni egy kamu dokumentumpart, akkor nem tudom
+- (Issue 39) Ha nem akarok csak emiatt feltolteni egy kamu dokumentumpart, akkor nem tudom
 triggerelni a rendszeren belul a harness elinditasat. Jo, nem nagy gond,
 tomcat6 user elinditja a
 nohup bash /big3/Work/HunglishMondattar/deployment/harness_cronjob.sh &
@@ -168,23 +173,14 @@ progit. De akkor is.
 sok haszna egyelore beloluk. A savegame addig nem lesz ipari szintu,
 amig nem allitja le a service-t.
 
-- Masodpeldany van a deployment konyvtarban a cronjob-bol.
-
 - Az exception-ok informacioit a webapp es a control_harness is elnyelegeti.
 UPDATE: a control_harnesst mar megjavitottam, de nem teljesen, mert nem derul ki
 a legalso szint.
 
 - Legyen kovetkezetesen hasznalva a control_harness logolasaban az INFO,WARN,ERROR.
 
-- control_harness-bol es indexelesbol semmikeppen ne fusson ketto egyszerre,
-az nagyon durva inkonzisztenciakhoz vezet. Lock-oljuk valami munkanaplo tablaban,
-arra az esetre, ha a quartz elszurna, es megis megengedne kettot.
-
 - Van-e valami komolyabb tranzakcionalitasi problema, tehat peldaul ha elfogy
 az indexelo memoriaja, akkor ertelmes allapotba hozza-e magat a rendszer?
-
-- Kornai feature request-je: A lucene tokenizalo legyen olyan okos,
-hogy a dog's szot is megtalalja, ha a dog-ra keresek.
 
 - SearchRequest legyen Bisen helyett az, amiben halad a searchrequest. A Bisen raeroltetett. (Low priority.)
 
@@ -208,6 +204,16 @@ szazak kattintanak ra.
 
 HARNESS, HIBAKEZELES:
 
+- Me'g egy meglepetes: van egy-ket doksi, peldaul 
+whole.top1000.sav/harness.data/hu/doc/469.hu.doc
+azaz /big3/Work/HunglishMondattar/datasources/hunglish2/hu/christie-nyaralo_gyilkosok.doc
+, amikre a hackelt tcg/scripts/catdoc_latin2.sh nem szuperal.
+Miert nem szuperal? Mert "catdoc -dISO-8859-2" helyett "catdoc -dutf-8" tortenik,
+es az utobbi valamiert latin1 o"-u"-t tesz a szovegbe, amit aztan az iconv elhajit.
+(Furcsa, de a word jol jeleniti meg.)
+Kiket erint ez? Kabe ezeket, bar ennel me'g pontosabban is meg kell majd nezni:
+ls whole.top1000.sav/harness.data/hu/doc/* | while read f ; do echo -n "$f " ; cat $f | catdoc -dutf-8 | ( iconv --f utf8 --t latin2 -c || true ) | grep -c " n " ; done | grep -v " 0$"
+
 - Meglepetes ennyi ev utan: a huntoken html entitasokka
 kodolja azokat, akik nincsenek benne a latin2 tablaban.
 Me'g egyszer, lassabban: a hu.sen.one.sh kimenete latin2 kodolasu,
@@ -222,6 +228,10 @@ Ha majd utf8 lesz a pipeline, azt valoszinuleg nem eli tul a huntoken.
 
 - Meg kellene patch-elni a hunalign-t, hogy az entitasokat egy karakternek
 szamolja.
+
+- Epiteni egy gorog-szlovak korpuszt.
+/big2/User/daniel/Acquis/raw/sen/ alatt nyelvi korpuszok, mint el (gorog)
+es sk (szlovak). raw/doclangtable.txt megmondja, hogy kik vannak meg.
 
 - A barom html2text meghagyja utf8-nak a tenylegesen utf8 szoveget,
 viszont a html entitasokat lelkesen atkonvertalja latin-1-re. Az
@@ -238,9 +248,6 @@ anyag bukott meg rajta. Beloni pontosabban.
 - control_harness.py:decideIfWorthIndexing() lehetne kicsit kifinomultabb.
 tcg/scripts/filtersen.py szinte'n.
 
-- Tovezes is legyen a pipeline-ban az align elott, hogy ne legyunk rosszabbak, mint
-a regi hunglish.
-
 - Kicsit hianyzik a pipeline-bol, hogy parhuzamositott mondatraszegmentalt
 adatot (forditomemoria) is bele lehessen tolni.
 
@@ -250,9 +257,7 @@ harness.py ne irjon a cout-ra.
 
 ADMIN:
 
-- mac:~/drafts/hunglish.install.rtf becsekkolasa.
-
-Ha a sudo me'g nem timeoutolt, akkor az eraseall.sh megkerdezi hogy are you
+- Ha a sudo me'g nem timeoutolt, akkor az eraseall.sh megkerdezi hogy are you
 fucking sure?, de a valaszt nem megvarva elkezdi a torlest. Egyebkent is,
 amit a webapp stop-pal meg start-tal csinal, az lehet, hogy felesleges.
 
@@ -267,7 +272,7 @@ fajlokat.
 De az is lehet, hogy az Aspects JAR problemat megoldja, ha a tomcat es a maven ugyanazzal
 a java-val (openjdk, sun jdk) megy.
 
-- atirtam az init.d/tomcat6-ot sun-rol openjdk path-ra!!!!!!!!!!!!
+- atirtam az init.d/tomcat6-ot sun-rol openjdk path-ra.
 
 - Modositottam /etc/mysql/my.cnf konfigot ezzel a sorral:
 wait_timeout=604800
@@ -285,12 +290,27 @@ hogy irt mar par fajlt a harness.data-ba, majd felulirja oket sajat magukkal.
 
 FUTURE FEJLESZTESI IGENYEK:
 
-- Beuzemelni valami elborult, egybajtosan nem kodolhato nyelvparra.
+- (Issue 32) Menjem vegig UTF-8 alatt is. Nagyon sok kis gonosz minosegellenorzesi lepes
+tamaszkodik az egybajtos kodolasra, de semmi olyan, ami lecserelhetetlen lenne.
+
+- (Issue 32) Beuzemelni valami elborult, egybajtosan nem kodolhato nyelvparra.
+
+- (Issue 45) Use Case: Approvement
+Bejon egy doksi, vegigmegy a duplumszures vegeig. Ha upload.is_approved=True,
+akkor beallitjuk a state-et I-re, kezdodhet az indexeles. Ha upload.is_approved=False,
+akkor beallitjuk A-ra, ami 'waiting for (A)pprovement'-et jelent.
+Az admin feluleten ket uj Control tamogatja ezt:
+= Meg lehet kerdezni, hogy mely doc-ok vannak approve-olatlanul.
+= Egy doc osszes nondup bisen-je sorrendben kilistazhato.
+Mindegyik mellett van egy pipa. Egyszeru, szokasos javascript control:
+egy mester-pipa, amelyik mindegyiket egyszerre bepipalja.
+Submit-ra kipipaltsag szerint beallitodik egy bisen.is_approved,
+es az erteketol fuggoen I vagy N allapotba lepunk.
+
+- Tovezes is legyen a pipeline-ban az align elott, hogy ne legyunk rosszabbak, mint
+a regi hunglish.
 
 - Autocomplete az author-ra. Ha ez van, akkor nem is kell dropdown menu.
-
-- Menjem vegig UTF8 alatt is. Nagyon sok kis gonosz minosegellenorzesi lepes
-tamaszkodik az egybajtos kodolasra, de semmi olyan, ami lecserelhetetlen lenne.
 
 - Clusteresites. harnessbol mar most is futhatna tobb parhuzamosan
 (bar a catalog.tmp-t fel kellene szamolni) a duplumszures eredendoen
@@ -329,6 +349,13 @@ reszehez.
 
 
 LEZART DOLGOK:
+
+DONE (Lett, ez az X state. Nem tuti, hogy tenyleg minden info megorzodik.) -
+Az adatbazissema sulyos hibaja, hogy ha megserul a lucene index, akkor nagyon nehez
+kimazsolazni, hogy melyik bisen-eket kell ujraepiteskor belerakni. Legyen egy state, ami
+ezt fejezi ki.
+
+DONE - mac:~/drafts/hunglish.install.rtf becsekkolasa.
 
 DONE - legyen logs/ alatt egy harness/ konyvtar, es az individualis harness futasok
 inkabb oda keruljenek, hogy konnyebb legyen megtalalni a control_harness logokat.

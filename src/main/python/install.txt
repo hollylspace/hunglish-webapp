@@ -1,0 +1,247 @@
+ssh vargadaniel@80.249.168.244
+
+---
+
+Beletettem a /etc/apt/sources.list vegere ezt:
+
+deb http://hu.archive.ubuntu.com/ubuntu/ lenny universe
+deb-src http://hu.archive.ubuntu.com/ubuntu/ lenny universe
+
+deb http://hu.archive.ubuntu.com/ubuntu/ lenny multiverse
+deb-src http://hu.archive.ubuntu.com/ubuntu/ lenny multiverse
+
+---
+
+ROOT:
+apt-get install sun-java6-bin sun-java6-jre sun-java6-jdk
+apt-get install subversion
+apt-get install cvs
+apt-get install python
+apt-get install python-mysqldb
+apt-get install tomcat6
+apt-get install tomcat6-admin
+apt-get install maven2
+apt-get install catdoc
+apt-get install poppler-utils # pdftotext
+apt-get install html2text
+apt-get install python-chardet
+
+
+NEMROOT:
+svn checkout https://hunglish-webapp.googlecode.com/svn/tags/spring-lucene-jmorph-skeleton hunglish-webapp --username varga.daniel --password n5h7z6m5
+cd hunglish-webapp
+mvn package
+# Aztan meg egyszer es meg egyszer, mert itt is van az a furcsa reprodukalhatatlan bug.
+mvn package
+mvn package
+
+A tomcat6-nak teljesen mas a file layout-ja, ugyhogy TODO valakinek valoszinuleg at kell allnia a masik layoutjara majd.
+
+---
+
+/srv/tomcat6/conf/tomcat-users.xml (A masodik (squeeze?) installnal /var/lib/tomcat6/conf/tomcat-users.xml) kiegeszitese ezzel:
+
+<!-- Daniel -->
+<role rolename="manager"/>
+<user username="admin" password="q1e33xx" roles="manager"/>
+
+---
+
+~/.m2/settings.xml -be ez:
+
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
+                	http://maven.apache.org/xsd/settings-1.0.0.xsd">
+<servers>
+    <server>
+	<id>tomcat</id>
+	<username>admin</username>
+	<password>q1e33xx</password>
+    </server>
+</servers>
+</settings>
+
+---
+
+/etc/tomcat6/server.xml kiegeszitese egy sorral (meg egy kommenttel):
+
+    <!-- Daniel : alapbol nem volt benne az URIEncoding -->
+    <Connector port="8080" protocol="HTTP/1.1" 
+               connectionTimeout="20000" 
+               URIEncoding="UTF-8" 
+               redirectPort="8443" />
+
+ebbol csak az URIEncoding sor az uj.
+
+Plusz loggolashoz kiszedem a komment-zarojelbol az alabbi blokkot:
+        <!-- Daniel : Ez eredetileg ki volt kommentezve -->
+        <Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs"  
+               prefix="localhost_access_log." suffix=".txt" pattern="common" resolveHosts="false"/>
+
+---
+
+(Most installaltam fel a tomcat-admin -t, amit mar kellett volna.) Ezen a ponton
+
+http://80.249.168.244:8080/manager/html
+
+cimen admin/q1e33xx jelszoval mar el az adminfelulet. Probaljunk meg deploy-olni.
+
+mvn tomcat:deploy
+
+timeout-ol a tomcat manager elerese kozben. Miert? Azert, mert a gep nem latja sajat magat
+ezen a cimen belulrol. 
+
+a pom.xml-ben ehelyett localhost-nak kell nevezze magat:
+<configuration>
+<server>tomcat</server>
+<url>http://localhost:8080/manager</url>
+</configuration>
+
+Igy mar megy a tomcat:deploy.
+
+---
+
+/usr/share/tomcat6/bin/catalina.sh
+
+Hozzaad, a kommentek utan:
+
+# Daniel
+JAVA_OPTS="-Djava.awt.headless=true -Dfile.encoding=UTF-8 -server -Xms1536m -Xmx1536m -XX:NewSize=256m -XX:MaxNewSize=256m -XX:PermSize=256m -XX:MaxPermSize=256m"
+
+tomcat restart kell.
+
+---
+
+Elraktarozom azokat, akiket megbolygattam:
+
+sudo tar czvf ~/altered.tgz /etc/apt/sources.list /etc/tomcat6/tomcat-users.xml ~/.m2/settings.xml /etc/tomcat6/server.xml /usr/share/tomcat6/bin/catalina.sh
+
+---
+
+Ez kabe megmondja, hogy hol vannak path hivatkozasok az appban:
+grep -r big3 * | grep -v "\.svn" | grep -v "^Binary" | grep -v "readme\.txt" | grep -v "^target"
+
+---
+
+Sose talalom, de hulye helyen van:
+sudo less /var/lib/tomcat6/logs/catalina.*
+
+---
+
+Harness felelesztese:
+
+
+ROOTKENT:
+
+cd /
+mkdir big3
+cd big3
+mkdir Work
+cd Work
+mkdir HunglishMondattar
+# TODO Ezt nem igy kell:
+chmod a+w HunglishMondattar
+cd HunglishMondattar
+
+Danielkent:
+
+export CVSROOT=daniel@kruso.mokk.bme.hu:/local/cvs
+cvs co tcg
+cvs co hunalign # Igazibol csak a dic miatt kell, a binaris a harness.binaries-ban van.
+svn checkout https://hunglish-webapp.googlecode.com/svn/tags/spring-lucene-jmorph-skeleton hunglish-webapp --username varga.daniel --password n5h7z6m5
+
+Danielkent (, de eredetileg ROOTKENT, csak aztan ujraszerveztem):
+mkdir deployment
+cd deployment
+cp ../hunglish-webapp/src/main/python/harness_cronjob.sh .
+chmod 744 harness_cronjob.sh # Csak akkor megy igy, ha a tomcat is daniel-kent fut!
+
+mkdir logs fileUpload hunglishIndex hunglishIndexTmp harness.data
+mkdir harness.data/en harness.data/hu harness.data/align
+
+(Vegul megis a vargadaniel userhez kerult a deployment konyvtar ownershipje. Minek vacakolni vargadaniel es tomcat6 jogainak osszehangolasaval, ha a jetty:run mindent vargadaniel alatt tud futtatni.)
+
+
+KOZELEN:
+cd /big3/Work/HunglishMondattar
+scp -r resources vargadaniel@80.249.168.244:/big3/Work/HunglishMondattar/
+scp -r harness.binaries vargadaniel@80.249.168.244:/big3/Work/HunglishMondattar/
+scp -pqr datasources vargadaniel@80.249.168.244:/big3/Work/HunglishMondattar/
+
+UJ GEPEN DANIELKENT:
+# A softlinket nem linkkent masolta, es eppen a rossz volt hivatkozva:
+cd /big3/Work/HunglishMondattar/harness.binaries/
+mv hunalign.kozel hunalign
+rm hunalign.kruso
+
+Aztan me'g kell egy
+sudo dpkg-reconfigure locales
+, ahol megmondom, hogy legyen a gepen hu_HU latin-2 locale. Ez kell ahhoz, hogy az enoughalpha.py alabbi sora lefusson:
+locale.setlocale(locale.LC_ALL,'hu_HU.ISO8859-2')
+(Ez a minosegellenorzo script me'g nem volt benne a harnessben az elso installalaskor.)
+
+...Es kesz:
+
+python /big3/Work/HunglishMondattar/tcg/harness/harness.py --graph=/big3/Work/HunglishMondattar/tcg/harness/hunglishstategraph.txt --commands=/big3/Work/HunglishMondattar/tcg/harness/hunglishcommands.txt --root=./frompdf
+
+---
+
+MySQL felelesztese:
+
+sudo mysql -u root -p # Nem tudom, hogy ez a sudo kell-e tenyleg.
+keri a jelszot, megadom:
+qweasdf
+(masodszorra mysqlpw, a kozelen gn81s volt.)
+
+CREATE DATABASE `hunglishwebapp` /*!40100 DEFAULT CHARACTER SET utf8 */;
+SET NAMES utf8;
+SET CHARACTER SET utf8;
+SET character_set_connection=utf8;
+SET character_set_server=utf8;
+GRANT all privileges on hunglishwebapp.* to hunglish@'localhost' identified by 'sw6x2the' ;
+
+cat create.sql | mysql -uhunglish -psw6x2the --default-character-set=utf8 hunglishwebapp
+
+---
+
+control_harness felelesztese:
+
+Igazibol nem kell feleleszteni, mar el, de igy lehet kiprobalni:
+cd /big3/Work/HunglishMondattar/hunglish-webapp/src/main/python/
+cat ../../../create.sql | mysql -uhunglish -psw6x2the --default-character-set=utf8 hunglishwebapp
+cat /big3/Work/HunglishMondattar/datasources/hunglish1.nolaw/hunglish1.nolaw.uploadtable | head -2 | python machine_upload.py hunglish sw6x2the hunglishwebapp
+mkdir x x/hu x/en x/align
+mkdir logs
+python control_harness.py hunglish sw6x2the hunglishwebapp x logs x
+
+---
+
+Most mar birhatna menni a tomcat alatt a hunglish webapp, de szinte hibauzenet nelkul elszall. Talan a jetty bobeszedubb:
+
+mvn jetty:run
+
+...igen, ebbol kiderul, hogy
+Caused by: java.io.FileNotFoundException: /srv/tomcat6/webapps/hunglish/WEB-INF/classes/resources-lang/jmorph/mispellRC1.aff (No such file or directory)
+
+Ez src/main/resources/META-INF/spring/stemmer.properties -ben volt beallitva, korrigalom:
+/big3/Work/HunglishMondattar/hunglish-webapp/src/main/resources/resources-lang/
+
+...Most elindul, felall a webapp, es a mysql-hez kapcsolodas is elsore megy.
+
+---
+
+Lucene
+
+Miutan rakuldtem a
+http://80.249.168.244:8080/hunglish/indexer?magic=666
+
+parancsot, ez is poccre elindul jetty alol.
+
+---
+
+Az admin-felulet jogait itt tudom beallitani:
+src/main/resources/META-INF/spring/applicationContext-security.xml
+
+admin/mokka a jelszo.
+
