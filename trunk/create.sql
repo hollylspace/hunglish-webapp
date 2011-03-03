@@ -165,7 +165,7 @@ CREATE TABLE `upload` (
 
   `align_bisentence_count` bigint(20) , -- number of aligned sentences; this is fiilled by control_harness.py
    
-  `is_processed` varchar(1) not null DEFAULT 'N', -- Y = processed, N = not processed, E = processed with error, L = processed without error but the result is of bad quality
+  `is_processed` varchar(1) not null DEFAULT 'N', -- Y = processed, N = not processed, E = processed with error, L = processed without error but the result is of bad quality, P - is currently being processed
   `hu_title` varchar(255) DEFAULT NULL, -- this is user input via the webapp (UploadController)
   `en_title` varchar(255) DEFAULT NULL, -- this is user input via the webapp (UploadController)
   `author` bigint(20) DEFAULT NULL, -- chosen from existing Authors; this is user input via the webapp (UploadController)
