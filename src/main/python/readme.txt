@@ -67,6 +67,8 @@ Indexing batch updates commited: 12-13 sec (volt 13sec)
 ---
 TODO
 
+- Az oldal cime mindig Welcome to Hunglish.
+
 - A nemregisztralt felhasznalok soha ne lassak a dokumentumok cimet. Copyright.
 
 - A fileUpload ne engedje meg, hogy a menubol is es a textboxbol is megadjunk authort.
@@ -226,6 +228,10 @@ Ha majd utf8 lesz a pipeline, azt valoszinuleg nem eli tul a huntoken.
 
 - Meg kellene patch-elni a hunalign-t, hogy az entitasokat egy karakternek
 szamolja.
+
+- Epiteni egy gorog-szlovak korpuszt.
+/big2/User/daniel/Acquis/raw/sen/ alatt nyelvi korpuszok, mint el (gorog)
+es sk (szlovak). raw/doclangtable.txt megmondja, hogy kik vannak meg.
 
 - A barom html2text meghagyja utf8-nak a tenylegesen utf8 szoveget,
 viszont a html entitasokat lelkesen atkonvertalja latin-1-re. Az
