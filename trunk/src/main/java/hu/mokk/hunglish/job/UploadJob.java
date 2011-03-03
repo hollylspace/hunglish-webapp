@@ -13,13 +13,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class UploadJob implements Job {
 	private Log log = LogFactory.getLog(UploadJob.class);
-
-	// @ Autowired
-	// private Indexer indexer;
-
-	// @ Autowired
-	// private Searcher searcher;
-
+	private static int HARNESS_SUCCESS_CODE = 1;
+	
 	@Override
 	public void execute(JobExecutionContext jc) throws JobExecutionException {
 		try {
@@ -27,9 +22,13 @@ public class UploadJob implements Job {
 			Searcher searcher = Searcher.getInstance();
 			log.debug("Executing upload processing job ... ");
 			if (indexer != null && searcher != null) {
-				SystemCall.execute(indexer.getUploadJobPath());
-				indexer.indexAll();
-				searcher.reInitSearcher();
+				//if harness exit status is not OK, then do not start indexer
+				//I just put it here, so when, we change this to asynchronous processing,  
+				//then this logic should be implemented
+				if (HARNESS_SUCCESS_CODE == SystemCall.execute(indexer.getUploadJobPath())){
+					indexer.indexAll();
+					searcher.reInitSearcher();
+				}
 			} else {
 				log.error("WTF, indexer or searcher is null! ");
 			}
