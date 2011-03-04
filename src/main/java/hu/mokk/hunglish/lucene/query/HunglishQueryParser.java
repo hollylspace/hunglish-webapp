@@ -89,7 +89,7 @@ public class HunglishQueryParser {
 
     private Query phraseToQuery(QueryPhrase phrase) {
     	String luceneField = null;
-    	if (phrase.stemmed){
+    	if (phrase.isStemmed()){
     		luceneField = Bisen.huSentenceStemmedFieldName;
 	        if (phrase.field == QueryPhrase.Field.EN) {
 	            luceneField = Bisen.enSentenceStemmedFieldName;

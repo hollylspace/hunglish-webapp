@@ -320,6 +320,7 @@ public class Bisen {
 	public static String huSentenceStemmedFieldName = "huSenStemmed";
 	public static String enSentenceStemmedFieldName = "enSenStemmed";
 
+	/*
 	public static String fieldName2LemmatizerMapCode(String fieldName) {
 		String res = null;
 		if (huSentenceStemmedFieldName.equals(fieldName)) {
@@ -330,7 +331,7 @@ public class Bisen {
 			res = fieldName;
 		}
 		return res;
-	}
+	} */
 
 	private static Bisen findInList(List<Bisen> bisens, Long id){
 		Bisen result = null;
@@ -391,14 +392,14 @@ public class Bisen {
 				Field.Store.YES, Field.Index.ANALYZED,
 				Field.TermVector.WITH_POSITIONS_OFFSETS));
 		result.add(new Field(huSentenceStemmedFieldName, this.huSentence,
-				Field.Store.NO, Field.Index.ANALYZED,
+				Field.Store.YES, Field.Index.ANALYZED,
 				Field.TermVector.WITH_POSITIONS_OFFSETS));
 
 		result.add(new Field(enSentenceFieldName, this.enSentence,
 				Field.Store.YES, Field.Index.ANALYZED,
 				Field.TermVector.WITH_POSITIONS_OFFSETS));
 		result.add(new Field(enSentenceStemmedFieldName, this.enSentence,
-				Field.Store.NO, Field.Index.ANALYZED,
+				Field.Store.YES, Field.Index.ANALYZED,
 				Field.TermVector.WITH_POSITIONS_OFFSETS));
 
 		return result;
