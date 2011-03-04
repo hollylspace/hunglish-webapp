@@ -5,6 +5,7 @@ import hu.mokk.hunglish.util.Pair;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.lucene.document.Document;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 
 
@@ -17,7 +18,7 @@ public class SearchResult {
 	
 	private int endOffset;
 	
-	private List<Bisen> hitList;
+	private List<Pair<Document, Bisen>> hitList;
 	
 	private List<Pair<String, String>> paginationLinks;
 	
@@ -25,7 +26,7 @@ public class SearchResult {
 		this.totalCount = totalCount;
 		this.startOffset = start;
 		this.endOffset = end;
-		hitList = new ArrayList<Bisen>(end-start);
+		hitList = new ArrayList<Pair<Document, Bisen>>(end-start);
 		
 	}
 	
@@ -47,22 +48,22 @@ public class SearchResult {
 	/**
 	 * @return Returns the resultList.
 	 */
-	public List<Bisen> getHitList() {
+	public List<Pair<Document, Bisen>> getHitList() {
 		return hitList;
 	}
 	/**
 	 * @param resultList The resultList to set.
 	 */
-	public void addToHits(Bisen doc) {
-		this.hitList.add(doc);
+	public void addToHits(Pair<Document, Bisen> pair) {
+		this.hitList.add(pair);
 	}
 
-	public void addToHits(List<Bisen> docs) {
+	public void addToHits(List<Pair<Document, Bisen>> docs) {
 		this.hitList.addAll(docs);
 	}
 	
 	
-	public Bisen getHit(int i) {
+	public Pair<Document, Bisen> getHit(int i) {
 		return hitList.get(i);
 	}
 	/**

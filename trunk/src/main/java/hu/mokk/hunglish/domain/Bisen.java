@@ -344,8 +344,8 @@ public class Bisen {
 		return result;
 	}
 	
-	public static List<Bisen> toBisens(List<Pair<Document, Integer>> docs) {
-		List<Bisen> result = new ArrayList<Bisen>();
+	public static List<Pair<Document, Bisen>> toBisens(List<Pair<Document, Integer>> docs) {
+		List<Pair<Document, Bisen>> result = new ArrayList<Pair<Document, Bisen>>();
 		if (docs.size() > 0){
 			List<Long> ids = new ArrayList<Long>();
 			for (Pair<Document, Integer> doc : docs){
@@ -358,7 +358,7 @@ public class Bisen {
 					Bisen bisen = findInList(tmpResult, new Long(doc.getFirst().getField(idFieldName).stringValue()));
 					if (bisen != null){
 						bisen.setLuceneDocId(doc.getSecond());
-						result.add(bisen);
+						result.add(new Pair<Document, Bisen>(doc.getFirst(), bisen));
 					}
 				}
 			}

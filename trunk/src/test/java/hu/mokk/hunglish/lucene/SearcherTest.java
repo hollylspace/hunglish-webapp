@@ -111,8 +111,8 @@ public class SearcherTest {
 			}
 			request.setMaxResults(10);
 			SearchResult searchResult = searcher.search(request);
-			List<Bisen> hits = searchResult.getHitList();
-			printList(hits);
+			//List<Bisen> hits = searchResult.getHitList();
+			//printList(hits);
 			
 		} catch (Exception e) {
 			System.err.println("Exception when searchin:"+query);

@@ -108,8 +108,7 @@ public class HunglishQueryParser {
             return null;
         } else if (terms.length == 1) {
             return new TermQuery(new Term(luceneField, terms[0]));
-        }
-
+        } 
     	PhraseQuery result = new PhraseQuery(); 
         for (int i = 0; i < terms.length; i++) {
             result.add(new Term(luceneField, terms[i]));
