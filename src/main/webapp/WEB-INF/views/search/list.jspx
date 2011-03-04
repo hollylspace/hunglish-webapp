@@ -127,16 +127,16 @@ English:
                         <th>English sentence</th>
                     </tr>
                 </thead>
-                <c:forEach items="${result.hitList}" var="bisen">
+                <c:forEach items="${result.hitList}" var="pair"> <!-- pair<Document, Bisen> -->
                     <tr>
-                        <td>${bisen.id}</td>
+                        <td>${pair.second.id}</td>
                         <td>
-                            <c:out value="${fn:substring(bisen.doc, 0, 30)}"/>
+                            <c:out value="${fn:substring(pair.second.doc, 0, 30)}"/>
                         </td>
-                        <td>${bisen.huSentenceView}
+                        <td>${pair.second.huSentenceView}
                             <!-- c:out value="${bisen.huSentence}"/> -->
                         </td>
-                        <td>${bisen.enSentenceView}
+                        <td>${pair.second.enSentenceView}
                             <!-- c:out value="${bisen.enSentence}"/> -->
                         </td>
                     </tr>
