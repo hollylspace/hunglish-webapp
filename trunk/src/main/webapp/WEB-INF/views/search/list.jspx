@@ -133,10 +133,10 @@ English:
                         <td>
                             <c:out value="${fn:substring(bisen.doc, 0, 30)}"/>
                         </td>
-                        <td>${bisen.huSentence}
+                        <td>${bisen.huSentenceView}
                             <!-- c:out value="${bisen.huSentence}"/> -->
                         </td>
-                        <td>${bisen.enSentence}
+                        <td>${bisen.enSentenceView}
                             <!-- c:out value="${bisen.enSentence}"/> -->
                         </td>
                     </tr>

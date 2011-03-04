@@ -31,7 +31,7 @@ public class LemmatizerWrapper {
 		if (word.length() < MIN_WORD_SIZE) {
 			return results;
 		}
-
+		@SuppressWarnings("unchecked")
 		List<Lemma> lemmas = lemmatizer.lemmatize(word);
 
 		// az eredeti tokent csak akkor adjuk vissza, ha a szo ismeretlen

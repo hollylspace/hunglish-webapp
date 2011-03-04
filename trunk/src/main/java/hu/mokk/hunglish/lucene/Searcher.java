@@ -41,6 +41,10 @@ public class Searcher {
 	
 	transient private static Log logger = LogFactory.getLog(Searcher.class);
 	private String indexDir;
+	/**
+	 * the maximum number of search results. 
+	 * 1000 like in google
+	 */
 	private Integer maxDocuments;
 	
 	private IndexSearcher searcher;
@@ -203,8 +207,11 @@ public class Searcher {
 				try {
 					TokenStream huTokens = TokenSources.getTokenStream(
 							indexReader, bisen.getLuceneDocId(), Bisen.huSentenceFieldName);
-					bisen.setHuSentenceView((highlightField(huTokens, query,
-							Bisen.huSentenceFieldName, bisen.getHuSentence())));
+					String high = highlightField(huTokens, query,
+							Bisen.huSentenceFieldName, bisen.getHuSentence());
+					logger.error("try to high hu:"+query.toString());
+					logger.error(high);
+					bisen.setHuSentenceView(high);
 				} catch (Exception e) {
 					e.printStackTrace(); //TODO FIXME
 					//throw new RuntimeException("error while highlighting", e);
@@ -215,8 +222,11 @@ public class Searcher {
 				try {
 					TokenStream enTokens = TokenSources.getTokenStream(
 							indexReader, bisen.getLuceneDocId(), Bisen.enSentenceFieldName);
-					bisen.setEnSentenceView((highlightField(enTokens, query,
-							Bisen.enSentenceFieldName, bisen.getEnSentence())));
+					String high = highlightField(enTokens, query,
+							Bisen.enSentenceFieldName, bisen.getEnSentence());
+					logger.error("try to high en:"+query.toString());
+					logger.error(high);					
+					bisen.setEnSentenceView(high);
 				} catch (Exception e) {
 					e.printStackTrace(); //TODO FIXME
 					//throw new RuntimeException("error while highlighting", e);

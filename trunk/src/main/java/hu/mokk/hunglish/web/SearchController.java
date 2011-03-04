@@ -31,24 +31,8 @@ public class SearchController {
 	@Autowired
 	private Searcher searcher;
 
-	@RequestMapping(value = "/search", method = RequestMethod.GET)
-	public String search(
-			//@RequestParam(value = "start", required = false) Integer start,
-			//@RequestParam(value = "n", required = false) Integer size,
-    		@RequestParam(value = "page", required = false) Integer page, 
-    		@RequestParam(value = "size", required = false) Integer size, 
-			// @Valid
-			Bisen bisen,
-			// BindingResult result,
-			// @RequestParam(value = "ql", required = false) String huQuery,
-			// @RequestParam(value = "qr", required = false) String enQuery,
-			// @RequestParam(value = "source", required = false) String source,
-			ModelMap modelMap) {
-
-		modelMap.addAttribute("genres", Genre.findAllGenres());
-
-        int sizeNo = size == null ? PAGE_SIZE : size.intValue();
-        int pageNo = page == null ? 1 : page.intValue();
+	//TODO eliminate this method by assembling request in View layer
+	private SearchRequest transformRequest(Bisen bisen, int sizeNo, int pageNo){
 		SearchRequest request = new SearchRequest();
 		
 		request.setEnQuery(bisen.getEnSentence());
@@ -57,17 +41,31 @@ public class SearchController {
 				&& bisen.getDoc().getGenre().getId() != null) {
 			request.setGenreId(bisen.getDoc().getGenre().getId().toString());
 		}
-		
 		request.setMaxResults(sizeNo);
 		request.setStartOffset((pageNo-1)*sizeNo);
-		
 		request.setHunglishSyntax(true);
-		modelMap.addAttribute("request", request);
+		return request;
+	}
+	
+	@RequestMapping(value = "/search", method = RequestMethod.GET)
+	public String search(
+    		@RequestParam(value = "page", required = false) Integer page, 
+    		@RequestParam(value = "size", required = false) Integer size, 
+			Bisen bisen,
+			ModelMap modelMap) {
+
+
+        int sizeNo = size == null ? PAGE_SIZE : size.intValue();
+        int pageNo = page == null ? 1 : page.intValue();
+		
+        SearchRequest request = transformRequest(bisen, sizeNo, pageNo);
+		
+        modelMap.addAttribute("request", request);
+		modelMap.addAttribute("genres", Genre.findAllGenres());
 
 		SearchResult result = searcher.search(request);
 		
         float nrOfPages = (float) result.getTotalCount() / sizeNo;
-        
         int maxPages = (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages);
 
         float nrOfPagesLimited = (float) searcher.getMaxDocuments() / sizeNo;

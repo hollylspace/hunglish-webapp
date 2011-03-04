@@ -22,7 +22,7 @@ public class QueryPhrase {
 	};
 
 	public Qualifier qualifier;
-	public boolean stemmed;
+	private boolean stemmed;
 	public Field field;
 
 	String[] terms;
