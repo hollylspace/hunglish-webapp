@@ -347,7 +347,10 @@ def processOneUpload(db,id) :
 
 def flagDuplicates(db) :
     logg("Flagging duplicates...")
-    duplumFilterMethodThreshold = 10
+    # 21 sec 3000 mondatot utanapakolni 2.5milliohoz a small path-on. Linearisan skalaz.
+    # 5:40 es 6:30 kozotti perc akar egyetlen mondatot is utanapakolni 2.5 milliohoz a big path-on.
+    # Ebbol jon ki a duplumFilterMethodThreshold, azaz hogy hany mondat felett valasszuk a big-et.
+    duplumFilterMethodThreshold = 60000
     loggnow("Counting number of new sentences for duplicate index.")
     cursor = db.cursor(MySQLdb.cursors.Cursor)
     cursor.execute("select count(*) from bisen where state='D' ")
