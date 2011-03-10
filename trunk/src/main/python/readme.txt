@@ -75,14 +75,6 @@ TODO
 
 - (Issue 13) Highlight search results.
 
-- (Issue 41) A timestamp fogalmat rosszul hasznaljuk. Egyes helyeken, mint bisen.indexed_timestamp kiirtando,
-mas helyeken, mint job_queue es upload, lecserelendo egy rendes datumra.
-Ez is emiatt van:
-- Az alkalmazas nem tudja a recordbol letrehozni az upload objektumot,
-ha nem hazudok be egy kitoltott harnessed_timestamp mezot.
-Gergo szedje ki ezt a hulye checket, Daniel utana mar kiszedheti
-a behazudast a machine_upload-bol.
-
 - (Issue 44) SystemCall.java defaultCommand vagy quartz.properties:uploadjob.path
 adja a cronjob helyet? Csak az egyik adja!
 
@@ -94,14 +86,6 @@ azert me'g mindig hagyja megszivatni magat.
 - Use case: Utolag rajovok, hogy egy kis bash scriptet bele kellene tenni a qualityfilterbe.
 Megteszem, de visszamenoleg is meg kellene tenni. Eszkoz: dumpoljuk ki id-vel az osszes
 bisen-t, es ha fennakad a scripten, akkor tiltsuk le.
-
-- A duplumszures eleg lassu. Amikor mar jo nagy az adatbazis, akkor egy rovid doksi
-feltoltesetol kezdve igy jonnek a fazisok:
-1. par masodperc harness.
-2. 2 min 30 sec duplumfilter (Lehet, hogy jobb, ha az adatbazis helyett a python vegzi a rendezest?)
-3. 3 min 20 sec indexeles (Tulindexeles bug: futott egy teljesen felesleges kort egy
-masodik 20000-es batch-csel, aminek nulla eleme volt, de igy is 50 sec-et szotymorgott vele.)
-UPDATE: Ezt ujra kellene merni az uj create.sql-en, valszeg javult a helyzet valamennyit.
 
 - Egy nagy machine_upload utan a duplumszures rettenetesen lassu. Ahogy irtam is:
 duplumszures : 8 ora (a duplumok megtalalasa 8 perc, a tobbi az sql update)
@@ -168,6 +152,9 @@ triggerelni a rendszeren belul a harness elinditasat. Jo, nem nagy gond,
 tomcat6 user elinditja a
 nohup bash /big3/Work/HunglishMondattar/deployment/harness_cronjob.sh &
 progit. De akkor is.
+
+- Tulindexeles bug: futott egy teljesen felesleges kort egy
+masodik 20000-es batch-csel, aminek nulla eleme volt, de igy is 50 sec-et szotymorgott vele.
 
 - A loadgame-savegame annyira kozel-specifikusak, hogy Gergonek nincs
 sok haszna egyelore beloluk. A savegame addig nem lesz ipari szintu,
@@ -355,9 +342,27 @@ reszehez.
 
 LEZART DOLGOK:
 
-DONE CPV-t attenni mag-bol law-ba.
+DONE - (Issue 41) A timestamp fogalmat rosszul hasznaljuk. Egyes helyeken, mint bisen.indexed_timestamp kiirtando,
+mas helyeken, mint job_queue es upload, lecserelendo egy rendes datumra.
+Ez is emiatt van:
+- Az alkalmazas nem tudja a recordbol letrehozni az upload objektumot,
+ha nem hazudok be egy kitoltott harnessed_timestamp mezot.
+Gergo szedje ki ezt a hulye checket, Daniel utana mar kiszedheti
+a behazudast a machine_upload-bol.
 
-DONE (Lett, ez az X state. Nem tuti, hogy tenyleg minden info megorzodik.) -
+DONE Csinaltam egy masik duplumfiltert, ami egyetlen doksi feltoltese eseten
+sokkal sokkal gyorsabb, mint a regi. A regi fixen 6 es fel percig tolt ra valamit
+2.5 millio bisen-re, az ujnal ez 21 sec / 3000 mondat.
+Ez lenyegeben megoldja ezt az issue-t:
+A duplumszures eleg lassu. Amikor mar jo nagy az adatbazis, akkor egy rovid doksi
+feltoltesetol kezdve igy jonnek a fazisok:
+1. par masodperc harness.
+2. 2 min 30 sec duplumfilter (Lehet, hogy jobb, ha az adatbazis helyett a python vegzi a rendezest?)
+3. 3 min 20 sec indexeles UPDATE: Ezt ujra kellene merni az uj create.sql-en, valszeg javult a helyzet valamennyit.
+
+DONE - CPV-t attenni mag-bol law-ba.
+
+DONE (Lett state, ez az X. Nem tuti, hogy tenyleg minden info megorzodik.) -
 Az adatbazissema sulyos hibaja, hogy ha megserul a lucene index, akkor nagyon nehez
 kimazsolazni, hogy melyik bisen-eket kell ujraepiteskor belerakni. Legyen egy state, ami
 ezt fejezi ki.
