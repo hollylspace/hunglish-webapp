@@ -347,7 +347,7 @@ def processOneUpload(db,id) :
 
 def flagDuplicates(db) :
     logg("Flagging duplicates...")
-    duplumFilterMethodThreshold = 100000
+    duplumFilterMethodThreshold = 10
     loggnow("Counting number of new sentences for duplicate index.")
     cursor = db.cursor(MySQLdb.cursors.Cursor)
     cursor.execute("select count(*) from bisen where state='D' ")
@@ -363,31 +363,28 @@ def flagDuplicates(db) :
 def isThereAlready(cursor,huHash,enHash) :
     cursor.execute("select count(*) from bisen where state='X' and hu_sentence_hash=%s and en_sentence_hash=%s " % (huHash,enHash) )
     row = cursor.fetchone()
-    number = row[0]
-    return number>0
+    numberInOld = row[0]
+    cursor.execute("select count(*) from bisen where state='I' and hu_sentence_hash=%s and en_sentence_hash=%s " % (huHash,enHash) )
+    row = cursor.fetchone()
+    numberInNew = row[0]
+    return numberInOld+numberInNew>0
 
 def flagDuplicatesForSmallBatch(db) :
     try :
 	cursor = db.cursor(MySQLdb.cursors.Cursor)
-        cursor.execute("select id from bisen where state='D' ")
+        cursor.execute("select id,hu_sentence_hash,en_sentence_hash from bisen where state='D' ")
         results = cursor.fetchall()
         dups = []
         nonDups = []
-        for (id,) in results :
+        for (id,huHash,enHash) in results :
     	    isThere = isThereAlready(cursor,huHash,enHash)
 	    if isThere :
 		dups.append(id)
+        	cursor.execute("update bisen set is_duplicate=True, state='N' where id=%s" % id )
 	    else :
 		nonDups.append(id)
-	loggnow("%d duplicates and %d nonduplicates found." % (len(dups),len(nonDups)) )
-	logg("Marking duplicates...")
-        for id in dups :
-            cursor.execute("update bisen set is_duplicate=True, state='N' where id=%s" % id )
-	loggnow("Duplicates marked.")
-	logg("Marking nonduplicates...")
-        for id in dups :
-            cursor.execute("update bisen set is_duplicate=False, state='I' where id=%s" % id )
-	loggnow("Nonduplicates marked.")
+        	cursor.execute("update bisen set is_duplicate=False, state='I' where id=%s" % id )
+	loggnow("%d duplicates and %d nonduplicates found and marked." % (len(dups),len(nonDups)) )
 	logg("Done.")
     except Exception, e:
 	logg("ERROR in flagDuplicates()!")
