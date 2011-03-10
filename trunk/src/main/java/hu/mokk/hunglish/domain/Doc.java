@@ -12,6 +12,7 @@ import hu.mokk.hunglish.domain.Genre;
 import javax.validation.constraints.NotNull;
 import javax.persistence.Column;
 import javax.persistence.EntityManager;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -38,17 +39,17 @@ public class Doc {
     @Size(max = 255)
     private String oldDocid;
 
-    @ManyToOne(targetEntity = Upload.class)
+    @ManyToOne(targetEntity = Upload.class, fetch=FetchType.LAZY)
     @JoinColumn
     private Upload upload;
 
     @NotNull
-    @ManyToOne(targetEntity = Genre.class)
+    @ManyToOne(targetEntity = Genre.class, fetch=FetchType.LAZY)
     @JoinColumn
     private Genre genre;
 
     @NotNull
-    @ManyToOne(targetEntity = Author.class)
+    @ManyToOne(targetEntity = Author.class, fetch=FetchType.LAZY)
     @JoinColumn
     private Author author;
 
