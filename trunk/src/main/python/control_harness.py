@@ -347,7 +347,61 @@ def processOneUpload(db,id) :
 
 def flagDuplicates(db) :
     logg("Flagging duplicates...")
-    loggnow("select started.")
+    duplumFilterMethodThreshold = 100000
+    loggnow("Counting number of new sentences for duplicate index.")
+    cursor = db.cursor(MySQLdb.cursors.Cursor)
+    cursor.execute("select count(*) from bisen where state='D' ")
+    row = cursor.fetchone()
+    numberOfNew = row[0]
+    doBigPath = ( numberOfNew >= duplumFilterMethodThreshold )
+    loggnow("%d new sentences found. Choosing '%s' flagging method" % (numberOfNew, "big" if doBigPath else "small" ) )
+    if doBigPath :
+	flagDuplicatesForBigBatch(db)
+    else :
+	flagDuplicatesForSmallBatch(db)
+
+def isThereAlready(cursor,huHash,enHash) :
+    cursor.execute("select count(*) from bisen where state='X' and hu_sentence_hash=%s and en_sentence_hash=%s " % (huHash,enHash) )
+    row = cursor.fetchone()
+    number = row[0]
+    return number>0
+
+def flagDuplicatesForSmallBatch(db) :
+    try :
+	cursor = db.cursor(MySQLdb.cursors.Cursor)
+        cursor.execute("select id from bisen where state='D' ")
+        results = cursor.fetchall()
+        dups = []
+        nonDups = []
+        for (id,) in results :
+    	    isThere = isThereAlready(cursor,huHash,enHash)
+	    if isThere :
+		dups.append(id)
+	    else :
+		nonDups.append(id)
+	loggnow("%d duplicates and %d nonduplicates found." % (len(dups),len(nonDups)) )
+	logg("Marking duplicates...")
+        for id in dups :
+            cursor.execute("update bisen set is_duplicate=True, state='N' where id=%s" % id )
+	loggnow("Duplicates marked.")
+	logg("Marking nonduplicates...")
+        for id in dups :
+            cursor.execute("update bisen set is_duplicate=False, state='I' where id=%s" % id )
+	loggnow("Nonduplicates marked.")
+	logg("Done.")
+    except Exception, e:
+	logg("ERROR in flagDuplicates()!")
+	exc_type, exc_obj, exc_tb = sys.exc_info()
+        fname = exc_tb.tb_frame.f_code.co_filename
+        logg("Exception %s: %s in file \"%s\", line %d" % ( str(type(e)), str(e), fname, exc_tb.tb_lineno) )
+        db.rollback()
+        logg("Flagging duplicates rolled back.")
+    else :
+        db.commit()
+        logg("Done flagging duplicates.")
+
+def flagDuplicatesForBigBatch(db) :
+    loggnow("big batch select started.")
     try :
         cursor = db.cursor(MySQLdb.cursors.Cursor)
 	# A (state='D') (regebben: is_duplicate is NULL) szerinti
@@ -390,19 +444,19 @@ def flagDuplicates(db) :
             prevHashes = hashes
 
         logg("%d duplicates found in %d new records. total # of records %d" % (len(dupIds),newBisenNum,len(results)) )
-	loggnow("duplicated found.")
+	loggnow("Duplicates found.")
 
 	logg("Marking non-duplicates and setting states to 'I'.")
 	# Actually, marking all, and being corrected in the next phase.
 	# Ez a control_harness egyetlen olyan sora, ami miatt semmikeppen sem
 	# szabad ket control_harness-nek egyszerre futnia.
 	cursor.execute("update bisen set is_duplicate=False, state='I' where state='D' ")
-	loggnow("non-duplicates marked.")
+	loggnow("Non-duplicates marked.")
 
 	logg("Marking duplicates...")
         for id in dupIds :
             cursor.execute("update bisen set is_duplicate=True, state='N' where id=%s" % id )
-	loggnow("duplicates marked.")
+	loggnow("Duplicates marked.")
 
 	logg("Done.")
     except Exception, e:

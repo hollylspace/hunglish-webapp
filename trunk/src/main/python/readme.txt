@@ -204,6 +204,8 @@ szazak kattintanak ra.
 
 HARNESS, HIBAKEZELES:
 
+- Vonyot beletolni, egyelore esz nelkul.
+
 - Me'g egy meglepetes: van egy-ket doksi, peldaul 
 whole.top1000.sav/harness.data/hu/doc/469.hu.doc
 azaz /big3/Work/HunglishMondattar/datasources/hunglish2/hu/christie-nyaralo_gyilkosok.doc
@@ -290,6 +292,9 @@ hogy irt mar par fajlt a harness.data-ba, majd felulirja oket sajat magukkal.
 
 FUTURE FEJLESZTESI IGENYEK:
 
+- A vonyot belerakni, kitalalni, hogy mi a legokosabb specialis user interface hozza.
+Mondjuk ne fole hanem melle rakja ki a regularis talalatoknak?
+
 - (Issue 32) Menjem vegig UTF-8 alatt is. Nagyon sok kis gonosz minosegellenorzesi lepes
 tamaszkodik az egybajtos kodolasra, de semmi olyan, ami lecserelhetetlen lenne.
 
@@ -349,6 +354,8 @@ reszehez.
 
 
 LEZART DOLGOK:
+
+DONE CPV-t attenni mag-bol law-ba.
 
 DONE (Lett, ez az X state. Nem tuti, hogy tenyleg minden info megorzodik.) -
 Az adatbazissema sulyos hibaja, hogy ha megserul a lucene index, akkor nagyon nehez
