@@ -10,15 +10,18 @@
 		
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-		<meta http-equiv="X-UA-Compatible" content="IE=8" />		
+		<meta http-equiv="X-UA-Compatible" content="IE=8" />
+		<link href="/hunglish/static/styles/search.css" media="screen" type="text/css" rel="stylesheet"></link>		
+		<!-- 
 		<spring:theme code="styleSheet" var="roo_css"/>	
 		<spring:url value="/${roo_css}" var="roo_css_url"/>
 		<spring:url value="/resources/dijit/themes/tundra/tundra.css" var="tundra_url"/>
-		
+		<link rel="stylesheet" type="text/css" media="screen" href="${roo_css_url}">< //required for FF3 and Opera ></link>
+		<link rel="stylesheet" type="text/css" href="${tundra_url}">< //required for FF3 and Opera ></link>	
+		 -->
+		 
 		<spring:url value="/static/images/favicon.ico" var="favicon" />
 		
-		<link rel="stylesheet" type="text/css" media="screen" href="${roo_css_url}"><!-- //required for FF3 and Opera --></link>
-		<link rel="stylesheet" type="text/css" href="${tundra_url}"><!-- //required for FF3 and Opera --></link>	
 		<link rel="SHORTCUT ICON" href="${favicon}" />
 		
 		<title>Hunglish Search</title>
