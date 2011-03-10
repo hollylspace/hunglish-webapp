@@ -199,23 +199,23 @@ public class Searcher {
 		for (Pair<Document, Bisen> pair : bisens){
 			Bisen bisen = pair.getSecond();
 			Document document = pair.getFirst();
-			logger.info("--------------- HIGHLIGHT -----------------");
+			logger.debug("--------------- HIGHLIGHT -----------------");
 			if (pair.getSecond() != null && request.nonEmptyHuQuery() && request.getHighlightHu() && indexReader != null) {
 				try {
 					TokenStream huTokens = TokenSources.getTokenStream(
 							indexReader, bisen.getLuceneDocId(), Bisen.huSentenceStemmedFieldName);
-					logger.info("try to high hu stemmed:"+query.toString());
+					logger.debug("try to high hu stemmed:"+query.toString());
 					String high = highlightField(huTokens, query,
 							Bisen.huSentenceFieldName, bisen.getHuSentence());
-					logger.info(high);
+					logger.debug(high);
 					
 					if (high.toLowerCase().indexOf("<b>")< 0){
-						logger.info("try to high hu on not-stemmed field 2:"+query.toString());
+						logger.debug("try to high hu on not-stemmed field 2:"+query.toString());
 						huTokens = TokenSources.getTokenStream(
 								indexReader, bisen.getLuceneDocId(), Bisen.huSentenceFieldName);
 						high = highlightField(huTokens, query,
 								Bisen.huSentenceStemmedFieldName, bisen.getHuSentence());
-						logger.info(high);
+						logger.debug(high);
 					}					
 					
 					bisen.setHuSentenceView(high);
@@ -229,17 +229,17 @@ public class Searcher {
 				try {
 					TokenStream enTokens = TokenSources.getTokenStream(
 							indexReader, bisen.getLuceneDocId(), Bisen.enSentenceStemmedFieldName);
-					logger.info("try to high en stemmed:"+query.toString());
+					logger.debug("try to high en stemmed:"+query.toString());
 					String high = highlightField(enTokens, query,
 							Bisen.enSentenceFieldName, bisen.getEnSentence());
-					logger.info(high);
+					logger.debug(high);
 					if (high.toLowerCase().indexOf("<b>")< 0){
 						enTokens = TokenSources.getTokenStream(
 								indexReader, bisen.getLuceneDocId(), Bisen.enSentenceFieldName);
-						logger.info("try to high en on not-stemmed field:"+query.toString());
+						logger.debug("try to high en on not-stemmed field:"+query.toString());
 						high = highlightField(enTokens, query,
 								Bisen.enSentenceStemmedFieldName, bisen.getEnSentence());
-						logger.info(high);
+						logger.debug(high);
 					}
 					
 					pair.getSecond().setEnSentenceView(high);
