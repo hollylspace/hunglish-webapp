@@ -78,10 +78,32 @@ TODO
 - (Issue 44) SystemCall.java defaultCommand vagy quartz.properties:uploadjob.path
 adja a cronjob helyet? Csak az egyik adja!
 
+- (Issue 44) A leheto legkevesebb helyen legyen a propertiesben abszolut path.
+Az osszes tobbi path relativ pathkent legyen megadva a fent emlitett abszolut path-okhoz kepest.
+Mostanra stabilizalodott az alkalmazas konyvtar-layout-ja, ugyhogy haromnal tobb abszolut path
+szinte biztosan felesleges, annak a jele, hogy valami me'g nincs vegiggondolva. A harom, amirol tudok:
+1. hol vannak a nyelvi eroforrasok.
+2. hol van az ugynevezett deployment konyvtar, ami alatt minden adatkonyvtar van. A java webapp
+nezopontjabol ezek kozul egyebkent csak harom relevans van: fileUpload,hunglishIndex,hunglishIndexTmp.
+3. hol van a harness_cronjob.sh.
+A kodban termeszetesen egyaltalan semmilyen path ne legyen, se relativ, se abszolut.
+
+- (Issue 44) ...Nem Java issue, hanem python, de az is ide tartozik, hogy ki kell talalni,
+hogy hol legyen a control_harness.py. (Jelenleg az eles alkalmazas dilettans
+modon a munkakonyvtaramra referal.)
+A tiszta megoldas talan az, ha a tomcat deploy lerakja valahova
+/srv/tomcat6/webapps/hunglish ala a src/main/python konyvtarat,
+es a java tudja hogy ott kell keresse a harness_cronjob.sh-t, a
+harness_cronjob.sh pedig tudja, hogy ott kell keresse a control_harness-t.
+
+- (Issue 44) ...Az me'g ezutan is homalyos, hogy a control_harness hol keresse a harness.py-t, de
+ez kisebb gond, es ezt is megoldana', ha atkerulne google code ala a harness a cvs alol.
+
 - (Issue 47) http://kozel.mokk.bme.hu:8080/hunglish/doc URL (a size attributum nelkul meghivva)
 kilistazza mind a sokszazat. Ki se merem probalni, hogy a hunglish/bisen mit csinal.
 UPDATE: Ugy tunik most mar ez default 10-re lett atallitva, de &size=100000 attributummal
 azert me'g mindig hagyja megszivatni magat.
+UPDATE2: Plusz van a menu url-ben egy &amp; is, ami nem kellene oda.
 
 - Use case: Utolag rajovok, hogy egy kis bash scriptet bele kellene tenni a qualityfilterbe.
 Megteszem, de visszamenoleg is meg kellene tenni. Eszkoz: dumpoljuk ki id-vel az osszes
@@ -250,13 +272,6 @@ ADMIN:
 fucking sure?, de a valaszt nem megvarva elkezdi a torlest. Egyebkent is,
 amit a webapp stop-pal meg start-tal csinal, az lehet, hogy felesleges.
 
-- Brutalis hibalehetoseg: az ujrainditas utan ugy latom nem tomcat6 userkent fut
-a service, hanem root-kent. Ez nem csak azert brutal, mert security hole, hanem
-azert is, mert nem lesz joga a tomcat-nek bolygatni a root altal letrehozott
-fajlokat.
-
-- Tomcat access logoljon a virtualis gepen is.
-
 - Zsolt telepitsen legujabb, sun-os javat, es mavent. A tomcat a sun-os java home-ra mutasson.
 De az is lehet, hogy az Aspects JAR problemat megoldja, ha a tomcat es a maven ugyanazzal
 a java-val (openjdk, sun jdk) megy.
@@ -286,6 +301,7 @@ Mondjuk ne fole hanem melle rakja ki a regularis talalatoknak?
 tamaszkodik az egybajtos kodolasra, de semmi olyan, ami lecserelhetetlen lenne.
 
 - (Issue 32) Beuzemelni valami elborult, egybajtosan nem kodolhato nyelvparra.
+(UPDATE: Ha mindenfele minosegszurest kivettem, akkor vegigment gorog-szlovakra.)
 
 - (Issue 45) Use Case: Approvement
 Bejon egy doksi, vegigmegy a duplumszures vegeig. Ha upload.is_approved=True,
@@ -341,6 +357,14 @@ reszehez.
 
 
 LEZART DOLGOK:
+
+NOTDONE (Nem tudtam reprodukalni.) - Brutalis hibalehetoseg:
+az ujrainditas utan ugy latom nem tomcat6 userkent fut
+a service, hanem root-kent. Ez nem csak azert brutal, mert security hole, hanem
+azert is, mert nem lesz joga a tomcat-nek bolygatni a root altal letrehozott
+fajlokat.
+
+NOTDONE - Tomcat access logoljon a virtualis gepen is.
 
 DONE - (Issue 41) A timestamp fogalmat rosszul hasznaljuk. Egyes helyeken, mint bisen.indexed_timestamp kiirtando,
 mas helyeken, mint job_queue es upload, lecserelendo egy rendes datumra.
