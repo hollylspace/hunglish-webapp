@@ -7,8 +7,16 @@ import shutil
 
 from base import *
 
-g_harnessDataDirectory = ""
+## Globals hardwired:
+#
 g_harnessAppDir = "/big3/Work/HunglishMondattar/tcg/harness"
+# Ez tobb dolgot is befolyasol: azt, hogy milyen command file-lal
+# hivjuk a harnesst, es hogy a qf-et milyen kodolasunak tekinti.
+# TODO Jelenleg a minosegszurest is kikapcsolja az utf8 mod.
+g_isUTF8 = False
+
+# Globals filled by the command line arguments:
+g_harnessDataDirectory = ""
 g_logDir = None
 g_logDate = None
 
@@ -59,9 +67,15 @@ def decideIfWorthIndexing(metadata) :
 	keepIt = False
 	logg("Zero aligned bisentences found. Throwing away upload #%s." % id)
     elif alignLines <= min((huLines,enLines))*0.6 :
-	keepIt = False
-	logg("The ratio of unaligned sentences is too large. (huLines:%d,enLines:%d,alignLines:%d). Throwing away upload #%s."
-	    % (huLines,enLines,alignLines,id) )
+	# Jelenleg az utf8-as kodon ki kellett kommentalni ezt a minosegszurest:
+	if g_isUTF8 :
+	    keepIt = True
+	    logg("WARNING: The ratio of unaligned sentences is too large. (huLines:%d,enLines:%d,alignLines:%d). Keeping upload #%s anyway!"
+		% (huLines,enLines,alignLines,id) )
+	else :
+	    keepIt = False
+	    logg("The ratio of unaligned sentences is too large. (huLines:%d,enLines:%d,alignLines:%d). Throwing away upload #%s."
+		% (huLines,enLines,alignLines,id) )
 
     if keepIt :
 	logg("Upload #%s successfully passed decideIfWorthIndexing()." % id)
@@ -84,7 +98,11 @@ def runHarness(metadata) :
 
     command = "python %s/harness.py " % g_harnessAppDir
     command += "--graph=%s/hunglishstategraph.txt " % g_harnessAppDir
-    command += "--commands=%s/hunglishcommands.txt " % g_harnessAppDir
+    
+    if g_isUTF8 :
+	command += "--commands=%s/hunglishcommands.utf8.txt " % g_harnessAppDir
+    else :
+	command += "--commands=%s/hunglishcommands.txt " % g_harnessAppDir
     command += "--root=%s --catalog=%s" % ( g_harnessDataDirectory, catalogFile )
 
     if g_logDir :
@@ -247,7 +265,9 @@ def hashSentences(bisentences) :
 
 def harnessOutputFileToBisenTable(db,id,alignedFilePath) :
     logg( "Loading into database: "+alignedFilePath )
-    bisentences = readAlignFile(alignedFilePath, 'ISO-8859-2')
+    enc = 'UTF-8' if g_isUTF8 else 'ISO-8859-2'
+    logg( "Encoding assumed: %s" )
+    bisentences = readAlignFile(alignedFilePath, enc)
     hashedBisentences = hashSentences(bisentences)
     cursor = getCursor(db)
     # state='D' means that the next task for this bisen is duplumfiltering.
