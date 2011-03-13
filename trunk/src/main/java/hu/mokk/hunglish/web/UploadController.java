@@ -6,10 +6,7 @@ import hu.mokk.hunglish.domain.Upload;
 import hu.mokk.hunglish.job.UploadJob;
 import hu.mokk.hunglish.lucene.Indexer;
 
-import hu.mokk.hunglish.job.MockJob;
-
 import java.io.File;
-import java.sql.Timestamp;
 import java.util.Date;
 
 import javax.validation.Valid;
@@ -27,7 +24,6 @@ import org.springframework.roo.addon.web.mvc.controller.RooWebScaffold;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -232,6 +228,7 @@ public class UploadController {
 		return "upload/update";
 	}
 
+	/*
 	@RequestMapping(value = "/upload/{id}", method = RequestMethod.DELETE)
 	public String delete(@PathVariable("id") Long id,
 			@RequestParam(value = "page", required = false) Integer page,
@@ -242,6 +239,6 @@ public class UploadController {
 		return "redirect:/upload?page="
 				+ ((page == null) ? "1" : page.toString()) + "&size="
 				+ ((size == null) ? "10" : size.toString());
-	}
+	}*/
 
 }
