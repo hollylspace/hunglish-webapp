@@ -4,19 +4,16 @@
  */
 package hu.mokk.hunglish.lucene;
 
-import hu.mokk.hunglish.domain.Bisen;
 import hu.mokk.hunglish.lucene.query.QueryPhrase;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.queryParser.ParseException;
@@ -24,7 +21,6 @@ import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.util.Version;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -46,6 +42,19 @@ public class SearcherTest {
 	@Autowired
 	private TestData testData;
 
+	@Test
+	public void testmergeHighLight(){
+		String line1 = "blah hello blah blah <B>high high1</B>.";
+		String line2 = "blah <B>hello</B> blah blah high high1.";
+		System.out.println("line1:"+line1);
+		System.out.println("line2:"+line2);
+		
+		String merged = Searcher.mergeHighLight(line1, line2);
+		
+		System.out.println("merged:"+merged);
+	}
+	
+	
 	@Test
 	public void testIndexSearcher() throws CorruptIndexException, IOException, ParseException {
 		IndexSearcher is = searcher.getSearcher();

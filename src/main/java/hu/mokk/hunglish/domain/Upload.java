@@ -401,13 +401,14 @@ public class Upload {
 
 	@Transactional
     public void remove() {
-        if (this.entityManager == null) this.entityManager = entityManager();
+		throw new RuntimeException("Upload cannot be removed");
+        /*if (this.entityManager == null) this.entityManager = entityManager();
         if (this.entityManager.contains(this)) {
             this.entityManager.remove(this);
         } else {
             Upload attached = this.entityManager.find(Upload.class, this.id);
             this.entityManager.remove(attached);
-        }
+        }*/
     }
 
 	@Transactional

@@ -4,12 +4,18 @@
 package hu.mokk.hunglish.lucene;
 
 import hu.mokk.hunglish.domain.Bisen;
+import hu.mokk.hunglish.jmorph.AnalyzerProvider;
+import hu.mokk.hunglish.lucene.analysis.CompoundStemmerTokenFilter;
 import hu.mokk.hunglish.util.Pair;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -56,6 +62,10 @@ public class Searcher {
 	@Autowired
 	private LuceneQueryBuilder luceneQueryBuilder;
 
+	@Autowired
+	private AnalyzerProvider analyzerProvider;
+	
+	
 	private static Searcher instance;
 	public Searcher(){
 		if (instance == null){
@@ -195,29 +205,54 @@ public class Searcher {
 		
 	}
 	
+	
+	
+	static String highLightStart = "<B>";
+	static String highLightEnd = "</B>";
+	static String highPatternString = "("+highLightStart+")"+"([^<>]+)"+"("+highLightEnd+")";
+	static Pattern highPattern = Pattern.compile(highPatternString);
+	
+	public static String mergeHighLight(String line1, String line2){
+		Matcher matcher = highPattern.matcher(line1);
+		boolean found = matcher.find();
+		while(found){
+			String match = matcher.group(2);
+			String replaceMent = matcher.group(); //highLightStart+match+highLightEnd;
+			System.out.println("match:"+match+";replacement:"+replaceMent);
+			line2 = line2.replaceAll(match, replaceMent);
+			found = matcher.find();
+		}
+		return line2;
+	}
+	
 	private void highlightBisens(SearchRequest request, List<Pair<Document, Bisen>> bisens, Query query){
 		for (Pair<Document, Bisen> pair : bisens){
 			Bisen bisen = pair.getSecond();
-			Document document = pair.getFirst();
+			//Document document = pair.getFirst();
 			logger.debug("--------------- HIGHLIGHT -----------------");
 			if (pair.getSecond() != null && request.nonEmptyHuQuery() && request.getHighlightHu() && indexReader != null) {
 				try {
 					TokenStream huTokens = TokenSources.getTokenStream(
 							indexReader, bisen.getLuceneDocId(), Bisen.huSentenceStemmedFieldName);
+					huTokens = new CompoundStemmerTokenFilter(huTokens,
+							analyzerProvider.getLemmatizerMap().get(Bisen.huSentenceStemmedFieldName)); 
 					logger.debug("try to high hu stemmed:"+query.toString());
 					String high = highlightField(huTokens, query,
 							Bisen.huSentenceFieldName, bisen.getHuSentence());
 					logger.debug(high);
 					
-					if (high.toLowerCase().indexOf("<b>")< 0){
-						logger.debug("try to high hu on not-stemmed field 2:"+query.toString());
-						huTokens = TokenSources.getTokenStream(
-								indexReader, bisen.getLuceneDocId(), Bisen.huSentenceFieldName);
-						high = highlightField(huTokens, query,
-								Bisen.huSentenceStemmedFieldName, bisen.getHuSentence());
-						logger.debug(high);
-					}					
+					//if (high.toLowerCase().indexOf("<b>")< 0){
+					logger.debug("try to high hu on not-stemmed field 2:"+query.toString());
+					huTokens = TokenSources.getTokenStream(
+							indexReader, bisen.getLuceneDocId(), Bisen.huSentenceFieldName);
+					huTokens = new CompoundStemmerTokenFilter(huTokens,
+							analyzerProvider.getLemmatizerMap().get(Bisen.huSentenceStemmedFieldName)); 
+					String high2 = highlightField(huTokens, query,
+							Bisen.huSentenceStemmedFieldName, bisen.getHuSentence());
+					logger.debug(high2);
+					//}					
 					
+					high = mergeHighLight(high, high2);
 					bisen.setHuSentenceView(high);
 				} catch (Exception e) {
 					e.printStackTrace(); //TODO FIXME
@@ -229,19 +264,23 @@ public class Searcher {
 				try {
 					TokenStream enTokens = TokenSources.getTokenStream(
 							indexReader, bisen.getLuceneDocId(), Bisen.enSentenceStemmedFieldName);
+					enTokens = new CompoundStemmerTokenFilter(enTokens,
+							analyzerProvider.getLemmatizerMap().get(Bisen.enSentenceStemmedFieldName)); 
+					
 					logger.debug("try to high en stemmed:"+query.toString());
 					String high = highlightField(enTokens, query,
 							Bisen.enSentenceFieldName, bisen.getEnSentence());
 					logger.debug(high);
-					if (high.toLowerCase().indexOf("<b>")< 0){
-						enTokens = TokenSources.getTokenStream(
-								indexReader, bisen.getLuceneDocId(), Bisen.enSentenceFieldName);
-						logger.debug("try to high en on not-stemmed field:"+query.toString());
-						high = highlightField(enTokens, query,
-								Bisen.enSentenceStemmedFieldName, bisen.getEnSentence());
-						logger.debug(high);
-					}
+					enTokens = TokenSources.getTokenStream(
+							indexReader, bisen.getLuceneDocId(), Bisen.enSentenceFieldName);
+					enTokens = new CompoundStemmerTokenFilter(enTokens,
+							analyzerProvider.getLemmatizerMap().get(Bisen.enSentenceStemmedFieldName)); 
+					logger.debug("try to high en on not-stemmed field:"+query.toString());
+					String high2 = highlightField(enTokens, query,
+							Bisen.enSentenceStemmedFieldName, bisen.getEnSentence());
+					logger.debug(high);
 					
+					high = mergeHighLight(high, high2);
 					pair.getSecond().setEnSentenceView(high);
 				} catch (Exception e) {
 					e.printStackTrace(); //TODO FIXME
@@ -298,6 +337,16 @@ public class Searcher {
 
 	public void setMaxDocuments(Integer maxDocuments) {
 		this.maxDocuments = maxDocuments;
+	}
+
+
+	public AnalyzerProvider getAnalyzerProvider() {
+		return analyzerProvider;
+	}
+
+
+	public void setAnalyzerProvider(AnalyzerProvider analyzerProvider) {
+		this.analyzerProvider = analyzerProvider;
 	}
 
 
