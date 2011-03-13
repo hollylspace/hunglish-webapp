@@ -217,8 +217,7 @@ public class Searcher {
 		boolean found = matcher.find();
 		while(found){
 			String match = matcher.group(2);
-			String replaceMent = matcher.group(); //highLightStart+match+highLightEnd;
-			System.out.println("match:"+match+";replacement:"+replaceMent);
+			String replaceMent = matcher.group();
 			line2 = line2.replaceAll(match, replaceMent);
 			found = matcher.find();
 		}

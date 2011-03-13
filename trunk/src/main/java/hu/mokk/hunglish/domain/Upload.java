@@ -145,23 +145,6 @@ public class Upload {
 	}
 	
     
-	public String toString() {
-        StringBuilder sb = new StringBuilder();
-        //sb.append("Id: ").append(getId()).append(", ");
-        //sb.append("Version: ").append(getVersion()).append(", ");
-        //sb.append("Genre: ").append(getGenre()).append(", ");
-        //sb.append("Author: ").append(getAuthor()).append(", ");
-        sb.append("EnTitle: ").append(getEnTitle()).append(", ");
-        //sb.append("HuTitle: ").append(getHuTitle()).append(", ");
-        //sb.append("IsProcessed: ").append(getIsProcessed()).append(", ");
-        //sb.append("IsApproved: ").append(getIsApproved()).append(", ");
-        //sb.append("HuFilePath: ").append(getHuFilePath()).append(", ");
-        //sb.append("EnFilePath: ").append(getEnFilePath()).append(", ");
-        //sb.append("HuSentence: ").append(getHuSentence()).append(", ");
-        //sb.append("EnSentence: ").append(getEnSentence());
-        return sb.toString();
-    }
-
 	public CommonsMultipartFile getHuFileData() {
 		return huFileData;
 	}
@@ -401,14 +384,13 @@ public class Upload {
 
 	@Transactional
     public void remove() {
-		throw new RuntimeException("Upload cannot be removed");
-        /*if (this.entityManager == null) this.entityManager = entityManager();
+        if (this.entityManager == null) this.entityManager = entityManager();
         if (this.entityManager.contains(this)) {
             this.entityManager.remove(this);
         } else {
             Upload attached = this.entityManager.find(Upload.class, this.id);
             this.entityManager.remove(attached);
-        }*/
+        }
     }
 
 	@Transactional
@@ -473,6 +455,31 @@ public class Upload {
 
 	public void setOldDocid(String oldDocid) {
 		this.oldDocid = oldDocid;
+	}
+
+
+	@Override
+	public String toString() {
+		return "Upload [huFileData=" + huFileData + ", enFileData="
+				+ enFileData + ", genre=" + genre + ", author=" + author
+				+ ", authorName=" + authorName + ", enTitle=" + enTitle
+				+ ", huTitle=" + huTitle + ", isProcessed=" + isProcessed
+				+ ", createdTimestamp=" + createdTimestamp
+				+ ", harnessedTimestamp=" + harnessedTimestamp
+				+ ", huUploadedFilePath=" + huUploadedFilePath
+				+ ", enUploadedFilePath=" + enUploadedFilePath
+				+ ", huOriginalFileName=" + huOriginalFileName
+				+ ", enOriginalFileName=" + enOriginalFileName
+				+ ", huOriginalFileSize=" + huOriginalFileSize
+				+ ", enOriginalFileSize=" + enOriginalFileSize
+				+ ", huRawFileSize=" + huRawFileSize + ", enRawFileSize="
+				+ enRawFileSize + ", huSentenceCount=" + huSentenceCount
+				+ ", enSentenceCount=" + enSentenceCount
+				+ ", alignBisentenceCount=" + alignBisentenceCount
+				+ ", approved=" + approved + ", copyright=" + copyright
+				+ ", oldDocid=" + oldDocid + ", enExtension=" + enExtension
+				+ ", huExtension=" + huExtension + ", id=" + id + ", version="
+				+ version + "]";
 	}
 
 }
