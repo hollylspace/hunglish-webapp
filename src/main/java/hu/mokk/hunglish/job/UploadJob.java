@@ -17,6 +17,7 @@ public class UploadJob implements Job {
 	
 	@Override
 	public void execute(JobExecutionContext jc) throws JobExecutionException {
+		/*
 		try {
 			Indexer indexer = Indexer.getInstance();
 			Searcher searcher = Searcher.getInstance();
@@ -37,7 +38,7 @@ public class UploadJob implements Job {
 			log.debug("Executed upload processing job!");
 		} catch (Exception e) {
 			log.error("Failed to execute upload processing job.", e);
-		}
+		} */
 	}
 
 }

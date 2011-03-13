@@ -3,16 +3,17 @@ package hu.mokk.hunglish.lucene;
 import hu.mokk.hunglish.domain.Bisen;
 import hu.mokk.hunglish.lucene.query.HunglishQueryParser;
 
+import java.io.PrintStream;
 import java.util.HashMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
+import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.FilteredQuery;
 import org.apache.lucene.search.Query;
-import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.util.Version;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -115,9 +116,9 @@ public class LuceneQueryBuilder {
 		}
 	}
 
-	public static void printBytes(byte[] array, String name) {
+	public static void printBytes(byte[] array, String name, PrintStream out) {
 		for (int k = 0; k < array.length; k++) {
-			System.out.println(name + "[" + k + "] = " + "0x"
+			out.println(name + "[" + k + "] = " + "0x"
 					+ byteToHex(array[k]));
 		}
 	}

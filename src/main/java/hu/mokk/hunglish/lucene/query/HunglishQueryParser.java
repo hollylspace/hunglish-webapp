@@ -124,7 +124,6 @@ public class HunglishQueryParser {
 			//TODO FIXME create separate query object from each term and
 			//combine them with boolean query
 			String wtf = phrase.getTermsSpaceSeparated(); 
-			//System.out.println("wft"+wtf);
 			result = luceneQueryParser.parse(wtf);
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
