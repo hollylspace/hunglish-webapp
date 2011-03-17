@@ -1,0 +1,64 @@
+# rtf to text
+hu/rtf -> hu/raw : doc2raw
+en/rtf -> en/raw : doc2raw
+
+# doc to text
+hu/doc -> hu/raw : doc2raw
+en/doc -> en/raw : doc2raw
+
+# pdf to text
+hu/pdf -> hu/raw : pdf2raw
+en/pdf -> en/raw : pdf2raw
+
+# html to text
+hu/html -> hu/raw : html2raw
+en/html -> en/raw : html2raw
+hu/htm -> hu/raw : html2raw
+en/htm -> en/raw : html2raw
+
+# srt subtitles to text
+hu/srt -> hu/raw : srt2raw
+en/srt -> en/raw : srt2raw
+
+# converting from utf8 to latin1|2 if necessary
+hu/txt -> hu/raw : txt2rawhu
+en/txt -> en/raw : txt2rawen
+
+
+# sentence segmentation using huntoken (and shell script for removing huntoken tags)
+hu/raw -> hu/sen : sen
+en/raw -> en/sen : sen
+
+# Collecting character and line numbers
+hu/sen -> hu/meta : meta
+en/sen -> en/meta : meta
+
+# dropping extremely low quality bidocuments
+# based on compatibility of sizes.
+# (dropping actually means truncating them to size zero.)
+hu/sen, hu/meta, en/meta -> hu/filtersen : filtersen
+en/sen, hu/meta, en/meta -> en/filtersen : filtersen
+
+# tokenization
+hu/filtersen -> hu/tok : tok
+en/filtersen -> en/tok : tok
+
+## create stem cache with ocastem
+#hu/tok -> hu/stemcache : stemcachehu
+#en/tok -> en/stemcache : stemcacheen
+
+## stem tokenized file using the previously created cache (java)
+#hu/tok, hu/stemcache -> hu/stem : stem
+#en/tok, en/stemcache -> en/stem : stem
+
+# sentence alignment using hunalign
+hu/tok, en/tok -> align/ladder : align
+
+# make bisentences: use the sentences and the ladder to assemble sentence pairs int a text file (python)
+align/ladder, hu/filtersen, en/filtersen -> align/text: align2text
+
+# quality filter
+align/text -> align/qf : qf
+
+# collect some more size about data, and add to the previously collected
+align/qf , hu/meta, en/meta -> align/bimeta : bimeta
