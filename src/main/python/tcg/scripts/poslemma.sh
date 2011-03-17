@@ -1,0 +1,1 @@
+cat $2 | cut -f2 | paste $1 - | python -u ../scripts/removeWhiteSpaceFromEmptyLines.py

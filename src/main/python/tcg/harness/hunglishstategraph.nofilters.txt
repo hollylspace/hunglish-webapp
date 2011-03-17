@@ -1,0 +1,47 @@
+# rtf to text
+hu/rtf -> hu/raw : doc2raw
+en/rtf -> en/raw : doc2raw
+
+# doc to text
+hu/doc -> hu/raw : doc2raw
+en/doc -> en/raw : doc2raw
+
+# pdf to text
+hu/pdf -> hu/raw : pdf2raw
+en/pdf -> en/raw : pdf2raw
+
+# html to text
+hu/html -> hu/raw : html2raw
+en/html -> en/raw : html2raw
+hu/htm -> hu/raw : html2raw
+en/htm -> en/raw : html2raw
+
+# copying text to the pool
+hu/txt -> hu/raw : cat
+en/txt -> en/raw : cat
+
+
+# sentence segmentation using huntoken (and shell script for removing huntoken tags)
+hu/raw -> hu/sen : sen
+en/raw -> en/sen : sen
+
+# tokenization
+hu/sen -> hu/tok : tok
+en/sen -> en/tok : tok
+
+## create stem cache with ocastem
+#hu/tok -> hu/stemcache : stemcachehu
+#en/tok -> en/stemcache : stemcacheen
+
+## stem tokenized file using the previously created cache (java)
+#hu/tok, hu/stemcache -> hu/stem : stem
+#en/tok, en/stemcache -> en/stem : stem
+
+# sentence alignment using hunalign
+hu/tok, en/tok -> align/ladder : align
+
+# make bisentences: use the sentences and the ladder to assemble sentence pairs int a text file (python)
+align/ladder, hu/sen, en/sen -> align/text: align2text
+
+# quality filter
+align/text -> align/qf : qf

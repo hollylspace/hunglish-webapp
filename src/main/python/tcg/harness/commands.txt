@@ -1,0 +1,116 @@
+[commands]
+pipeline_dir=/big1/Work/Pipeline
+
+tcg_dir=%(pipeline_dir)s/cvs/tcg
+scripts_dir=%(tcg_dir)s/scripts
+binaries_dir=%(pipeline_dir)s/harness.binaries
+bisentence_dir=%(tcg_dir)s/bisentence
+huntaggers_dir=%(pipeline_dir)s/cvs/huntaggers
+model_dir=%(pipeline_dir)s/huntaggers.models
+resources_dir=%(tcg_dir)s/resources
+bisentence_dir=%(tcg_dir)s/bisentence
+1bie2conll_py=%(huntaggers_dir)s/bie12conll.py
+
+#pos_hu
+pos_hu_model=%(model_dir)s/hu/pos/hu_szeged_kr.model
+
+#pos_en
+pos_en_model=%(model_dir)s/en/pos/english.model
+
+#cp_hu
+cp_hu_traincorpus=%(model_dir)s/hu/cp/szeged.cp.bie1.train
+cp_hu_model=%(model_dir)s/hu/cp/szeged.cp.bie1.model
+cp_hu_features=%(model_dir)s/hu/cp/szeged.cp.bie1.features
+cp_hu_keptfeats=%(model_dir)s/hu/cp/szeged.cp.bie1.keptfeats
+cp_hu_lmweight=0.1
+
+#cp_en
+cp_en_traincorpus=%(model_dir)s/en/cp/penn.cp.sbar.train
+cp_en_model=%(model_dir)s/en/cp/penn.cp.sbar.model
+cp_en_features=%(model_dir)s/en/cp/penn.cp.sbar.features
+cp_en_keptfeats=%(model_dir)s/en/cp/penn.cp.sbar.keptfeats
+cp_en_lmweight=0.1
+
+#np_hu
+np_hu_traincorpus=%(model_dir)s/hu/np/szeged.shuffled.2+.train
+np_hu_model=%(model_dir)s/hu/np/szeged.shuffled.2+.g0.it100.features_krPatt.txt.cutoff1.rad3.model
+np_hu_features=%(model_dir)s/hu/np/features_krPatt.txt
+np_hu_keptfeats=%(model_dir)s/hu/np/szeged.shuffled.2+.keptfeats
+np_hu_lmweight=0.2
+
+#np_en
+np_en_traincorpus=%(model_dir)s/en/np/fullPenn.2+.train
+np_en_model=%(model_dir)s/en/np/fullPenn.2+.g0.it100.features_eng.txt.cutoff1.rad3_hunKr.model
+np_en_features=%(model_dir)s/en/np/features_eng.txt
+np_en_keptfeats=%(model_dir)s/en/np/fullPenn.2+.features_eng.txt.cutoff1.keptfeats
+np_en_lmweight=0.4
+
+#ner_hu
+ner_hu_traincorpus=%(model_dir)s/hu/ner/szeged.train
+ner_hu_model=%(model_dir)s/hu/ner/ner.szuz.bie1.g10.model
+ner_hu_features=%(model_dir)s/hu/ner/features.txt
+ner_hu_keptfeats=%(model_dir)s/hu/ner/szeged.keptfeats
+ner_hu_lmweight=2
+
+#ner_en
+ner_en_traincorpus=%(model_dir)s/en/ner/eng.train
+ner_en_model=%(model_dir)s/en/ner/eng.g0.it150.features_eng.txt.cutoff1.eng.model
+ner_en_features=%(model_dir)s/en/ner/features_eng.txt
+ner_en_keptfeats=%(model_dir)s/en/ner/eng.features_eng.txt.cutoff1.keptfeats
+ner_en_lmweight=0.6
+
+# morphtable_hu
+morphdb_hu=%(model_dir)s/hu/morphtable/morphdb_hu.bin
+
+# morphtable_en
+morphdb_en=%(model_dir)s/en/morphtable/morphdb_en.bin
+
+# disambig_hu
+disambig_tagger_model=%(binaries_dir)s/hu_szeged.model
+
+# schema files
+stem_schema_file=%(resources_dir)s/stem_schema.txt
+np_schema_file=%(resources_dir)s/np_schema.txt
+
+lowercaser=%(scripts_dir)s/lowercase.perl
+iconv=iconv -f LATIN2 -t utf8
+
+#real commands
+# tokenize
+tok_cmd: %(scripts_dir)s/tokenizer.pl -l en | sed "s/$/ /" | tr ' ' '\n'
+
+# pos tagging
+pos_hu_cmd: %(binaries_dir)s/hunpos-tag %(pos_hu_model)s | python [[,-u]] %(scripts_dir)s/removeTailingTabs.py
+pos_en_cmd: %(binaries_dir)s/hunpos-tag %(pos_en_model)s | python [[,-u]] %(scripts_dir)s/removeTailingTabs.py
+
+# cp chunking
+cp_hu_cmd: python [[,-u]] %(huntaggers_dir)s/huntag.py --traincorpus=%(cp_hu_traincorpus)s --model=%(cp_hu_model)s --features=%(cp_hu_features)s --keptfeats=%(cp_hu_keptfeats)s --lmweight=%(cp_hu_lmweight)s [[,--daemon]] | python [[,-u]] %(1bie2conll_py)s -d --fields=-1
+cp_en_cmd: python [[,-u]] %(huntaggers_dir)s/huntag.py --traincorpus=%(cp_en_traincorpus)s --model=%(cp_en_model)s --features=%(cp_en_features)s --keptfeats=%(cp_en_keptfeats)s --lmweight=%(cp_en_lmweight)s [[,--daemon]] | python [[,-u]] %(1bie2conll_py)s -d --fields=-1
+
+# np chunking
+np_hu_cmd: python [[,-u]] %(huntaggers_dir)s/huntag.py --traincorpus=%(np_hu_traincorpus)s --model=%(np_hu_model)s --features=%(np_hu_features)s --keptfeats=%(np_hu_keptfeats)s --lmweight=%(np_hu_lmweight)s [[,--daemon]]
+np_en_cmd: python [[,-u]] %(huntaggers_dir)s/huntag.py --traincorpus=%(np_en_traincorpus)s --model=%(np_en_model)s --features=%(np_en_features)s --keptfeats=%(np_en_keptfeats)s --lmweight=%(np_en_lmweight)s [[,--daemon]]
+
+# ner tagging
+ner_hu_cmd: python [[,-u]] %(huntaggers_dir)s/huntag.py --traincorpus=%(ner_hu_traincorpus)s --model=%(ner_hu_model)s --features=%(ner_hu_features)s --keptfeats=%(ner_hu_keptfeats)s --lmweight=%(ner_hu_lmweight)s [[,--daemon]] | python [[,-u]] %(1bie2conll_py)s -d --fields=-1
+ner_en_cmd: python [[,-u]] %(huntaggers_dir)s/huntag.py --traincorpus=%(ner_en_traincorpus)s --model=%(ner_en_model)s --features=%(ner_en_features)s --keptfeats=%(ner_en_keptfeats)s --lmweight=%(ner_en_lmweight)s [[,--daemon]] | python [[,-u]] %(1bie2conll_py)s -d --fields=-1
+
+# morph analyzing and stemming
+lemma_hu_cmd: %(huntaggers_dir)s/lemmatize/lemmatize.sh
+morphtable_hu_cmd: %(scripts_dir)s/morphtable.sh %(morphdb_hu)s %(binaries_dir)s/ocamorph
+morphtable_en_cmd: %(scripts_dir)s/morphtable.sh %(morphdb_en)s %(binaries_dir)s/ocamorph
+disambig_hu_cmd: %(scripts_dir)s/disambig.sh %(disambig_tagger_model)s
+poslemma_hu_cmd: %(scripts_dir)s/poslemma.sh
+stem_hu_cmd: python %(scripts_dir)s/stemhu.py
+stem_en_cmd: python %(scripts_dir)s/stemen.py
+
+# giza aligning
+to_moses_cmd: python %(bisentence_dir)s/to_moses.py --schema=%(stem_schema_file)s --tags=stem | %(iconv)s | %(lowercaser)s
+giza_cmd: %(scripts_dir)s/rungiza.sh /big1/Work/Pipeline/tmp 0-0
+
+# np stats collecting
+np_stats_hu_en_cmd: python %(bisentence_dir)s/bisentence.py --npstats --schema_file=%(np_schema_file)s
+np_stats_en_hu_cmd: python %(bisentence_dir)s/bisentence.py --npstats --schema_file=%(np_schema_file)s -r
+
+stem_pos_en_cmd: %(huntaggers_dir)s/stempos_en.sh
+stem_pos_hu_cmd: %(huntaggers_dir)s/stempos_hu.sh

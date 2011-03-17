@@ -1,0 +1,80 @@
+[commands]
+
+# --- variables ---
+
+# important paths
+
+# When we were on /big1
+# pipeline_dir=/big1/Work/Pipeline
+# cvs_dir=%(pipeline_dir)s/cvs
+
+pipeline_dir=/big3/Work/HunglishMondattar
+cvs_dir=%(pipeline_dir)s
+tcg_dir=%(cvs_dir)s/tcg
+scripts_dir=%(tcg_dir)s/scripts
+binaries_dir=%(pipeline_dir)s/harness.binaries
+resources_dir=%(pipeline_dir)s/resources
+
+# stemmer resources
+ocamorph_bin_hu=%(pipeline_dir)s/huntaggers.models/hu/morphtable/morphdb_hu.bin
+ocamorph_bin_en=%(pipeline_dir)s/huntaggers.models/en/morphtable/morphdb_en.bin
+
+# aligner resources
+aligner_dic=%(cvs_dir)s/hunalign/data/null.dic
+#aligner_dic=%(cvs_dir)s/hunalign/data/hu-en.stem.dic
+
+# --- commands ---
+
+doc2raw_cmd: %(scripts_dir)s/catdoc.utf8.sh
+
+pdf2raw_cmd: %(scripts_dir)s/catpdf.utf8.sh
+
+# Converts to utf8 if necessary. (If not, it is just a copying.)
+txt2rawhu_cmd: python %(scripts_dir)s/txt2raw.utf8.py hu
+txt2rawen_cmd: python %(scripts_dir)s/txt2raw.utf8.py en
+
+srt2raw_cmd: %(scripts_dir)s/srt2txt.utf8.sh
+
+html2raw_cmd: html2text -nobs | ( iconv -fUTF-8 -tUTF-8 -c || true )
+
+# split the text into separate sentences
+# TODO TODO Ez nem volt jo, ugyhogy szejjelkurtam. jrc-ac eleve mondatraszegmentalt.
+sen_cmd: cat
+#sen_cmd: perl %(scripts_dir)s/split-sentences.perl | sed "s/^<P>$/<p>/"
+
+# collect metadata from sen file
+# argument: sen
+meta_cmd: python %(scripts_dir)s/meta.py %(resources_dir)s/textcat.models --utf8
+
+# drop files which are incompatible with their pairs
+# arguments: ?/sen hu/meta en/meta
+# TODO TODO Ez nem volt jo, ugyhogy szejjelkurtam.
+filtersen_cmd: bash %(scripts_dir)s/filtersen.utf8.temp.sh
+#filtersen_cmd: python %(scripts_dir)s/filtersen.py
+
+# tokenize the text (split the text into separate words)
+tok_cmd: %(scripts_dir)s/tokenizer.utf8.pl -l en
+
+# make a stem table for the text
+stemcachehu_cmd: %(scripts_dir)s/ocastem_preprocess.sh | %(binaries_dir)s/ocastem --bin %(ocamorph_bin_hu)s
+# ocastem puts tags at the and of the english stemtable output
+stemcacheen_cmd: %(scripts_dir)s/ocastem_preprocess.sh | %(binaries_dir)s/ocastem --lowercase no --bin %(ocamorph_bin_en)s | sed "s/<.*//g"
+
+# replace every word with its stem, using the previously built stemtable
+# WARNING: This small class must be compiled at the cvs checkout dir at %(cvs_dir)s,
+# unlike many compiled executables that are copied once to %(binaries_dir)s and then forgotten about.
+webapp_class_dir=%(cvs_dir)s/hunglish-webapp/output/classes
+stem_cmd: java -cp %(webapp_class_dir)s mokk.nlp.ocamorph.FileStemmer
+
+# make the sentence alignment which will output a ladder
+align_cmd: %(binaries_dir)s/hunalign -utf %(aligner_dic)s
+
+# assemble the bisentences using the original sentences and the ladder
+align2text_cmd: python %(scripts_dir)s/ladder2text.py
+
+# quality filter
+qf_cmd: bash %(scripts_dir)s/qualityfilter.utf8.sh | python %(scripts_dir)s/enoughalpha.py --utf8
+
+# collect more metadata
+# arguments: align/qf hu/meta en/meta
+bimeta_cmd: python %(scripts_dir)s/bimeta.py --utf8
