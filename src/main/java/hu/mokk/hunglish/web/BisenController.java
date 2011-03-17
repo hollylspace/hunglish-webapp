@@ -17,7 +17,7 @@ import org.springframework.stereotype.Controller;
 @Controller
 public class BisenController {
 
-	private int maxResultSetSize;
+	private int maxResultSetSize = 100;
 
 	/*
 	 * @RequestMapping(value = "/bisen", method = RequestMethod.POST) public

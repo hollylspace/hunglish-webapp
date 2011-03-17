@@ -417,6 +417,11 @@ public class Upload {
         return (Long) entityManager().createQuery("select count(o) from Upload o").getSingleResult();
     }
 
+	public static long countUnprocessedUploads() {
+        return (Long) entityManager().createQuery("select count(o) from Upload o where o.isProcessed = 'N'").getSingleResult();
+    }
+	
+	
 	public static List<Upload> findAllUploads() {
         return entityManager().createQuery("select o from Upload o").getResultList();
     }
