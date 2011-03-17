@@ -3,6 +3,7 @@ package hu.mokk.hunglish.web;
 import hu.mokk.hunglish.domain.Author;
 import hu.mokk.hunglish.domain.Genre;
 import hu.mokk.hunglish.domain.Upload;
+import hu.mokk.hunglish.job.MockJob;
 import hu.mokk.hunglish.job.UploadJob;
 import hu.mokk.hunglish.lucene.Indexer;
 
@@ -40,21 +41,14 @@ public class UploadController {
 			.getLog(UploadController.class);
 
 	@Autowired
+	private MockJob mockJob;
+
+	public void setMockJob(MockJob mockJob) {
+		this.mockJob = mockJob;
+	}
+
+	@Autowired
 	private Indexer indexer;
-
-	@Autowired
-	private Scheduler scheduler;
-
-	@Autowired
-	private JobDetail jobDetail;
-
-	public void setJobDetail(JobDetail jobDetail) {
-		this.jobDetail = jobDetail;
-	}
-
-	public void setScheduler(Scheduler scheduler) {
-		this.scheduler = scheduler;
-	}
 
 	private String getUploadDir() {
 		String uploadDir = indexer.getUploadDir();
@@ -71,35 +65,42 @@ public class UploadController {
 		return uploadDir;
 	}
 
-	private void startUploadJob() throws SchedulerException{
-		long startTime = System.currentTimeMillis();
-		SimpleTrigger trigger = new SimpleTrigger("mySimpleTrigger",
-				scheduler.DEFAULT_GROUP, new Date(startTime), null, 0, 0L);
-		logger.info("triggered job manually.");
-		scheduler.scheduleJob(jobDetail, trigger);
-	}
-	
-	/* old code
 	private void startUploadJob() throws SchedulerException {
-		// get the Quartz scheduler
-		Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
 
-		// Define job instance
-		JobDetail job = new JobDetail("job1", "group1", UploadJob.class);
+		logger.info("trying to run job on demand...");
+		mockJob.doItOnDemand();
 
-		// Define a Trigger that will fire "now"
-		Trigger trigger = new SimpleTrigger("trigger1", "group1", new Date());
+		// long startTime = System.currentTimeMillis();
+		// SimpleTrigger trigger = new SimpleTrigger("mySimpleTrigger"
+		// + new Date().toString().replaceAll(" ", ""), scheduler.DEFAULT_GROUP,
+		// new Date(startTime), null, 0, 0L);
+		// logger.info("triggered job manually.");
 
-		if (!scheduler.isStarted()) {
-			scheduler.start();
-		}
+		// JobDetail newJobDetail = (JobDetail) jobDetail.clone();
+		// newJobDetail.setName("newJobDetail" + new
+		// Date().toString().replaceAll(" ", ""));
+		// scheduler.scheduleJob(newJobDetail, trigger);
+	}
 
-		// Schedule the job with the trigger
-		logger.info("scheduling upload job ...");
-		scheduler.scheduleJob(job, trigger);
-
-		// scheduler.standby();
-	} */
+	/*
+	 * old code private void startUploadJob() throws SchedulerException { // get
+	 * the Quartz scheduler Scheduler scheduler =
+	 * StdSchedulerFactory.getDefaultScheduler();
+	 * 
+	 * // Define job instance JobDetail job = new JobDetail("job1", "group1",
+	 * UploadJob.class);
+	 * 
+	 * // Define a Trigger that will fire "now" Trigger trigger = new
+	 * SimpleTrigger("trigger1", "group1", new Date());
+	 * 
+	 * if (!scheduler.isStarted()) { scheduler.start(); }
+	 * 
+	 * // Schedule the job with the trigger
+	 * logger.info("scheduling upload job ..."); scheduler.scheduleJob(job,
+	 * trigger);
+	 * 
+	 * // scheduler.standby(); }
+	 */
 
 	@RequestMapping(value = "/upload", method = RequestMethod.POST)
 	public String create(@Valid Upload upload, BindingResult result,
@@ -116,7 +117,7 @@ public class UploadController {
 			modelMap.addAttribute("genres", Genre.findAllGenresNoDummy());
 			return "upload/create";
 		}
-		
+
 		String uploadDir = getUploadDir();
 		try {
 			upload.setHuOriginalFileName(upload.getHuFileData()
