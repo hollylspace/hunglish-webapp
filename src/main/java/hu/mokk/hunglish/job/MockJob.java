@@ -62,9 +62,7 @@ public class MockJob { // extends QuartzJobBean implements StatefulJob {
 				// TODO remove this
 				logger.info("waiting...");
 				Thread.sleep(15000);
-				int exitCode = 0;
-				// int exitCode =
-				// SystemCall.execute(indexer.getUploadJobPath());
+				int exitCode = SystemCall.execute(indexer.getUploadJobPath());
 				logger.info("harness job finished, exit code:" + exitCode);
 				if (HARNESS_SUCCESS_CODE == exitCode) {
 					indexer.indexAll();
