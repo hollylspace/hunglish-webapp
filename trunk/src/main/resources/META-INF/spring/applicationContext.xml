@@ -149,28 +149,25 @@
 
 	<!-- http://code.google.com/p/hunglish-webapp/issues/detail?id=43 -->
 	<!-- scheduling -->
-
+<!-- 
 	<bean id="uploadController" class="hu.mokk.hunglish.web.UploadController" />
-
+ -->
 	<bean id="mockJob" class="hu.mokk.hunglish.job.MockJob" />
 
- 	<!-- not needed atm
-	<task:scheduler id="scheduler" pool-size="1" />
-	<task:scheduled-tasks scheduler="scheduler">
-		<task:scheduled ref="uploadController" method="startUploadJob"
-			cron="${uploadjob.cronexpression}" />
-	</task:scheduled-tasks>
- 	-->
- 	
+	<!-- not needed atm <task:scheduler id="scheduler" pool-size="1" /> <task:scheduled-tasks 
+		scheduler="scheduler"> <task:scheduled ref="uploadController" method="startUploadJob" 
+		cron="${uploadjob.cronexpression}" /> </task:scheduled-tasks> -->
+
 	<bean id="jobDetail"
 		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="name" value="default"></property>
 		<property name="targetObject" ref="mockJob" />
-		<property name="targetMethod" value="doSomeAction" />
+		<property name="targetMethod" value="doItPeriodically" />
 		<property name="concurrent" value="false" />
 	</bean>
 
 	<bean id="cronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
-		<property name="jobDetail" ref="jobDetail" />
+		<property name="jobDetail" ref="jobDetail" /> 
 		<property name="cronExpression" value="${uploadjob.cronexpression}" />
 	</bean>
 
@@ -183,4 +180,12 @@
 		</property>
 	</bean>
 
+
+<!-- 
+	<task:annotation-driven executor="singleThreadExecutor"
+		scheduler="scheduler"  /> -->
+		
+	<task:executor id="singleThreadExecutor" pool-size="1" />
+	<!-- <task:scheduler id="scheduler" pool-size="1" /> -->
+	
 </beans>
