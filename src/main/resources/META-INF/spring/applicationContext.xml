@@ -94,15 +94,15 @@
 	<bean class="hu.mokk.hunglish.jmorph.AnalyzerProvider" id="analyzerProvider"
 		init-method="initAnalyzerProvider">
 		<property name="resourceEncodingHu" value="${stemmer.resourceEncodingHu}" />
-		<property name="huAff" value="${stemmer.huAff}" />
-		<property name="huDic" value="${stemmer.huDic}" />
-		<property name="huDerivatives" value="${stemmer.huDerivatives}" />
-		<property name="huCompounds" value="${stemmer.huCompounds}" />
+		<property name="huAff" value="${webapp.dir}/${stemmer.huAff}" />
+		<property name="huDic" value="${webapp.dir}/${stemmer.huDic}" />
+		<property name="huDerivatives" value="${webapp.dir}/${stemmer.huDerivatives}" />
+		<property name="huCompounds" value="${webapp.dir}/${stemmer.huCompounds}" />
 		<property name="huRecursionDepth" value="${stemmer.huRecursionDepth}" />
 
 		<property name="resourceEncodingEn" value="${stemmer.resourceEncodingEn}" />
-		<property name="enAff" value="${stemmer.enAff}" />
-		<property name="enDic" value="${stemmer.enDic}" />
+		<property name="enAff" value="${webapp.dir}/${stemmer.enAff}" />
+		<property name="enDic" value="${webapp.dir}/${stemmer.enDic}" />
 		<property name="enRecursionDepth" value="${stemmer.enRecursionDepth}" />
 	</bean>
 
@@ -113,14 +113,10 @@
 		<property name="mergeFactorTemp" value="${indexer.mergeFactorTemp}" />
 		<!-- property name="maxBufferedDocs" value="${indexer.maxBufferedDocs}" 
 			/ -->
-		<property name="indexDir" value="${indexer.indexDir}" />
-		<property name="tmpIndexDir" value="${indexer.tmpIndexDir}" />
-		<property name="uploadDir" value="${indexer.uploadDir}" />
-		<property name="uploadJobPath" value="${uploadjob.path}" />
-		<!-- besides JPA/Hibernate, indexer also uses pure JDBC, for updating bisen 
-			table <property name="dbUrl" value="${database.url}" /> <property name="dbDriver" 
-			value="${database.driverClassName}" /> <property name="dbUser" value="${database.username}" 
-			/> <property name="dbPassword" value="${database.password}" /> -->
+		<property name="indexDir" value="${deployment.dir}/${indexer.indexDir}" />
+		<property name="tmpIndexDir" value="${deployment.dir}/${indexer.tmpIndexDir}" />
+		<property name="uploadDir" value="${deployment.dir}/${indexer.uploadDir}" />
+		<property name="uploadJobPath" value="${webapp.dir}/${python.dir}/${uploadjob.path} ${deployment.dir} ${webapp.dir}/${python.dir}" />
 		<property name="dbBatchSize" value="${indexer.dbBatchSize}" />
 
 	</bean>
@@ -129,7 +125,7 @@
 		init-method="initSearcher">
 		<property name="luceneQueryBuilder" ref="luceneQueryBuilder" />
 		<property name="analyzerProvider" ref="analyzerProvider" />
-		<property name="indexDir" value="${indexer.indexDir}" />
+		<property name="indexDir" value="${deployment.dir}/${indexer.indexDir}" />
 		<property name="maxDocuments" value="${searcher.maxDocuments}" />
 		<property name="useHunglishSyntax" value="${searcher.useHunglishSyntax}" />
 	</bean>
