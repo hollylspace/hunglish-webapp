@@ -316,13 +316,13 @@
 		<resources>
 		</resources>
 		<plugins>
-		<!-- copy jmorph.jar to the WEB-INF/lib dir-->
+	  <!-- copy jmorph.jar to the WEB-INF/lib dir-->
 	  <plugin>
 		<artifactId>maven-resources-plugin</artifactId>
         <version>2.4.3</version>
         <executions>
           <execution>
-            <id>copy-resources</id>
+            <id>copy-jmorph-jar</id>
             <phase>process-resources</phase>
             <goals>
               <goal>copy-resources</goal>
@@ -339,8 +339,27 @@
                     </excludes>
                 </resource>
               </resources>              
-            </configuration>            
+            </configuration>
           </execution>
+          
+          <execution>
+            <id>copy-python-code</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <includeEmptyDirs>true</includeEmptyDirs>
+            
+              <outputDirectory>src/main/webapp/WEB-INF/python</outputDirectory>
+              <resources>          
+                <resource>
+                  <directory>src/main/python/</directory>
+                </resource>
+              </resources>              
+            </configuration>
+          </execution>
+          
         </executions>
       </plugin>
 
