@@ -9,7 +9,7 @@ from base import *
 
 ## Globals hardwired:
 #
-g_harnessAppDir = "/big3/Work/HunglishMondattar/tcg/harness"
+g_harnessAppDir = "/big3/Work/HunglishMondattar/hunglish-webapp/src/main/python/tcg/harness"
 # Ez tobb dolgot is befolyasol: azt, hogy milyen command file-lal
 # hivjuk a harnesst, es hogy a qf-et milyen kodolasunak tekinti.
 # TODO Jelenleg a minosegszurest is kikapcsolja az utf8 mod.
@@ -266,7 +266,7 @@ def hashSentences(bisentences) :
 def harnessOutputFileToBisenTable(db,id,alignedFilePath) :
     logg( "Loading into database: "+alignedFilePath )
     enc = 'UTF-8' if g_isUTF8 else 'ISO-8859-2'
-    logg( "Encoding assumed: %s" )
+    logg( "Encoding assumed: %s" % enc )
     bisentences = readAlignFile(alignedFilePath, enc)
     hashedBisentences = hashSentences(bisentences)
     cursor = getCursor(db)
