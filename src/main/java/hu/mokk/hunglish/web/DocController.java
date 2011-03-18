@@ -1,9 +1,12 @@
 package hu.mokk.hunglish.web;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.roo.addon.web.mvc.controller.RooWebScaffold;
 import hu.mokk.hunglish.domain.Author;
 import hu.mokk.hunglish.domain.Doc;
 import hu.mokk.hunglish.domain.Genre;
+import hu.mokk.hunglish.lucene.Searcher;
+
 import javax.validation.Valid;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -17,6 +20,8 @@ import org.springframework.stereotype.Controller;
 @RequestMapping("/doc/**")
 @Controller
 public class DocController {
+	@Autowired
+	private Searcher searcher;
 
 	/*
 	@RequestMapping(value = "/doc", method = RequestMethod.POST)
@@ -49,13 +54,8 @@ public class DocController {
 
 	@RequestMapping(value = "/doc", method = RequestMethod.GET)
     public String list(@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, ModelMap modelMap) {
-		if (page == null){
-			page = 0;
-		}
-		if (size == null){
-			size = 20;
-		}
-        int sizeNo = size == null ? 10 : size.intValue();
+
+		int sizeNo = size == null ? 10 : Math.min(searcher.getMaxResultSetSize(), size.intValue());
         modelMap.addAttribute("docs", Doc.findDocEntries(page == null ? 0 : (page.intValue() - 1) * sizeNo, sizeNo));
         float nrOfPages = (float) Doc.countDocs() / sizeNo;
         modelMap.addAttribute("maxPages", (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages));

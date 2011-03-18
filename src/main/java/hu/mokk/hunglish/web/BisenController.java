@@ -1,8 +1,12 @@
 package hu.mokk.hunglish.web;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.roo.addon.web.mvc.controller.RooWebScaffold;
 import hu.mokk.hunglish.domain.Bisen;
 import hu.mokk.hunglish.domain.Doc;
+import hu.mokk.hunglish.lucene.Indexer;
+import hu.mokk.hunglish.lucene.Searcher;
+
 import javax.validation.Valid;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -17,7 +21,10 @@ import org.springframework.stereotype.Controller;
 @Controller
 public class BisenController {
 
-	private int maxResultSetSize = 100;
+	@Autowired
+	private Searcher searcher;
+
+	//private Integer maxResultSetSize = 100;
 
 	/*
 	 * @RequestMapping(value = "/bisen", method = RequestMethod.POST) public
@@ -29,9 +36,9 @@ public class BisenController {
 	 * "redirect:/bisen/" + bisen.getId(); }
 	 */
 
-	public void setMaxResultSetSize(int maxResultSetSize) {
+	/*public void setMaxResultSetSize(int maxResultSetSize) {
 		this.maxResultSetSize = maxResultSetSize;
-	}
+	}*/
 
 	@RequestMapping(value = "/bisen/form", method = RequestMethod.GET)
 	public String createForm(ModelMap modelMap) {
@@ -53,7 +60,8 @@ public class BisenController {
 			@RequestParam(value = "page", required = false) Integer page,
 			@RequestParam(value = "size", required = false) Integer size,
 			ModelMap modelMap) {
-		int sizeNo = size == null ? 10 : Math.max(maxResultSetSize, size.intValue());
+		
+		int sizeNo = size == null ? 10 : Math.min(searcher.getMaxResultSetSize(), size.intValue());
 		int pageNo = page == null ? 1 : page.intValue();
 		modelMap.addAttribute("bisens",
 				Bisen.findBisenEntries((pageNo - 1) * sizeNo, sizeNo));

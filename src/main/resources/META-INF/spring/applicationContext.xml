@@ -116,7 +116,7 @@
 		<property name="indexDir" value="${deployment.dir}/${indexer.indexDir}" />
 		<property name="tmpIndexDir" value="${deployment.dir}/${indexer.tmpIndexDir}" />
 		<property name="uploadDir" value="${deployment.dir}/${indexer.uploadDir}" />
-		<property name="uploadJobPath" value="${webapp.dir}/${python.dir}/${uploadjob.path} ${deployment.dir} ${webapp.dir}/${python.dir}" />
+		<property name="uploadJobPath" value="bash ${webapp.dir}/${python.dir}/${uploadjob.path} ${deployment.dir} ${webapp.dir}/${python.dir}" />
 		<property name="dbBatchSize" value="${indexer.dbBatchSize}" />
 
 	</bean>
@@ -128,6 +128,7 @@
 		<property name="indexDir" value="${deployment.dir}/${indexer.indexDir}" />
 		<property name="maxDocuments" value="${searcher.maxDocuments}" />
 		<property name="useHunglishSyntax" value="${searcher.useHunglishSyntax}" />
+		<property name="maxResultSetSize" value="${bisen.maxResultSetSize}" />
 	</bean>
 
 	<bean class="hu.mokk.hunglish.lucene.LuceneQueryBuilder" id="luceneQueryBuilder">
@@ -139,9 +140,12 @@
 		<property name="analyzerProvider" ref="analyzerProvider" />
 	</bean>
 
+<!-- 
 	<bean id="bisenController" class="hu.mokk.hunglish.web.BisenController">
 		<property name="maxResultSetSize" value="${bisen.maxResultSetSize}" />
 	</bean>
+-->
+
 
 	<!-- http://code.google.com/p/hunglish-webapp/issues/detail?id=43 -->
 	<!-- scheduling -->
