@@ -146,17 +146,16 @@ cd HunglishMondattar
 
 Danielkent:
 
-export CVSROOT=daniel@kruso.mokk.bme.hu:/local/cvs
-cvs co tcg
-cvs co hunalign # Igazibol csak a dic miatt kell, a binaris a harness.binaries-ban van.
-svn checkout https://hunglish-webapp.googlecode.com/svn/tags/spring-lucene-jmorph-skeleton hunglish-webapp --username varga.daniel --password n5h7z6m5
+# Regen a cvs-bol a tcg es a hunalign is kellettek, de
+# elobbi bekerult svn:/src/main/python/tcg ala, utobbi pedig
+# csak a dic miatt kellett, ami most mar resources/hunalign alatt van.
+# export CVSROOT=daniel@kruso.mokk.bme.hu:/local/cvs
+
+svn checkout https://hunglish-webapp.googlecode.com/svn/trunk hunglish-webapp --username varga.daniel --password n5h7z6m5
 
 Danielkent (, de eredetileg ROOTKENT, csak aztan ujraszerveztem):
 mkdir deployment
 cd deployment
-cp ../hunglish-webapp/src/main/python/harness_cronjob.sh .
-chmod 744 harness_cronjob.sh # Csak akkor megy igy, ha a tomcat is daniel-kent fut!
-
 mkdir logs fileUpload hunglishIndex hunglishIndexTmp harness.data
 mkdir harness.data/en harness.data/hu harness.data/align
 
