@@ -53,6 +53,8 @@ public class Searcher {
 	 */
 	private Integer maxDocuments;
 	
+	private Integer maxResultSetSize;
+	
 	private IndexSearcher searcher;
 	private IndexReader indexReader;
 	
@@ -346,6 +348,16 @@ public class Searcher {
 
 	public void setAnalyzerProvider(AnalyzerProvider analyzerProvider) {
 		this.analyzerProvider = analyzerProvider;
+	}
+
+
+	public Integer getMaxResultSetSize() {
+		return maxResultSetSize;
+	}
+
+
+	public void setMaxResultSetSize(Integer maxResultSetSize) {
+		this.maxResultSetSize = maxResultSetSize;
 	}
 
 
