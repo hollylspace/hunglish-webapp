@@ -73,37 +73,7 @@ TODO
 
 - A fileUpload ne engedje meg, hogy a menubol is es a textboxbol is megadjunk authort.
 
-- (Issue 13) Highlight search results.
-
-- (Issue 44) SystemCall.java defaultCommand vagy quartz.properties:uploadjob.path
-adja a cronjob helyet? Csak az egyik adja!
-
-- (Issue 44) A leheto legkevesebb helyen legyen a propertiesben abszolut path.
-Az osszes tobbi path relativ pathkent legyen megadva a fent emlitett abszolut path-okhoz kepest.
-Mostanra stabilizalodott az alkalmazas konyvtar-layout-ja, ugyhogy haromnal tobb abszolut path
-szinte biztosan felesleges, annak a jele, hogy valami me'g nincs vegiggondolva. A harom, amirol tudok:
-1. hol vannak a nyelvi eroforrasok.
-2. hol van az ugynevezett deployment konyvtar, ami alatt minden adatkonyvtar van. A java webapp
-nezopontjabol ezek kozul egyebkent csak harom relevans van: fileUpload,hunglishIndex,hunglishIndexTmp.
-3. hol van a harness_cronjob.sh.
-A kodban termeszetesen egyaltalan semmilyen path ne legyen, se relativ, se abszolut.
-
-- (Issue 44) ...Nem Java issue, hanem python, de az is ide tartozik, hogy ki kell talalni,
-hogy hol legyen a control_harness.py. (Jelenleg az eles alkalmazas dilettans
-modon a munkakonyvtaramra referal.)
-A tiszta megoldas talan az, ha a tomcat deploy lerakja valahova
-/srv/tomcat6/webapps/hunglish ala a src/main/python konyvtarat,
-es a java tudja hogy ott kell keresse a harness_cronjob.sh-t, a
-harness_cronjob.sh pedig tudja, hogy ott kell keresse a control_harness-t.
-
-- (Issue 44) ...Az me'g ezutan is homalyos, hogy a control_harness hol keresse a harness.py-t, de
-ez kisebb gond, es ezt is megoldana', ha atkerulne google code ala a harness a cvs alol.
-
-- (Issue 47) http://kozel.mokk.bme.hu:8080/hunglish/doc URL (a size attributum nelkul meghivva)
-kilistazza mind a sokszazat. Ki se merem probalni, hogy a hunglish/bisen mit csinal.
-UPDATE: Ugy tunik most mar ez default 10-re lett atallitva, de &size=100000 attributummal
-azert me'g mindig hagyja megszivatni magat.
-UPDATE2: Plusz van a menu url-ben egy &amp; is, ami nem kellene oda.
+- Van a menu url-ben egy &amp; , ami nem kellene oda.
 
 - Use case: Utolag rajovok, hogy egy kis bash scriptet bele kellene tenni a qualityfilterbe.
 Megteszem, de visszamenoleg is meg kellene tenni. Eszkoz: dumpoljuk ki id-vel az osszes
@@ -138,25 +108,12 @@ persze csak a metaadatokat.)
 - (Issue 43) properties-bol allithato legyen, hogy idozitesre vagy fileUpload triggerre
 induljon el a pipeline.
 
-- (Issue 43) Feltolteskor ha mar fut egy quartz job, akkor a quartz nem moge-schedule-olja
-az ujat, hanem bejelenti, hogy most nem tud inditani.
-
 - (Issue 43) control_harness-bol es indexelesbol semmikeppen ne fusson ketto egyszerre,
 az nagyon durva inkonzisztenciakhoz vezet. Lock-oljuk valami munkanaplo tablaban,
 arra az esetre, ha a quartz elszurna, es megis megengedne kettot.
 
-- (Issue 44) Ne relativ path-on keresse az index es upload konyvtarakat, hanem fixen
-/big3/Work/HunglishMondattar/deployment alatt.
-Persze a laptopokon nem big3, legyen valami lokalis conf,
-ami alapjan startup (es nem build) idoben beallithato. Utobbi azert fontos,
-hogy mac-rol is tudjam a kozelen deployolni.
-
 - (Issue 35) Valami ronda nagy (quartz?) leak, ami miatt ujra kell inditgatni
 a tomcat-et nehany tomcat:deploy utan.
-
-- A quartz finnyas arra, hogy honnan kell inditania a cronjobot.
-
-- Masodpeldany van a deployment konyvtarban a cronjob-bol.
 
 - Erdekes, ugy latszik nem csak a quartz-nak vannak problemai a threadek leolesevel:
 SEVERE: The web application [/hunglish] appears to have started a thread named [MySQL Statement Cancellation Timer] but has failed to stop it. This is very likely to create a memory leak.
@@ -181,6 +138,8 @@ masodik 20000-es batch-csel, aminek nulla eleme volt, de igy is 50 sec-et szotym
 - A loadgame-savegame annyira kozel-specifikusak, hogy Gergonek nincs
 sok haszna egyelore beloluk. A savegame addig nem lesz ipari szintu,
 amig nem allitja le a service-t.
+
+- Shell scriptek elejere "set -e".
 
 - Az exception-ok informacioit a webapp es a control_harness is elnyelegeti.
 UPDATE: a control_harnesst mar megjavitottam, de nem teljesen, mert nem derul ki
@@ -213,17 +172,15 @@ szazak kattintanak ra.
 
 HARNESS, HIBAKEZELES:
 
-- Vonyot beletolni, egyelore esz nelkul.
+- Tenyleg rettenetesen utalatos, hogy ha a tomcat lehal vagy leoljuk,
+akkor a beragadt harness-t mennyire nehez es error-prone kipusztitani.
 
-- Me'g egy meglepetes: van egy-ket doksi, peldaul 
-whole.top1000.sav/harness.data/hu/doc/469.hu.doc
-azaz /big3/Work/HunglishMondattar/datasources/hunglish2/hu/christie-nyaralo_gyilkosok.doc
-, amikre a hackelt tcg/scripts/catdoc_latin2.sh nem szuperal.
-Miert nem szuperal? Mert "catdoc -dISO-8859-2" helyett "catdoc -dutf-8" tortenik,
-es az utobbi valamiert latin1 o"-u"-t tesz a szovegbe, amit aztan az iconv elhajit.
-(Furcsa, de a word jol jeleniti meg.)
-Kiket erint ez? Kabe ezeket, bar ennel me'g pontosabban is meg kell majd nezni:
-ls whole.top1000.sav/harness.data/hu/doc/* | while read f ; do echo -n "$f " ; cat $f | catdoc -dutf-8 | ( iconv --f utf8 --t latin2 -c || true ) | grep -c " n " ; done | grep -v " 0$"
+- A marciusi dist-upgrade megvaltoztatta a html2text kimenetenek kodolasat.
+Egyelore egy utanadobott pipe-pal probalom korrigalni, de ez nem vegleges,
+peldaul az angol oldalon se szep. Ideje utf-re atalallni.
+html2raw_cmd: html2text -nobs | ( iconv --f utf8 --t latin2 -c || true )
+
+- Vonyot beletolni, egyelore esz nelkul.
 
 - Meglepetes ennyi ev utan: a huntoken html entitasokka
 kodolja azokat, akik nincsenek benne a latin2 tablaban.
@@ -243,6 +200,7 @@ szamolja.
 - Epiteni egy gorog-szlovak korpuszt.
 /big2/User/daniel/Acquis/raw/sen/ alatt nyelvi korpuszok, mint el (gorog)
 es sk (szlovak). raw/doclangtable.txt megmondja, hogy kik vannak meg.
+(UPDATE: Ha mindenfele minosegszurest kivettem, akkor vegigment gorog-szlovakra.)
 
 - A barom html2text meghagyja utf8-nak a tenylegesen utf8 szoveget,
 viszont a html entitasokat lelkesen atkonvertalja latin-1-re. Az
@@ -271,12 +229,6 @@ ADMIN:
 - Ha a sudo me'g nem timeoutolt, akkor az eraseall.sh megkerdezi hogy are you
 fucking sure?, de a valaszt nem megvarva elkezdi a torlest. Egyebkent is,
 amit a webapp stop-pal meg start-tal csinal, az lehet, hogy felesleges.
-
-- Zsolt telepitsen legujabb, sun-os javat, es mavent. A tomcat a sun-os java home-ra mutasson.
-De az is lehet, hogy az Aspects JAR problemat megoldja, ha a tomcat es a maven ugyanazzal
-a java-val (openjdk, sun jdk) megy.
-
-- atirtam az init.d/tomcat6-ot sun-rol openjdk path-ra.
 
 - Modositottam /etc/mysql/my.cnf konfigot ezzel a sorral:
 wait_timeout=604800
@@ -358,13 +310,76 @@ reszehez.
 
 LEZART DOLGOK:
 
-NOTDONE (Nem tudtam reprodukalni.) - Brutalis hibalehetoseg:
-az ujrainditas utan ugy latom nem tomcat6 userkent fut
-a service, hanem root-kent. Ez nem csak azert brutal, mert security hole, hanem
-azert is, mert nem lesz joga a tomcat-nek bolygatni a root altal letrehozott
-fajlokat.
+DONE Ugy tunik a dist-upgrade megoldotta a ket furcsasagot.
+(Az egyik hogy a mvn package csak tobbedszerre futott le, a masik egy Aspects JAR runtime error.)
+- Zsolt telepitsen legujabb, sun-os javat, es mavent. A tomcat a sun-os java home-ra mutasson.
+De az is lehet, hogy az Aspects JAR problemat megoldja, ha a tomcat es a maven ugyanazzal
+a java-val (openjdk, sun jdk) megy.
+- atirtam az init.d/tomcat6-ot sun-rol openjdk path-ra.
 
-NOTDONE - Tomcat access logoljon a virtualis gepen is.
+DONE - (Issue 44) A leheto legkevesebb helyen legyen a propertiesben abszolut path.
+Az osszes tobbi path relativ pathkent legyen megadva a fent emlitett abszolut path-okhoz kepest.
+Mostanra stabilizalodott az alkalmazas konyvtar-layout-ja, ugyhogy haromnal tobb abszolut path
+szinte biztosan felesleges, annak a jele, hogy valami me'g nincs vegiggondolva. A harom, amirol tudok:
+1. hol vannak a nyelvi eroforrasok.
+2. hol van az ugynevezett deployment konyvtar, ami alatt minden adatkonyvtar van. A java webapp
+nezopontjabol ezek kozul egyebkent csak harom relevans van: fileUpload,hunglishIndex,hunglishIndexTmp.
+3. hol van a harness_cronjob.sh.
+A kodban termeszetesen egyaltalan semmilyen path ne legyen, se relativ, se abszolut.
+
+DONE - (Issue 44) ...Nem Java issue, hanem python, de az is ide tartozik, hogy ki kell talalni,
+hogy hol legyen a control_harness.py. (Jelenleg az eles alkalmazas dilettans
+modon a munkakonyvtaramra referal.)
+A tiszta megoldas talan az, ha a tomcat deploy lerakja valahova
+/srv/tomcat6/webapps/hunglish ala a src/main/python konyvtarat,
+es a java tudja hogy ott kell keresse a harness_cronjob.sh-t, a
+harness_cronjob.sh pedig tudja, hogy ott kell keresse a control_harness-t.
+
+DONE - (Issue 44) ...Az me'g ezutan is homalyos, hogy a control_harness hol keresse a harness.py-t, de
+ez kisebb gond, es ezt is megoldana', ha atkerulne google code ala a harness a cvs alol.
+
+DONE (Nem pont igy lett, de jo lett.) - (Issue 44) Ne relativ path-on keresse az index es upload konyvtarakat, hanem fixen
+/big3/Work/HunglishMondattar/deployment alatt.
+Persze a laptopokon nem big3, legyen valami lokalis conf,
+ami alapjan startup (es nem build) idoben beallithato. Utobbi azert fontos,
+hogy mac-rol is tudjam a kozelen deployolni.
+
+DONE - A quartz finnyas arra, hogy honnan kell inditania a cronjobot.
+
+DONE - Masodpeldany van a deployment konyvtarban a cronjob-bol.
+
+DONE - (Issue 47) http://kozel.mokk.bme.hu:8080/hunglish/doc URL (a size attributum nelkul meghivva)
+kilistazza mind a sokszazat. Ki se merem probalni, hogy a hunglish/bisen mit csinal.
+UPDATE: Ugy tunik most mar ez default 10-re lett atallitva, de &size=100000 attributummal
+azert me'g mindig hagyja megszivatni magat.
+
+DONE - (Issue 44) SystemCall.java defaultCommand vagy quartz.properties:uploadjob.path
+adja a cronjob helyet? Csak az egyik adja!
+
+DONE - (Issue 13) Highlight search results.
+
+DONE (short path) - A duplumszures eleg lassu. Amikor mar jo nagy az adatbazis, akkor egy rovid doksi
+feltoltesetol kezdve igy jonnek a fazisok:
+1. par masodperc harness.
+2. 2 min 30 sec duplumfilter (Lehet, hogy jobb, ha az adatbazis helyett a python vegzi a rendezest?)
+3. 3 min 20 sec indexeles (Tulindexeles bug: futott egy teljesen felesleges kort egy
+masodik 20000-es batch-csel, aminek nulla eleme volt, de igy is 50 sec-et szotymorgott vele.)
+UPDATE: Ezt ujra kellene merni az uj create.sql-en, valszeg javult a helyzet valamennyit.
+
+DONE - (Issue 43) Feltolteskor ha mar fut egy quartz job, akkor a quartz nem moge-schedule-olja
+az ujat, hanem bejelenti, hogy most nem tud inditani.
+
+NOTDONE - Me'g egy meglepetes: van 8 darab doc, peldaul 
+whole.top1000.sav/harness.data/hu/doc/469.hu.doc
+azaz /big3/Work/HunglishMondattar/datasources/hunglish2/hu/christie-nyaralo_gyilkosok.doc
+, amikre a hackelt tcg/scripts/catdoc_latin2.sh nem szuperal.
+Miert nem szuperal? Mert "catdoc -dISO-8859-2" helyett "catdoc -dutf-8" tortenik,
+es az utobbi valamiert latin1 o"-u"-t tesz a szovegbe, amit aztan az iconv elhajit.
+Ez akkor es csakis akkor tortenik, ha word 95 formatumu a doc. A hunglish2/readme.txt-ben
+pontosan leirtam, hogy mi ez es hogy kerultem ki. Nincs ra kezimunka nelkuli megoldas,
+a harness rosszul fogja kezelni tovabbra is.
+
+DONE CPV-t attenni mag-bol law-ba.
 
 DONE - (Issue 41) A timestamp fogalmat rosszul hasznaljuk. Egyes helyeken, mint bisen.indexed_timestamp kiirtando,
 mas helyeken, mint job_queue es upload, lecserelendo egy rendes datumra.
@@ -373,6 +388,13 @@ Ez is emiatt van:
 ha nem hazudok be egy kitoltott harnessed_timestamp mezot.
 Gergo szedje ki ezt a hulye checket, Daniel utana mar kiszedheti
 a behazudast a machine_upload-bol.
+
+NOTDONE (Nem tudtam reprodukalni.) - Brutalis hibalehetoseg: az ujrainditas utan ugy latom nem tomcat6 userkent fut
+a service, hanem root-kent. Ez nem csak azert brutal, mert security hole, hanem
+azert is, mert nem lesz joga a tomcat-nek bolygatni a root altal letrehozott
+fajlokat.
+
+NOTDONE - Tomcat access logoljon a virtualis gepen is.
 
 DONE Csinaltam egy masik duplumfiltert, ami egyetlen doksi feltoltese eseten
 sokkal sokkal gyorsabb, mint a regi. A regi fixen 6 es fel percig tolt ra valamit
@@ -583,6 +605,8 @@ DONE - utf8 bug.
 
 ---
 Adatforrasok
+
+(mac:~/save/HunglishMondattar.datasources ala elmentettem egy peldanyt.)
 
 Osszesites:
 
