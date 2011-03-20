@@ -7,7 +7,11 @@ appdata_rootdir=/big3/Work/HunglishMondattar/deployment
 appcode_rootdir=/big3/Work/HunglishMondattar/hunglish-webapp
 
 logdir=$appdata_rootdir/logs
+mkdir $logdir
+mkdir $logdir/cout
+
 logdate=`date +"%Y%m%d-%H%M%S"`
+# TODO ha mar letezik 
 
 harnessdatadir=$appdata_rootdir/harness.data
 
