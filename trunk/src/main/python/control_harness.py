@@ -520,8 +520,6 @@ def main():
 	# Jobb ketszer mint soha.
 	mkdir(g_logDir)
 	mkdir(g_logDir+"/cout")
-	mkdir(g_logDir+"/harness")
-	mkdir(g_logDir+"/harness/cout")
 	
     db = MySQLdb.connect( host="localhost",
 	user=username, passwd=password, db=database )
