@@ -31,7 +31,9 @@ txt2rawen_cmd: python %(scripts_dir)s/txt2raw.py en
 
 srt2raw_cmd: %(scripts_dir)s/srt2txt.sh
 
-html2raw_cmd: html2text -nobs
+# TODO HACK. A latin1-es ekezeteket eldobja.
+# A 20110319 dist-upgrade elott a pipe nem kellett, mert eleve latin1-et adott.
+html2raw_cmd: html2text -nobs | ( iconv --f utf8 --t latin2 -c || true )
 
 # split the text into separate sentences
 sen_cmd: %(binaries_dir)s/huntoken -b | %(scripts_dir)s/clean_huntoken_output.sh
