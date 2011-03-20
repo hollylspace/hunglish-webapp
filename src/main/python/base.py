@@ -18,6 +18,7 @@ def mkdir(f) :
     except :
 	# Ez csuf, de csak a mar letezo dir-t fedi el. Egyelore megfelel.
 	pass
+    assert os.path.isdir(f)
 
 def cp(f1,f2) :
     logg( "cp "+f1+" "+f2 )
