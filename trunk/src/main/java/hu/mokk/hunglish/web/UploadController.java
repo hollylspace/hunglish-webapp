@@ -4,7 +4,6 @@ import hu.mokk.hunglish.domain.Author;
 import hu.mokk.hunglish.domain.Genre;
 import hu.mokk.hunglish.domain.Upload;
 import hu.mokk.hunglish.job.MockJob;
-import hu.mokk.hunglish.job.UploadJob;
 import hu.mokk.hunglish.lucene.Indexer;
 
 import java.io.File;
@@ -15,12 +14,7 @@ import javax.validation.Valid;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.quartz.JobDetail;
-import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
-import org.quartz.SimpleTrigger;
-import org.quartz.Trigger;
-import org.quartz.impl.StdSchedulerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.roo.addon.web.mvc.controller.RooWebScaffold;
 import org.springframework.stereotype.Controller;
@@ -70,37 +64,8 @@ public class UploadController {
 		logger.info("trying to run job on demand...");
 		mockJob.doItOnDemand();
 
-		// long startTime = System.currentTimeMillis();
-		// SimpleTrigger trigger = new SimpleTrigger("mySimpleTrigger"
-		// + new Date().toString().replaceAll(" ", ""), scheduler.DEFAULT_GROUP,
-		// new Date(startTime), null, 0, 0L);
-		// logger.info("triggered job manually.");
-
-		// JobDetail newJobDetail = (JobDetail) jobDetail.clone();
-		// newJobDetail.setName("newJobDetail" + new
-		// Date().toString().replaceAll(" ", ""));
-		// scheduler.scheduleJob(newJobDetail, trigger);
 	}
 
-	/*
-	 * old code private void startUploadJob() throws SchedulerException { // get
-	 * the Quartz scheduler Scheduler scheduler =
-	 * StdSchedulerFactory.getDefaultScheduler();
-	 * 
-	 * // Define job instance JobDetail job = new JobDetail("job1", "group1",
-	 * UploadJob.class);
-	 * 
-	 * // Define a Trigger that will fire "now" Trigger trigger = new
-	 * SimpleTrigger("trigger1", "group1", new Date());
-	 * 
-	 * if (!scheduler.isStarted()) { scheduler.start(); }
-	 * 
-	 * // Schedule the job with the trigger
-	 * logger.info("scheduling upload job ..."); scheduler.scheduleJob(job,
-	 * trigger);
-	 * 
-	 * // scheduler.standby(); }
-	 */
 
 	@RequestMapping(value = "/upload", method = RequestMethod.POST)
 	public String create(@Valid Upload upload, BindingResult result,

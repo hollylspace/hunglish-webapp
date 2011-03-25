@@ -3,6 +3,10 @@
 
 <urlrewrite default-match-type="wildcard">
 	<rule>
+		<from>/dwr/**</from>
+		<to last="true">/dwr/$1</to>
+	</rule>
+	<rule>
 		<from>/resources/**</from>
 		<to last="true">/resources/$1</to>
 	</rule>

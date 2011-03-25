@@ -56,24 +56,20 @@ public class MockJob { // extends QuartzJobBean implements StatefulJob {
 			Searcher searcher = Searcher.getInstance();
 			
 			if (indexer != null && searcher != null) {
-				// if harness exit status is not OK, then do not start indexer
-				// I just put it here, so when, we change this to asynchronous
-				// processing,
-				// then this logic should be implemented
-				// TODO remove this
-				//logger.info("waiting...");
-				//Thread.sleep(15000);
+				int exitCode = HARNESS_SUCCESS_CODE;
 				long cnt = Upload.countUnprocessedUploads();
+				
 				logger.info("Executing upload processing job, upload count:"+cnt);
 				if (cnt > 0 ){
-					logger.info("harness job start ...");
-					int exitCode = SystemCall.execute(indexer.getUploadJobPath());
+					logger.info("harness job start ...:"+indexer.getUploadJobPath());
+					exitCode = SystemCall.execute(indexer.getUploadJobPath());
 					logger.info("harness job finished, exit code:" + exitCode);
-					if (HARNESS_SUCCESS_CODE == exitCode) {
-						indexer.indexAll();
-						searcher.reInitSearcher();
-					}
 				}
+				if (HARNESS_SUCCESS_CODE == exitCode) {
+					indexer.indexAll();
+					searcher.reInitSearcher();
+				}
+				
 			} else {
 				logger.error("WTF, indexer or searcher is null! ");
 			}
@@ -84,12 +80,4 @@ public class MockJob { // extends QuartzJobBean implements StatefulJob {
 
 	}
 
-	/*
-	 * @Override protected void executeInternal(JobExecutionContext arg0) throws
-	 * JobExecutionException {
-	 * 
-	 * logger.info("job running...");
-	 * 
-	 * }
-	 */
 }
