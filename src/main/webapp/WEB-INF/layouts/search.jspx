@@ -9,6 +9,8 @@
 	<jsp:directive.page contentType="text/html;charset=UTF-8" />  
 		
 	<head>
+	
+	
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=8" />
 		<link href="/hunglish/static/styles/search.css" media="screen" type="text/css" rel="stylesheet"></link>		
@@ -25,8 +27,14 @@
 		<link rel="SHORTCUT ICON" href="${favicon}" />
 		
 		<title>Hunglish Search</title>
+		
+  <script type='text/javascript' src='/hunglish/dwr/interface/UpvoteController.js'></script>
+  <script type='text/javascript' src='/hunglish/dwr/engine.js'></script>
+		
 	</head>
    	<body class="tundra spring">
+
+   	
    		<div id="wrapper">
 
 	    	<div id="main">

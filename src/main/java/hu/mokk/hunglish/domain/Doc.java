@@ -66,6 +66,8 @@ public class Doc {
     @Size(max = 255)
     private String alignedFilePath;
 
+    private Long boost;
+    
 	@PersistenceContext
     transient EntityManager entityManager;
 
@@ -247,5 +249,13 @@ public class Doc {
 
 	public void setCopyright(String copyright) {
 		this.copyright = copyright;
+	}
+
+	public Long getBoost() {
+		return boost;
+	}
+
+	public void setBoost(Long boost) {
+		this.boost = boost;
 	}
 }

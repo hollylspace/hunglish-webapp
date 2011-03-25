@@ -310,6 +310,15 @@
             <version>1.8.3</version>
         </dependency>
         
+		<dependency>
+			<groupId>org.directwebremoting</groupId>
+			<artifactId>dwr</artifactId>
+			<version>3.rc1</version>
+			<scope>system</scope>
+            <systemPath>${basedir}/src/main/webapp/WEB-INF/lib/dwr.jar</systemPath>
+		</dependency>
+
+        
 	</dependencies>
 
 	<build>

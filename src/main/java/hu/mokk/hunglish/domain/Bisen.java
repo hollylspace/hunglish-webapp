@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.roo.addon.entity.RooEntity;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.tostring.RooToString;
+import org.springframework.transaction.annotation.Transactional;
 
 @Configurable
 @Entity
@@ -79,7 +80,7 @@ public class Bisen {
 	transient String huSentenceView;
 	transient String enSentenceView;
 
-	transient int luceneDocId;
+	transient Integer luceneDocId;
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -366,6 +367,13 @@ public class Bisen {
 		return result;
 	}
 	
+	public static void upvote(Long id) {
+		entityManager().createNativeQuery("update bisen set state = 'R', upvotes = COALESCE(upvotes, 0) + 1 where id = "+id).executeUpdate();
+	}
+
+	public static void downvote(Long id) {
+		entityManager().createNativeQuery("update bisen set state = 'R', downvotes = COALESCE(downvotes, 0) + 1 where id = "+id).executeUpdate();
+	}
 	
 	public static Bisen toBisen(Document document, int id) {
 		Bisen result = findBisen(new Long(document.getField(idFieldName).stringValue())); 
@@ -373,6 +381,21 @@ public class Bisen {
 		return result;
 	}
 
+	public float getBoost(){
+		float result;
+		Long diff = (upvotes == null ? 0 : upvotes) - (downvotes == null ? 0 : downvotes);
+		if (diff >= 0) {
+			result = diff + 1;
+		} else {
+			result = 1/(Math.abs(diff));
+		}
+		Long docBoost = getDoc().getBoost(); 
+		if (docBoost != null){
+			result = result * docBoost; 
+		}
+		return result; 
+	}
+	
 	public Document toLucene() {
 		Document result = new Document();
 
@@ -402,6 +425,7 @@ public class Bisen {
 				Field.Store.YES, Field.Index.ANALYZED,
 				Field.TermVector.WITH_POSITIONS_OFFSETS));
 
+		result.setBoost(getBoost());
 		return result;
 
 	}

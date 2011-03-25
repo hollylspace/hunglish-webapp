@@ -29,6 +29,7 @@
         <intercept-url pattern="/indexer/**" access="isAuthenticated()" />
         <intercept-url pattern="/search/**" access="permitAll" />
         <intercept-url pattern="/static/**" access="permitAll" />
+        <intercept-url pattern="/dwr/**" access="permitAll" />
         <intercept-url pattern="/login" access="permitAll" />
         <intercept-url pattern="/**" access="permitAll" />
     </http>

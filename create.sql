@@ -104,6 +104,7 @@ CREATE TABLE `doc` (
   `upload` bigint(20) DEFAULT NULL,
   `copyright` varchar(1) not null DEFAULT 'C',
   `approved` varchar(1) not null DEFAULT 'N',  -- TODO the indexing would not be started automatically on a new doc, but could be triggered by hand on a doc.   
+  `boost` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_doc_genre` (`genre`),
   KEY `fk_doc_author` (`author`),

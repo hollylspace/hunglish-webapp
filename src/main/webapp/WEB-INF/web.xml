@@ -125,6 +125,23 @@
 		</init-param>
 	</servlet>
 
+	<servlet>
+	  <servlet-name>dwr-invoker</servlet-name>
+	  <!-- <display-name>DWR Servlet</display-name>  -->
+	  <servlet-class>org.directwebremoting.servlet.DwrServlet</servlet-class>
+	  <init-param>
+	     <param-name>debug</param-name>
+	     <param-value>true</param-value>
+	  </init-param>
+		<!-- By default DWR creates application scope objects when they are first
+	    used. This creates them when the app-server is started -->
+	    <init-param>
+	      <param-name>initApplicationScopeCreatorsAtStartup</param-name>
+	      <param-value>true</param-value>
+	    </init-param>
+	    <load-on-startup>1</load-on-startup>	  
+	</servlet>
+
 	<!--
 		Serves static resource content from .jar files such as spring-js.jar
 	-->
@@ -136,6 +153,11 @@
 	<servlet-mapping>
 		<servlet-name>hunglish</servlet-name>
 		<url-pattern>/app/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+	  <servlet-name>dwr-invoker</servlet-name>
+	  <url-pattern>/dwr/*</url-pattern>
 	</servlet-mapping>
 
 	<!--
