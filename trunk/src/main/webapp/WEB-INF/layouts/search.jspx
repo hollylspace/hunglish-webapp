@@ -28,9 +28,12 @@
 		
 		<title>Hunglish Search</title>
 		
-  <script type='text/javascript' src='/hunglish/dwr/interface/UpvoteController.js'></script>
-  <script type='text/javascript' src='/hunglish/dwr/engine.js'></script>
-		
+<!-- 
+http://stackoverflow.com/questions/2058649/jspx-script-element-on-glassfish-v3
+ -->
+<script type='text/javascript' src='/hunglish/dwr/interface/UpvoteController.js'><jsp:text> </jsp:text></script>
+<script type='text/javascript' src='/hunglish/dwr/engine.js'><jsp:text> </jsp:text></script>
+
 	</head>
    	<body class="tundra spring">
 
