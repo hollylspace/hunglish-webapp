@@ -140,23 +140,8 @@
 		<property name="analyzerProvider" ref="analyzerProvider" />
 	</bean>
 
-<!-- 
-	<bean id="bisenController" class="hu.mokk.hunglish.web.BisenController">
-		<property name="maxResultSetSize" value="${bisen.maxResultSetSize}" />
-	</bean>
--->
 
-
-	<!-- http://code.google.com/p/hunglish-webapp/issues/detail?id=43 -->
-	<!-- scheduling -->
-<!-- 
-	<bean id="uploadController" class="hu.mokk.hunglish.web.UploadController" />
- -->
 	<bean id="mockJob" class="hu.mokk.hunglish.job.MockJob" />
-
-	<!-- not needed atm <task:scheduler id="scheduler" pool-size="1" /> <task:scheduled-tasks 
-		scheduler="scheduler"> <task:scheduled ref="uploadController" method="startUploadJob" 
-		cron="${uploadjob.cronexpression}" /> </task:scheduled-tasks> -->
 
 	<bean id="jobDetail"
 		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
@@ -181,11 +166,7 @@
 	</bean>
 
 
-<!-- 
-	<task:annotation-driven executor="singleThreadExecutor"
-		scheduler="scheduler"  /> -->
-		
+	<!-- TODO do we really need this? -->
 	<task:executor id="singleThreadExecutor" pool-size="1" />
-	<!-- <task:scheduler id="scheduler" pool-size="1" /> -->
 	
 </beans>

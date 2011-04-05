@@ -5,6 +5,7 @@ package hu.mokk.hunglish.lucene;
 
 import hu.mokk.hunglish.domain.Bisen;
 import hu.mokk.hunglish.jmorph.AnalyzerProvider;
+import hu.mokk.hunglish.job.MockJob;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -63,6 +64,10 @@ public class Indexer {
 		this.dataSource = dataSource;
 	}
 
+	@Autowired
+	private MockJob mockJob;
+
+	
 	/**
 	 * besides JPA/Hibernate, indexer also uses pure JDBC, for updating bisen
 	 * table
@@ -614,6 +619,14 @@ public class Indexer {
 
 	public void setDbBatchSize(Integer dbBatchSize) {
 		this.dbBatchSize = dbBatchSize;
+	}
+
+	public MockJob getMockJob() {
+		return mockJob;
+	}
+
+	public void setMockJob(MockJob mockJob) {
+		this.mockJob = mockJob;
 	}
 
 }

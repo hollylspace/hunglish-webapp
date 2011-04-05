@@ -1,28 +1,19 @@
 package hu.mokk.hunglish.web;
 
 import hu.mokk.hunglish.domain.Bisen;
-import hu.mokk.hunglish.job.MockJob;
+import hu.mokk.hunglish.lucene.Indexer;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.quartz.SchedulerException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 public class UpvoteController {
 	transient private static Log logger = LogFactory.getLog(UpvoteController.class);
 
-	@Autowired
-	private MockJob mockJob;
-
-	public void setMockJob(MockJob mockJob) {
-		this.mockJob = mockJob;
-	}
-
-	
 	private void startUploadJob() throws SchedulerException {
 		logger.info("trying to run job on demand...");
-		mockJob.doItOnDemand();
+		Indexer.getInstance().getMockJob().doItOnDemand();
 	}
 	
 	@Transactional
