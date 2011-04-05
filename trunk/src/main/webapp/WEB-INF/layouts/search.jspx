@@ -13,7 +13,9 @@
 	
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=8" />
-		<link href="/hunglish/static/styles/search.css" media="screen" type="text/css" rel="stylesheet"></link>		
+		<!-- <link href="/hunglish/static/styles/search.css" media="screen" type="text/css" rel="stylesheet"></link> -->		
+		<link href="/static/styles/search.css" media="screen" type="text/css" rel="stylesheet"></link>
+		
 		<!-- 
 		<spring:theme code="styleSheet" var="roo_css"/>	
 		<spring:url value="/${roo_css}" var="roo_css_url"/>
@@ -30,9 +32,11 @@
 		
 <!-- 
 http://stackoverflow.com/questions/2058649/jspx-script-element-on-glassfish-v3
- -->
 <script type='text/javascript' src='/hunglish/dwr/interface/UpvoteController.js'><jsp:text> </jsp:text></script>
 <script type='text/javascript' src='/hunglish/dwr/engine.js'><jsp:text> </jsp:text></script>
+ -->
+<script type='text/javascript' src='/dwr/interface/UpvoteController.js'><jsp:text> </jsp:text></script>
+<script type='text/javascript' src='/dwr/engine.js'><jsp:text> </jsp:text></script>
 
 	</head>
    	<body class="tundra spring">
