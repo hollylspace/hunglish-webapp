@@ -193,7 +193,7 @@ public class Bisen {
 	@SuppressWarnings("unchecked")
 	public static List<Bisen> findBisenEntries(List<Long> ids) {
 		return entityManager().createQuery(
-				"select o from Bisen o where o.id in (:ids) order by o.id")
+				"select o from Bisen o inner join o.doc d inner join d.genre g where o.id in (:ids) order by o.id")
 				.setParameter("ids", ids).getResultList();
 	}
 

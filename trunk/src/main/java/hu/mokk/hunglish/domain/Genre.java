@@ -147,6 +147,6 @@ public class Genre {
         //sb.append("Version: ").append(getVersion()).append(", ");
         //sb.append("Name: ").append(getName()).append(", ");
         //sb.append("Description: ").append(getDescription());
-        return getName(); //sb.toString();
+        return getDescription(); //sb.toString();
     }
 }
