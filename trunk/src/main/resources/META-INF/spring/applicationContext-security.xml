@@ -12,18 +12,14 @@
         <logout logout-url="/static/j_spring_security_logout"/>
         
         <!-- Configure these elements to secure URIs in your application -->
-<!--         
-        <intercept-url pattern="/choice/**" access="hasRole('ROLE_ADMIN')"/>
-        <intercept-url pattern="/indexer/**" access="hasRole('ROLE_ADMIN')"/>
-        <intercept-url pattern="/member/**" access="isAuthenticated()" />
         
         <intercept-url pattern="/bisen/**" access="isAuthenticated()" />
         <intercept-url pattern="/author/**" access="isAuthenticated()" />
         <intercept-url pattern="/doc/**" access="isAuthenticated()" />
         <intercept-url pattern="/genre/**" access="isAuthenticated()" />
- -->        
-        <!--intercept-url pattern="/upload/**" access="isAuthenticated()" /-->
 
+		<intercept-url pattern="/upload/form/**" access="permitAll" />
+        <intercept-url pattern="/upload/**" access="isAuthenticated()" />
         
         <intercept-url pattern="/resources/**" access="permitAll" />
         <intercept-url pattern="/indexer/**" access="isAuthenticated()" />
