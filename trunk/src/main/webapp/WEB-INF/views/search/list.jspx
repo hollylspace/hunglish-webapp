@@ -10,9 +10,9 @@ xmlns:roo="urn:jsptagdir:/WEB-INF/tags" xmlns:spring="http://www.springframework
             
             <div id="roo_bisen_huSentence">
                 Hungarian:
-                <form:input cssStyle="width:150px" id="_huSentence_id" path="huSentence"/>
+                <form:input cssStyle="width:200px" id="_huSentence_id" path="huSentence"/>
                 English:
-                <form:input cssStyle="width:150px" id="_enSentence_id" path="enSentence"/>
+                <form:input cssStyle="width:200px" id="_enSentence_id" path="enSentence"/>
                 
                 <c:if test="${not empty genres}">
 		    in genre:
