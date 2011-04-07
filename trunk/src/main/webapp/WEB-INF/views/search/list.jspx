@@ -9,22 +9,19 @@ xmlns:roo="urn:jsptagdir:/WEB-INF/tags" xmlns:spring="http://www.springframework
         <form:form action="${form_url}" method="GET" modelAttribute="bisen">
             
             <div id="roo_bisen_huSentence">
-                <!-- <label for="_huSentence_id">Hungarian:</label> -->
                 Hungarian:
                 <form:input cssStyle="width:150px" id="_huSentence_id" path="huSentence"/>
-                <!-- <label for="_enSentence_id">English:</label> -->
                 English:
                 <form:input cssStyle="width:150px" id="_enSentence_id" path="enSentence"/>
                 
                 <c:if test="${not empty genres}">
-                    <!-- <label for="_genre_id">Genre:</label>  -->
 		    in genre:
                     <form:select cssStyle="width:150px" id="_genre_id" path="doc.genre">
                         <form:options itemValue="id" itemLabel="description" items="${genres}"/>
                     </form:select>
                 </c:if>
                 <spring:message code="button.search" var="update_button"/>
-                <input id="proceed" type="submit" value="${update_button}"/>
+                <input class="search" type="submit" value="${update_button}"/>
                 
             </div>
         </form:form>
@@ -33,9 +30,8 @@ xmlns:roo="urn:jsptagdir:/WEB-INF/tags" xmlns:spring="http://www.springframework
  			<div id="pager">
 				<c:choose>
 				<c:when test="${not empty result.hitList}">
-					<p> Page ${page}  of ${maxPages } pages  |  Results ${result.startOffset+1} - ${result.endOffset} of ${result.totalCount}<br/></p>
-
-	                <p>Pages: <c:forEach items="${result.paginationLinks}" var="link">
+					<p> Results ${result.startOffset+1} - ${result.endOffset} of ${result.totalCount}; Page ${page} of ${maxPages}; 
+	                Pages: <c:forEach items="${result.paginationLinks}" var="link">
 							<c:choose>
 							<c:when test="${link.second  == page}">
 								${link.second}
@@ -77,8 +73,8 @@ xmlns:roo="urn:jsptagdir:/WEB-INF/tags" xmlns:spring="http://www.springframework
                         <td>${pair.second.huSentenceView}</td>
                         <!-- c:out value="${bisen.enSentence}"/> -->
                         <td>${pair.second.enSentenceView}</td>
-                        <td><input type="button" style="background: url('/static/images/thumb_up.gif'); border:0px; width:24px;height:24px" onclick="UpvoteController.upvote(${pair.second.id});this.disabled=true;this.style.visibility='hidden';"/></td>
-                        <td><input type="button" style="background: url('/static/images/thumb_down.gif'); border:0px; width:24px;height:24px" onclick="UpvoteController.downvote(${pair.second.id});this.disabled=true;this.style.visibility='hidden';"/></td>
+                        <td><input class="upvote" type="button" onclick="UpvoteController.upvote(${pair.second.id});this.disabled=true;this.style.visibility='hidden';"/></td>
+                        <td><input class="downvote" type="button" onclick="UpvoteController.downvote(${pair.second.id});this.disabled=true;this.style.visibility='hidden';"/></td>
                          
                     </tr>
                 </c:forEach>
