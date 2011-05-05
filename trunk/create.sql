@@ -104,7 +104,7 @@ CREATE TABLE `doc` (
   `upload` bigint(20) DEFAULT NULL,
   `copyright` varchar(1) not null DEFAULT 'C',
   `approved` varchar(1) not null DEFAULT 'N',  -- TODO the indexing would not be started automatically on a new doc, but could be triggered by hand on a doc.   
-  `boost` bigint(20) DEFAULT NULL,
+  `boost` float DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_doc_genre` (`genre`),
   KEY `fk_doc_author` (`author`),
@@ -186,6 +186,7 @@ CREATE TABLE `upload` (
 
   `created_timestamp` TIMESTAMP , -- this is filled by the webapp (UploadController) when the files was uploaded
   `harnessed_timestamp` TIMESTAMP , -- this is filled by control_harness.py when the pipe-line is completed
+  `boost` float DEFAULT NULL,
 
   PRIMARY KEY (`id`),
   KEY `fk_upload_genre` (`genre`),
