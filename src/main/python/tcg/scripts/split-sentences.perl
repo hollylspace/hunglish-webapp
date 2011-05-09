@@ -106,7 +106,7 @@ sub preprocess {
 	$text =~ s/([?!\.][\ ]*[\'\"\)\]\p{IsPf}]+) +([\'\"\(\[\¿\¡\p{IsPi}]*[\ ]*[\p{IsUpper}])/$1\n$2/g;
 		
 	# add breaks for sentences that end with some sort of punctuation are followed by a sentence starter punctuation and upper case
-	$text =~ s/([?!\.]) +([\'\"\(\[\¿\¡\p{IsPi}]+[\ ]*[\p{IsUpper}])/$1\n$2/g;
+	$text =~ s/([?!\.]) +([-\'\"\(\[\¿\¡\p{IsPi}]+[\ ]*[\p{IsUpper}])/$1\n$2/g;
 	
 	# special punctuation cases are covered. Check all remaining periods.
 	my $word;
