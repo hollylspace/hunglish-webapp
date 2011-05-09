@@ -15,10 +15,16 @@ def dictFromFile(filename) :
     return d
 
 def main() :
-    if len(sys.argv)!=4 :
-	sys.stderr.write("usage: filtersen.py doc.sen hu.meta en.meta\n")
+    argv = sys.argv
+    if not( len(argv)==4 or ( len(argv)==5 and argv[1]=="--utf8" ) ) :
+	sys.stderr.write("usage: filtersen.py [ --utf8 ] doc.sen hu.meta en.meta\n")
 	sys.exit(-1)
-    senFilename,huFilename,enFilename = sys.argv[1:]
+    utf = (argv[1]=="--utf8")
+    if utf :
+	argv = argv[2:]
+    else :
+	argv = argv[1:]
+    senFilename,huFilename,enFilename = argv
     hu = dictFromFile(huFilename)
     en = dictFromFile(enFilename)
     huSentenceNum = hu['sentence_count_nondelimiter']
@@ -36,13 +42,20 @@ def main() :
     huLang = hu['language_detected']
     enLang = en['language_detected']
 
-    if huLang!='hungarian-latin2' :
-	sys.stderr.write( "The text from the Hungarian side is not Hungarian latin2, but %s\n" % huLang )
-	likeIt = False
-
-    if enLang!='english' :
-	sys.stderr.write( "The text from the English side is not English latin1, but %s\n" % enLang )
-	likeIt = False
+    if utf :
+	if huLang!='hungarian-utf8' :
+	    sys.stderr.write( "The text from the Hungarian side is not Hungarian utf8, but %s\n" % huLang )
+	    likeIt = False
+	if enLang!='english' :
+	    sys.stderr.write( "The text from the English side is not English ascii, but %s\n" % enLang )
+	    likeIt = False
+    else :
+	if huLang!='hungarian-latin2' :
+	    sys.stderr.write( "The text from the Hungarian side is not Hungarian latin2, but %s\n" % huLang )
+	    likeIt = False
+	if enLang!='english' :
+	    sys.stderr.write( "The text from the English side is not English ascii, but %s\n" % enLang )
+	    likeIt = False
 
     if likeIt :
 	sys.stdout.write(file(senFilename).read())

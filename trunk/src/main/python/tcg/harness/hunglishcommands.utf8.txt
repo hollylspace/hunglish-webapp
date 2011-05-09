@@ -38,9 +38,7 @@ srt2raw_cmd: %(scripts_dir)s/srt2txt.utf8.sh
 html2raw_cmd: html2text -nobs | ( iconv -fUTF-8 -tUTF-8 -c || true )
 
 # split the text into separate sentences
-# TODO TODO Ez nem volt jo, ugyhogy szejjelkurtam. jrc-ac eleve mondatraszegmentalt.
-sen_cmd: cat
-#sen_cmd: perl %(scripts_dir)s/split-sentences.perl | sed "s/^<P>$/<p>/"
+sen_cmd: perl %(scripts_dir)s/split-sentences.perl | sed "s/^<P>$/<p>/"
 
 # collect metadata from sen file
 # argument: sen
@@ -49,8 +47,7 @@ meta_cmd: python %(scripts_dir)s/meta.py %(resources_dir)s/textcat.models --utf8
 # drop files which are incompatible with their pairs
 # arguments: ?/sen hu/meta en/meta
 # TODO TODO Ez nem volt jo, ugyhogy szejjelkurtam.
-filtersen_cmd: bash %(scripts_dir)s/filtersen.utf8.temp.sh
-#filtersen_cmd: python %(scripts_dir)s/filtersen.py
+filtersen_cmd: python %(scripts_dir)s/filtersen.py --utf8
 
 # tokenize the text (split the text into separate words)
 tok_cmd: %(scripts_dir)s/tokenizer.utf8.pl -l en
