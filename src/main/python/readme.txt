@@ -67,13 +67,26 @@ Indexing batch updates commited: 12-13 sec (volt 13sec)
 ---
 TODO
 
+FRONTEND
+
 - Az oldal cime mindig Welcome to Hunglish.
 
-- A nemregisztralt felhasznalok soha ne lassak a dokumentumok cimet. Copyright.
+- Van a menu url-ben egy &amp; , ami nem kellene oda.
 
 - A fileUpload ne engedje meg, hogy a menubol is es a textboxbol is megadjunk authort.
 
-- Van a menu url-ben egy &amp; , ami nem kellene oda.
+- Atallas GWT-re.
+
+- Nezzen ki normalisan.
+
+JAVA BACKEND
+
+- Igaz-e az alabbi: ha gyengitek a minosegbiztositasi kod ellenorzesein, es aztan
+egy L(ow quality)-nak bizonyult upload flagjet L-rol visszaallitom N-re, akkor
+minden konzisztensen es logikusan fog mukodni?
+
+- Me'g egyszer utoljara atnezni a Hibernate logokat, hogy van-e valami feleslegesen
+elkomplikalt select, es ha nincs, akkor kivenni a logolast.
 
 - Use case: Utolag rajovok, hogy egy kis bash scriptet bele kellene tenni a qualityfilterbe.
 Megteszem, de visszamenoleg is meg kellene tenni. Eszkoz: dumpoljuk ki id-vel az osszes
@@ -197,6 +210,10 @@ Ha majd utf8 lesz a pipeline, azt valoszinuleg nem eli tul a huntoken.
 - Meg kellene patch-elni a hunalign-t, hogy az entitasokat egy karakternek
 szamolja.
 
+- Meg kellene patch-elni a hunalign-t, hogy a -logquality kapcsolora
+tegye ki a ladder elso soraba a global quality-t. Aztan a ladder2text
+ezt a modositott formatumot kezelje le, es a bimeta bogarassza ki.
+
 - Epiteni egy gorog-szlovak korpuszt.
 /big2/User/daniel/Acquis/raw/sen/ alatt nyelvi korpuszok, mint el (gorog)
 es sk (szlovak). raw/doclangtable.txt megmondja, hogy kik vannak meg.
@@ -225,6 +242,16 @@ harness.py ne irjon a cout-ra.
 
 
 ADMIN:
+
+Ahhoz, hogy a rendszer a nagykozonsegnek atadhato legyen, nagyon sok rendszergazdai szintu apro lepes kell me'g. Ez szinte csak Danielt es Zsoltot erinti. Ledokumentalom a legfontosabbakat:
+
+DONE - Az alkalmazas eljen hunglish.hu alatt, fizikailag a kozelen.
+DONE - Port redirect-et nem akarunk, ugyhogy menjen at a 80-as portra, az ugyis nemreg szabadult fel a kozelen.
+DONE - Lecserelni a jelszavakat olyanra, ami nincs benne az svn-ben.
+DONE - Admin jelszo moge rakni az adatbazis-terhelo admin-oldalakat.
+DONE - A regi gepen kihirdetni, hogy at lehet menni. (Es lehet minket like-olni.)
+- Vagy megoldani, hogy a firefox searchplugin az ujra mutasson, vagy csinalni egy komplex url rewrite-ot.
+- A regi service-t leloni.
 
 - Ha a sudo me'g nem timeoutolt, akkor az eraseall.sh megkerdezi hogy are you
 fucking sure?, de a valaszt nem megvarva elkezdi a torlest. Egyebkent is,
@@ -309,6 +336,8 @@ reszehez.
 
 
 LEZART DOLGOK:
+
+- A nemregisztralt felhasznalok soha ne lassak a dokumentumok cimet. Copyright.
 
 DONE Ugy tunik a dist-upgrade megoldotta a ket furcsasagot.
 (Az egyik hogy a mvn package csak tobbedszerre futott le, a masik egy Aspects JAR runtime error.)
