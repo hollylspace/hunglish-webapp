@@ -3,10 +3,11 @@
 # magyar	magyar_form	angol	angol_form
 # abe-a_homok_asszonya	rtf	abe-woman_in_the_dunes	pdf
 # ilyenne alakit:
-# author_name hu_title en_title genre_name hu_uploaded_file_path en_uploaded_file_path copyright old_docid approved
+# author_name hu_title en_title genre_name hu_uploaded_file_path en_uploaded_file_path copyright old_docid approved boost
 #
 # old_docid uresstringre toltodik ki, jelezve, hogy a hunglish2-ben nincs docid.
 # Ugyhogy a parsolassal vigyazni kell.
+# boost jelenleg 1-re toltodik ki.
 
 # FIGYELEM: A bemeneti tablazat a cut -f1,2,4,5 paranccsal
 # all elo Rung Andris master.txt formatumabol.
@@ -52,10 +53,10 @@ def process(record,dataDir) :
 	logg( "ERROR: File missing: "+str(e) )
 	sys.exit(-1)
 
-    print "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s" % (
+    print "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s" % (
 	author_name, hu_title, en_title, genre_name,
 	hu_uploaded_file_path, en_uploaded_file_path,
-	"C", "", "Y" ) # C=Copyrighted, ""=no old_docid, Y=approved
+	"C", "", "Y", "1" ) # C=Copyrighted, ""=no old_docid, Y=approved, boost=1
 
 def main() :
     if len(sys.argv)!=2 :

@@ -164,15 +164,18 @@ def metadataFromUpload(db,id) :
 	metadata['is_processed'] = r['is_processed']
 
     # Izombol atemeljuk:
-    # id, hu_title, en_title, genre
-    # doc.hu_raw_file_path = upload.hu_file_path, ue. en
-    metadata['id']       = r['id']
-    metadata['hu_title'] = r['hu_title']
-    metadata['en_title'] = r['en_title']
-    metadata['genre'] = r['genre']
-    metadata['hu_uploaded_file_path'] = r['hu_uploaded_file_path']
-    metadata['en_uploaded_file_path'] = r['en_uploaded_file_path']
-    
+    def lift(to,frm,field) :
+	to[field] = frm[field]
+    lift(metadata,r,'id')
+    lift(metadata,r,'hu_title')
+    lift(metadata,r,'en_title')
+    lift(metadata,r,'genre')
+    lift(metadata,r,'hu_uploaded_file_path')
+    lift(metadata,r,'en_uploaded_file_path')
+    lift(metadata,r,'copyright')
+    lift(metadata,r,'approved')
+    lift(metadata,r,'boost')
+
     # Ha uj, akkor kibovitjuk vele az author tablat.
     author = r['author']
     if author==None :
@@ -182,9 +185,8 @@ def metadataFromUpload(db,id) :
     metadata['author'] = author
 
     # Konstans:
-    # old_docid, is_open_content
+    # old_docid
     metadata['old_docid'] = ""
-    metadata['is_open_content'] = False
 
     # Szarmaztatjuk:
     # aligned_file_path
@@ -202,11 +204,12 @@ def metadataToDoc(db,metadata) :
     cursor = getCursor(db)
     cursor.execute("insert into doc \
 	(id, old_docid, genre, author, en_title, hu_title, \
-	is_open_content, aligned_file_path, version) \
-	values (%s, %s, %s, %s, %s, %s, %s, %s, 1)",
+	copyright, approved, boost,
+	aligned_file_path, version) \
+	values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 1)",
 	(m['id'], m['old_docid'], m['genre'], m['author'],
-         m['en_title'],m['hu_title'],
-	 m['is_open_content'],
+         m['en_title'], m['hu_title'],
+	 m['copyright'], m['approved'], m['boost']
          m['aligned_file_path'] )
     )
 
