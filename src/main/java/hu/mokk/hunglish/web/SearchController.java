@@ -78,7 +78,10 @@ public class SearchController {
         String baseUrl = getBaseUrl(bisen) +"&size="+sizeNo;
         List<Pair<String, String>> linx = new ArrayList<Pair<String, String>>();
         for (int i = 1; i <= (int)Math.min(maxPagesLimited, maxPages); i++){
-        	String url =baseUrl+"&page="+i;        	
+        	String url =baseUrl+"&page="+i;
+        	if (request.getGenreId() != null){
+        		url += "&doc.genre="+request.getGenreId();
+        	}
         	linx.add(new Pair<String, String>(url, new Integer(i).toString()));
         }
         result.setPaginationLinks(linx);
