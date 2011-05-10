@@ -43,7 +43,7 @@ A tomcat6-nak teljesen mas a file layout-ja, ugyhogy TODO valakinek valoszinuleg
 
 <!-- Daniel -->
 <role rolename="manager"/>
-<user username="admin" password="q1e33xx" roles="manager"/>
+<user username="admin" password="???" roles="manager"/>
 
 ---
 
@@ -85,7 +85,7 @@ Plusz loggolashoz kiszedem a komment-zarojelbol az alabbi blokkot:
 
 http://80.249.168.244:8080/manager/html
 
-cimen admin/q1e33xx jelszoval mar el az adminfelulet. Probaljunk meg deploy-olni.
+cimen admin/??? jelszoval mar el az adminfelulet. Probaljunk meg deploy-olni.
 
 mvn tomcat:deploy
 
@@ -151,7 +151,7 @@ Danielkent:
 # csak a dic miatt kellett, ami most mar resources/hunalign alatt van.
 # export CVSROOT=daniel@kruso.mokk.bme.hu:/local/cvs
 
-svn checkout https://hunglish-webapp.googlecode.com/svn/trunk hunglish-webapp --username varga.daniel --password n5h7z6m5
+svn checkout https://hunglish-webapp.googlecode.com/svn/trunk hunglish-webapp --username varga.daniel --password ???
 
 Danielkent (, de eredetileg ROOTKENT, csak aztan ujraszerveztem):
 mkdir deployment
