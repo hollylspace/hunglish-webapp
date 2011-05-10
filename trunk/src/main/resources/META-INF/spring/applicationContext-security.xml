@@ -17,12 +17,14 @@
         <intercept-url pattern="/author/**" access="isAuthenticated()" />
         <intercept-url pattern="/doc/**" access="isAuthenticated()" />
         <intercept-url pattern="/genre/**" access="isAuthenticated()" />
-
-		<intercept-url pattern="/upload/form/**" access="permitAll" />
-        <intercept-url pattern="/upload/**" access="isAuthenticated()" />
-        
-        <intercept-url pattern="/resources/**" access="permitAll" />
         <intercept-url pattern="/indexer/**" access="isAuthenticated()" />
+        <intercept-url pattern="/admin/**" access="isAuthenticated()" />
+
+		<!-- <intercept-url pattern="/upload/form/**" access="permitAll" />  -->
+		<intercept-url pattern="/upload/**" access="permitAll" />
+
+         
+        <intercept-url pattern="/resources/**" access="permitAll" />
         <intercept-url pattern="/search/**" access="permitAll" />
         <intercept-url pattern="/static/**" access="permitAll" />
         <intercept-url pattern="/dwr/**" access="permitAll" />
@@ -36,11 +38,12 @@
     	<authentication-provider>
 	    	<password-encoder hash="sha-256"/>
 	        <user-service>
-	        	<!-- mokka -->
+	        	<!-- mokka 
 	            <user name="admin" password="dc26689c7902e7ca8943a02d4993e654fa16e4af994326f569b8cd6e31254e9c" authorities="ROLE_ADMIN"/>
+	            -->
 		        
-		        <!-- mokk -->
-		        <user name="user" password="e514fd37d1da17be3d763f4d5ac2d49f82d997a224bc5e7c31cf584ac8e9b689" authorities="ROLE_USER"/>
+		        <!---->
+		        <user name="hunglish" password="30a9cb835600206734d7afe1aa57fb6f24544c5f9830e629bb248307cda1d775" authorities="ROLE_USER"/>
 		        
 		    </user-service>
     	</authentication-provider>

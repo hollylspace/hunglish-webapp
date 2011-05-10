@@ -29,18 +29,6 @@ body {
 	/*margin-top: 90px;*/
 }
 
-/* header and footer elements 
-
-#main {
-	overflow:hidden;
-	display:box;
-}
-
-*/
-
-
-
-
 /* mokk yello CD951A */
 
 input {
@@ -96,21 +84,18 @@ tr:nth-child(even) {
 }
 
 /* table elements */
+	/*padding-top:3px; 
+	padding-right:20px; 
+	/*padding-bottom:3px; 
+	padding-left:20px; */
 
 table {
 	background: #EEEEEE;
 	margin: 2px 0 0 0;
 	border: 0px; /*solid #BBBBBB;*/
 	border-collapse: collapse;
-	width: 100%
-}
+	width: 100%;
 
-table th {
-	font-size: 0.75em;
-	text-align: left;
-	font-weight: bold;
-	font-style: italic;
-	background: #336699;
 }
 
 input.upvote {

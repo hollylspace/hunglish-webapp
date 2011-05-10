@@ -1,11 +1,66 @@
-<div xmlns:spring="http://www.springframework.org/tags" xmlns:jsp="http://java.sun.com/JSP/Page" version="2.0">
-	<jsp:output omit-xml-declaration="yes"/>	
-	<script type="text/javascript">dojo.require("dijit.TitlePane")</script>
-    <div id="_title_id">
-    	<spring:message var="app_name" code="application.name" />
-    	<spring:message var="title" code="welcome.titlepane" arguments="${app_name}" />
-    	<script type="text/javascript">Spring.addDecoration(new Spring.ElementDecoration({elementId : '_title_id', widgetType : 'dijit.TitlePane', widgetAttrs : {title: '${title}'}})); </script>
-		<h3><spring:message code="welcome.h3" arguments="${app_name}" /></h3>
-		<p><spring:message code="welcome.text" /></p>
-	</div>
+<div>
+Kedves Hunglish Mondattár Felhasználók,
+<p> 
+Hamarosan elkészül a Hunglish Mondattár új, jelentősen továbbfejleszett változata. 
+Az elmúlt hónapokban folyamatosan dolgoztunk ezen. 
+A felhasználók számára is érzékelhető fejlesztések közül az alábbiak a legfontosabbak:
+</p><p> 
+<ul> 
+<li>Dokumentumpárok feltöltésének lehetősége: 
+a felhasználó által feltöltött magyar-angol dokumentumpárból 
+a rendszer automatikusan kivonatolja az egymásnak megfelelő mondatpárokat. 
+Ha a szoftver elégedett ennek a kivonatolásnak a minőségével, 
+akkor a mondatpárokat hozzáadja a kereshető adatbázishoz.</li> 
+<li>Duplikátumszűrés: a találati lista csak egyszer mutatja meg az azonos találatokat.</li> 
+<li>Hibás mondatpárok leszavazása (dislike): 
+Ha nem illeszkedő vagy félrefordított mondatpárra bukkanunk, hátrasorolhatjuk a találati listán.</li> 
+<li>Hunglish Korpusz 2: Új szövegeket gyűjtöttünk, 
+így a rendszerben "alapból" benne levő mondatpárok számát jelentősen megnöveltük, 2 millióról körülbelül 3.5 millióra.</li> 
+</ul> 
+</p><p> 
+Fontos linkek:
+<ul> 
+<li><a href="http://hunglish.hu/search">Keresés</a></li> 
+<li><a href="http://hunglish.hu/upload/form">Dokumentumpárok feltöltése</a></li> 
+<li><a
+href="http://www.facebook.com/pages/Hunglish/155128681212319?sk=wall">A
+Hunglish Mondattár Facebook
+oldala.</a></li>
+
+<br /> 
+A Like gombbal jelezhetik, ha hasznosnak találták akár a régi, akár az új Mondattárat!
+</ul> 
+</p> 
+<p> 
+<iframe src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.facebook.com%2FHunglish.Mondattar&amp;layout=standard&amp;show_faces=true&amp;width=450&amp;action=like&amp;font&amp;colorscheme=light&amp;height=80" scrolling="no" frameborder="0" style="overflow:hidden; height:70px; margin-left:0px; " allowTransparency="true"></iframe> 
+</p> 
+<p> 
+Az új rendszer tesztüzemben fut, és folyamatos fejlesztés alatt áll. 
+A felhasználói felület designja például még teljesen ideiglenes, de sokminden más is drasztikusan változni fog. 
+Ennek ellenére mi már most meg szeretnénk kérni Önöket, hogy látogassanak át az új rendszerhez, 
+próbálják ki az új funkciókat, és ha úgy érzik, adjanak visszajelzést a hunglish kukac mokk.bme.hu mailcímen.
+</p>
+<p> 
+Mindenkit lelkesen bátorítunk arra, hogy próbálja ki a dokumentumpár-feltöltési funkciót. 
+Ne bizonytalanítsa el az sem, ha a feltöltendő dokumentumpár minősége kétséges. 
+A kevésbé jó dokumentumpárok (hiányos vagy problémás kódolású szövegek, pontatlan fordítások) 
+a Hunglish Mondattár végső változatának nem szolgálnak majd az előnyére, de jelenleg, 
+teszteléskor fontos információkat adhatnak nekünk a rendszer hibatűréséről. 
+(A rendszer szigorúan próbálja meghúzni a határt, hogy milyen minőségű 
+adatot enged be az adatbázisba, sokmindent elutasít. 
+Még nem készült el az az oldal, ahol erről visszajelzést ad.)
+</p><p> 
+A Hunglish Mondattár látogatottsága lassan, de törés nélkül nőtt átadása óta, 
+jelenleg körülbelül havi 300 ezer kérést szolgál ki. 
+Valószínűleg kuriózum a weben, hogy ezt a népszerűségnövekedést a szolgáltatás úgy érte el, 
+hogy a 2005-ös átadás óta semmilyen változtatást nem végeztünk rajta. Örömmel törjük meg ezt a szériát.
+</p><p> 
+Varga Dániel és Barna Péter Gergő fejlesztők
+</p><p> 
+Köszönetnyilvánítás:
+</p><p> 
+Az alábbiaknak különösen hálásak vagyunk segítségükért: 
+Balogh Attila, Both Zsolt, Farkas András, Halácsy Péter (az eredeti rendszer fejlesztője), 
+Kornai András, Rung András, Váradi Tamás, Zséder Attila
+</p>
 </div>
