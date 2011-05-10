@@ -68,7 +68,6 @@ def main() :
 	    if l=="\n" or l[0]=="#" :
 		continue
 	    record = l.decode("utf-8").strip().split("\t")
-	    assert len(record)==9
 	    addOne(db,record)
     except :
 	db.rollback()

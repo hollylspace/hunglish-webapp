@@ -9,7 +9,7 @@ binaries_dir=%(pipeline_dir)s/harness.binaries
 resources_dir=%(pipeline_dir)s/resources
 
 # TODO Ez vegul a deployed alkalmazasra fog referalni, nem ide. Illetve jetty alatt tenyleg ide.
-scripts_dir=%(pipeline_dir)s/hunglish-webapp/src/main/python/tcg/scripts
+scripts_dir=/var/lib/tomcat6/webapps/ROOT/WEB-INF/python/tcg/scripts
 
 
 # stemmer resources
@@ -36,7 +36,7 @@ srt2raw_cmd: %(scripts_dir)s/srt2txt.sh
 html2raw_cmd: html2text -nobs | ( iconv --f utf8 --t latin2 -c || true )
 
 # split the text into separate sentences
-sen_cmd: %(binaries_dir)s/huntoken -b | %(scripts_dir)s/clean_huntoken_output.sh
+sen_cmd: %(binaries_dir)s/huntoken -b | bash %(scripts_dir)s/clean_huntoken_output.sh
 
 # collect metadata from sen file
 # argument: sen

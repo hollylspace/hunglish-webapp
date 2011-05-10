@@ -9,7 +9,7 @@ from base import *
 
 ## Globals hardwired:
 #
-g_harnessAppDir = "/big3/Work/HunglishMondattar/hunglish-webapp/src/main/python/tcg/harness"
+g_harnessAppDir = "/var/lib/tomcat6/webapps/ROOT/WEB-INF/python/tcg/harness"
 # Ez tobb dolgot is befolyasol: azt, hogy milyen command file-lal
 # hivjuk a harnesst, es hogy a qf-et milyen kodolasunak tekinti.
 # TODO Jelenleg a minosegszurest is kikapcsolja az utf8 mod.
@@ -204,12 +204,12 @@ def metadataToDoc(db,metadata) :
     cursor = getCursor(db)
     cursor.execute("insert into doc \
 	(id, old_docid, genre, author, en_title, hu_title, \
-	copyright, approved, boost,
+	copyright, approved, boost, \
 	aligned_file_path, version) \
 	values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 1)",
 	(m['id'], m['old_docid'], m['genre'], m['author'],
          m['en_title'], m['hu_title'],
-	 m['copyright'], m['approved'], m['boost']
+	 m['copyright'], m['approved'], m['boost'],
          m['aligned_file_path'] )
     )
 
