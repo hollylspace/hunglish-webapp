@@ -113,6 +113,8 @@ public class Upload {
 	@Size(max = 255)
 	private String oldDocid; 
 	
+	private Float boost;
+	
     @Transient
     private String enExtension;
     
@@ -485,6 +487,16 @@ public class Upload {
 				+ ", oldDocid=" + oldDocid + ", enExtension=" + enExtension
 				+ ", huExtension=" + huExtension + ", id=" + id + ", version="
 				+ version + "]";
+	}
+
+
+	public Float getBoost() {
+		return boost;
+	}
+
+
+	public void setBoost(Float boost) {
+		this.boost = boost;
 	}
 
 }

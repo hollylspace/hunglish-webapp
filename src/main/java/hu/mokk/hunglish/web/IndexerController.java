@@ -16,11 +16,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class IndexerController {
 
 	
-	@Autowired
-	private Indexer indexer;
+	//@Autowired
+	//private Indexer indexer;
 	
-	@Autowired
-	private Searcher searcher;
+	//@Autowired
+	//private Searcher searcher;
 	
 
 	@RequestMapping(value = "/indexer", method = RequestMethod.GET)
@@ -28,10 +28,11 @@ public class IndexerController {
     		@RequestParam(value = "magic", required = false) String magic,
     		ModelMap modelMap) {
 
+		/*
 		if ("666".equals(magic)){
 			indexer.indexAll();
 			searcher.reInitSearcher();
-		}
+		}*/
 		
 		/*
 		if ("777".equals(magic)){
