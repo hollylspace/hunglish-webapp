@@ -8,10 +8,15 @@ import tempfile
 
 from base import *
 
-## Globals hardwired:
-#TODO remove absolute path of tomcat from here
-#g_harnessAppDir = "/var/lib/tomcat6/webapps/ROOT/WEB-INF/python/tcg/harness"
-g_harnessAppDir = "/srv/tomcat6/webapps/ROOT/WEB-INF/python/tcg/harness"
+# A jelenlegi megoldas az, hogy a harness.py-t a futo control_harness.py
+# konyvtara alatti ./tcg/harness konyvtarban keresi:
+g_thisAppDir = os.path.dirname( os.path.realpath( __file__ ) )
+g_harnessAppDir = g_thisAppDir + "/tcg/harness"
+
+# ...ami kockazatokat rejt, de meg mindig jobb, mint amikor be volt egetve a helye:
+# g_harnessAppDir = "/var/lib/tomcat6/webapps/ROOT/WEB-INF/python/tcg/harness"
+# g_harnessAppDir = "/srv/tomcat6/webapps/ROOT/WEB-INF/python/tcg/harness"
+
 
 # Ez tobb dolgot is befolyasol: azt, hogy milyen command file-lal
 # hivjuk a harnesst, es hogy a qf-et milyen kodolasunak tekinti.
@@ -92,10 +97,9 @@ def runHarness(metadata) :
     global g_logDir
     global g_logDate
 
-    catalogFile = tempfile.NamedTemporaryFile(delete=False,suffix=".tmp",dir="/tmp")
-    
     id = metadata['id']
 
+    catalogFile = tempfile.NamedTemporaryFile(delete=False,prefix=str(id)+".",suffix=".tmp",dir="/tmp")
     catalogFile.write(str(id)+"\n")
     catalogFile.close()
 
@@ -125,6 +129,8 @@ def runHarness(metadata) :
 	# Csak teszteleshez, ha a qf fajl mar korabban a helyere kerult.
 	logg( "NOT EXECUTING!: "+command )
 	status = 0
+
+    os.unlink(catalogFile.name)
 
     metadataFile = "%s/align/bimeta/%s.align.bimeta" % ( g_harnessDataDirectory,str(id) )
     metadata = collectMoreMetadata(metadata,metadataFile)
