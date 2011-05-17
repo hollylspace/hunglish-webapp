@@ -8,8 +8,9 @@ import shutil
 from base import *
 
 ## Globals hardwired:
-#
-g_harnessAppDir = "/var/lib/tomcat6/webapps/ROOT/WEB-INF/python/tcg/harness"
+#TODO remove absolute path of tomcat from here
+#g_harnessAppDir = "/var/lib/tomcat6/webapps/ROOT/WEB-INF/python/tcg/harness"
+g_harnessAppDir = "/srv/tomcat6/webapps/ROOT/WEB-INF/python/tcg/harness"
 # Ez tobb dolgot is befolyasol: azt, hogy milyen command file-lal
 # hivjuk a harnesst, es hogy a qf-et milyen kodolasunak tekinti.
 # TODO Jelenleg a minosegszurest is kikapcsolja az utf8 mod.

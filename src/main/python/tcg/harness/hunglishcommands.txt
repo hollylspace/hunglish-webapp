@@ -9,8 +9,9 @@ binaries_dir=%(pipeline_dir)s/harness.binaries
 resources_dir=%(pipeline_dir)s/resources
 
 # TODO Ez vegul a deployed alkalmazasra fog referalni, nem ide. Illetve jetty alatt tenyleg ide.
-scripts_dir=/var/lib/tomcat6/webapps/ROOT/WEB-INF/python/tcg/scripts
-
+# TODO remove absolute path of tomcat from here 
+# scripts_dir=/var/lib/tomcat6/webapps/ROOT/WEB-INF/python/tcg/scripts
+scripts_dir=/srv/tomcat6/webapps/ROOT/WEB-INF/python/tcg/scripts
 
 # stemmer resources
 ocamorph_bin_hu=%(resources_dir)s/huntaggers.models/hu/morphtable/morphdb_hu.bin
@@ -47,7 +48,7 @@ meta_cmd: python %(scripts_dir)s/meta.py %(resources_dir)s/textcat.models
 filtersen_cmd: python %(scripts_dir)s/filtersen.py
 
 # tokenize the text (split the text into separate words)
-tok_cmd: %(scripts_dir)s/tokenizer.pl -l en
+tok_cmd: perl %(scripts_dir)s/tokenizer.pl -l en
 
 # make a stem table for the text
 stemcachehu_cmd: %(scripts_dir)s/ocastem_preprocess.sh | %(binaries_dir)s/ocastem --bin %(ocamorph_bin_hu)s
