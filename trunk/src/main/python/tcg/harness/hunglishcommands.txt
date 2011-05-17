@@ -4,14 +4,16 @@
 
 # important paths
 
+# Ez immaron startupbol kapja az erteket, ezen szintaxis szerint:
+# --startup_values=scripts_dir=y
+# scripts_dir=/srv/tomcat6/webapps/ROOT/WEB-INF/python/tcg/scripts
+
+# TODO elobb-utobb talan ennek is onnan kellene:
 pipeline_dir=/big3/Work/HunglishMondattar
+
 binaries_dir=%(pipeline_dir)s/harness.binaries
 resources_dir=%(pipeline_dir)s/resources
 
-# TODO Ez vegul a deployed alkalmazasra fog referalni, nem ide. Illetve jetty alatt tenyleg ide.
-# TODO remove absolute path of tomcat from here 
-# scripts_dir=/var/lib/tomcat6/webapps/ROOT/WEB-INF/python/tcg/scripts
-scripts_dir=/srv/tomcat6/webapps/ROOT/WEB-INF/python/tcg/scripts
 
 # stemmer resources
 ocamorph_bin_hu=%(resources_dir)s/huntaggers.models/hu/morphtable/morphdb_hu.bin

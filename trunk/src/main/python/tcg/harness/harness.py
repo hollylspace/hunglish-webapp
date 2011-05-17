@@ -18,8 +18,11 @@ import collecting
 from graph import Graph, Edge
 from parallel import submit_jobs
 
-def read_commands(f, daemon=False):
-    config = ConfigParser.SafeConfigParser()
+# startupValues is a dict that contains variables that
+# can be referenced in the commands file.
+# A typical usage is to specify a base directory.
+def read_commands(f, daemon=False, startupValues=None):
+    config = ConfigParser.SafeConfigParser( startupValues if startupValues else {} )
     config.read(f)
     items = config.items('commands')
     
@@ -45,6 +48,7 @@ def read_commands(f, daemon=False):
             cmd = cmd.replace('../', os.getcwd() + '/')
             commands[item[0][:-4]] = cmd
     
+    # print "\n".join(map(str,sorted(commands.iteritems())))
     return commands
 
 def get_file_list(root, edge, catalog=None):
@@ -307,6 +311,8 @@ parser.add_option("", "--daemon", dest="daemon", action='store_true',
                   help="process files with daemons if they are available")
 parser.add_option("-p", "--parallel", dest="parallel",
                   action='store_true', help="parallel processing")
+parser.add_option("", "--startup_values", dest="startup_values",
+		    help="comma-sep key=value pairs bootstrapping the command file parse. Sorry, no escaping, space and , are disallowed in values.")
 
 (options, args) = parser.parse_args()
 
@@ -316,6 +322,16 @@ if not options.command_file:
     raise "There is no command file specified"
 if not options.root_dir:
     raise "There is no root directory specified"
+
+startupValues = {}
+if options.startup_values :
+    a = options.startup_values.split(",")
+    for kv in a :
+	aa = kv.split("=",1)
+	if len(aa)!=2 :
+	    raise Exception("Badly formed startup key-value pair: "+kv)
+	k,v = aa
+	startupValues[k] = v
 
 if options.catalog:
     catalog = read_catalog(file(options.catalog))
@@ -328,7 +344,7 @@ if bool(options.what) ^ bool(options.lang):
 
 
 graph = Graph(file(options.graph), daemon=options.daemon)
-commands = read_commands(options.command_file, daemon=options.daemon)
+commands = read_commands(options.command_file, daemon=options.daemon, startupValues=startupValues)
 graph.setCommands(commands=commands)
 graph.order()
 

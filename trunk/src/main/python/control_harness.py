@@ -89,6 +89,7 @@ def runHarness(metadata) :
     global g_harnessDataDirectory
     global g_logDir
     global g_logDate
+
     catalogFile = g_harnessDataDirectory+"/catalog.tmp"
     
     id = metadata['id']
@@ -104,6 +105,9 @@ def runHarness(metadata) :
 	command += "--commands=%s/hunglishcommands.utf8.txt " % g_harnessAppDir
     else :
 	command += "--commands=%s/hunglishcommands.txt " % g_harnessAppDir
+
+    command += "--startup_values=scripts_dir=%s " % g_harnessAppDir+"/../scripts"
+    
     command += "--root=%s --catalog=%s" % ( g_harnessDataDirectory, catalogFile )
 
     if g_logDir :
@@ -508,7 +512,7 @@ def main():
     
     if len(sys.argv) not in (5,7) :
         logg("Usage: control_harness.py username passwd db harnessDataDir [ logDir logDate ]")
-	logg("If you omit the last two arguments, harness instances will log the stdout/stderr.")
+	logg("If you omit the last two arguments, harness instances will log to stdout/stderr.")
 	logg("If you provide them, they will log to:")
 	logg(" > logDir/cout/logDate.uploadId.cout 2> logDir/logDate.uploadId.cerr")
 	logg("NOTE: logDir will normally be deployment/logs/harness, NOT deployment/logs .")
