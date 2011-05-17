@@ -139,7 +139,7 @@ insert into genre (name,description) values ("film",  "Subtitles") ;
 insert into genre (name,description) values ("mag",   "Magazine") ;
 insert into genre (name,description) values ("swdoc", "Software Documentation") ;
 insert into genre (name,description) values ("law",   "Law") ;
-
+insert into genre (name,description) values ("science", "Science");
 
 --
 -- Table structure for table `upload`
