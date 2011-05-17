@@ -9,9 +9,8 @@ import tempfile
 from base import *
 
 # A jelenlegi megoldas az, hogy a harness.py-t a futo control_harness.py
-# konyvtara alatti ./tcg/harness konyvtarban keresi:
+# konyvtara alatti ./tcg/harness konyvtarban keresi. Ehhez kell tudni, hogy mi a futo konyvtara:
 g_thisAppDir = os.path.dirname( os.path.realpath( __file__ ) )
-g_harnessAppDir = g_thisAppDir + "/tcg/harness"
 
 # ...ami kockazatokat rejt, de meg mindig jobb, mint amikor be volt egetve a helye:
 # g_harnessAppDir = "/var/lib/tomcat6/webapps/ROOT/WEB-INF/python/tcg/harness"
@@ -92,10 +91,13 @@ def decideIfWorthIndexing(metadata) :
     return metadata
 
 def runHarness(metadata) :
-    global g_harnessAppDir
+    global g_thisAppDir
     global g_harnessDataDirectory
     global g_logDir
     global g_logDate
+
+    harnessAppDir     = g_thisAppDir + "/tcg/harness"
+    harnessScriptsDir = g_thisAppDir + "/tcg/scripts"
 
     id = metadata['id']
 
@@ -103,15 +105,15 @@ def runHarness(metadata) :
     catalogFile.write(str(id)+"\n")
     catalogFile.close()
 
-    command = "python %s/harness.py " % g_harnessAppDir
-    command += "--graph=%s/hunglishstategraph.txt " % g_harnessAppDir
+    command = "python %s/harness.py " % harnessAppDir
+    command += "--graph=%s/hunglishstategraph.txt " % harnessAppDir
     
     if g_isUTF8 :
-	command += "--commands=%s/hunglishcommands.utf8.txt " % g_harnessAppDir
+	command += "--commands=%s/hunglishcommands.utf8.txt " % harnessAppDir
     else :
-	command += "--commands=%s/hunglishcommands.txt " % g_harnessAppDir
+	command += "--commands=%s/hunglishcommands.txt " % harnessAppDir
 
-    command += "--startup_values=scripts_dir=%s " % (g_harnessAppDir+"/../scripts")
+    command += "--startup_values=scripts_dir=%s " % harnessScriptsDir
     
     command += "--root=%s --catalog=%s" % ( g_harnessDataDirectory, catalogFile.name )
 
