@@ -4,6 +4,7 @@ import MySQLdb
 import sys
 import os
 import shutil
+import tempfile
 
 from base import *
 
@@ -11,6 +12,7 @@ from base import *
 #TODO remove absolute path of tomcat from here
 #g_harnessAppDir = "/var/lib/tomcat6/webapps/ROOT/WEB-INF/python/tcg/harness"
 g_harnessAppDir = "/srv/tomcat6/webapps/ROOT/WEB-INF/python/tcg/harness"
+
 # Ez tobb dolgot is befolyasol: azt, hogy milyen command file-lal
 # hivjuk a harnesst, es hogy a qf-et milyen kodolasunak tekinti.
 # TODO Jelenleg a minosegszurest is kikapcsolja az utf8 mod.
@@ -90,13 +92,12 @@ def runHarness(metadata) :
     global g_logDir
     global g_logDate
 
-    catalogFile = g_harnessDataDirectory+"/catalog.tmp"
+    catalogFile = tempfile.NamedTemporaryFile(delete=False,suffix=".tmp",dir="/tmp")
     
     id = metadata['id']
-    
-    f = file(catalogFile,"w")
-    f.write(str(id)+"\n")
-    f.close()    
+
+    catalogFile.write(str(id)+"\n")
+    catalogFile.close()
 
     command = "python %s/harness.py " % g_harnessAppDir
     command += "--graph=%s/hunglishstategraph.txt " % g_harnessAppDir
@@ -106,9 +107,9 @@ def runHarness(metadata) :
     else :
 	command += "--commands=%s/hunglishcommands.txt " % g_harnessAppDir
 
-    command += "--startup_values=scripts_dir=%s " % g_harnessAppDir+"/../scripts"
+    command += "--startup_values=scripts_dir=%s " % (g_harnessAppDir+"/../scripts")
     
-    command += "--root=%s --catalog=%s" % ( g_harnessDataDirectory, catalogFile )
+    command += "--root=%s --catalog=%s" % ( g_harnessDataDirectory, catalogFile.name )
 
     if g_logDir :
 	command += " > %s/cout/%s.%s.cout" % (g_logDir,g_logDate,id)
