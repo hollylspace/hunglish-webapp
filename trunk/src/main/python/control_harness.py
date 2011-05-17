@@ -67,7 +67,7 @@ def decideIfWorthIndexing(metadata) :
     if not (alignLines>0) :
 	keepIt = False
 	logg("Zero aligned bisentences found. Throwing away upload #%s." % id)
-    elif alignLines <= min((huLines,enLines))*0.6 :
+    elif alignLines <= min((huLines,enLines))*0.6 :  #TODO this is the quality filter quotient, please remove this from here, put it into config
 	# Jelenleg az utf8-as kodon ki kellett kommentalni ezt a minosegszurest:
 	if g_isUTF8 :
 	    keepIt = True
