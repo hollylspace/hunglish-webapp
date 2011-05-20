@@ -24,15 +24,15 @@ aligner_dic=%(resources_dir)s/hunalign/hu-en.stem.dic
 
 # --- commands ---
 
-doc2raw_cmd: %(scripts_dir)s/catdoc_latin2.sh
+doc2raw_cmd: bash %(scripts_dir)s/catdoc_latin2.sh
 
-pdf2raw_cmd: %(scripts_dir)s/catpdf.sh
+pdf2raw_cmd: bash %(scripts_dir)s/catpdf.sh
 
 # Converts to latin if necessary. (If not, it is just a copying.)
 txt2rawhu_cmd: python %(scripts_dir)s/txt2raw.py hu
 txt2rawen_cmd: python %(scripts_dir)s/txt2raw.py en
 
-srt2raw_cmd: %(scripts_dir)s/srt2txt.sh
+srt2raw_cmd: bash %(scripts_dir)s/srt2txt.sh
 
 # TODO HACK. A latin1-es ekezeteket eldobja.
 # A 20110319 dist-upgrade elott a pipe nem kellett, mert eleve latin1-et adott.
@@ -53,9 +53,9 @@ filtersen_cmd: python %(scripts_dir)s/filtersen.py
 tok_cmd: perl %(scripts_dir)s/tokenizer.pl -l en
 
 # make a stem table for the text
-stemcachehu_cmd: %(scripts_dir)s/ocastem_preprocess.sh | %(binaries_dir)s/ocastem --bin %(ocamorph_bin_hu)s
+stemcachehu_cmd: bash %(scripts_dir)s/ocastem_preprocess.sh | %(binaries_dir)s/ocastem --bin %(ocamorph_bin_hu)s
 # ocastem puts tags at the and of the english stemtable output
-stemcacheen_cmd: %(scripts_dir)s/ocastem_preprocess.sh | %(binaries_dir)s/ocastem --lowercase no --bin %(ocamorph_bin_en)s | sed "s/<.*//g"
+stemcacheen_cmd: bash %(scripts_dir)s/ocastem_preprocess.sh | %(binaries_dir)s/ocastem --lowercase no --bin %(ocamorph_bin_en)s | sed "s/<.*//g"
 
 # replace every word with its stem, using the previously built stemtable
 # WARNING: This small class must be compiled at the cvs checkout dir at %(cvs_dir)s,
