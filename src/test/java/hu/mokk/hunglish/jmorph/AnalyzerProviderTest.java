@@ -21,8 +21,12 @@ public class AnalyzerProviderTest {
 
 	@Test
 	public void testLemmatizerMap() {
+		for (String key : analyzerProvider.getLemmatizerMap().keySet()){
+			System.out.println(key);
+		}
+		
 		List<String> list = analyzerProvider.getLemmatizerMap().get(
-				Bisen.huSentenceFieldName).lemmatize("embereinket");
+				Bisen.huSentenceStemmedFieldName).lemmatize("embereinket");
 		for (String o : list){
 			System.out.println(o);
 		}
