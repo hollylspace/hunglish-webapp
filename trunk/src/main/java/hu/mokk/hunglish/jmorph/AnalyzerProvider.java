@@ -146,10 +146,10 @@ public class AnalyzerProvider {
 			LemmatizerWrapper enLemmatizerWrapper = new LemmatizerWrapper(enLemmatizer,true/*returnOOVOrig*/,true/*returnOrig*/,false/*returnPOS*/);
 			lemmatizerMap.put(Bisen.enSentenceStemmedFieldName, enLemmatizerWrapper);
 
-			StemmerAnalyzer stemmerAnalyzer = new StemmerAnalyzer(Version.LUCENE_30, lemmatizerMap);
+			StemmerAnalyzer stemmerAnalyzer = new StemmerAnalyzer(Version.LUCENE_32, lemmatizerMap);
 			
 			PerFieldAnalyzerWrapper analyzerWrapper =
-			      new PerFieldAnalyzerWrapper(new StandardAnalyzer(Version.LUCENE_CURRENT));
+			      new PerFieldAnalyzerWrapper(new StandardAnalyzer(Version.LUCENE_32));
 			analyzerWrapper.addAnalyzer(Bisen.huSentenceStemmedFieldName, stemmerAnalyzer);
 			analyzerWrapper.addAnalyzer(Bisen.enSentenceStemmedFieldName, stemmerAnalyzer);
 			

@@ -94,10 +94,9 @@ public class StemmerAnalyzer extends Analyzer {
 			Map<String, Set<?>> stopsets) {
 		this.stopsets = stopsets;
 		// TODO Why
-		setOverridesTokenStreamMethod(StandardAnalyzer.class);
-		enableStopPositionIncrements = StopFilter
-				.getEnablePositionIncrementsVersionDefault(matchVersion);
-		replaceInvalidAcronym = matchVersion.onOrAfter(Version.LUCENE_24);
+		//setOverridesTokenStreamMethod(StandardAnalyzer.class);
+		enableStopPositionIncrements = StopFilter.getEnablePositionIncrementsVersionDefault(matchVersion);
+		replaceInvalidAcronym = matchVersion.onOrAfter(Version.LUCENE_32);
 		this.matchVersion = matchVersion;
 		this.lemmatizers = lemmatizers;
 
@@ -176,12 +175,12 @@ public class StemmerAnalyzer extends Analyzer {
 	@Override
 	public TokenStream reusableTokenStream(String fieldName, Reader reader)
 			throws IOException {
-		if (overridesTokenStreamMethod) {
+		/*if (overridesTokenStreamMethod) {
 			// LUCENE-1678: force fallback to tokenStream() if we
 			// have been subclassed and that subclass overrides
 			// tokenStream but not reusableTokenStream
 			return tokenStream(fieldName, reader);
-		}
+		} //*/
 		SavedStreams streams = (SavedStreams) getPreviousTokenStream();
 		if (streams == null) {
 			streams = new SavedStreams();

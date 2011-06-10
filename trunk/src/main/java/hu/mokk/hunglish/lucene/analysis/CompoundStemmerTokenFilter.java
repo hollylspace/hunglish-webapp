@@ -33,9 +33,16 @@ public class CompoundStemmerTokenFilter extends CompoundWordTokenFilterBase {
 			LemmatizerWrapper lemmatizerWrapper) {
 		super(input);
 		this.lemmatizerWrapper = lemmatizerWrapper;
+		if (input == null){
+			throw new IllegalArgumentException("TokenStream cannot be null");
+		}
+		if (lemmatizerWrapper == null){
+			throw new IllegalArgumentException("LemmatizerWrapper cannot be null");
+		}
 
 	}
 
+	@SuppressWarnings("unchecked")
 	private void add(Object token) {
 		tokens.add(token);
 	}
