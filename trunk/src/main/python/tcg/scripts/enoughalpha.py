@@ -8,20 +8,27 @@ import math
 
 locale.setlocale(locale.LC_ALL, 'hu_HU.ISO8859-2')
 
-threshold = 0.85
+alphaThreshold  = 0.6
+usefulThreshold = 0.85
+
+def charNums(s) :
+    alphabeticCharNum = sum( 1 for c in s if (c.isalpha() ) )
+    usefulCharNum =     sum( 1 for c in s if (c.isalpha() or c in " -,.?!'\"" ) )
+    totalCharNum = float(len(s))
+    return alphabeticCharNum,usefulCharNum,totalCharNum
 
 # s bytestream, a fuggveny feladata konvertalni. 
 def ratio(s,utf) :
     if len(s)==0 :
 	return 0.0
     if utf :
+	# Az U+FFFD 'REPLACEMENT CHARACTER'-t rakja a helyukre.
 	s = s.decode("UTF-8",'replace')
 
-    al = sum( 1 for c in s if (c.isalpha() or c in " -,.?!'\"" ) )
-    n = float(len(s))
-
-    q = 2*math.sqrt(n)
-    return (float(al)+q)/(n+q)
+    alphabeticCharNum,usefulCharNum,totalCharNum = charNums(s)
+    deviation = 2*math.sqrt(totalCharNum)
+    return (float(alphabeticCharNum)+deviation)/(totalCharNum+deviation),\
+	   (float(usefulCharNum)    +deviation)/(totalCharNum+deviation)
 
 def main() :
     if len(sys.argv)>1 :
@@ -39,12 +46,15 @@ def main() :
 	a = l.split("\t")
 	assert len(a)==2
 	hu,en = a
-	r = ratio(hu+en,utf)
-	# rhu = ratio(hu)
-	# ren = ratio(en)
-	# rmin = min((rhu,ren))
-	# print "%f\t%f\t%s" % (rmin,r,l)
-	if r>=threshold :
-	    print l
+	huAlphaRatio,huUsefulRatio = ratio(hu,utf)
+	enAlphaRatio,enUsefulRatio = ratio(en,utf)
+	alphaRatio = min((huAlphaRatio,enAlphaRatio))
+	usefulRatio = min((huUsefulRatio,enUsefulRatio))
+	debugMode = True
+	if debugMode :
+	    print "%f\t%f\t%s" % (alphaRatio,usefulRatio,l)
+	else :
+	    if alphaRatio>=alphaThreshold and usefulRatio>=usefulThreshold :
+		print l
 
 main()
