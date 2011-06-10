@@ -67,7 +67,7 @@ CREATE TABLE `bisen` (
   `en_sentence` varchar(4000) DEFAULT NULL,
   `hu_sentence` varchar(4000) DEFAULT NULL,
   `line_number` int(11) DEFAULT NULL,
-  `doc` bigint(20) DEFAULT NULL,
+  `doc` bigint(20) NOT NULL,
   `en_sentence_hash` bigint(20) DEFAULT NULL,
   `hu_sentence_hash` bigint(20) DEFAULT NULL,
   `is_duplicate` bit(1) DEFAULT NULL,

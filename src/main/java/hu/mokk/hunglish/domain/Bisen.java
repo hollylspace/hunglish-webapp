@@ -290,15 +290,13 @@ public class Bisen {
 		return builder.toString();
 	}
 
-	/**
+	//this is commented out since it's done by control_harness.py
+	/*
 	 * only letters, digits and space (0x20) will preserved all other characters
 	 * will be deleted
 	 * 
 	 * @param s
 	 * @return
-	 */
-	//this is commented out since it's done by control_harness.py
-	/*
 	private static String stripPunctuation(String s) {
 		StringBuffer sb = new StringBuffer();
 		if (s.length() > 0) {
@@ -313,6 +311,7 @@ public class Bisen {
 		return sb.toString().replaceAll(" +", " ").trim();
 	} */
 
+	
 	public static String idFieldName = "id";
 	public static String genreFieldName = "doc.genre.id";
 	public static String authorFieldName = "doc.author.id";

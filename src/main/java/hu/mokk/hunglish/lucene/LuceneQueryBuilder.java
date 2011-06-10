@@ -37,7 +37,7 @@ public class LuceneQueryBuilder {
 		huRequest = request.getHuQuery();
 		if (huRequest != null && huRequest.length() > 0) {
 
-			Query huQuery = new QueryParser(Version.LUCENE_30,
+			Query huQuery = new QueryParser(Version.LUCENE_32,
 					Bisen.huSentenceStemmedFieldName, queryParser
 							.getAnalyzerProvider().getAnalyzer())
 					.parse(huRequest);
@@ -45,7 +45,7 @@ public class LuceneQueryBuilder {
 		}
 
 		if (request.getEnQuery() != null && request.getEnQuery().length() > 0) {
-			Query enQuery = new QueryParser(Version.LUCENE_30,
+			Query enQuery = new QueryParser(Version.LUCENE_32,
 					Bisen.enSentenceStemmedFieldName, queryParser
 							.getAnalyzerProvider().getAnalyzer()).parse(request
 					.getEnQuery());

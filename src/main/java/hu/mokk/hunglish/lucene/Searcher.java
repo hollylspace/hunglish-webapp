@@ -23,6 +23,7 @@ import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.Term;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
@@ -193,7 +194,7 @@ public class Searcher {
 			} catch (IOException ioe) {
 				throw new RuntimeException(ioe);
 			}
-			docs.add(new Pair<Document, Integer>(d, docId));
+			docs.add(new Pair<Document, Integer>(d, docId));			
 		}
 		
 		List<Pair<Document,Bisen>> resultBisens = Bisen.toBisens(docs);
@@ -215,15 +216,105 @@ public class Searcher {
 	static Pattern highPattern = Pattern.compile(highPatternString);
 	
 	public static String mergeHighLight(String line1, String line2){
-		Matcher matcher = highPattern.matcher(line1);
-		boolean found = matcher.find();
-		while(found){
-			String match = matcher.group(2);
-			String replaceMent = matcher.group();
-			line2 = line2.replaceAll(match, replaceMent);
-			found = matcher.find();
+		if (line1 != null && line2 != null){
+			Matcher matcher = highPattern.matcher(line1);
+			boolean found = matcher.find();
+			while(found){
+				String match = matcher.group(2);
+				String replaceMent = matcher.group();
+				line2 = line2.replaceAll(match, replaceMent);
+				found = matcher.find();
+			}
+			return line2;
+		} else if (line1 != null) {
+			return line1;
+		} else if (line2 != null){
+			return line2;
+		} else {
+			throw new IllegalArgumentException("both line is null");
 		}
-		return line2;
+	}
+
+	private enum BisenSide {
+		   EN, HU 
+		}
+	
+	private static boolean notEmptyQuery(Query query, BisenSide side){
+		Set<Term> terms = new HashSet<Term>();
+		query.extractTerms(terms);
+		for (Term term : terms){
+			if (term.field().toUpperCase().startsWith(side.toString().toUpperCase())){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private void highlightBisen(Bisen bisen, Query query, BisenSide side){
+		switch (side) {
+		case EN:
+			bisen.setEnSentenceView(bisen.getEnSentence());
+			break;
+		case HU:
+			bisen.setHuSentenceView(bisen.getHuSentence());
+			break;
+		}
+
+		if (notEmptyQuery(query, side)){
+			String fieldName = null; 
+			String stemmedFieldName = null;
+			
+			switch (side) {
+			case EN:
+				fieldName = Bisen.enSentenceFieldName;
+				stemmedFieldName = Bisen.enSentenceStemmedFieldName;
+				break;
+			case HU:
+				fieldName = Bisen.huSentenceFieldName;
+				stemmedFieldName = Bisen.huSentenceStemmedFieldName;
+				break;
+			}
+			String high = null;
+			String high2 = null;
+			TokenStream tokens;
+			try {
+				tokens = TokenSources.getTokenStream(
+						indexReader, bisen.getLuceneDocId(), stemmedFieldName);
+				tokens = new CompoundStemmerTokenFilter(tokens,
+						analyzerProvider.getLemmatizerMap().get(stemmedFieldName)); 
+				logger.debug(side+": try to high stemmed:"+query.toString());
+				high = highlightField(tokens, query,
+						stemmedFieldName, bisen.getHuSentence());
+				logger.debug(high);
+			} catch (Exception e) {
+				logger.error(bisen);
+				logger.error(query);
+				logger.error(side+": Error while highlighting stemmed field", e);
+				//throw new RuntimeException("error while highlighting", e);
+			}
+	
+			try {
+				//if (high.toLowerCase().indexOf("<b>")< 0){
+				logger.debug(side+": try to high on not-stemmed field 2:"+query.toString());
+				tokens = TokenSources.getTokenStream(
+						indexReader, bisen.getLuceneDocId(), fieldName);
+				tokens = new CompoundStemmerTokenFilter(tokens,
+						analyzerProvider.getLemmatizerMap().get(stemmedFieldName)); 
+				high2 = highlightField(tokens, query,
+						fieldName, bisen.getHuSentence());
+				logger.debug(high2);
+				//}					
+			} catch (Exception e) {
+				logger.error(bisen);
+				logger.error(query);
+				logger.error(side+": Error while highlighting NOT stemmed field", e);
+				//throw new RuntimeException("error while highlighting", e);
+			}
+			if (high != null || high2 != null){
+				high = mergeHighLight(high, high2);
+				bisen.setHuSentenceView(high);
+			}
+		}
 	}
 	
 	private void highlightBisens(SearchRequest request, List<Pair<Document, Bisen>> bisens, Query query){
@@ -231,8 +322,11 @@ public class Searcher {
 			Bisen bisen = pair.getSecond();
 			//Document document = pair.getFirst();
 			logger.debug("--------------- HIGHLIGHT -----------------");
-			if (pair.getSecond() != null && request.nonEmptyHuQuery() && request.getHighlightHu() && indexReader != null) {
-				try {
+			if (pair.getSecond() != null && request.nonEmptyHuQuery() && request.getHighlightHu() 
+					&& indexReader != null) {
+				highlightBisen(bisen, query, BisenSide.HU);
+				/*
+				try {				
 					TokenStream huTokens = TokenSources.getTokenStream(
 							indexReader, bisen.getLuceneDocId(), Bisen.huSentenceStemmedFieldName);
 					huTokens = new CompoundStemmerTokenFilter(huTokens,
@@ -258,10 +352,13 @@ public class Searcher {
 				} catch (Exception e) {
 					e.printStackTrace(); //TODO FIXME
 					//throw new RuntimeException("error while highlighting", e);
-				}
-			}
+				} //*/
+			} 
 	
-			if (bisen != null && request.nonEmptyEnQuery() && request.getHighlightEn() && indexReader != null) {
+			if (bisen != null && request.nonEmptyEnQuery() && request.getHighlightEn() 
+					&& indexReader != null) {
+				highlightBisen(bisen, query, BisenSide.EN);
+				/*
 				try {
 					TokenStream enTokens = TokenSources.getTokenStream(
 							indexReader, bisen.getLuceneDocId(), Bisen.enSentenceStemmedFieldName);
@@ -272,6 +369,7 @@ public class Searcher {
 					String high = highlightField(enTokens, query,
 							Bisen.enSentenceFieldName, bisen.getEnSentence());
 					logger.debug(high);
+					
 					enTokens = TokenSources.getTokenStream(
 							indexReader, bisen.getLuceneDocId(), Bisen.enSentenceFieldName);
 					enTokens = new CompoundStemmerTokenFilter(enTokens,
@@ -286,7 +384,7 @@ public class Searcher {
 				} catch (Exception e) {
 					e.printStackTrace(); //TODO FIXME
 					//throw new RuntimeException("error while highlighting", e);
-				}
+				} //*/
 			}	
 			
 		}
