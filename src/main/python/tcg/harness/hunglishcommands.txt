@@ -26,6 +26,7 @@ aligner_dic=%(resources_dir)s/hunalign/hu-en.stem.dic
 
 doc2raw_cmd: bash %(scripts_dir)s/catdoc_latin2.sh
 
+# TODO Tettem a catpdf vegere egy latin2-re konverziot, de az utf8-as hunglishcommands ettol elromlott. Eddig meg csak az volt itt jo.
 pdf2raw_cmd: bash %(scripts_dir)s/catpdf.sh
 
 # Converts to latin if necessary. (If not, it is just a copying.)
@@ -76,3 +77,7 @@ qf_cmd: bash %(scripts_dir)s/qualityfilter.sh | python %(scripts_dir)s/enoughalp
 # collect more metadata
 # arguments: align/qf hu/meta en/meta
 bimeta_cmd: python %(scripts_dir)s/bimeta.py
+
+# --- Translation Memory ---
+# Alternativ path, ha mar valaki parhuzamositotta a szovegeket helyettunk.
+merge_cmd: python %(scripts_dir)s/mergetm.py

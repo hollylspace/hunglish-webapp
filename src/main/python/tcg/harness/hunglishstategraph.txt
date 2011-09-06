@@ -62,3 +62,13 @@ align/text -> align/qf : qf
 
 # collect some more size about data, and add to the previously collected
 align/qf , hu/meta, en/meta -> align/bimeta : bimeta
+
+# translation memories must be prepared in a slightly roundabout fashion:
+# hu/tm and en/tm is the input split into two files.
+# we have to re-merge them to form the qf file.
+# merge checks whether the two files have the same 
+hu/tm , en/tm -> align/qf : merge
+# the meta_cmd is suitable here, as it expects a sen, and a tm is indistinguisable from a sen.
+hu/tm -> hu/meta : meta
+en/tm -> en/meta : meta
+ 
