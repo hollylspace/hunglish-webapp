@@ -675,7 +675,9 @@ TODO A lit-ekbol txt-t kellene csinalni, ne menjenek ka'rba.
 = Hunglish 2.0 Law (Farkas Andras)
 originally at: hunglish2.justlaw/zips (andras.farkas@yahoo.com, 2011 jan 1 levele nyoman)
 now at: hunglish2.justlaw
-Igy keszult az uploadtable:
+Igy keszult az uploadtable: az ottani readme.txt elmondja.
+TODO 2005-2010D_en-hu_HTML_hatarozatok.rar, 2005-2010_en-hu_aligned.rar me'g nem kerult bele.
+
 TODO Me'g sehogy. Esetleg beszerezni a 2005-2006 jogszabalyokat is.
 
 = Telekom sajtofigyelo

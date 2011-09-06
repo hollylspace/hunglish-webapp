@@ -2,13 +2,18 @@ ssh vargadaniel@80.249.168.244
 
 ---
 
-Beletettem a /etc/apt/sources.list vegere ezt:
+Ubuntun beletettem a /etc/apt/sources.list vegere ezt, de nem tudom, hogy szakszeru volt-e:
 
 deb http://hu.archive.ubuntu.com/ubuntu/ lenny universe
 deb-src http://hu.archive.ubuntu.com/ubuntu/ lenny universe
 
 deb http://hu.archive.ubuntu.com/ubuntu/ lenny multiverse
 deb-src http://hu.archive.ubuntu.com/ubuntu/ lenny multiverse
+
+Debianon:
+deb http://ftp.us.debian.org/debian squeeze main contrib non-free
+deb http://security.debian.org/ squeeze/updates main contrib non-free
+deb http://backports.debian.org/debian-backports squeeze-backports main contrib non-free
 
 ---
 
@@ -39,7 +44,7 @@ A tomcat6-nak teljesen mas a file layout-ja, ugyhogy TODO valakinek valoszinuleg
 
 ---
 
-/srv/tomcat6/conf/tomcat-users.xml (A masodik (squeeze?) installnal /var/lib/tomcat6/conf/tomcat-users.xml) kiegeszitese ezzel:
+/srv/tomcat6/conf/tomcat-users.xml (A masodik (Debian Squeeze) installnal /var/lib/tomcat6/conf/tomcat-users.xml) kiegeszitese ezzel:
 
 <!-- Daniel -->
 <role rolename="manager"/>
@@ -57,7 +62,7 @@ A tomcat6-nak teljesen mas a file layout-ja, ugyhogy TODO valakinek valoszinuleg
     <server>
 	<id>tomcat</id>
 	<username>admin</username>
-	<password>q1e33xx</password>
+	<password>???</password>
     </server>
 </servers>
 </settings>
@@ -72,7 +77,7 @@ A tomcat6-nak teljesen mas a file layout-ja, ugyhogy TODO valakinek valoszinuleg
                URIEncoding="UTF-8" 
                redirectPort="8443" />
 
-ebbol csak az URIEncoding sor az uj.
+ebbol csak az URIEncoding sor az uj. Az uj Debian tomcat mar alapbol igy erkezik.
 
 Plusz loggolashoz kiszedem a komment-zarojelbol az alabbi blokkot:
         <!-- Daniel : Ez eredetileg ki volt kommentezve -->
@@ -92,7 +97,7 @@ mvn tomcat:deploy
 timeout-ol a tomcat manager elerese kozben. Miert? Azert, mert a gep nem latja sajat magat
 ezen a cimen belulrol. 
 
-a pom.xml-ben ehelyett localhost-nak kell nevezze magat:
+a pom.xml-ben ehelyett localhost-nak kell nevezze magat. Most mar igy is van trunkon:
 <configuration>
 <server>tomcat</server>
 <url>http://localhost:8080/manager</url>
