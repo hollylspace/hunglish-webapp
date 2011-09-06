@@ -1,6 +1,7 @@
-# Azokat a sorokat engedi at, ahol a latin2 kodolas szerinti alfabetikus
-# karakterek aranya legalabb 2/3, nem beleszamolva a space-eket es irasjeleket,
-# plane nem a szamjegyeket.
+# Kiszuri a keves ertekes karaktert tartalmazo sorokat, ketfele heurisztika
+# szerint. Az egyik az alfabetikus karakterek ara'nya't korlatozza alulrol
+# mindket oldalon, a masik a "hasznos" karaktereke't, ahol hasznos= (c.isalpha() or c in " -,.?!'\"" ).
+# FIGYELEM, az ara'ny egy higitas utan szamolodik, 2*sqrt(n) kepzeletbeli jo karaktert adunk hozza.
 
 import sys
 import locale
