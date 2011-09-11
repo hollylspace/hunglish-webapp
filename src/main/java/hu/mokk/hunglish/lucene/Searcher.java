@@ -290,7 +290,7 @@ public class Searcher {
 				logger.error(bisen);
 				logger.error(query);
 				logger.error(side+": Error while highlighting stemmed field", e);
-				//throw new RuntimeException("error while highlighting", e);
+				//TODO? throw new RuntimeException("error while highlighting", e);
 			}
 	
 			try {
@@ -308,12 +308,22 @@ public class Searcher {
 				logger.error(bisen);
 				logger.error(query);
 				logger.error(side+": Error while highlighting NOT stemmed field", e);
-				//throw new RuntimeException("error while highlighting", e);
+				//TODO? throw new RuntimeException("error while highlighting", e);
 			}
+
 			if (high != null || high2 != null){
 				high = mergeHighLight(high, high2);
-				bisen.setHuSentenceView(high);
-			}
+
+				switch (side) {
+				case EN:
+					bisen.setEnSentenceView(high);
+					break;
+				case HU:
+					bisen.setHuSentenceView(high);
+					break;
+				}
+			}			
+			
 		}
 	}
 	

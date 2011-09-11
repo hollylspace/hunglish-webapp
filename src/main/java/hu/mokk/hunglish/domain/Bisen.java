@@ -510,7 +510,12 @@ public class Bisen {
 	}
 
 	public String getHuSentenceView() {
-		return huSentenceView;
+		if ((huSentenceView != null) && (huSentenceView.trim().length()> 0)){
+			return huSentenceView;
+		} else {
+			return getHuSentence();
+		}
+		
 	}
 
 	public void setHuSentenceView(String huSentenceView) {
@@ -518,7 +523,11 @@ public class Bisen {
 	}
 
 	public String getEnSentenceView() {
-		return enSentenceView;
+		if ((enSentenceView != null) && (enSentenceView.trim().length()> 0)){
+			return enSentenceView;
+		} else {
+			return getEnSentence();
+		}		
 	}
 
 	public void setEnSentenceView(String enSentenceView) {
