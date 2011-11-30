@@ -51,7 +51,7 @@ def main() :
 	enAlphaRatio,enUsefulRatio = ratio(en,utf)
 	alphaRatio = min((huAlphaRatio,enAlphaRatio))
 	usefulRatio = min((huUsefulRatio,enUsefulRatio))
-	debugMode = True
+	debugMode = False
 	if debugMode :
 	    print "%f\t%f\t%s" % (alphaRatio,usefulRatio,l)
 	else :

@@ -21,7 +21,7 @@ grep -v "~~~" |\
 grep -v "<p>" |\
 grep -v "\([^0-9.]\)\1\1\1" | grep -v "\.\.\.\.\." |\
 grep -v "|" |\
-awk '
+LC_ALL=C awk '
 BEGIN { FS="\t" }
 
 {

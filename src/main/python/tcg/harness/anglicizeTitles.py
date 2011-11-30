@@ -4,6 +4,8 @@ import sys
 import os
 import shutil
 
+# Figyelem, az angol fajlnevek vegerol a hunglish2.justlaw miatt
+# lecsippentunk egy _en vegzodest.
 
 def mkdir(f) :
     try :
@@ -30,6 +32,10 @@ def addOne(target,record) :
 
     hu_base,hu_ext = hu_original_file_name.split(".")
     en_base,en_ext = en_original_file_name.split(".")
+    
+    # Figyelem, kivetelkod!
+    if en_base.endswith("_en") and hu_base.endswith("_hu") :
+	en_base = en_base[:-3]
     
     hu_target_dir = target +"/hu/"+ hu_ext
     en_target_dir = target +"/en/"+ en_ext
