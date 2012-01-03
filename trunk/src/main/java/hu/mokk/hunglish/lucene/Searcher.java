@@ -11,6 +11,7 @@ import hu.mokk.hunglish.util.Pair;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -35,6 +36,8 @@ import org.apache.lucene.search.highlight.QueryScorer;
 import org.apache.lucene.search.highlight.SimpleFragmenter;
 import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
 import org.apache.lucene.search.highlight.TokenSources;
+import org.apache.lucene.search.spell.LuceneDictionary;
+import org.apache.lucene.search.spell.SpellChecker;
 import org.apache.lucene.store.SimpleFSDirectory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -48,6 +51,8 @@ public class Searcher {
 	
 	transient private static Log logger = LogFactory.getLog(Searcher.class);
 	private String indexDir;
+	private String spellIndexDir;
+	private String spellIndexDirHu;
 	/**
 	 * the maximum number of search results. 
 	 * 1000 like in google
@@ -58,6 +63,11 @@ public class Searcher {
 	
 	private IndexSearcher searcher;
 	private IndexReader indexReader;
+	private SpellChecker enSpellChecker;
+	private SpellChecker huSpellChecker;
+
+	private int minimumHits;
+    private float minimumScore;	
 	
 	private String useHunglishSyntax = "true";
 	//private Boolean setHunglishSyntax = false;
@@ -98,10 +108,14 @@ public class Searcher {
 		boolean readOnly = true;
 		if (indexReader == null) {
 			try {
-				indexReader = IndexReader.open(new SimpleFSDirectory(new File(
-						indexDir)), readOnly);
+				SimpleFSDirectory indexFSDir = new SimpleFSDirectory(new File(indexDir));
+				SimpleFSDirectory spellFSDir = new SimpleFSDirectory(new File(spellIndexDir));
+				SimpleFSDirectory spellFSDirHu = new SimpleFSDirectory(new File(spellIndexDirHu));
+				indexReader = IndexReader.open(indexFSDir, readOnly);
 				searcher = new IndexSearcher(indexReader);
 				luceneQueryBuilder = new LuceneQueryBuilder();
+				enSpellChecker = new SpellChecker(spellFSDir);
+				huSpellChecker = new SpellChecker(spellFSDirHu);
 			} catch (CorruptIndexException e) {
 				throw new RuntimeException("Cannot open index directory:"+indexDir, e);
 			} catch (IOException e) {
@@ -198,15 +212,77 @@ public class Searcher {
 		}
 		
 		List<Pair<Document,Bisen>> resultBisens = Bisen.toBisens(docs);
-		
+		for (Pair<Document, Bisen> pair : resultBisens){
+			Bisen bisen = pair.getSecond();
+			bisen.setEnSentenceView(bisen.getEnSentence());
+			bisen.setHuSentenceView(bisen.getHuSentence());
+		}
 		if (request.getHighlightHu() || request.getHighlightEn()){
 			highlightBisens(request, resultBisens, query);
 		}
 		
 		result.addToHits(resultBisens);
+		if (hits.length > 0) logger.debug("SSSSSSSSSSSSSSSSSSSSSSScore:"+hits[0].score);
+		if (hits.length < minimumHits || (hits.length > 0 && hits[0].score < minimumScore)) {
+			didYouMean(result, query, request);
+		}
 		return result;
 		
 	}
+	
+	private void didYouMean(SearchResult result, Query query, SearchRequest request){
+		String enSuggestionString = request.getEnQuery();
+		String huSuggestionString = request.getHuQuery();
+		boolean OK = false;
+		Set<Term> terms = new HashSet<Term>();		
+		query.extractTerms(terms);		
+		if (terms.size() > 0){
+			for (Term term : terms){
+				logger.debug("Term:"+term);
+				if (Bisen.enSentenceStemmedFieldName.equals(term.field())){
+					String suggestion = suggest(enSpellChecker, term);
+					if (suggestion != null){
+						OK = true;
+						logger.debug("suggestion for Term:"+suggestion);
+						logger.debug("enSuggestionString:"+enSuggestionString);
+						enSuggestionString = enSuggestionString.replaceAll(term.text(), suggestion);
+						logger.debug("enSuggestionString replaced:"+enSuggestionString);
+					}
+				} else if (Bisen.huSentenceStemmedFieldName.equals(term.field())){
+					String suggestion = suggest(huSpellChecker, term);
+					if (suggestion != null){
+						OK = true;
+						logger.debug("suggestion for Term:"+suggestion);
+						logger.debug("huSuggestionString:"+huSuggestionString);
+						huSuggestionString = huSuggestionString.replaceAll(term.text(), suggestion);
+						logger.debug("huSuggestionString replaced:"+huSuggestionString);
+					}					
+				}
+			}
+		}
+		
+		if (OK){
+			result.setEnSuggestionString(enSuggestionString);
+			result.setHuSuggestionString(huSuggestionString);
+		}
+	}
+	
+	private String suggest(SpellChecker spellChecker, Term term) {
+		String queryString = term.text();
+        try {
+			if (spellChecker.exist(queryString)) {
+			    return null;
+			}
+	        String[] similarWords = spellChecker.suggestSimilar(queryString, 1); 
+	        if (similarWords.length == 0) {
+	            return null;
+	        }
+	        return similarWords[0];
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			throw new RuntimeException("error while getting similar word for "+queryString, e);
+		}
+    }	
 	
 	
 	
@@ -251,29 +327,27 @@ public class Searcher {
 	}
 	
 	private void highlightBisen(Bisen bisen, Query query, BisenSide side){
-		switch (side) {
-		case EN:
-			bisen.setEnSentenceView(bisen.getEnSentence());
-			break;
-		case HU:
-			bisen.setHuSentenceView(bisen.getHuSentence());
-			break;
+		if (logger.isDebugEnabled()){
+			logger.debug("highlight bisen");
+			logger.debug(bisen);logger.debug(query);logger.debug(side);
 		}
-
 		if (notEmptyQuery(query, side)){
 			String fieldName = null; 
 			String stemmedFieldName = null;
-			
+			String sentence = null;
 			switch (side) {
 			case EN:
 				fieldName = Bisen.enSentenceFieldName;
 				stemmedFieldName = Bisen.enSentenceStemmedFieldName;
+				sentence = bisen.getEnSentence();
 				break;
 			case HU:
 				fieldName = Bisen.huSentenceFieldName;
 				stemmedFieldName = Bisen.huSentenceStemmedFieldName;
+				sentence = bisen.getHuSentence();
 				break;
 			}
+			logger.debug(fieldName+"--"+stemmedFieldName);
 			String high = null;
 			String high2 = null;
 			TokenStream tokens;
@@ -282,31 +356,24 @@ public class Searcher {
 						indexReader, bisen.getLuceneDocId(), stemmedFieldName);
 				tokens = new CompoundStemmerTokenFilter(tokens,
 						analyzerProvider.getLemmatizerMap().get(stemmedFieldName)); 
-				logger.debug(side+": try to high stemmed:"+query.toString());
 				high = highlightField(tokens, query,
-						stemmedFieldName, bisen.getHuSentence());
+						stemmedFieldName, sentence);
 				logger.debug(high);
 			} catch (Exception e) {
-				logger.error(bisen);
-				logger.error(query);
 				logger.error(side+": Error while highlighting stemmed field", e);
 				//TODO? throw new RuntimeException("error while highlighting", e);
 			}
 	
 			try {
-				//if (high.toLowerCase().indexOf("<b>")< 0){
-				logger.debug(side+": try to high on not-stemmed field 2:"+query.toString());
 				tokens = TokenSources.getTokenStream(
 						indexReader, bisen.getLuceneDocId(), fieldName);
+				//TODO is this next line really neaded?
 				tokens = new CompoundStemmerTokenFilter(tokens,
 						analyzerProvider.getLemmatizerMap().get(stemmedFieldName)); 
 				high2 = highlightField(tokens, query,
-						fieldName, bisen.getHuSentence());
+						fieldName, sentence);
 				logger.debug(high2);
-				//}					
 			} catch (Exception e) {
-				logger.error(bisen);
-				logger.error(query);
 				logger.error(side+": Error while highlighting NOT stemmed field", e);
 				//TODO? throw new RuntimeException("error while highlighting", e);
 			}
@@ -332,69 +399,17 @@ public class Searcher {
 			Bisen bisen = pair.getSecond();
 			//Document document = pair.getFirst();
 			logger.debug("--------------- HIGHLIGHT -----------------");
+			logger.debug(bisen);
 			if (pair.getSecond() != null && request.nonEmptyHuQuery() && request.getHighlightHu() 
 					&& indexReader != null) {
+				logger.debug("-- HIGHLIGHTing HU --");
 				highlightBisen(bisen, query, BisenSide.HU);
-				/*
-				try {				
-					TokenStream huTokens = TokenSources.getTokenStream(
-							indexReader, bisen.getLuceneDocId(), Bisen.huSentenceStemmedFieldName);
-					huTokens = new CompoundStemmerTokenFilter(huTokens,
-							analyzerProvider.getLemmatizerMap().get(Bisen.huSentenceStemmedFieldName)); 
-					logger.debug("try to high hu stemmed:"+query.toString());
-					String high = highlightField(huTokens, query,
-							Bisen.huSentenceFieldName, bisen.getHuSentence());
-					logger.debug(high);
-					
-					//if (high.toLowerCase().indexOf("<b>")< 0){
-					logger.debug("try to high hu on not-stemmed field 2:"+query.toString());
-					huTokens = TokenSources.getTokenStream(
-							indexReader, bisen.getLuceneDocId(), Bisen.huSentenceFieldName);
-					huTokens = new CompoundStemmerTokenFilter(huTokens,
-							analyzerProvider.getLemmatizerMap().get(Bisen.huSentenceStemmedFieldName)); 
-					String high2 = highlightField(huTokens, query,
-							Bisen.huSentenceStemmedFieldName, bisen.getHuSentence());
-					logger.debug(high2);
-					//}					
-					
-					high = mergeHighLight(high, high2);
-					bisen.setHuSentenceView(high);
-				} catch (Exception e) {
-					e.printStackTrace(); //TODO FIXME
-					//throw new RuntimeException("error while highlighting", e);
-				} //*/
 			} 
 	
 			if (bisen != null && request.nonEmptyEnQuery() && request.getHighlightEn() 
 					&& indexReader != null) {
+				logger.debug("-- HIGHLIGHTing EN --");
 				highlightBisen(bisen, query, BisenSide.EN);
-				/*
-				try {
-					TokenStream enTokens = TokenSources.getTokenStream(
-							indexReader, bisen.getLuceneDocId(), Bisen.enSentenceStemmedFieldName);
-					enTokens = new CompoundStemmerTokenFilter(enTokens,
-							analyzerProvider.getLemmatizerMap().get(Bisen.enSentenceStemmedFieldName)); 
-					
-					logger.debug("try to high en stemmed:"+query.toString());
-					String high = highlightField(enTokens, query,
-							Bisen.enSentenceFieldName, bisen.getEnSentence());
-					logger.debug(high);
-					
-					enTokens = TokenSources.getTokenStream(
-							indexReader, bisen.getLuceneDocId(), Bisen.enSentenceFieldName);
-					enTokens = new CompoundStemmerTokenFilter(enTokens,
-							analyzerProvider.getLemmatizerMap().get(Bisen.enSentenceStemmedFieldName)); 
-					logger.debug("try to high en on not-stemmed field:"+query.toString());
-					String high2 = highlightField(enTokens, query,
-							Bisen.enSentenceStemmedFieldName, bisen.getEnSentence());
-					logger.debug(high);
-					
-					high = mergeHighLight(high, high2);
-					pair.getSecond().setEnSentenceView(high);
-				} catch (Exception e) {
-					e.printStackTrace(); //TODO FIXME
-					//throw new RuntimeException("error while highlighting", e);
-				} //*/
 			}	
 			
 		}
@@ -466,6 +481,46 @@ public class Searcher {
 
 	public void setMaxResultSetSize(Integer maxResultSetSize) {
 		this.maxResultSetSize = maxResultSetSize;
+	}
+
+
+	public String getSpellIndexDir() {
+		return spellIndexDir;
+	}
+
+
+	public void setSpellIndexDir(String spellIndexDir) {
+		this.spellIndexDir = spellIndexDir;
+	}
+
+
+	public int getMinimumHits() {
+		return minimumHits;
+	}
+
+
+	public void setMinimumHits(int minimumHits) {
+		this.minimumHits = minimumHits;
+	}
+
+
+	public float getMinimumScore() {
+		return minimumScore;
+	}
+
+
+	public void setMinimumScore(float minimumScore) {
+		this.minimumScore = minimumScore;
+	}
+
+
+	public String getSpellIndexDirHu() {
+		return spellIndexDirHu;
+	}
+
+
+	public void setSpellIndexDirHu(String spellIndexDirHu) {
+		this.spellIndexDirHu = spellIndexDirHu;
 	}
 
 

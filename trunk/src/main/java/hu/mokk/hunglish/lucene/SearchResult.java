@@ -22,6 +22,9 @@ public class SearchResult {
 	
 	private List<Pair<String, String>> paginationLinks;
 	
+	private String enSuggestionString;
+	private String huSuggestionString;
+	
 	public SearchResult(int totalCount, int start, int end) {
 		this.totalCount = totalCount;
 		this.startOffset = start;
@@ -97,6 +100,22 @@ public class SearchResult {
 
 	public void setPaginationLinks(List<Pair<String, String>> paginationLinks) {
 		this.paginationLinks = paginationLinks;
+	}
+
+	public String getEnSuggestionString() {
+		return enSuggestionString;
+	}
+
+	public void setEnSuggestionString(String suggestionString) {
+		this.enSuggestionString = suggestionString;
+	}
+
+	public String getHuSuggestionString() {
+		return huSuggestionString;
+	}
+
+	public void setHuSuggestionString(String huSuggestionString) {
+		this.huSuggestionString = huSuggestionString;
 	}
 
 }

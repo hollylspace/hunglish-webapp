@@ -115,22 +115,6 @@ public class HunglishQueryParser {
         }
     	return result;
 
-        /*----------new version-----------*/
-        /*
-		Query result = null;
-    	QueryParser luceneQueryParser = new QueryParser(Version.LUCENE_CURRENT,
-				luceneField, analyzerProvider.getAnalyzer());
-    	try {
-			//TODO FIXME create separate query object from each term and
-			//combine them with boolean query
-			String wtf = phrase.getTermsSpaceSeparated(); 
-			result = luceneQueryParser.parse(wtf);
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			throw new RuntimeException("Parse error while parsing:"+phrase.getTermsSpaceSeparated(), e);
-		}//*/	        
-    	
     }
 
 

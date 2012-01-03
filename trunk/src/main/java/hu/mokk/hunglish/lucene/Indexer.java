@@ -30,6 +30,9 @@ import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
+import org.apache.lucene.search.spell.Dictionary;
+import org.apache.lucene.search.spell.LuceneDictionary;
+import org.apache.lucene.search.spell.SpellChecker;
 import org.apache.lucene.store.LockObtainFailedException;
 import org.apache.lucene.store.SimpleFSDirectory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +55,8 @@ public class Indexer {
 	private Integer maxBufferedDocs;
 	private String indexDir;
 	private String tmpIndexDir;
+	private String spellIndexDir;
+	private String spellIndexDirHu;
 	private String uploadDir;
 	private String uploadJobPath;
 
@@ -65,7 +70,6 @@ public class Indexer {
 	@Autowired
 	private MockJob mockJob;
 
-	
 	/**
 	 * batch size for indexing operations
 	 */
@@ -149,23 +153,27 @@ public class Indexer {
 		IndexerHelper.reCreateDir(tmpIndexDir);
 	}
 
-
 	private void deleteBisenFromIndex(Bisen bisen, IndexWriter iwriter,
 			Statement jdbcStatement) {
 		try {
 			Term term = new Term(Bisen.idFieldName, bisen.getId().toString());
 			iwriter.deleteDocuments(term);
-			jdbcStatement.addBatch("update bisen set state = '" + BisenState.newState(bisen, BisenOperation.DELETEFROMINDEX)
+			jdbcStatement.addBatch("update bisen set state = '"
+					+ BisenState
+							.newState(bisen, BisenOperation.DELETEFROMINDEX)
 					+ "' where id=" + bisen.getId());
 		} catch (Exception e) {
 			try {
-				logger.error("error while deleting bisen:"+bisen, e);
-				jdbcStatement.addBatch("update bisen "
-						+ "set state = '"+BisenState.newState(bisen, BisenOperation.ERROR)+"' where id=" + bisen.getId());
+				logger.error("error while deleting bisen:" + bisen, e);
+				jdbcStatement.addBatch("update bisen " + "set state = '"
+						+ BisenState.newState(bisen, BisenOperation.ERROR)
+						+ "' where id=" + bisen.getId());
 			} catch (SQLException e1) {
-				//e1.printStackTrace();
+				// e1.printStackTrace();
 				logger.fatal("DELETING error for bisen:" + bisen, e);
-				throw new RuntimeException("Error while deleting from index and updating error status on bisen", e1);
+				throw new RuntimeException(
+						"Error while deleting from index and updating error status on bisen",
+						e1);
 			}
 			throw new RuntimeException("Error while deleting from index", e);
 		}
@@ -175,18 +183,22 @@ public class Indexer {
 			Statement jdbcStatement) {
 		try {
 			iwriter.addDocument(bisen.toLucene());
-			jdbcStatement.addBatch("update bisen set state = '"+BisenState.newState(bisen, BisenOperation.ADD2INDEX)
-					+"' where id="+ bisen.getId());
+			jdbcStatement.addBatch("update bisen set state = '"
+					+ BisenState.newState(bisen, BisenOperation.ADD2INDEX)
+					+ "' where id=" + bisen.getId());
 		} catch (Exception e) {
 			try {
-				jdbcStatement.addBatch("update bisen "
-						+ "set state = '"+BisenState.newState(bisen, BisenOperation.ERROR)+"' where id=" + bisen.getId());
+				jdbcStatement.addBatch("update bisen " + "set state = '"
+						+ BisenState.newState(bisen, BisenOperation.ERROR)
+						+ "' where id=" + bisen.getId());
 			} catch (SQLException e1) {
-				//e1.printStackTrace();
+				// e1.printStackTrace();
 				logger.fatal("Exception in Catch block for "
 						+ "Indexing error for bisen:", e1);
-				throw new RuntimeException("Error while indexing and updating error status on bisen", e1);
-				
+				throw new RuntimeException(
+						"Error while indexing and updating error status on bisen",
+						e1);
+
 			}
 			logger.error("Indexing error for bisen:" + bisen, e);
 			throw new RuntimeException(e);
@@ -195,24 +207,23 @@ public class Indexer {
 
 	private List<Bisen> getBisensByState(EntityManager em, List<State> states) {
 		List<Bisen> result = new ArrayList<Bisen>();
-		for (State state : states){
-			result = em.createQuery(
-							"from Bisen where state = '" + state.toString() + "' order by id")
+		for (State state : states) {
+			result = em
+					.createQuery(
+							"from Bisen where state = '" + state.toString()
+									+ "' order by id")
 					.setMaxResults(dbBatchSize).getResultList();
-			if (result != null && result.size() > 0){
+			if (result != null && result.size() > 0) {
 				break;
-			}		
+			}
 		}
 		return result;
 	}
 
 	/**
-	 * delete from the index the next batch of size BATCH_SIZE 
-	 * 1) get the next
-	 * batch of Bisens from database, continue if not empty 
-	 * 2) for all bisen:
-	 * delete from index, add update statement to batch 
-	 * 3) execute database
+	 * delete from the index the next batch of size BATCH_SIZE 1) get the next
+	 * batch of Bisens from database, continue if not empty 2) for all bisen:
+	 * delete from index, add update statement to batch 3) execute database
 	 * batch updates
 	 * 
 	 * @param jdbcConnection
@@ -223,7 +234,8 @@ public class Indexer {
 	public boolean deleteBatch(Connection jdbcConnection,
 			IndexWriter indexWriter) {
 		// the batch statement
-		Statement jdbcStatement = IndexerHelper.getJdbcStatement(jdbcConnection);
+		Statement jdbcStatement = IndexerHelper
+				.getJdbcStatement(jdbcConnection);
 
 		EntityManager em = null;
 		boolean result = false;
@@ -231,12 +243,15 @@ public class Indexer {
 		try {
 			// 1) get the next batch from database
 			em = entityManagerFactory.createEntityManager();
-			bisens = getBisensByState(em, BisenState.waitingForOperation(BisenOperation.DELETEFROMINDEX));  //State.E.toString());
+			bisens = getBisensByState(
+					em,
+					BisenState
+							.waitingForOperation(BisenOperation.DELETEFROMINDEX)); // State.E.toString());
 			result = (bisens != null) && (bisens.size() > 0);
-			//if (!result) {
-			//	bisens = getBisensByState(em, State.R.toString());
-			//	result = (bisens != null) && (bisens.size() > 0);
-			//}
+			// if (!result) {
+			// bisens = getBisensByState(em, State.R.toString());
+			// result = (bisens != null) && (bisens.size() > 0);
+			// }
 			logger.info("DELETE FROM INDEX get the next batch from database done resultList size:"
 					+ bisens.size());
 
@@ -275,7 +290,8 @@ public class Indexer {
 	@SuppressWarnings("unchecked")
 	public boolean indexBatch(Connection jdbcConnection) {
 		// the batch statement
-		Statement jdbcStatement = IndexerHelper.getJdbcStatement(jdbcConnection);
+		Statement jdbcStatement = IndexerHelper
+				.getJdbcStatement(jdbcConnection);
 
 		EntityManager em = null;
 		boolean result = false;
@@ -283,7 +299,8 @@ public class Indexer {
 		try {
 			// 1) get the next batch from database
 			em = entityManagerFactory.createEntityManager();
-			bisens = getBisensByState(em, BisenState.waitingForOperation(BisenOperation.ADD2INDEX)); //State.I.toString());
+			bisens = getBisensByState(em,
+					BisenState.waitingForOperation(BisenOperation.ADD2INDEX)); // State.I.toString());
 			result = (bisens != null) && (bisens.size() > 0);
 			logger.info("get the next batch from database done resultList size:"
 					+ bisens.size());
@@ -360,15 +377,15 @@ public class Indexer {
 			jdbcConnection = IndexerHelper.getJdbcConnection(dataSource);
 			logger.info("db connection initialized");
 
-			deleteAllFromIndex(jdbcConnection);
-			addAllToIndex(jdbcConnection);
-			optimizeIndex();
-
+			boolean indexchanged = deleteAllFromIndex(jdbcConnection);
+			indexchanged |= addAllToIndex(jdbcConnection);
+			
+			if (indexchanged){
+				optimizeIndex();
+			}
 		} catch (SQLException sex) {
 
-			logger.error(
-					"Couldn't initialize database connection for indexing.",
-					sex);
+			logger.error("Couldn't initialize database connection for indexing.", sex);
 
 		} finally {
 			IndexerHelper.closeConnection(jdbcConnection);
@@ -376,24 +393,38 @@ public class Indexer {
 		}
 	}
 
-	private void addAllToIndex(Connection jdbcConnection) {
+
+	public void reBuildSpellIndex(){
+		logger.debug("About to rebuild spell indexes, spellIndexDir:"+spellIndexDir);
+		logger.debug("spellIndexDirHu:"+spellIndexDirHu);
+		SpellIndexBuilder.rebuildSpellIndex(Bisen.enSentenceFieldName, indexDir, spellIndexDir);
+		SpellIndexBuilder.rebuildSpellIndex(Bisen.huSentenceFieldName, indexDir, spellIndexDirHu);
+		logger.debug("Done rebuild spell indexes");		
+	}
+	
+	private boolean addAllToIndex(Connection jdbcConnection) {
+		boolean result = false;
 		int batchIndex = 0;
 		boolean keepItOn = true;
 		while (keepItOn) {
 			keepItOn = indexBatch(jdbcConnection);
+			result |= keepItOn;
 			logger.info("<<<<<< finished indexing batch at " + ++batchIndex
 					* dbBatchSize);
 		}
 		logger.info("-----indexing ::: all batches done--");
+		return result;
 	}
 
-	public void deleteAllFromIndex(Connection jdbcConnection) {
+	public boolean deleteAllFromIndex(Connection jdbcConnection) {
+		boolean result = false;
 		IndexWriter indexWriter = initIndexer(false);
 		boolean keepItOn = true;
 		int batchIndex = 0;
 		try {
 			while (keepItOn) {
 				keepItOn = deleteBatch(jdbcConnection, indexWriter);
+				result |= keepItOn;
 				logger.info("<<<<<< DELETE FROM INDEX batch at " + ++batchIndex
 						* dbBatchSize);
 
@@ -406,6 +437,7 @@ public class Indexer {
 					e);
 			throw new RuntimeException(e);
 		}
+		return result;
 	}
 
 	synchronized private void mergeTmpIndex() {
@@ -503,4 +535,20 @@ public class Indexer {
 		this.mockJob = mockJob;
 	}
 
+	public void setSpellIndexDir(String spellIndexDir) {
+		this.spellIndexDir = spellIndexDir;
+	}
+
+	public String getSpellIndexDir() {
+		return spellIndexDir;
+	}
+
+	public void setSpellIndexDirHu(String spellIndexDirHu) {
+		this.spellIndexDirHu = spellIndexDirHu;
+	}
+
+	public String getSpellIndexDirHu() {
+		return spellIndexDirHu;
+	}
+	
 }

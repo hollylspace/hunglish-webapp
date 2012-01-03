@@ -26,7 +26,7 @@ public class AnalyzerProviderTest {
 		}
 		
 		List<String> list = analyzerProvider.getLemmatizerMap().get(
-				Bisen.huSentenceStemmedFieldName).lemmatize("embereinket");
+				Bisen.enSentenceStemmedFieldName).lemmatize("kategorischer");
 		for (String o : list){
 			System.out.println(o);
 		}

@@ -20,8 +20,8 @@ Ha nem illeszkedő vagy félrefordított mondatpárra bukkanunk, hátrasorolhatj
 </p><p> 
 Fontos linkek:
 <ul> 
-<li><a href="http://hunglish.hu/search">Keresés</a></li> 
-<li><a href="http://hunglish.hu/upload/form">Dokumentumpárok feltöltése</a></li> 
+<li><a href="${form_url}/search">Keresés</a></li> 
+<li><a href="${form_url}/upload/form">Dokumentumpárok feltöltése</a></li> 
 <li><a
 href="http://www.facebook.com/Hunglish.Mondattar">A
 Hunglish Mondattár Facebook
