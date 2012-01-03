@@ -28,6 +28,11 @@ public class IndexerHelper {
 		}
 	}
 
+	public static boolean directoryExists(String directoryName)
+	{
+	  File theDir = new File(directoryName);
+	  return theDir.isDirectory();
+	}
 	
 	public static Connection getJdbcConnection(DataSource dataSource) throws SQLException {
 		// Connection con = null;

@@ -6,9 +6,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class Launcher {
 
 	/**
-	 * command line interface for the harness pipeline
-	 * this will be the last program executed by 
-	 * src/main/python/control_harness.py
+	 * command line interface for the spellcheck index builder
 	 * 
 	 */
 	public static void main(String[] args) {
@@ -17,7 +15,7 @@ public class Launcher {
 					new String[] { "applicationContext.xml" });
 			
 			Indexer indexer = (Indexer)context.getBean("indexer");
-			indexer.indexAll();
+			indexer.reBuildSpellIndex();
 		} catch (Exception e) {
 			System.err.println("------------FATAL ERROR------------");
 			e.printStackTrace();

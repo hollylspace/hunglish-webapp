@@ -20,6 +20,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 @RooWebScaffold(path = "search", automaticallyMaintainView = true, formBackingObject = Bisen.class)
 @RequestMapping("/search/**")
 @Controller
@@ -51,8 +54,8 @@ public class SearchController {
 	public String search(
     		@RequestParam(value = "page", required = false) Integer page, 
     		@RequestParam(value = "size", required = false) Integer size, 
-			Bisen bisen,
-			ModelMap modelMap) {
+			Bisen bisen, //this is a hack, this holds the search terms! TODO clear it up 
+			ModelMap modelMap) throws UnsupportedEncodingException {
 
 
         int sizeNo = size == null ? PAGE_SIZE : size.intValue();
@@ -75,7 +78,7 @@ public class SearchController {
         modelMap.addAttribute("maxPages", maxPages);
         modelMap.addAttribute("page", pageNo);
         
-        String baseUrl = getBaseUrl(bisen) +"&size="+sizeNo;
+        String baseUrl = getBaseUrl(bisen.getHuSentence(), bisen.getEnSentence()) +"&size="+sizeNo;
         List<Pair<String, String>> linx = new ArrayList<Pair<String, String>>();
         for (int i = 1; i <= (int)Math.min(maxPagesLimited, maxPages); i++){
         	String url =baseUrl+"&page="+i;
@@ -85,19 +88,26 @@ public class SearchController {
         	linx.add(new Pair<String, String>(url, new Integer(i).toString()));
         }
         result.setPaginationLinks(linx);
+        if (result.getEnSuggestionString() != null || result.getHuSuggestionString() != null){
+        	String suggestionURL = getBaseUrl(result.getHuSuggestionString(), result.getEnSuggestionString()) +"&size="+sizeNo;
+        	if (request.getGenreId() != null){
+        		suggestionURL += "&doc.genre="+request.getGenreId();
+        	}
+        	modelMap.addAttribute("suggestionURL", suggestionURL);
+        }
         modelMap.addAttribute("result", result);
 		
 		return "search/list";
 	}
 	
-	private String getBaseUrl(Bisen bisen){
+	private String getBaseUrl(String huSentence, String enSentence) throws UnsupportedEncodingException{
 		 String baseUrl = "?huSentence=";
-		 if (bisen.getHuSentence() != null){
-			 baseUrl += bisen.getHuSentence();
+		 if (huSentence != null){
+			 baseUrl += URLEncoder.encode(huSentence, "UTF-8");
 		 }
 		 baseUrl += "&enSentence=";
-		 if (bisen.getEnSentence() != null){
-			 baseUrl += bisen.getEnSentence();
+		 if (enSentence != null){
+			 baseUrl += URLEncoder.encode(enSentence, "UTF-8");
 		 }
 		 return baseUrl;
 	}

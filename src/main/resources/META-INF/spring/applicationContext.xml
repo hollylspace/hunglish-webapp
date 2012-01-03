@@ -115,6 +115,8 @@
 			/ -->
 		<property name="indexDir" value="${deployment.dir}/${indexer.indexDir}" />
 		<property name="tmpIndexDir" value="${deployment.dir}/${indexer.tmpIndexDir}" />
+		<property name="spellIndexDir" value="${deployment.dir}/${indexer.spellIndexDir}" />
+		<property name="spellIndexDirHu" value="${deployment.dir}/${indexer.spellIndexDirHu}" />
 		<property name="uploadDir" value="${deployment.dir}/${indexer.uploadDir}" />
 		<property name="uploadJobPath" value="bash ${webapp.dir}/${python.dir}/${uploadjob.path} ${deployment.dir} ${webapp.dir}/${python.dir}" />
 		<property name="dbBatchSize" value="${indexer.dbBatchSize}" />
@@ -126,9 +128,14 @@
 		<property name="luceneQueryBuilder" ref="luceneQueryBuilder" />
 		<property name="analyzerProvider" ref="analyzerProvider" />
 		<property name="indexDir" value="${deployment.dir}/${indexer.indexDir}" />
+		<property name="spellIndexDir" value="${deployment.dir}/${indexer.spellIndexDir}" />
+		<property name="spellIndexDirHu" value="${deployment.dir}/${indexer.spellIndexDirHu}" />
 		<property name="maxDocuments" value="${searcher.maxDocuments}" />
 		<property name="useHunglishSyntax" value="${searcher.useHunglishSyntax}" />
 		<property name="maxResultSetSize" value="${bisen.maxResultSetSize}" />
+		
+		<property name="minimumHits" value="${searcher.minimumHits}" />
+		<property name="minimumScore" value="${searcher.minimumScore}" />
 	</bean>
 
 	<bean class="hu.mokk.hunglish.lucene.LuceneQueryBuilder" id="luceneQueryBuilder">

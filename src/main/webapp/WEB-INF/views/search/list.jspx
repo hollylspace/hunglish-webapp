@@ -26,6 +26,12 @@ xmlns:roo="urn:jsptagdir:/WEB-INF/tags" xmlns:spring="http://www.springframework
             </div>
         </form:form>
 
+	<c:if test="${not empty suggestionURL}">
+		<div id="suggest">
+			Did you mean <a href="${form_url}${suggestionURL}">${result.huSuggestionString} ${result.enSuggestionString}</a>
+		</div>
+    </c:if>
+ 
  
  			<div id="pager">
 				<c:choose>
@@ -43,9 +49,9 @@ xmlns:roo="urn:jsptagdir:/WEB-INF/tags" xmlns:spring="http://www.springframework
 	                </c:forEach></p>
 	                
 					</c:when>
-					<c:otherwise>
+				<!-- <c:otherwise>
 						<p>No results</p>
-					</c:otherwise>
+					</c:otherwise>  -->
 					</c:choose> 	 			            
 			</div>
  

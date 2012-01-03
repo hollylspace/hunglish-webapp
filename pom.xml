@@ -303,6 +303,13 @@
 		    <artifactId>lucene-highlighter</artifactId>
 		    <version>3.2.0</version>
 		</dependency>
+
+		<dependency>
+		    <groupId>org.apache.lucene</groupId>
+		    <artifactId>lucene-spellchecker</artifactId>
+		    <version>3.3.0</version>
+		</dependency>
+
 		
 		<dependency>
             <groupId>org.quartz-scheduler</groupId>
@@ -448,6 +455,12 @@
 							jar-with-dependencies
 						</descriptorRef>
 					</descriptorRefs>
+					
+					<archive>
+            			<manifest>
+              				<mainClass>hu.mokk.hunglish.lucene.Launcher</mainClass>
+            			</manifest>
+          			</archive>					
 				</configuration>
 			</plugin>
 			<plugin>

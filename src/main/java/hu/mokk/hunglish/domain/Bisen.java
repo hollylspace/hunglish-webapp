@@ -15,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Transient;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -27,7 +28,6 @@ import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.roo.addon.entity.RooEntity;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.tostring.RooToString;
-import org.springframework.transaction.annotation.Transactional;
 
 @Configurable
 @Entity
@@ -270,6 +270,12 @@ public class Bisen {
 		builder.append(huSentence);
 		builder.append(", enSentence=");
 		builder.append(enSentence);
+		
+		builder.append(", huSentenceView=");
+		builder.append(huSentenceView);
+		builder.append(", enSentenceView=");
+		builder.append(enSentenceView);
+		
 		builder.append(", huSentenceHash=");
 		builder.append(huSentenceHash);
 		builder.append(", enSentenceHash=");
@@ -411,14 +417,14 @@ public class Bisen {
 				Field.TermVector.NO));
 
 		result.add(new Field(huSentenceFieldName, this.huSentence,
-				Field.Store.YES, Field.Index.ANALYZED,
+				Field.Store.YES, Field.Index.ANALYZED, //TODO Field.Index.NOT_ANALYZED?
 				Field.TermVector.WITH_POSITIONS_OFFSETS));
 		result.add(new Field(huSentenceStemmedFieldName, this.huSentence,
 				Field.Store.YES, Field.Index.ANALYZED,
 				Field.TermVector.WITH_POSITIONS_OFFSETS));
 
 		result.add(new Field(enSentenceFieldName, this.enSentence,
-				Field.Store.YES, Field.Index.ANALYZED,
+				Field.Store.YES, Field.Index.ANALYZED, //TODO Field.Index.NOT_ANALYZED?
 				Field.TermVector.WITH_POSITIONS_OFFSETS));
 		result.add(new Field(enSentenceStemmedFieldName, this.enSentence,
 				Field.Store.YES, Field.Index.ANALYZED,
@@ -518,6 +524,7 @@ public class Bisen {
 		
 	}
 
+	@Transient
 	public void setHuSentenceView(String huSentenceView) {
 		this.huSentenceView = huSentenceView;
 	}
@@ -530,6 +537,7 @@ public class Bisen {
 		}		
 	}
 
+	@Transient
 	public void setEnSentenceView(String enSentenceView) {
 		this.enSentenceView = enSentenceView;
 	}
