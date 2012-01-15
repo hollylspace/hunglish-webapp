@@ -1,3 +1,4 @@
+
 <div>
 Kedves Hunglish Mondattár Felhasználók,
 <p> 
@@ -22,17 +23,8 @@ Fontos linkek:
 <ul> 
 <li><a href="${form_url}/search">Keresés</a></li> 
 <li><a href="${form_url}/upload/form">Dokumentumpárok feltöltése</a></li> 
-<li><a
-href="http://www.facebook.com/Hunglish.Mondattar">A
-Hunglish Mondattár Facebook
-oldala.</a></li>
-
-<br /> 
-A Like gombbal jelezhetik, ha hasznosnak találták akár a régi, akár az új Mondattárat!
+<li><a href="${form_url}/static/html/syntax.html">The search syntax (angolul)</a></li>
 </ul> 
-</p> 
-<p> 
-<iframe src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.facebook.com%2FHunglish.Mondattar&amp;layout=standard&amp;show_faces=true&amp;width=450&amp;action=like&amp;font&amp;colorscheme=light&amp;height=80" scrolling="no" frameborder="0" style="overflow:hidden; height:70px; margin-left:0px; " allowTransparency="true"></iframe> 
 </p> 
 <p> 
 Az új rendszer tesztüzemben fut, és folyamatos fejlesztés alatt áll. 
@@ -63,4 +55,18 @@ Az alábbiaknak különösen hálásak vagyunk segítségükért:
 Balogh Attila, Both Zsolt, Farkas András, Halácsy Péter (az eredeti rendszer fejlesztője), 
 Kornai András, Rung András, Váradi Tamás, Zséder Attila
 </p>
+
+
+<a
+href="http://www.facebook.com/Hunglish.Mondattar">A
+Hunglish Mondattár Facebook
+oldala.</a>
+
+<br /> 
+A Like gombbal jelezhetik, ha hasznosnak találták akár a régi, akár az új Mondattárat!
+
+<p> 
+<iframe src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.facebook.com%2FHunglish.Mondattar&amp;layout=standard&amp;show_faces=true&amp;width=450&amp;action=like&amp;font&amp;colorscheme=light&amp;height=80" scrolling="no" frameborder="0" style="overflow:hidden; height:70px; margin-left:0px; " allowTransparency="true"></iframe> 
+</p> 
+
 </div>

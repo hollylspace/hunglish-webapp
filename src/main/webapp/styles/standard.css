@@ -8,9 +8,9 @@ body,div,td {
 
 body {
 	background-color: #fff;
-	background-image: url(../images/logo.jpg);
+	background-image: url(../images/logo.jpg); /*url(../images/nytud-logo.gif);*/ 
 	background-position: top center;
-	background-repeat: no-repeat;
+	background-repeat: no-repeat;  
 	text-align: center;
 }
 
