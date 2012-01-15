@@ -1,0 +1,72 @@
+<html> 
+<head> 
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"> 
+<title> 
+        Hunglish corpus search syntax
+</title> 
+<link rel="stylesheet" href="/static/styles/syntax.css" type="text/css"> 
+</head> 
+  <body> 
+<p> 
+<a href="http://mokk.bme.hu"><img src="http://szotar.mokk.bme.hu/hunglish/mokk-logo.gif"/></a> 
+<a href="http://www.nytud.hu"><img src="http://szotar.mokk.bme.hu/hunglish/nytud-logo.gif"/></a> 
+</p> 
+
+<h1> 
+Search syntax
+</h1> 
+ 
+<p>You can set any number of space-separated query phrases on the Hungarian or the English side, or even both sides at once.
+</p> 
+ 
+<p>The syntax of these query phrases is easiest to describe through a series of examples:
+</p> 
+ 
+<p>The simplest example of a query phrases is a word: The Hungarian side <code>ellopták</code> query results in bisentences with 
+this Hungarian word in their Hungarian sentence. Other inflected forms (<code>ellopnám</code>, <code>ellopott</code>) are also returned as results, but are ranked lower than the exactly matching version.
+</p> 
+<p> 
+ 
+To prohibit results with other inflected forms, the term should be surrounded with the &lt; &gt; parentheses. So <code>&lt;ellopták&gt;</code> 
+will not give results with only, say, <code>ellopott</code> in them. This is called an <i>exact match</i> query.
+</p> 
+ 
+<p> 
+One can search for <i>multi-word</i> search terms. The three equivalent ways of doing this are: 
+<ol> 
+<li>Quotation: <code>"back to normal"</code>.</li> 
+<li>Dashes: <code>back-to-normal</code>. </li> 
+<li>Dots: <code>back.to.normal</code> .</li> 
+</ol> 
+</p> 
+ 
+<p> 
+One can mix the exact match syntax with multi-word search terms, but mixing parentheses and quotation signs (<code>&lt;"back to normal"&gt;</code>) is not allowed. So the exact match versions of the previous examples would look like this: <code>&lt;back to normal&gt;</code> 
+<code>&lt;back-to-normal&gt;</code> <code>&lt;back.to.normal&gt;</code>.
+</p> 
+ 
+<p> 
+Any query phrase is allowed to have one of the following two modifiers as prefixes. Space is not allowed between the modifier and its modifyee.
+ 
+ 
+<ul> 
+<li> 
+The <i>Prohibited</i> modifier (minus sign) negates the query phrase. So, for example Hungarian: 
+<code>fél</code> English: <code>-scared</code> returns bisentences where there is a word in 
+the Hungarian sentence which stems the same as "fél", but there is NO word in the English 
+sentence which stems the same as "scared". 
+The Prohibited modifier can be combined with exact match syntax and multi-word search terms, 
+e.g. English: <code>scare -<scared></code> and <code>-<don't know></code> are valid queries.
+</li> 
+ 
+<li> 
+The <i>Required</i> modifier (plus sign) requires that the term after the "+" symbol exist somewhere in the sentence. Without any modifier 
+the phrase is optional. So, for example English <code> buy into </code> return bisentences where the words <code>buy</code> OR  <code>into</code> but the query <code> +buy +into</code>  returns only bisentences with the two words in it.
+</li> 
+</ul> 
+ 
+<p> 
+ 
+The query syntax is designed so that simple queries have straightforward syntax, but quite complex queries are manageable, too. Some users might need even more advanced queries, like nested ones, or complex filtering of document sources. For these users we plan to provide direct access to the internal query language, but the syntax for this is quite complex and nonintuitive.
+</p> 
+</html> 
