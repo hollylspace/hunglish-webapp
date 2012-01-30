@@ -370,19 +370,21 @@ public class Indexer {
 	 * Create a jdbcConnection calls indexBatch until it returns false using the
 	 * connection clear up connection
 	 */
-	synchronized public void indexAll() {
+	synchronized public boolean indexAll() {
+		boolean indexchanged = false;
 		Connection jdbcConnection = null;
 		try {
 
 			jdbcConnection = IndexerHelper.getJdbcConnection(dataSource);
 			logger.info("db connection initialized");
 
-			boolean indexchanged = deleteAllFromIndex(jdbcConnection);
+			indexchanged = deleteAllFromIndex(jdbcConnection);
 			indexchanged |= addAllToIndex(jdbcConnection);
 			
 			if (indexchanged){
-				optimizeIndex();
-			}
+				logger.info("index will be optimized");
+				optimizeIndex();				
+			}			
 		} catch (SQLException sex) {
 
 			logger.error("Couldn't initialize database connection for indexing.", sex);
@@ -391,6 +393,7 @@ public class Indexer {
 			IndexerHelper.closeConnection(jdbcConnection);
 			logger.info("db connection closed");
 		}
+		return indexchanged;
 	}
 
 
