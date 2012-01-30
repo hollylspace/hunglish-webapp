@@ -3,7 +3,6 @@
 Kedves Hunglish Mondattár Felhasználók,
 <p> 
 Hamarosan elkészül a Hunglish Mondattár új, jelentősen továbbfejleszett változata. 
-Az elmúlt hónapokban folyamatosan dolgoztunk ezen. 
 A felhasználók számára is érzékelhető fejlesztések közül az alábbiak a legfontosabbak:
 </p><p> 
 <ul> 
@@ -16,7 +15,8 @@ akkor a mondatpárokat hozzáadja a kereshető adatbázishoz.</li>
 <li>Hibás mondatpárok leszavazása (dislike): 
 Ha nem illeszkedő vagy félrefordított mondatpárra bukkanunk, hátrasorolhatjuk a találati listán.</li> 
 <li>Hunglish Korpusz 2: Új szövegeket gyűjtöttünk, 
-így a rendszerben "alapból" benne levő mondatpárok számát jelentősen megnöveltük, 2 millióról körülbelül 3.5 millióra.</li> 
+így a rendszerben "alapból" benne levő mondatpárok számát jelentősen megnöveltük, 2 millióról körülbelül 3.5 millióra.</li>
+<li>Did you mean ...? Helyesírási hibák, elgépelések javítása</li> 
 </ul> 
 </p><p> 
 Fontos linkek:
@@ -24,6 +24,7 @@ Fontos linkek:
 <li><a href="${form_url}/search">Keresés</a></li> 
 <li><a href="${form_url}/upload/form">Dokumentumpárok feltöltése</a></li> 
 <li><a href="${form_url}/static/html/syntax.html">The search syntax (angolul)</a></li>
+<li><a href="http://code.google.com/p/hunglish-webapp/issues/entry">Hibabejelentés, új funkciók kérése a projekt weboldalán</a></li>
 </ul> 
 </p> 
 <p> 
@@ -41,12 +42,15 @@ teszteléskor fontos információkat adhatnak nekünk a rendszer hibatűrésér�
 (A rendszer szigorúan próbálja meghúzni a határt, hogy milyen minőségű 
 adatot enged be az adatbázisba, sokmindent elutasít. 
 Még nem készült el az az oldal, ahol erről visszajelzést ad.)
-</p><p> 
+</p>
+
+<!--<p> 
 A Hunglish Mondattár látogatottsága lassan, de törés nélkül nőtt átadása óta, 
 jelenleg körülbelül havi 300 ezer kérést szolgál ki. 
 Valószínűleg kuriózum a weben, hogy ezt a népszerűségnövekedést a szolgáltatás úgy érte el, 
 hogy a 2005-ös átadás óta semmilyen változtatást nem végeztünk rajta. Örömmel törjük meg ezt a szériát.
-</p><p> 
+</p>-->
+<p> 
 Varga Dániel és Barna Péter Gergő fejlesztők
 </p><p> 
 Köszönetnyilvánítás:
@@ -57,14 +61,10 @@ Kornai András, Rung András, Váradi Tamás, Zséder Attila
 </p>
 
 
-<a
-href="http://www.facebook.com/Hunglish.Mondattar">A
-Hunglish Mondattár Facebook
-oldala.</a>
-
 <br /> 
-A Like gombbal jelezhetik, ha hasznosnak találták akár a régi, akár az új Mondattárat!
 
+<a href="http://www.facebook.com/Hunglish.Mondattar">A Hunglish Mondattár Facebook oldala.</a>
+<!-- A Like gombbal jelezhetik, ha hasznosnak találták akár a régi, akár az új Mondattárat!  -->
 <p> 
 <iframe src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.facebook.com%2FHunglish.Mondattar&amp;layout=standard&amp;show_faces=true&amp;width=450&amp;action=like&amp;font&amp;colorscheme=light&amp;height=80" scrolling="no" frameborder="0" style="overflow:hidden; height:70px; margin-left:0px; " allowTransparency="true"></iframe> 
 </p> 
