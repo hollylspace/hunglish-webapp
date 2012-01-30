@@ -66,8 +66,11 @@ public class MockJob { // extends QuartzJobBean implements StatefulJob {
 					logger.info("harness job finished, exit code:" + exitCode);
 				}
 				if (HARNESS_SUCCESS_CODE == exitCode) {
-					indexer.indexAll();
-					searcher.reInitSearcher();
+					logger.info("harness was successful, indexing comes...");
+					if (indexer.indexAll()){
+						logger.info("indexing changed indexes, sercher will be reinitialized...");
+						searcher.reInitSearcher();
+					}
 				}
 				
 			} else {
