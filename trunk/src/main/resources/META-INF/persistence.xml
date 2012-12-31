@@ -16,7 +16,7 @@
             <property name="hibernate.ejb.naming_strategy" value="org.hibernate.cfg.ImprovedNamingStrategy"/>
             <property name="hibernate.jdbc.batch_size" value="256"/> <!-- this is set for batches of size 1000 -->
 			<property name="hibernate.connection.zeroDateTimeBehavior" value="convertToNull" />        
-			<property name="hibernate.show_sql" value="true"/>
+			<property name="hibernate.show_sql" value="false"/>
         </properties>
     </persistence-unit>
 </persistence>

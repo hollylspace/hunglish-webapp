@@ -44,12 +44,13 @@ public class SearcherTest {
 
 	@Test
 	public void testmergeHighLight(){
+		String sentence = "blah hello blah blah high high1.";
 		String line1 = "blah hello blah blah <B>high high1</B>.";
 		String line2 = "blah <B>hello</B> blah blah high high1.";
 		System.out.println("line1:"+line1);
 		System.out.println("line2:"+line2);
 		
-		String merged = Searcher.mergeHighLight(line1, line2);
+		String merged = Searcher.mergeHighLight(line1, line2, sentence);
 		
 		System.out.println("merged:"+merged);
 	}
