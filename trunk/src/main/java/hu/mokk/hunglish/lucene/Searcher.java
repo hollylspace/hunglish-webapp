@@ -458,7 +458,7 @@ public class Searcher {
 			}
 			logger.debug(fieldName + "--" + stemmedFieldName);
 			String high = null;
-			String high2 = null;
+			//String high2 = null;
 			TokenStream tokens;
 			try {
 				tokens = TokenSources.getTokenStream(indexReader,
@@ -475,34 +475,33 @@ public class Searcher {
 				// e);
 			}
 
-			try {
-				tokens = TokenSources.getTokenStream(indexReader,
-						bisen.getLuceneDocId(), fieldName);
+			//try {
+			//	tokens = TokenSources.getTokenStream(indexReader,
+			//			bisen.getLuceneDocId(), fieldName);
 				// TODO is this next line really neaded?
 				//tokens = new CompoundStemmerTokenFilter(tokens,
 				//		analyzerProvider.getLemmatizerMap().get(
 				//				stemmedFieldName));
-				high2 = highlightField(tokens, query, fieldName, sentence);
-				logger.debug("high2:"+high2);
-			} catch (Exception e) {
-				logger.error(side
-						+ ": Error while highlighting NOT stemmed field", e);
+			//	high2 = highlightField(tokens, query, fieldName, sentence);
+			//	logger.debug("high2:"+high2);
+			//} catch (Exception e) {
+			//	logger.error(side
+			//			+ ": Error while highlighting NOT stemmed field", e);
 				// TODO? throw new RuntimeException("error while highlighting",
 				// e);
-			}
+			//}
 
-			if (high2 != null && !high2.equals(sentence)){
+			/*if (high2 != null && !high2.equals(sentence)){
 				logger.warn("high2:"+high2);
 				if (high == null || sentence.equals(high)){
 					high = high2;
 					logger.warn("using high2:"+high);
 				}
 			}
-
 			if (high != null || high2 != null) {
 				//TODO current merging of two highlights does not work 
 				//high = mergeHighLight(high, high2, sentence);
-			}
+			}*/
 			
 			if (high != null){
 				switch (side) {
