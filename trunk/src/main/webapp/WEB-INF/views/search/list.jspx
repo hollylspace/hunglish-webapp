@@ -5,26 +5,28 @@ xmlns:roo="urn:jsptagdir:/WEB-INF/tags" xmlns:spring="http://www.springframework
 <jsp:output omit-xml-declaration="yes"/>
 <div id="_title_div">
 
-<spring:url value="/search" var="form_url"/>
-        <form:form action="${form_url}" method="GET" modelAttribute="bisen">
-            
-            <div id="roo_bisen_huSentence">
-                Hungarian:
-                <form:input cssStyle="width:200px" id="_huSentence_id" path="huSentence"/>
-                English:
-                <form:input cssStyle="width:200px" id="_enSentence_id" path="enSentence"/>
-                
-                <c:if test="${not empty genres}">
-		    in genre:
-                    <form:select cssStyle="width:150px" id="_genre_id" path="doc.genre">
-                        <form:options itemValue="id" itemLabel="description" items="${genres}"/>
-                    </form:select>
-                </c:if>
-                <spring:message code="button.search" var="update_button"/>
-                <input class="search" type="submit" value="${update_button}"/>
-                
-            </div>
-        </form:form>
+	<spring:url value="/search" var="form_url"/>
+	<form:form action="${form_url}" method="GET" modelAttribute="bisen">
+	    
+	    <div id="roo_bisen_huSentence">
+	        Hungarian:
+	        <form:input cssStyle="width:200px" id="_huSentence_id" autofocus="autofocus" path="huSentence"/>
+	        English:
+	        <form:input cssStyle="width:200px" id="_enSentence_id" path="enSentence"/>
+	        
+	        <c:if test="${not empty genres}">in genre:
+	            <form:select cssStyle="width:150px" id="_genre_id" path="doc.genre">
+	                <form:options itemValue="id" itemLabel="description" items="${genres}"/>
+	            </form:select>
+	        </c:if>
+	        
+	        <input class="search" type="button" onclick="_huSentence_id.value=''; _enSentence_id.value=''" value="reset" />
+	        
+	        <spring:message code="button.search" var="search_button"/>
+	        <input class="search" type="submit" value="${search_button}"/>
+	        
+	    </div>
+	</form:form>
 
 	<c:if test="${not empty suggestionURL}">
 		<div id="suggest">
@@ -72,12 +74,9 @@ xmlns:roo="urn:jsptagdir:/WEB-INF/tags" xmlns:spring="http://www.springframework
                 </thead>  -->
                 <c:forEach items="${result.hitList}" var="pair"> <!-- pair<Document, Bisen> -->
                     <tr>
-                        <!-- <td>${pair.second.id}</td>  -->
-                        <td><c:out value="${fn:substring(pair.second.doc.genre, 0, 30)}"/></td>
-                        <!-- c:out value="${bisen.huSentence}"/> -->
-                        <td>${pair.second.huSentenceView}</td>
-                        <!-- c:out value="${bisen.enSentence}"/> -->
-                        <td>${pair.second.enSentenceView}</td>
+                        <td class="borderright"><c:out value="${fn:substring(pair.second.doc.genre, 0, 30)}"/></td>
+                        <td class="borderright">${pair.second.huSentenceView}</td>
+                        <td class="borderright">${pair.second.enSentenceView}</td>
                         <td><input class="upvote" type="button" onclick="UpvoteController.upvote(${pair.second.id});this.disabled=true;this.style.visibility='hidden';"/></td>
                         <td><input class="downvote" type="button" onclick="UpvoteController.downvote(${pair.second.id});this.disabled=true;this.style.visibility='hidden';"/></td>
                          

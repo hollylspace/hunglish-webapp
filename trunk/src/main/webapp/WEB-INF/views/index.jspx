@@ -1,8 +1,74 @@
+<div xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:fmt="http://java.sun.com/jsp/jstl/fmt" 
+xmlns:fn="http://java.sun.com/jsp/jstl/functions" 
+xmlns:form="http://www.springframework.org/tags/form" 
+xmlns:jsp="http://java.sun.com/JSP/Page" 
+xmlns:roo="urn:jsptagdir:/WEB-INF/tags" 
+xmlns:spring="http://www.springframework.org/tags" version="2.0">
+<jsp:output omit-xml-declaration="yes"/>
+
+	<spring:url value="/search" var="search_form_url"/>
+	<form:form action="${search_form_url}" method="GET" modelAttribute="bisen">
+	    
+	    <div id="roo_bisen_huSentence">
+	        Hungarian:
+	        <form:input cssStyle="width:200px" id="_huSentence_id" autofocus="autofocus" path="huSentence"/>
+	        English:
+	        <form:input cssStyle="width:200px" id="_enSentence_id" path="enSentence"/>
+	        
+	        <c:if test="${not empty genres}">in genre:
+	              <form:select cssStyle="width:150px" id="_genre_id" path="doc.genre">
+	                  <form:options itemValue="id" itemLabel="description" items="${genres}"/>
+	            </form:select>
+	        </c:if>
+	        
+	        <input class="search" type="button" onclick="_huSentence_id.value=''; _enSentence_id.value=''" value="reset" />
+	        <spring:message code="button.search" var="update_button"/>
+	        <input class="search" type="submit" value="${update_button}"/>
+	        
+	    </div>
+	</form:form>
+
+<div>
+Dear Hunglish Users,
+<p> 
+Welcome to Hunglish 2.0! 
+We have rewritten the system behind <a href="http://szotar.mokk.bme.hu/hunglish/search/corpus">Hunglish</a>, these are some important changese: 
+<p> 
+<ul> 
+<li>You can <a href="${form_url}/upload/form">upload a pair of documents</a>, the system will extract the sentence pairs 
+</li> 
+<li>Duplicate filter</li> 
+<li>Downvote: if you find an wrongly translated sentence pair, you can downvote it. (The sole purpose of the upvote button is to correct downvotes done by mistake)</li> 
+<li><a href="http://mokk.bme.hu/resources/hunglishcorpus/">Hunglish Corpus 2</a>: we have increased the number of sentence pairs from 2 million to 3.5 million.</li>
+<li>Did you mean ...? feature</li> 
+</ul> 
+</p><p> 
+Important links:
+<ul> 
+<li><a href="${form_url}/search">Search</a></li> 
+<li><a href="${form_url}/upload/form">Upload a pair of documents</a></li> 
+<li><a href="${form_url}/static/html/syntax.html">The search syntax</a></li>
+<li><a href="http://code.google.com/p/hunglish-webapp/issues/entry">Report an error, ask a new feature, give feedback</a></li>
+</ul> 
+</p>
+</p>
+
+<p> 
+The Developers: Dániel Varga and Péter Gergő Barna
+</p><p> 
+Special thanks to:
+</p><p> 
+Attila Balogh, Zsolt Both, András Farkas, Péter Halácsy (developer of the original system), 
+András Kornai, András Rung, Tamás Váradi, Attila Zséder
+</p>
+
+
+</div>
 
 <div>
 Kedves Hunglish Mondattár Felhasználók,
 <p> 
-Hamarosan elkészül a Hunglish Mondattár új, jelentősen továbbfejleszett változata. 
+Elkészült a <a href="http://szotar.mokk.bme.hu/hunglish/search/corpus">Hunglish Mondattár</a> új, jelentősen továbbfejleszett változata. 
 A felhasználók számára is érzékelhető fejlesztések közül az alábbiak a legfontosabbak:
 </p><p> 
 <ul> 
@@ -14,7 +80,7 @@ akkor a mondatpárokat hozzáadja a kereshető adatbázishoz.</li>
 <li>Duplikátumszűrés: a találati lista csak egyszer mutatja meg az azonos találatokat.</li> 
 <li>Hibás mondatpárok leszavazása (dislike): 
 Ha nem illeszkedő vagy félrefordított mondatpárra bukkanunk, hátrasorolhatjuk a találati listán.</li> 
-<li>Hunglish Korpusz 2: Új szövegeket gyűjtöttünk, 
+<li><a href="http://mokk.bme.hu/resources/hunglishcorpus/">Hunglish Korpusz 2</a>: Új szövegeket gyűjtöttünk, 
 így a rendszerben "alapból" benne levő mondatpárok számát jelentősen megnöveltük, 2 millióról körülbelül 3.5 millióra.</li>
 <li>Did you mean ...? Helyesírási hibák, elgépelések javítása</li> 
 </ul> 
@@ -68,5 +134,7 @@ Kornai András, Rung András, Váradi Tamás, Zséder Attila
 <p> 
 <iframe src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.facebook.com%2FHunglish.Mondattar&amp;layout=standard&amp;show_faces=true&amp;width=450&amp;action=like&amp;font&amp;colorscheme=light&amp;height=80" scrolling="no" frameborder="0" style="overflow:hidden; height:70px; margin-left:0px; " allowTransparency="true"></iframe> 
 </p> 
+
+</div>
 
 </div>
