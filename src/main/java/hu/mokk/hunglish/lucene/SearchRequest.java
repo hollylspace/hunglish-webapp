@@ -217,6 +217,21 @@ public class SearchRequest {
 		this.hunglishSyntax = Boolean.parseBoolean(useHunglishSyntax);
 	}
 
+	public SearchRequest clone(){
+		SearchRequest result = new SearchRequest();
+		result.setCommonQuery(commonQuery);
+		result.setEnQuery(enQuery);
+		result.setGenreId(genreId);
+		result.setHighlightEn(highlightEn);
+		result.setHighlightHu(highlightHu);
+		result.setHunglishSyntax(hunglishSyntax);
+		result.setHuQuery(huQuery);
+		result.setMaxResults(maxResults);
+		result.setStartOffset(startOffset);
+		result.setStemEnQuery(stemEnQuery);
+		result.setStemHuQuery(stemHuQuery);
+		return result;
+	}
 	
 	public String toString(){
         StringBuilder sb = new StringBuilder();

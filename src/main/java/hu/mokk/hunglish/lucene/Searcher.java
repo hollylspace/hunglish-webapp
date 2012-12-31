@@ -50,6 +50,10 @@ import org.springframework.beans.factory.annotation.Configurable;
 public class Searcher {
 
 	transient private static Log logger = LogFactory.getLog(Searcher.class);
+	private enum BisenSide {
+		EN, HU
+	}
+
 	private String indexDir;
 	private String spellIndexDir;
 	private String spellIndexDirHu;
@@ -295,17 +299,33 @@ public class Searcher {
 			bisen.setEnSentenceView(bisen.getEnSentence());
 			bisen.setHuSentenceView(bisen.getHuSentence());
 		}
-		if (request.getHighlightHu() || request.getHighlightEn()) {
-			highlightBisens(request, resultBisens, query);
-		}
-
-		result.addToHits(resultBisens);
-		if (hits.length > 0)
-			logger.debug("SScore:" + hits[0].score);
+		
 		if (hits.length < minimumHits
 				|| (hits.length > 0 && hits[0].score < minimumScore)) {
 			didYouMean(result, query, request);
 		}
+		if (hits.length > 0) {
+			logger.debug("SScore:" + hits[0].score);
+		}
+		
+		
+		Query highLightQuery = null;
+		SearchRequest highlightRequest = request.clone();
+		highlightRequest.setHuQuery(request.getHuQuery().replaceAll("<", "").replaceAll(">", ""));
+		highlightRequest.setEnQuery(request.getEnQuery().replaceAll("<", "").replaceAll(">", ""));
+		try {
+			highLightQuery = luceneQueryBuilder.parseRequest(highlightRequest);
+		} catch (ParseException e1) {
+			logger.error("cannot parse search request:" + request, e1);
+			throw new RuntimeException("Request couldn't be parsed", e1);
+		}
+		
+		if (highLightQuery !=null && (request.getHighlightHu() || request.getHighlightEn())) {
+			highlightBisens(highlightRequest, resultBisens, highLightQuery);
+		}
+
+		result.addToHits(resultBisens);
+		
 		return result;
 
 	}
@@ -380,14 +400,14 @@ public class Searcher {
 			+ "(" + highLightEnd + ")";
 	static Pattern highPattern = Pattern.compile(highPatternString);
 
-	public static String mergeHighLight(String line1, String line2) {
+	public static String mergeHighLight(String line1, String line2, String sentence) {
 		if (line1 != null && line2 != null) {
 			Matcher matcher = highPattern.matcher(line1);
 			boolean found = matcher.find();
 			while (found) {
 				String match = matcher.group(2);
 				String replaceMent = matcher.group();
-				line2 = line2.replaceAll(match, replaceMent);
+				line2 = line2.replaceAll("\b("+match+")\b", replaceMent);
 				found = matcher.find();
 			}
 			return line2;
@@ -400,9 +420,6 @@ public class Searcher {
 		}
 	}
 
-	private enum BisenSide {
-		EN, HU
-	}
 
 	private static boolean notEmptyQuery(Query query, BisenSide side) {
 		Set<Term> terms = new HashSet<Term>();
@@ -420,8 +437,8 @@ public class Searcher {
 		if (logger.isDebugEnabled()) {
 			logger.debug("highlight bisen");
 			logger.debug(bisen);
-			logger.debug(query);
-			logger.debug(side);
+			logger.debug("query:"+query);
+			logger.debug("side:"+side);
 		}
 		if (notEmptyQuery(query, side)) {
 			String fieldName = null;
@@ -450,7 +467,7 @@ public class Searcher {
 						analyzerProvider.getLemmatizerMap().get(
 								stemmedFieldName));
 				high = highlightField(tokens, query, stemmedFieldName, sentence);
-				logger.debug(high);
+				logger.debug("high:"+high);
 			} catch (Exception e) {
 				logger.error(side + ": Error while highlighting stemmed field",
 						e);
@@ -462,11 +479,11 @@ public class Searcher {
 				tokens = TokenSources.getTokenStream(indexReader,
 						bisen.getLuceneDocId(), fieldName);
 				// TODO is this next line really neaded?
-				tokens = new CompoundStemmerTokenFilter(tokens,
-						analyzerProvider.getLemmatizerMap().get(
-								stemmedFieldName));
+				//tokens = new CompoundStemmerTokenFilter(tokens,
+				//		analyzerProvider.getLemmatizerMap().get(
+				//				stemmedFieldName));
 				high2 = highlightField(tokens, query, fieldName, sentence);
-				logger.debug(high2);
+				logger.debug("high2:"+high2);
 			} catch (Exception e) {
 				logger.error(side
 						+ ": Error while highlighting NOT stemmed field", e);
@@ -474,9 +491,20 @@ public class Searcher {
 				// e);
 			}
 
-			if (high != null || high2 != null) {
-				high = mergeHighLight(high, high2);
+			if (high2 != null && !high2.equals(sentence)){
+				logger.warn("high2:"+high2);
+				if (high == null || sentence.equals(high)){
+					high = high2;
+					logger.warn("using high2:"+high);
+				}
+			}
 
+			if (high != null || high2 != null) {
+				//TODO current merging of two highlights does not work 
+				//high = mergeHighLight(high, high2, sentence);
+			}
+			
+			if (high != null){
 				switch (side) {
 				case EN:
 					bisen.setEnSentenceView(high);
@@ -492,6 +520,8 @@ public class Searcher {
 
 	private void highlightBisens(SearchRequest request,
 			List<Pair<Document, Bisen>> bisens, Query query) {
+		
+		
 		for (Pair<Document, Bisen> pair : bisens) {
 			Bisen bisen = pair.getSecond();
 			// Document document = pair.getFirst();
@@ -603,4 +633,11 @@ public class Searcher {
 		this.spellIndexDirHu = spellIndexDirHu;
 	}
 
+	public static void main(String [ ] args){
+		String s = "Hermann úr fogta a kalapját és eltávozott.";
+		//s = s.replaceAll("\b"+"a"+"\b", "<B>a</B>");
+		s = s.replaceAll("[ ,.]a[ ,.]", "<B>a</B>");
+		System.out.println(s);
+	}
+	
 }
