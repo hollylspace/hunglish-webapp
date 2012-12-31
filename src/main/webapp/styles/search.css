@@ -1,9 +1,16 @@
 /* main elements */
 
 body,div,td {
-	font-family: Arial, Helvetica, sans-serif;
+	/*font-family: Arial, Helvetica, sans-serif;
 	font-size: 12px;
-	color: #666;
+	color: #666;*/
+	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size : 12px;
+	margin-bottom : 6px;
+	margin-left : 6px;
+	margin-right : 6px;
+	margin-top : 6px;
+	/*width: 800px;*/	
 }
 
 body {
@@ -76,11 +83,16 @@ a:hover {
 
 tr:nth-child(odd) {
 	background-color: #FFFFFF;
+	border-bottom: 1px solid #8CACBB;
 }
 
 tr:nth-child(even) {
-	background-color: #E9EFF2 /* old hunglish #F7F9FA; */
-	/*border-bottom: 1px solid #8CACBB;*/
+	background-color:  #F7F9FA; 
+	border-bottom: 1px solid #8CACBB;
+}
+
+.borderright {
+    border-right: 1px solid #8cacbb; 
 }
 
 /* table elements */
@@ -89,13 +101,17 @@ tr:nth-child(even) {
 	/*padding-bottom:3px; 
 	padding-left:20px; */
 
+td {
+	padding: 0.5em 1em;
+}
+
 table {
 	background: #EEEEEE;
 	margin: 2px 0 0 0;
 	border: 0px; /*solid #BBBBBB;*/
 	border-collapse: collapse;
 	width: 100%;
-
+	padding: 0.5em 1em;
 }
 
 input.upvote {

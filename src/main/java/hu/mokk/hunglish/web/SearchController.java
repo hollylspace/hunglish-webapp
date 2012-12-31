@@ -30,7 +30,11 @@ public class SearchController {
 	private static Log logger = LogFactory.getLog(SearchController.class);
 	
 	public static final int PAGE_SIZE = 20;
-	
+	public static final int MAX_PAGE_LINKS = 20;
+	public static final String BACK_ARROW = "<<";
+	public static final String FORWARD_ARROW = ">>";
+	public static final int PAGINATION_LINK_WINDOW_SIZE = 10;
+			
 	@Autowired
 	private Searcher searcher;
 
@@ -48,6 +52,39 @@ public class SearchController {
 		request.setStartOffset((pageNo-1)*sizeNo);
 		request.setHunglishSyntax(true);
 		return request;
+	}
+
+	private List<Pair<String, String>> getPaginationLinks(SearchRequest request, Bisen bisen, 
+			int sizeNo, int maxPages, int pageNo) throws UnsupportedEncodingException {
+        String baseUrl = getBaseUrl(bisen.getHuSentence(), bisen.getEnSentence()) +"&size="+sizeNo;
+        List<Pair<String, String>> linx = new ArrayList<Pair<String, String>>();
+        String url;
+        if (pageNo > 1) {
+        	url =baseUrl+"&page="+new Integer(pageNo-1).toString();
+        	if (request.getGenreId() != null){
+        		url += "&doc.genre="+request.getGenreId();
+        	}
+        	linx.add(new Pair<String, String>(url, BACK_ARROW));        	
+        }
+        int start = Math.max(1, pageNo - PAGINATION_LINK_WINDOW_SIZE);
+        int end = Math.min(maxPages, pageNo + PAGINATION_LINK_WINDOW_SIZE);
+        for (int i = start; i <= end; i++){
+        	url =baseUrl+"&page="+i;
+        	if (request.getGenreId() != null){
+        		url += "&doc.genre="+request.getGenreId();
+        	}
+        	linx.add(new Pair<String, String>(url, new Integer(i).toString()));
+        }
+    	
+        if (pageNo < maxPages) {
+        	url =baseUrl+"&page="+new Integer(pageNo+1).toString();
+        	if (request.getGenreId() != null){
+        		url += "&doc.genre="+request.getGenreId();
+        	}
+        	linx.add(new Pair<String, String>(url, FORWARD_ARROW));        	
+        }
+    	
+        return linx;
 	}
 	
 	@RequestMapping(value = "/search", method = RequestMethod.GET)
@@ -70,24 +107,15 @@ public class SearchController {
 		
         float nrOfPages = (float) result.getTotalCount() / sizeNo;
         int maxPages = (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages);
-
+        
         float nrOfPagesLimited = (float) searcher.getMaxDocuments() / sizeNo;
         int maxPagesLimited = (int) nrOfPagesLimited; 
-        
-        
+                
         modelMap.addAttribute("maxPages", maxPages);
         modelMap.addAttribute("page", pageNo);
         
-        String baseUrl = getBaseUrl(bisen.getHuSentence(), bisen.getEnSentence()) +"&size="+sizeNo;
-        List<Pair<String, String>> linx = new ArrayList<Pair<String, String>>();
-        for (int i = 1; i <= (int)Math.min(maxPagesLimited, maxPages); i++){
-        	String url =baseUrl+"&page="+i;
-        	if (request.getGenreId() != null){
-        		url += "&doc.genre="+request.getGenreId();
-        	}
-        	linx.add(new Pair<String, String>(url, new Integer(i).toString()));
-        }
-        result.setPaginationLinks(linx);
+        result.setPaginationLinks(getPaginationLinks(request, bisen, sizeNo, (int)Math.min(maxPagesLimited, maxPages), pageNo));
+        
         if (result.getEnSuggestionString() != null || result.getHuSuggestionString() != null){
         	String suggestionURL = getBaseUrl(result.getHuSuggestionString(), result.getEnSuggestionString()) +"&size="+sizeNo;
         	if (request.getGenreId() != null){
