@@ -30,19 +30,35 @@ xmlns:spring="http://www.springframework.org/tags" version="2.0">
 
 <div>
 Dear Hunglish Users,
+
 <p> 
 Welcome to Hunglish 2.0! 
-We have rewritten the system behind <a href="http://szotar.mokk.bme.hu/hunglish/search/corpus">Hunglish</a>, these are some important changese: 
-<p> 
+This page is an online search interface for the <a href="http://mokk.bme.hu/resources/hunglishcorpus/">Hunglish Corpus 2</a>, 
+which is a free, sentence-aligned Hungarian-English parallel corpus of about 120 million words in 4 million sentence pairs. 
+This is the version 2.0 release of the search interface, the backend software, and the Corpus itself.
+</p>
+
+<p>
+The original 1.0 release of the <a href="http://szotar.mokk.bme.hu/hunglish/search/corpus">old Hunglish Corpus</a> from 2005 is still available.   
+</p>
+
+<p>
+These are some important changes in the new system: 
+</p> 
+
+<p>
 <ul> 
-<li>You can <a href="${form_url}/upload/form">upload a pair of documents</a>, the system will extract the sentence pairs 
-</li> 
-<li>Duplicate filter</li> 
-<li>Downvote: if you find an wrongly translated sentence pair, you can downvote it. (The sole purpose of the upvote button is to correct downvotes done by mistake)</li> 
 <li><a href="http://mokk.bme.hu/resources/hunglishcorpus/">Hunglish Corpus 2</a>: we have increased the number of sentence pairs from 2 million to 3.5 million.</li>
+<li>You can <a href="${form_url}/upload/form">upload a pair of documents</a>, the system will extract the sentence pairs </li> 
+<li><a href="http://szotar.mokk.bme.hu/hunglish/search/corpus?ql=&amp;qr=captain&amp;source=all">Duplicates</a> 
+are <a href="http://hunglish.hu/search?huSentence=&amp;enSentence=captain&amp;doc.genre=-10">filtered</a></li> 
+<li>Downvote: if you find an wrongly translated sentence pair, you can downvote it. 
+(The sole purpose of the upvote button is to correct downvotes done by mistake)</li> 
 <li>Did you mean ...? feature</li> 
 </ul> 
-</p><p> 
+</p>
+
+<p> 
 Important links:
 <ul> 
 <li><a href="${form_url}/search">Search</a></li> 
@@ -51,19 +67,23 @@ Important links:
 <li><a href="http://code.google.com/p/hunglish-webapp/issues/entry">Report an error, ask a new feature, give feedback</a></li>
 </ul> 
 </p>
-</p>
+
 
 <p> 
 The Developers: Dániel Varga and <a href="https://code.google.com/u/bpgergo/">Péter Gergő Barna</a>
-</p><p> 
+</p>
+
+<p> 
 Special thanks to:
-</p><p> 
+</p>
+<p> 
 Attila Balogh, Zsolt Both, András Farkas, Péter Halácsy (developer of the original system), 
 András Kornai, András Rung, Tamás Váradi, Attila Zséder
 </p>
-
-
 </div>
+
+<p> _____________________________________________ </p>
+<br />
 
 <div>
 Kedves Hunglish Mondattár Felhasználók,
@@ -72,7 +92,9 @@ Elkészült a <a href="http://szotar.mokk.bme.hu/hunglish/search/corpus">Hunglis
 A felhasználók számára is érzékelhető fejlesztések közül az alábbiak a legfontosabbak:
 </p><p> 
 <ul> 
-<li>Dokumentumpárok feltöltésének lehetősége: 
+<li><a href="http://mokk.bme.hu/resources/hunglishcorpus/">Hunglish Korpusz 2</a>: Új szövegeket gyűjtöttünk, 
+így a rendszerben "alapból" benne levő mondatpárok számát jelentősen megnöveltük, 2 millióról körülbelül 3.5 millióra.</li>
+<li>Dokumentumpárok <a href="${form_url}/upload/form">feltöltésének</a> lehetősége: 
 a felhasználó által feltöltött magyar-angol dokumentumpárból 
 a rendszer automatikusan kivonatolja az egymásnak megfelelő mondatpárokat. 
 Ha a szoftver elégedett ennek a kivonatolásnak a minőségével, 
@@ -80,8 +102,6 @@ akkor a mondatpárokat hozzáadja a kereshető adatbázishoz.</li>
 <li>Duplikátumszűrés: a találati lista csak egyszer mutatja meg az azonos találatokat.</li> 
 <li>Hibás mondatpárok leszavazása (dislike): 
 Ha nem illeszkedő vagy félrefordított mondatpárra bukkanunk, hátrasorolhatjuk a találati listán.</li> 
-<li><a href="http://mokk.bme.hu/resources/hunglishcorpus/">Hunglish Korpusz 2</a>: Új szövegeket gyűjtöttünk, 
-így a rendszerben "alapból" benne levő mondatpárok számát jelentősen megnöveltük, 2 millióról körülbelül 3.5 millióra.</li>
 <li>Did you mean ...? Helyesírási hibák, elgépelések javítása</li> 
 </ul> 
 </p><p> 

@@ -115,14 +115,14 @@ table {
 }
 
 input.upvote {
-	background: url('/static/images/thumb_up.gif'); 
+	background: url('/static/images/up_arrow.png'); /*http://www.iconfinder.com/icondetails/27881/24/arrow_up_icon*/ 
 	border:0px; 
 	width:24px;
 	height:24px;
 }
 
 input.downvote {
-	background: url('/static/images/thumb_down.gif'); 
+	background: url('/static/images/down_arrow.png'); /*http://www.iconfinder.com/icondetails/27880/24/arrow_red_up_icon*/ 
 	border:0px; 
 	width:24px;
 	height:24px;
