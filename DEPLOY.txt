@@ -1,6 +1,5 @@
-mvn clean package
 /etc/init.d/tomcat6 stop
-rm -rf /var/lib/tomcat/webapps/ROOT
-rm -rf /var/lib/tomcat/webapps/ROOT.war
-cp [developementdir]/target/[somename].war /var/lib/tomcat/webapps/ROOT.war
+rm -rf /srv/tomcat6/webapps/ROOT
+rm -rf /srv/tomcat6/webapps/ROOT.war
+cp /home/bpgergo/hunglish_deploy/ROOT.war /srv/tomcat6/webapps/ROOT.war
 /etc/init.d/tomcat6 start
