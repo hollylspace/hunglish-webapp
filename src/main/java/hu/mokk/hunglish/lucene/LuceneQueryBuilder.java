@@ -2,6 +2,7 @@ package hu.mokk.hunglish.lucene;
 
 import hu.mokk.hunglish.domain.Bisen;
 import hu.mokk.hunglish.lucene.query.HunglishQueryParser;
+import hu.mokk.hunglish.lucene.query.exception.QueryException;
 
 import java.io.PrintStream;
 import java.util.HashMap;
@@ -56,19 +57,15 @@ public class LuceneQueryBuilder {
 
 	public Query parseRequest(SearchRequest request) throws ParseException {
 		Query query;
-		try {
 			if (request.getHunglishSyntax()) {
 				logger.debug("parsing request against Hunglish syntax");
 				query = queryParser.parse(request.getHuQuery().toLowerCase(),
 						request.getEnQuery().toLowerCase());
+				
 			} else {
 				logger.debug("parsing request against simple syntax");
 				query = simpleParseSearchRequest(request);
 			}
-		} catch (Exception e) {
-			// e.printStackTrace();
-			throw new RuntimeException("query couldn't be parsed", e);
-		}
 
 		if (request.getGenreId() != null) {
 			Integer genreId = -1;

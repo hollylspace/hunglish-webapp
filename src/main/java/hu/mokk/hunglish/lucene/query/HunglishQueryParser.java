@@ -6,6 +6,8 @@ package hu.mokk.hunglish.lucene.query;
 import hu.mokk.hunglish.domain.Bisen;
 import hu.mokk.hunglish.jmorph.AnalyzerProvider;
 import hu.mokk.hunglish.jmorph.LemmatizerWrapper;
+import hu.mokk.hunglish.lucene.query.exception.NoClosingQuoteException;
+import hu.mokk.hunglish.lucene.query.exception.QueryException;
 
 import java.util.Iterator;
 import java.util.List;
@@ -23,7 +25,7 @@ import org.apache.lucene.search.TermQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * @author Peter Halacsy <peter at halacsy.com>
+ * @author Peter Halacsy <peter at halacsy.com>, bpgergo@gmail.com
  *
  */
 public class HunglishQueryParser {
@@ -37,9 +39,10 @@ public class HunglishQueryParser {
  
 
 
-    public Query parse(String hu, String en) throws Exception {
+    public Query parse(String hu, String en) {
     	HunglishQuerySyntaxParser qp = new HunglishQuerySyntaxParser();
-        QueryStructure qs = qp.parse(hu, en);
+        QueryStructure qs = null;
+		qs = qp.parse(hu, en);
         
         QueryPhrase[] phrases = qs.getPhrases();
         
