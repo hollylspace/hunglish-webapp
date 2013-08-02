@@ -1,0 +1,80 @@
+<div xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:form="http://www.springframework.org/tags/form" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:spring="http://www.springframework.org/tags" version="2.0">
+    <jsp:output omit-xml-declaration="yes"/>
+    <script type="text/javascript">dojo.require('dijit.TitlePane');dojo.require('dijit.form.FilteringSelect');dojo.require('dijit.form.SimpleTextarea');</script>
+    <div id="_title_div">
+        <spring:message code="label.bisen" var="entity_label"/>
+        <spring:message arguments="${entity_label}" code="entity.update" var="title_msg"/>
+        <script type="text/javascript">Spring.addDecoration(new Spring.ElementDecoration({elementId : '_title_div', widgetType : 'dijit.TitlePane', widgetAttrs : {title: '${title_msg}'}})); </script>
+        <spring:url value="/bisen/${bisen.id}" var="form_url"/>
+        <form:form action="${form_url}" method="PUT" modelAttribute="bisen">
+            <form:errors cssClass="errors" delimiter="&lt;p/&gt;"/>
+            <div id="roo_bisen_doc">
+                <c:if test="${not empty docs}">
+                    <label for="_doc_id">Doc:</label>
+                    <form:select cssStyle="width:250px" id="_doc_id" path="doc">
+                        <form:options itemValue="id" items="${docs}"/>
+                    </form:select>
+                    <script type="text/javascript">Spring.addDecoration(new Spring.ElementDecoration({elementId : '_doc_id', widgetType: 'dijit.form.FilteringSelect', widgetAttrs : {hasDownArrow : true}})); </script>
+                </c:if>
+            </div>
+            <br/>
+            <br/>
+            <div id="roo_bisen_lineNumber">
+                <label for="_lineNumber_id">Line Number:</label>
+                <form:input cssStyle="width:250px" id="_lineNumber_id" maxlength="30" path="lineNumber" size="0"/>
+                <br/>
+                <form:errors cssClass="errors" id="_lineNumber_error_id" path="lineNumber"/>
+                <spring:message code="field.invalid.integer" var="field_invalid"/>
+                <spring:message code="field.required" var="field_required"/>
+                <spring:message argumentSeparator="," arguments="Line Number," code="field.simple.validation" var="field_validation"/>
+                <script type="text/javascript">Spring.addDecoration(new Spring.ElementDecoration({elementId : '_lineNumber_id', widgetType : 'dijit.form.ValidationTextBox', widgetAttrs : {promptMessage: '${field_validation}', invalidMessage: '${field_invalid}', regExp: '-?[0-9]*', required : false}})); </script>
+            </div>
+            <br/>
+            <div id="roo_bisen_upvotes">
+                <label for="_upvotes_id">Upvotes:</label>
+                <form:input cssStyle="width:250px" id="_upvotes_id" maxlength="30" path="upvotes" size="0"/>
+                <br/>
+                <form:errors cssClass="errors" id="_upvotes_error_id" path="upvotes"/>
+                <spring:message arguments="Upvotes" code="field.invalid" var="field_invalid"/>
+                <spring:message code="field.required" var="field_required"/>
+                <spring:message argumentSeparator="," arguments="Upvotes," code="field.simple.validation" var="field_validation"/>
+                <script type="text/javascript">Spring.addDecoration(new Spring.ElementDecoration({elementId : '_upvotes_id', widgetType : 'dijit.form.ValidationTextBox', widgetAttrs : {promptMessage: '${field_validation}', invalidMessage: '${field_invalid}', required : false}})); </script>
+            </div>
+            <br/>
+            <div id="roo_bisen_downvotes">
+                <label for="_downvotes_id">Downvotes:</label>
+                <form:input cssStyle="width:250px" id="_downvotes_id" maxlength="30" path="downvotes" size="0"/>
+                <br/>
+                <form:errors cssClass="errors" id="_downvotes_error_id" path="downvotes"/>
+                <spring:message arguments="Downvotes" code="field.invalid" var="field_invalid"/>
+                <spring:message code="field.required" var="field_required"/>
+                <spring:message argumentSeparator="," arguments="Downvotes," code="field.simple.validation" var="field_validation"/>
+                <script type="text/javascript">Spring.addDecoration(new Spring.ElementDecoration({elementId : '_downvotes_id', widgetType : 'dijit.form.ValidationTextBox', widgetAttrs : {promptMessage: '${field_validation}', invalidMessage: '${field_invalid}', required : false}})); </script>
+            </div>
+            <br/>
+            <div id="roo_bisen_huSentence">
+                <label for="_huSentence_id">Hu Sentence:</label>
+                <form:textarea cssStyle="width:250px" id="_huSentence_id" path="huSentence"/>
+                <script type="text/javascript">Spring.addDecoration(new Spring.ElementDecoration({elementId : '_huSentence_id', widgetType: 'dijit.form.SimpleTextarea', widgetAttrs: {}})); </script>
+                <br/>
+                <form:errors cssClass="errors" id="_huSentence_error_id" path="huSentence"/>
+            </div>
+            <br/>
+            <div id="roo_bisen_enSentence">
+                <label for="_enSentence_id">En Sentence:</label>
+                <form:textarea cssStyle="width:250px" id="_enSentence_id" path="enSentence"/>
+                <script type="text/javascript">Spring.addDecoration(new Spring.ElementDecoration({elementId : '_enSentence_id', widgetType: 'dijit.form.SimpleTextarea', widgetAttrs: {}})); </script>
+                <br/>
+                <form:errors cssClass="errors" id="_enSentence_error_id" path="enSentence"/>
+            </div>
+            <br/>
+            <div class="submit" id="roo_bisen_submit">
+                <spring:message code="button.update" var="update_button"/>
+                <script type="text/javascript">Spring.addDecoration(new Spring.ValidateAllDecoration({elementId:'proceed', event:'onclick'}));</script>
+                <input id="proceed" type="submit" value="${update_button}"/>
+            </div>
+            <form:hidden id="_id_id" path="id"/>
+            <form:hidden id="_version_id" path="version"/>
+        </form:form>
+    </div>
+</div>

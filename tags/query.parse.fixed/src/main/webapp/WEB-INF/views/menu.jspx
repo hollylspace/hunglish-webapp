@@ -1,0 +1,131 @@
+<div xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:spring="http://www.springframework.org/tags" id="menu" version="2.0">
+	<jsp:output omit-xml-declaration="yes"/>
+	<ul id="roo_menu">
+			
+	<li id="web_mvc_jsp_upload_category">
+            <h2>
+                <spring:message code="menu.category.web_mvc_jsp_upload_category.label"/>
+            </h2>
+            <ul>
+                <li id="web_mvc_jsp_create_upload_menu_item">
+                    <spring:url value="/upload/form" var="web_mvc_jsp_create_upload_menu_item_url"/>
+                    <a href="${web_mvc_jsp_create_upload_menu_item_url}">
+                        <spring:message code="label.upload" var="label_upload"/>
+                        <spring:message arguments="${label_upload}" code="global.menu.new"/>
+                    </a>
+                </li>
+            <li id="web_mvc_jsp_list_upload_menu_item">
+                    <spring:url value="/upload?page=1&amp;amp;size=10" var="web_mvc_jsp_list_upload_menu_item_url"/>
+                    <a href="${web_mvc_jsp_list_upload_menu_item_url}">
+                        <spring:message code="label.uploads" var="label_uploads"/>
+                        <spring:message arguments="${label_uploads}" code="global.menu.list"/>
+                    </a>
+                </li>
+            </ul>
+        </li>
+    <li id="web_mvc_jsp_doc_category">
+            <h2>
+                <spring:message code="menu.category.web_mvc_jsp_doc_category.label"/>
+            </h2>
+            <ul>
+               <!--
+                <li id="web_mvc_jsp_create_doc_menu_item">
+                    <spring:url value="/doc/form" var="web_mvc_jsp_create_doc_menu_item_url"/>
+                    <a href="${web_mvc_jsp_create_doc_menu_item_url}">
+                        <spring:message code="label.doc" var="label_doc"/>
+                        <spring:message arguments="${label_doc}" code="global.menu.new"/>
+                    </a>
+                </li>
+                -->
+            <li id="web_mvc_jsp_list_doc_menu_item">
+                    <spring:url value="/doc?page=1&amp;amp;size=10" var="web_mvc_jsp_list_doc_menu_item_url"/>
+                    <a href="${web_mvc_jsp_list_doc_menu_item_url}">
+                        <spring:message code="label.docs" var="label_docs"/>
+                        <spring:message arguments="${label_docs}" code="global.menu.list"/>
+                    </a>
+                </li>
+            </ul>
+        </li>
+    <li id="web_mvc_jsp_author_category">
+            <h2>
+                <spring:message code="menu.category.web_mvc_jsp_author_category.label"/>
+            </h2>
+            <ul>
+                <li id="web_mvc_jsp_create_author_menu_item">
+                    <spring:url value="/author/form" var="web_mvc_jsp_create_author_menu_item_url"/>
+                    <a href="${web_mvc_jsp_create_author_menu_item_url}">
+                        <spring:message code="label.author" var="label_author"/>
+                        <spring:message arguments="${label_author}" code="global.menu.new"/>
+                    </a>
+                </li>
+            <li id="web_mvc_jsp_list_author_menu_item">
+                    <spring:url value="/author?page=1&amp;amp;size=10" var="web_mvc_jsp_list_author_menu_item_url"/>
+                    <a href="${web_mvc_jsp_list_author_menu_item_url}">
+                        <spring:message code="label.authors" var="label_authors"/>
+                        <spring:message arguments="${label_authors}" code="global.menu.list"/>
+                    </a>
+                </li>
+            </ul>
+        </li>
+    <li id="web_mvc_jsp_bisen_category">
+            <h2>
+                <spring:message code="menu.category.web_mvc_jsp_bisen_category.label"/>
+            </h2>
+            <ul>
+            <!--
+                <li id="web_mvc_jsp_create_bisen_menu_item">
+                    <spring:url value="/bisen/form" var="web_mvc_jsp_create_bisen_menu_item_url"/>
+                    <a href="${web_mvc_jsp_create_bisen_menu_item_url}">
+                        <spring:message code="label.bisen" var="label_bisen"/>
+                        <spring:message arguments="${label_bisen}" code="global.menu.new"/>
+                    </a>
+                </li>
+                -->
+            <li id="web_mvc_jsp_list_bisen_menu_item">
+                    <spring:url value="/bisen?page=1&amp;amp;size=10" var="web_mvc_jsp_list_bisen_menu_item_url"/>
+                    <a href="${web_mvc_jsp_list_bisen_menu_item_url}">
+                        <spring:message code="label.bisens" var="label_bisens"/>
+                        <spring:message arguments="${label_bisens}" code="global.menu.list"/>
+                    </a>
+                </li>
+            </ul>
+        </li>
+    <li id="web_mvc_jsp_genre_category">
+            <h2>
+                <spring:message code="menu.category.web_mvc_jsp_genre_category.label"/>
+            </h2>
+            <ul>
+                <li id="web_mvc_jsp_create_genre_menu_item">
+                    <spring:url value="/genre/form" var="web_mvc_jsp_create_genre_menu_item_url"/>
+                    <a href="${web_mvc_jsp_create_genre_menu_item_url}">
+                        <spring:message code="label.genre" var="label_genre"/>
+                        <spring:message arguments="${label_genre}" code="global.menu.new"/>
+                    </a>
+                </li>
+            <li id="web_mvc_jsp_list_genre_menu_item">
+                    <spring:url value="/genre?page=1&amp;amp;size=10" var="web_mvc_jsp_list_genre_menu_item_url"/>
+                    <a href="${web_mvc_jsp_list_genre_menu_item_url}">
+                        <spring:message code="label.genres" var="label_genres"/>
+                        <spring:message arguments="${label_genres}" code="global.menu.list"/>
+                    </a>
+                </li>
+            </ul>
+        </li>
+        
+    <li id="web_mvc_jsp_search_category">
+            <h2>
+                <spring:message code="menu.category.web_mvc_jsp_search_category.label"/>
+            </h2>
+            <ul>
+                <li id="web_mvc_jsp_search_menu_item">
+                    <spring:url value="/search" var="web_mvc_jsp_search_menu_item_url"/>
+                    <a href="${web_mvc_jsp_search_menu_item_url}">
+                        <spring:message code="label.search" var="label_search"/>
+                        <spring:message arguments="${label_search}" code="global.menu.list"/>
+                    </a>
+                </li>            
+            </ul>
+        </li>
+        
+    </ul>
+</div>

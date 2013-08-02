@@ -1,0 +1,84 @@
+<div xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:form="http://www.springframework.org/tags/form" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:spring="http://www.springframework.org/tags" version="2.0">
+    <jsp:output omit-xml-declaration="yes"/>
+    <script type="text/javascript">dojo.require('dijit.TitlePane');dojo.require('dijit.form.SimpleTextarea');dojo.require('dijit.form.FilteringSelect');</script>
+    <div id="_title_div">
+        <spring:message code="label.doc" var="entity_label"/>
+        <spring:message arguments="${entity_label}" code="entity.update" var="title_msg"/>
+        <script type="text/javascript">Spring.addDecoration(new Spring.ElementDecoration({elementId : '_title_div', widgetType : 'dijit.TitlePane', widgetAttrs : {title: '${title_msg}'}})); </script>
+        <spring:url value="/doc/${doc.id}" var="form_url"/>
+        <form:form action="${form_url}" method="PUT" modelAttribute="doc">
+            <form:errors cssClass="errors" delimiter="&lt;p/&gt;"/>
+            <div id="roo_doc_oldDocid">
+                <label for="_oldDocid_id">Old Docid:</label>
+                <form:textarea cssStyle="width:250px" id="_oldDocid_id" path="oldDocid"/>
+                <script type="text/javascript">Spring.addDecoration(new Spring.ElementDecoration({elementId : '_oldDocid_id', widgetType: 'dijit.form.SimpleTextarea', widgetAttrs: {}})); </script>
+                <br/>
+                <form:errors cssClass="errors" id="_oldDocid_error_id" path="oldDocid"/>
+            </div>
+            <br/>
+            <div id="roo_doc_genre">
+                <c:if test="${not empty genres}">
+                    <label for="_genre_id">Genre:</label>
+                    <form:select cssStyle="width:250px" id="_genre_id" path="genre">
+                        <form:options itemValue="id" items="${genres}"/>
+                    </form:select>
+                    <script type="text/javascript">Spring.addDecoration(new Spring.ElementDecoration({elementId : '_genre_id', widgetType: 'dijit.form.FilteringSelect', widgetAttrs : {hasDownArrow : true}})); </script>
+                </c:if>
+            </div>
+            <br/>
+            <div id="roo_doc_author">
+                <c:if test="${not empty authors}">
+                    <label for="_author_id">Author:</label>
+                    <form:select cssStyle="width:250px" id="_author_id" path="author">
+                        <form:options itemValue="id" items="${authors}"/>
+                    </form:select>
+                    <script type="text/javascript">Spring.addDecoration(new Spring.ElementDecoration({elementId : '_author_id', widgetType: 'dijit.form.FilteringSelect', widgetAttrs : {hasDownArrow : true}})); </script>
+                </c:if>
+            </div>
+            <br/>
+            <div id="roo_doc_upload">
+                <label for="_upload_id">Upload:</label>
+                <div class="box" id="_upload_id">
+                    <c:out value="${doc.upload}"/>
+                </div>
+            </div>
+            <br/>
+            <div id="roo_doc_enTitle">
+                <label for="_enTitle_id">En Title:</label>
+                <form:textarea cssStyle="width:250px" id="_enTitle_id" path="enTitle"/>
+                <script type="text/javascript">Spring.addDecoration(new Spring.ElementDecoration({elementId : '_enTitle_id', widgetType: 'dijit.form.SimpleTextarea', widgetAttrs: {}})); </script>
+                <br/>
+                <form:errors cssClass="errors" id="_enTitle_error_id" path="enTitle"/>
+            </div>
+            <br/>
+            <div id="roo_doc_huTitle">
+                <label for="_huTitle_id">Hu Title:</label>
+                <form:textarea cssStyle="width:250px" id="_huTitle_id" path="huTitle"/>
+                <script type="text/javascript">Spring.addDecoration(new Spring.ElementDecoration({elementId : '_huTitle_id', widgetType: 'dijit.form.SimpleTextarea', widgetAttrs: {}})); </script>
+                <br/>
+                <form:errors cssClass="errors" id="_huTitle_error_id" path="huTitle"/>
+            </div>
+            <br/>
+            <div id="roo_doc_isOpenContent">
+                <label for="_isOpenContent_id">Is Open Content:</label>
+                <form:checkbox id="_isOpenContent_id" path="isOpenContent"/>
+            </div>
+            <br/>
+            <div id="roo_doc_alignedFilePath">
+                <label for="_alignedFilePath_id">Aligned File Path:</label>
+                <form:textarea cssStyle="width:250px" id="_alignedFilePath_id" path="alignedFilePath"/>
+                <script type="text/javascript">Spring.addDecoration(new Spring.ElementDecoration({elementId : '_alignedFilePath_id', widgetType: 'dijit.form.SimpleTextarea', widgetAttrs: {}})); </script>
+                <br/>
+                <form:errors cssClass="errors" id="_alignedFilePath_error_id" path="alignedFilePath"/>
+            </div>
+            <br/>
+            <div class="submit" id="roo_doc_submit">
+                <spring:message code="button.update" var="update_button"/>
+                <script type="text/javascript">Spring.addDecoration(new Spring.ValidateAllDecoration({elementId:'proceed', event:'onclick'}));</script>
+                <input id="proceed" type="submit" value="${update_button}"/>
+            </div>
+            <form:hidden id="_id_id" path="id"/>
+            <form:hidden id="_version_id" path="version"/>
+        </form:form>
+    </div>
+</div>

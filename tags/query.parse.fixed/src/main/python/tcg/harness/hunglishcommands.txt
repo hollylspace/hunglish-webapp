@@ -1,0 +1,83 @@
+[commands]
+
+# --- variables ---
+
+# important paths
+
+# Ez immaron startupbol kapja az erteket, ezen szintaxis szerint:
+# --startup_values=scripts_dir=y
+# scripts_dir=/srv/tomcat6/webapps/ROOT/WEB-INF/python/tcg/scripts
+
+# TODO elobb-utobb talan ennek is onnan kellene:
+pipeline_dir=/big3/Work/HunglishMondattar
+
+binaries_dir=%(pipeline_dir)s/harness.binaries
+resources_dir=%(pipeline_dir)s/resources
+
+
+# stemmer resources
+ocamorph_bin_hu=%(resources_dir)s/huntaggers.models/hu/morphtable/morphdb_hu.bin
+ocamorph_bin_en=%(resources_dir)s/huntaggers.models/en/morphtable/morphdb_en.bin
+
+# aligner resources
+aligner_dic=%(resources_dir)s/hunalign/hu-en.stem.dic
+
+# --- commands ---
+
+doc2raw_cmd: bash %(scripts_dir)s/catdoc_latin2.sh
+
+# TODO Tettem a catpdf vegere egy latin2-re konverziot, de az utf8-as hunglishcommands ettol elromlott. Eddig meg csak az volt itt jo.
+pdf2raw_cmd: bash %(scripts_dir)s/catpdf.sh
+
+# Converts to latin if necessary. (If not, it is just a copying.)
+txt2rawhu_cmd: python %(scripts_dir)s/txt2raw.py hu
+txt2rawen_cmd: python %(scripts_dir)s/txt2raw.py en
+
+srt2raw_cmd: bash %(scripts_dir)s/srt2txt.sh
+
+# TODO HACK. A latin1-es ekezeteket eldobja.
+# A 20110319 dist-upgrade elott a pipe nem kellett, mert eleve latin1-et adott.
+html2raw_cmd: html2text -nobs | ( iconv --f utf8 --t latin2 -c || true )
+
+# split the text into separate sentences
+sen_cmd: %(binaries_dir)s/huntoken -b | bash %(scripts_dir)s/clean_huntoken_output.sh
+
+# collect metadata from sen file
+# argument: sen
+meta_cmd: python %(scripts_dir)s/meta.py %(resources_dir)s/textcat.models
+
+# drop files which are incompatible with their pairs
+# arguments: ?/sen hu/meta en/meta
+filtersen_cmd: python %(scripts_dir)s/filtersen.py
+
+# tokenize the text (split the text into separate words)
+tok_cmd: perl %(scripts_dir)s/tokenizer.pl -l en
+
+# make a stem table for the text
+stemcachehu_cmd: bash %(scripts_dir)s/ocastem_preprocess.sh | %(binaries_dir)s/ocastem --bin %(ocamorph_bin_hu)s
+# ocastem puts tags at the and of the english stemtable output
+stemcacheen_cmd: bash %(scripts_dir)s/ocastem_preprocess.sh | %(binaries_dir)s/ocastem --lowercase no --bin %(ocamorph_bin_en)s | sed "s/<.*//g"
+
+# replace every word with its stem, using the previously built stemtable
+# WARNING: This small class must be compiled at the cvs checkout dir at %(cvs_dir)s,
+# unlike many compiled executables that are copied once to %(binaries_dir)s and then forgotten about.
+# Nem mukodik!
+webapp_class_dir=%(pipeline_dir)s/hunglish-webapp/output/classes
+stem_cmd: java -cp %(webapp_class_dir)s mokk.nlp.ocamorph.FileStemmer
+
+# make the sentence alignment which will output a ladder
+align_cmd: %(binaries_dir)s/hunalign %(aligner_dic)s
+
+# assemble the bisentences using the original sentences and the ladder
+align2text_cmd: python %(scripts_dir)s/ladder2text.py
+
+# quality filter
+qf_cmd: bash %(scripts_dir)s/qualityfilter.sh | python %(scripts_dir)s/enoughalpha.py
+
+# collect more metadata
+# arguments: align/qf hu/meta en/meta
+bimeta_cmd: python %(scripts_dir)s/bimeta.py
+
+# --- Translation Memory ---
+# Alternativ path, ha mar valaki parhuzamositotta a szovegeket helyettunk.
+merge_cmd: python %(scripts_dir)s/mergetm.py

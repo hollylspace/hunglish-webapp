@@ -1,0 +1,106 @@
+
+<div xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:fmt="http://java.sun.com/jsp/jstl/fmt" xmlns:fn="http://java.sun.com/jsp/jstl/functions" 
+xmlns:form="http://www.springframework.org/tags/form" xmlns:jsp="http://java.sun.com/JSP/Page" 
+xmlns:roo="urn:jsptagdir:/WEB-INF/tags" xmlns:spring="http://www.springframework.org/tags" version="2.0">
+<jsp:output omit-xml-declaration="yes"/>
+<div id="_title_div">
+
+	<spring:url value="/search" var="form_url"/>
+	<form:form action="${form_url}" method="GET" modelAttribute="bisen">
+	    
+	    <div id="roo_bisen_huSentence">
+	        Hungarian:
+	        <form:input cssStyle="width:200px" id="_huSentence_id" autofocus="autofocus" path="huSentence"/>
+	        English:
+	        <form:input cssStyle="width:200px" id="_enSentence_id" path="enSentence"/>
+	        
+	        <c:if test="${not empty genres}">in genre:
+	            <form:select cssStyle="width:150px" id="_genre_id" path="doc.genre">
+	                <form:options itemValue="id" itemLabel="description" items="${genres}"/>
+	            </form:select>
+	        </c:if>
+	        
+	        <input class="search" type="button" onclick="_huSentence_id.value=''; _enSentence_id.value=''" value="reset" />
+	        
+	        <spring:message code="button.search" var="search_button"/>
+	        <input class="search" type="submit" value="${search_button}"/>
+	        
+	    </div>
+	</form:form>
+
+	<c:if test="${not empty suggestionURL}">
+		<div id="suggest">
+			Did you mean <a href="${form_url}${suggestionURL}">${result.huSuggestionString} ${result.enSuggestionString}</a>
+		</div>
+    </c:if>
+ 
+ 
+ 			<div id="pager">
+				<c:choose>
+				<c:when test="${not empty result.hitList}">
+					<p> Results ${result.startOffset+1} - ${result.endOffset} of ${result.totalCount}; Page ${page} of ${maxPages}; 
+	                Pages: <c:forEach items="${result.paginationLinks}" var="link">
+							<c:choose>
+							<c:when test="${link.second  == page}">
+								${link.second}
+							</c:when>
+							<c:otherwise>
+								<a href="${form_url}${link.first}"> ${link.second} </a>
+							</c:otherwise>
+							</c:choose>
+	                </c:forEach></p>
+	                
+					</c:when>
+				<!-- <c:otherwise>
+						<p>No results</p>
+					</c:otherwise>  -->
+					</c:choose> 	 			            
+			</div>
+ 
+ 
+
+         <div id="results">
+        <c:if test="${not empty result.hitList}">
+            <table align="center"> <!-- width="500px" -->
+                <!-- <thead>
+                    <tr>
+                        <th>Genre</th>
+                        <th>Hungarian sentence</th>
+                        <th>English sentence</th>
+                        <th></th>
+                        <th></th>
+                        
+                    </tr>
+                </thead>  -->
+                <c:forEach items="${result.hitList}" var="pair"> <!-- pair<Document, Bisen> -->
+                    <tr>
+                        <td class="borderright"><c:out value="${fn:substring(pair.second.doc.genre, 0, 30)}"/></td>
+                        <td class="borderright">${pair.second.huSentenceView}</td>
+                        <td class="borderright">${pair.second.enSentenceView}</td>
+                        <td><input class="upvote" type="button" onclick="UpvoteController.upvote(${pair.second.id});this.disabled=true;this.style.visibility='hidden';"/></td>
+                        <td><input class="downvote" type="button" onclick="UpvoteController.downvote(${pair.second.id});this.disabled=true;this.style.visibility='hidden';"/></td>
+                         
+                    </tr>
+                </c:forEach>
+            </table>
+            </c:if>
+			</div>
+			
+            
+        <c:if test="${not empty result.hitList}">
+	                <p>Pages: <c:forEach items="${result.paginationLinks}" var="link">
+							<c:choose>
+							<c:when test="${link.second  == page}">
+								${link.second}
+							</c:when>
+							<c:otherwise>
+								<a href="${form_url}${link.first}"> ${link.second} </a>
+							</c:otherwise>
+							</c:choose>
+	                </c:forEach></p>
+        </c:if>
+
+		</div> 
+
+        
+    </div>

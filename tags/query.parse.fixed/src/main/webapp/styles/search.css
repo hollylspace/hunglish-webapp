@@ -1,0 +1,134 @@
+/* main elements */
+
+body,div,td {
+	/*font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	color: #666;*/
+	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size : 12px;
+	margin-bottom : 6px;
+	margin-left : 6px;
+	margin-right : 6px;
+	margin-top : 6px;
+	/*width: 800px;*/	
+}
+
+body {
+	background-color: #fff;
+	/*background-image: url(../images/logo.jpg);*/
+	background-position: top center;
+	background-repeat: no-repeat;
+	text-align: center;
+}
+
+#wrapper {
+	/*width:800px;
+	min-width: 800px;*/
+	/*max-width: 800px; */
+	margin-right: auto;
+	margin-left: auto;
+	/* fix max-width incompatibility in IE6 */
+	/*width:expression(document.body.clientWidth > 800? "800px": "auto" );*/
+	width: auto;
+	
+	overflow:hidden;
+	display:block;
+	/*margin-top: 90px;*/
+}
+
+/* mokk yello CD951A */
+
+input {
+	height:20px;
+}
+
+input, textarea, select {
+	border: 1px solid #8cacbb;
+}
+
+input.image {
+	border: none;
+	height: auto;
+}
+
+submit {
+	height:20px;
+}
+
+div {
+	text-align: left;
+}
+
+div .box {
+	display:block;
+	margin-left:105px;
+}
+
+	
+/* link styles */
+a:link {
+   color: #336699;
+}
+
+a:visited {
+   color: #336699;
+}
+
+a:hover {
+	color: #000000;
+}
+
+
+
+
+tr:nth-child(odd) {
+	background-color: #FFFFFF;
+	border-bottom: 1px solid #8CACBB;
+}
+
+tr:nth-child(even) {
+	background-color:  #F7F9FA; 
+	border-bottom: 1px solid #8CACBB;
+}
+
+.borderright {
+    border-right: 1px solid #8cacbb; 
+}
+
+/* table elements */
+	/*padding-top:3px; 
+	padding-right:20px; 
+	/*padding-bottom:3px; 
+	padding-left:20px; */
+
+td {
+	padding: 0.5em 1em;
+}
+
+table {
+	background: #EEEEEE;
+	margin: 2px 0 0 0;
+	border: 0px; /*solid #BBBBBB;*/
+	border-collapse: collapse;
+	width: 100%;
+	padding: 0.5em 1em;
+}
+
+input.upvote {
+	background: url('/static/images/up_arrow.png'); /*http://www.iconfinder.com/icondetails/27881/24/arrow_up_icon*/ 
+	border:0px; 
+	width:24px;
+	height:24px;
+}
+
+input.downvote {
+	background: url('/static/images/down_arrow.png'); /*http://www.iconfinder.com/icondetails/27880/24/arrow_red_up_icon*/ 
+	border:0px; 
+	width:24px;
+	height:24px;
+}
+
+input.search {
+	height:20px;
+}
+

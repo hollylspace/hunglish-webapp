@@ -1,0 +1,25 @@
+hu/sen -> hu/tok : tok
+en/sen -> en/tok : tok
+hu/tok -> hu/pos : pos_hu
+en/tok -> en/pos : pos_en
+hu/pos -> hu/cp : cp_hu (daemon)
+en/pos -> en/cp : cp_en (daemon)
+hu/pos -> hu/np : np_hu (daemon)
+en/pos -> en/np : np_en (daemon)
+hu/tok -> hu/morphtable : morphtable_hu
+en/tok -> en/morphtable : morphtable_en
+hu/tok, hu/morphtable -> hu/disambig : disambig_hu
+hu/pos, hu/disambig -> hu/poslemma : poslemma_hu
+hu/poslemma -> hu/ner : ner_hu (daemon)
+en/pos -> en/ner : ner_en (daemon)
+hu/pos, hu/disambig -> hu/stem : stem_hu
+en/pos, en/morphtable -> en/stem : stem_en
+hu/stem -> hu/moses: to_moses
+en/stem -> en/moses: to_moses
+hu/moses, en/moses -> align/giza: giza (collect)
+
+hu/stem, hu/pos -> hu/stempos: stem_pos_hu
+en/stem, en/pos -> en/stempos: stem_pos_en
+
+hu/np, en/np, align/giza -> align/np_stats_hu_en: np_stats_hu_en
+hu/np, en/np, align/giza -> align/np_stats_en_hu: np_stats_en_hu

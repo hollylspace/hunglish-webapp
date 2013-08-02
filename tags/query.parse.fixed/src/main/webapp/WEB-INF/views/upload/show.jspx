@@ -1,0 +1,84 @@
+<div xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:fmt="http://java.sun.com/jsp/jstl/fmt" xmlns:form="http://www.springframework.org/tags/form" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:spring="http://www.springframework.org/tags" version="2.0">
+    <jsp:output omit-xml-declaration="yes"/>
+    <script type="text/javascript">dojo.require('dijit.TitlePane');</script>
+    <div id="_title_div">
+        <spring:message code="label.upload" var="entity_label"/>
+        <spring:message arguments="${entity_label}" code="entity.show" var="title_msg"/>
+        <script type="text/javascript">Spring.addDecoration(new Spring.ElementDecoration({elementId : '_title_div', widgetType : 'dijit.TitlePane', widgetAttrs : {title: '${title_msg}'}})); </script>
+        <c:if test="${not empty upload}">
+            <div id="roo_upload_genre">
+                <label for="_genre_id">Genre:</label>
+                <div class="box" id="_genre_id">
+                    <c:out value="${upload.genre}"/>
+                </div>
+            </div>
+            <br/>
+            <div id="roo_upload_author">
+                <label for="_author_id">Author:</label>
+                <div class="box" id="_author_id">
+                    <c:out value="${upload.author}"/>
+                </div>
+            </div>
+            <br/>
+            <div id="roo_upload_authorName">
+                <label for="_authorName_id">Author Name:</label>
+                <div class="box" id="_authorName_id">
+                    <c:out value="${upload.authorName}"/>
+                </div>
+            </div>
+            <br/>
+            <div id="roo_upload_enTitle">
+                <label for="_enTitle_id">En Title:</label>
+                <div class="box" id="_enTitle_id">
+                    <c:out value="${upload.enTitle}"/>
+                </div>
+            </div>
+            <br/>
+            <div id="roo_upload_huTitle">
+                <label for="_huTitle_id">Hu Title:</label>
+                <div class="box" id="_huTitle_id">
+                    <c:out value="${upload.huTitle}"/>
+                </div>
+            </div>
+            <br/>
+            <div id="roo_upload_isProcessed">
+                <label for="_isProcessed_id">Is Processed:</label>
+                <div class="box" id="_isProcessed_id">
+                    <c:out value="${upload.isProcessed}"/>
+                </div>
+            </div>
+            <br/>
+            <div id="roo_upload_huUploadedFilePath">
+                <label for="_huUploadedFilePath_id">Hu Uploaded File Path:</label>
+                <div class="box" id="_huUploadedFilePath_id">
+                    <c:out value="${upload.huUploadedFilePath}"/>
+                </div>
+            </div>
+            <br/>
+            <div id="roo_upload_enUploadedFilePath">
+                <label for="_enUploadedFilePath_id">En File Uploaded Path:</label>
+                <div class="box" id="_enUploadedFilePath_id">
+                    <c:out value="${upload.enUploadedFilePath}"/>
+                </div>
+            </div>
+            <br/>
+            <div id="roo_upload_huOriginalFileName">
+                <label for="_huOriginalFileName_id">Hu Original File Name:</label>
+                <div class="box" id="_huOriginalFileName_id">
+                    <c:out value="${upload.huOriginalFileName}"/>
+                </div>
+            </div>
+            <br/>
+            <div id="roo_upload_enOriginalFileName">
+                <label for="_enOriginalFileName_id">En Original File Name:</label>
+                <div class="box" id="_enOriginalFileName_id">
+                    <c:out value="${upload.enOriginalFileName}"/>
+                </div>
+            </div>
+            <br/>
+        </c:if>
+        <c:if test="${empty upload}">
+            <spring:message arguments="${entity_label}" code="entity.not.found.single"/>
+        </c:if>
+    </div>
+</div>

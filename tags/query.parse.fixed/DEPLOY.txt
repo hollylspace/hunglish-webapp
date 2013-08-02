@@ -1,0 +1,5 @@
+/etc/init.d/tomcat6 stop
+rm -rf /srv/tomcat6/webapps/ROOT
+rm -rf /srv/tomcat6/webapps/ROOT.war
+cp /home/bpgergo/hunglish_deploy/ROOT.war /srv/tomcat6/webapps/ROOT.war
+/etc/init.d/tomcat6 start
