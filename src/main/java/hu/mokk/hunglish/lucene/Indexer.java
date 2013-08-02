@@ -75,6 +75,12 @@ public class Indexer {
 	 */
 	private Integer dbBatchSize;
 
+	/**
+	 * increase the affect of votes
+	 */
+	private Float voteFactor;
+	
+	
 	@Autowired
 	private EntityManagerFactory entityManagerFactory;
 
@@ -243,16 +249,14 @@ public class Indexer {
 		try {
 			// 1) get the next batch from database
 			em = entityManagerFactory.createEntityManager();
-			bisens = getBisensByState(
-					em,
-					BisenState
-							.waitingForOperation(BisenOperation.DELETEFROMINDEX)); // State.E.toString());
+			bisens = getBisensByState(em,
+					BisenState.waitingForOperation(BisenOperation.DELETEFROMINDEX)); 
 			result = (bisens != null) && (bisens.size() > 0);
 			// if (!result) {
 			// bisens = getBisensByState(em, State.R.toString());
 			// result = (bisens != null) && (bisens.size() > 0);
 			// }
-			logger.info("DELETE FROM INDEX get the next batch from database done resultList size:"
+			logger.debug("DELETE FROM INDEX get the next batch from database done resultList size:"
 					+ bisens.size());
 
 			if (result) {
@@ -302,7 +306,7 @@ public class Indexer {
 			bisens = getBisensByState(em,
 					BisenState.waitingForOperation(BisenOperation.ADD2INDEX)); // State.I.toString());
 			result = (bisens != null) && (bisens.size() > 0);
-			logger.info("get the next batch from database done resultList size:"
+			logger.debug("get the next batch from database done resultList size:"
 					+ bisens.size());
 
 			if (result) {
@@ -319,6 +323,9 @@ public class Indexer {
 
 				// 5) execute database batch updates
 				IndexerHelper.executeBatchUpdate(jdbcConnection, jdbcStatement);
+				
+				logger.info("A batch of bisens has been sucessfully indexed. Batch size:"+ bisens.size());
+				
 			}
 		} finally {
 			IndexerHelper.closeStatement(jdbcStatement);
@@ -334,17 +341,17 @@ public class Indexer {
 
 	private void indexBisens(List<Bisen> bisens, Statement jdbcStatement) {
 		IndexWriter indexWriter = initIndexer(true);
-		logger.info("-------clear the temporary index dir, and initialize indexWriter on the temporary directory done-----");
+		logger.debug("-------clear the temporary index dir, and initialize indexWriter on the temporary directory done-----");
 		try {
 			for (Bisen bisen : bisens) {
 				indexBisen(bisen, indexWriter, jdbcStatement);
 			}
-			logger.info("-------call indexBisen for all Bisens and store corresponding database updates in a batch jdbcStatement done-----");
-			logger.info("------indexing batch done in memory.");
+			logger.debug("-------call indexBisen for all Bisens and store corresponding database updates in a batch jdbcStatement done-----");
+			logger.debug("------indexing batch done in memory.");
 
 		} finally {
 			IndexerHelper.closeIndexWriter(indexWriter);
-			logger.info("-------temporary index written to disk done-----");
+			logger.debug("-------temporary index written to disk done-----");
 		}
 
 	}
@@ -376,13 +383,13 @@ public class Indexer {
 		try {
 
 			jdbcConnection = IndexerHelper.getJdbcConnection(dataSource);
-			logger.info("db connection initialized");
+			logger.debug("db connection initialized");
 
 			indexchanged = deleteAllFromIndex(jdbcConnection);
 			indexchanged |= addAllToIndex(jdbcConnection);
 			
 			if (indexchanged){
-				logger.info("index will be optimized");
+				logger.debug("index will be optimized");
 				optimizeIndex();				
 			}			
 		} catch (SQLException sex) {
@@ -391,7 +398,7 @@ public class Indexer {
 
 		} finally {
 			IndexerHelper.closeConnection(jdbcConnection);
-			logger.info("db connection closed");
+			logger.debug("db connection closed");
 		}
 		return indexchanged;
 	}
@@ -412,10 +419,10 @@ public class Indexer {
 		while (keepItOn) {
 			keepItOn = indexBatch(jdbcConnection);
 			result |= keepItOn;
-			logger.info("<<<<<< finished indexing batch at " + ++batchIndex
+			logger.debug("<<<<<< finished indexing batch at " + ++batchIndex
 					* dbBatchSize);
 		}
-		logger.info("-----indexing ::: all batches done--");
+		logger.debug("-----indexing ::: all batches done--");
 		return result;
 	}
 
@@ -428,13 +435,13 @@ public class Indexer {
 			while (keepItOn) {
 				keepItOn = deleteBatch(jdbcConnection, indexWriter);
 				result |= keepItOn;
-				logger.info("<<<<<< DELETE FROM INDEX batch at " + ++batchIndex
+				logger.debug("<<<<<< DELETE FROM INDEX batch at " + ++batchIndex
 						* dbBatchSize);
 
 			}
-			logger.info("-----DELETE FROM INDEX ::: all batches done--");
+			logger.debug("-----DELETE FROM INDEX ::: all batches done--");
 			IndexerHelper.closeIndexWriter(indexWriter);
-			logger.info("-----DELETE FROM INDEX ::: indexwriter closed --");
+			logger.debug("-----DELETE FROM INDEX ::: indexwriter closed --");
 		} catch (Exception e) {
 			logger.fatal("DELETE FROM INDEX Exception while optimizing index",
 					e);
@@ -454,7 +461,7 @@ public class Indexer {
 				indexReader = IndexReader.open(new SimpleFSDirectory(new File(
 						tmpIndexDir)), readOnly);
 				indexWriter.addIndexes(indexReader);
-				logger.info("------indexreader addIndexes done----");
+				logger.debug("------indexreader addIndexes done----");
 
 			} catch (Exception e) {
 				logger.error("Index merge error", e);
@@ -466,7 +473,7 @@ public class Indexer {
 				if (indexReader != null) {
 					indexReader.close();
 				}
-				logger.info("------indexreader close done----");
+				logger.debug("------indexreader close done----");
 			} catch (Exception e) {
 				logger.fatal("indexReader close error in Finally block", e);
 				throw new RuntimeException(e);
@@ -552,6 +559,14 @@ public class Indexer {
 
 	public String getSpellIndexDirHu() {
 		return spellIndexDirHu;
+	}
+
+	public Float getVoteFactor() {
+		return voteFactor;
+	}
+
+	public void setVoteFactor(Float voteFactor) {
+		this.voteFactor = voteFactor;
 	}
 	
 }

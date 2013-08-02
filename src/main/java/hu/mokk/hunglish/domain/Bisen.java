@@ -1,5 +1,6 @@
 package hu.mokk.hunglish.domain;
 
+import hu.mokk.hunglish.lucene.Indexer;
 import hu.mokk.hunglish.util.Pair;
 
 import java.sql.Timestamp;
@@ -388,11 +389,12 @@ public class Bisen {
 
 	public float getBoost(){
 		float result;
+		float voteFactor = Indexer.getInstance().getVoteFactor() == null ? 1 : Indexer.getInstance().getVoteFactor(); 
 		Long diff = (upvotes == null ? 0 : upvotes) - (downvotes == null ? 0 : downvotes);
 		if (diff >= 0) {
-			result = diff + 1;
+			result = (diff + 1) * voteFactor;
 		} else {
-			result = 1/(Math.abs(diff));
+			result = 1/(Math.abs(diff) * voteFactor);
 		}
 		Float docBoost = getDoc().getBoost(); 
 		if (docBoost != null){
