@@ -2,7 +2,6 @@ package hu.mokk.hunglish.lucene.query;
 
 import hu.mokk.hunglish.lucene.query.exception.BracketInsideQuotationException;
 import hu.mokk.hunglish.lucene.query.exception.ClosingBracketButNoOpeningException;
-import hu.mokk.hunglish.lucene.query.exception.ClosingBracketInsideQuatation;
 import hu.mokk.hunglish.lucene.query.exception.NoClosingBracketException;
 import hu.mokk.hunglish.lucene.query.exception.NoClosingQuoteException;
 import hu.mokk.hunglish.lucene.query.exception.NotValidCharacterException;
@@ -12,238 +11,315 @@ import hu.mokk.hunglish.lucene.query.exception.QueryException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import edu.emory.mathcs.backport.java.util.Arrays;
+
 /**
  * 
  * @author Peter Halacsy <peter at halacsy.com>, bpgergo@gmail.com
- *
+ * 
  */
 public class HunglishQuerySyntaxParser {
+	private static Log logger = LogFactory.getLog(HunglishQueryParser.class);
 
-    public static void main(String args[]) throws Exception {
-        HunglishQuerySyntaxParser qp = new HunglishQuerySyntaxParser();
-        System.out.println(qp.parse("-<ablak> \"ajto ablak\"", "-<don't know>"));
-    }
-    public QueryStructure parse(String hu, String en) //throws QueryException //throws Exception 
-    {
-        QueryStructure qs = new QueryStructure();
+	public static void main(String args[]) throws Exception {
+		HunglishQuerySyntaxParser qp = new HunglishQuerySyntaxParser();
+		System.out
+				.println(qp.parse("-<ablak> \"ajto ablak\"", "-<don't know>"));
+	}
 
-        if(hu != null && hu.length() > 0) {
-            parseHunglishSearchbox(hu, QueryPhrase.Field.HU, qs);
-        }
-        
-        if(en != null && en.length() > 0) {
-            parseHunglishSearchbox(en, QueryPhrase.Field.EN, qs);
-        }
-        return qs;
-    }
+	public QueryStructure parse(String hu, String en) // throws QueryException
+														// //throws Exception
+	{
+		QueryStructure qs = new QueryStructure();
 
- 
+		if (hu != null && hu.length() > 0) {
+			parseHunglishSearchbox(hu, QueryPhrase.Field.HU, qs);
+		}
 
-    void parseHunglishSearchbox(String q, QueryPhrase.Field field,
-            QueryStructure queryStructure) //throws QueryException 
-    {
-        String[] ps = new String[0];
+		if (en != null && en.length() > 0) {
+			parseHunglishSearchbox(en, QueryPhrase.Field.EN, qs);
+		}
+		return qs;
+	}
+
+	/*
+	 * private String [] ereaseAndPrimitiveParse(String q, String erease) throws
+	 * QueryException{ String q2 = q.replaceAll(erease, "");
+	 * logger.debug("parseHunglishSearchbox, query:" + q2); return
+	 * primitiveParse(q2); }
+	 */
+
+	private void parseHunglishSearchbox(String q, QueryPhrase.Field field,
+			QueryStructure queryStructure) // throws QueryException
+	{
+		logger.debug("parseHunglishSearchbox, query1:" + q);
+		String[] ps = new String[0];
+		Exception ex = null;
+		String newQuery = q;
 		try {
-			ps = primitiveParse(q);
+			ps = primitiveParse(newQuery);
+			logger.debug("parseHunglishSearchbox, primitive parse result:"
+					+ Arrays.toString(ps));
 		} catch (QueryException e) {
-			if (e instanceof NoClosingQuoteException){
-				String q2 = q.replaceAll("\"", "");
+			ps = null;
+			ex = e;
+		}
+		while (ex != null) {
+			if (ex instanceof NoClosingQuoteException) {
 				try {
-					ps = primitiveParse(q2);
-				} catch (QueryException e1) {
-					throw new RuntimeException(e);
+					newQuery = newQuery.replaceAll("\"", "");
+					logger.debug("parseHunglishSearchbox, newQuery:" + newQuery);
+					ps = primitiveParse(newQuery);
+					ex = null;
+					logger.debug("parseHunglishSearchbox, primitive parse result:"
+							+ Arrays.toString(ps));
+				} catch (QueryException e) {
+					ps = null;
+					ex = e;
+				}
+			} else if (ex instanceof NoClosingBracketException
+					|| ex instanceof OpeningBracketAfterOtherException
+					|| ex instanceof ClosingBracketButNoOpeningException
+					|| ex instanceof BracketInsideQuotationException) {
+				try {
+					newQuery = newQuery.replaceAll("[<>]", "");
+					logger.debug("parseHunglishSearchbox, newQuery-2:" + newQuery);
+					ps = primitiveParse(newQuery);
+					ex = null;
+					logger.debug("parseHunglishSearchbox, primitive parse result:"+ Arrays.toString(ps));					
+				} catch (QueryException e) {
+					ps = null;
+					ex = e;
 				}
 			} else {
-				throw new RuntimeException(e);
+				throw new RuntimeException(ex);
 			}
 		}
 
-        for (int i = 0; i < ps.length; ++i) {
-            String p = ps[i];
-
-            QueryPhrase queryPhrase = null;
+		ex = null;
+		for (int i = 0; i < ps.length; ++i) {
+			String p = ps[i];
+			QueryPhrase queryPhrase = null;
 			try {
 				queryPhrase = parseAnnotatedPhrase(p, field);
+				logger.debug("parseHunglishSearchbox, queryPhrase result:"
+						+ queryPhrase);
 			} catch (QueryException e) {
-				throw new RuntimeException(e);
+				queryPhrase = null;
+				ex = e;
 			}
 
-            queryStructure.addPhrase(queryPhrase);
-        }
-    }
+			while (ex != null) {
+				if (ex instanceof NoClosingQuoteException) {
+					try {
+						p = p.replaceAll("\"", "");
+						logger.debug("parseHunglishSearchbox, new phrase:" + p);
+						queryPhrase = parseAnnotatedPhrase(p, field);
+						ex = null;
+						logger.debug("parseHunglishSearchbox, queryPhrase result:"
+								+ queryPhrase);
+					} catch (QueryException e) {
+						ps = null;
+						ex = e;
+					}
+				} else if (ex instanceof NoClosingBracketException
+						|| ex instanceof OpeningBracketAfterOtherException
+						|| ex instanceof ClosingBracketButNoOpeningException
+						|| ex instanceof BracketInsideQuotationException) {
 
-    private QueryPhrase parseAnnotatedPhrase(String pc, QueryPhrase.Field field)
-            throws QueryException 
-        {
-        int mode = noparaMode;
+					try {
+						p = p.replaceAll("[<>]", "");
+						logger.debug("parseHunglishSearchbox, new phrase-2:" + p);
+						queryPhrase = parseAnnotatedPhrase(p, field);
+						ex = null;
+						logger.debug("parseHunglishSearchbox, queryPhrase result:"
+								+ queryPhrase);
+					} catch (QueryException e) {
+						ps = null;
+						ex = e;
+					}
+				} else {
+					throw new RuntimeException(ex);
+				}
+			}
 
-        QueryPhrase.Qualifier qualifier;
-        boolean stemmed;
+			queryStructure.addPhrase(queryPhrase);
+		}
+	}
 
-        String[] terms;
+	private QueryPhrase parseAnnotatedPhrase(String pc, QueryPhrase.Field field)
+			throws QueryException {
+		int mode = noparaMode;
 
-        String p = pc;
+		QueryPhrase.Qualifier qualifier;
+		boolean stemmed;
 
-        if (p.charAt(0) == '-') {
-            qualifier = QueryPhrase.Qualifier.MUSTNOT;
-            p = p.substring(1);
-        } else if (p.charAt(0) == '+') {
-            qualifier = QueryPhrase.Qualifier.MUST;
-            p = p.substring(1);
-        } else {
-            qualifier = QueryPhrase.Qualifier.SHOULD;
-        }
+		String[] terms;
 
-        char start = p.charAt(0);
-        char end = p.charAt(p.length() - 1);
+		String p = pc;
 
-        if (start == '<') {
-            mode = bracketMode;
+		if (p.charAt(0) == '-') {
+			qualifier = QueryPhrase.Qualifier.MUSTNOT;
+			p = p.substring(1);
+		} else if (p.charAt(0) == '+') {
+			qualifier = QueryPhrase.Qualifier.MUST;
+			p = p.substring(1);
+		} else {
+			qualifier = QueryPhrase.Qualifier.SHOULD;
+		}
 
-            if (end != '>') {
-                throw new NoClosingBracketException(p);
-                //Exception("no closing bracket: " + p);
-            }
-            p = p.substring(1, p.length() - 1);
-        } else if (start == '"') {
-            mode = quoteMode;
+		char start = p.charAt(0);
+		char end = p.charAt(p.length() - 1);
 
-            if (end != '"') {
-                throw new NoClosingQuoteException(p); 
-                //Exception("no closing quotation mark: " + p);
-            }
-            p = p.substring(1, p.length() - 1);
-        }
+		if (start == '<') {
+			mode = bracketMode;
 
-        stemmed = (mode != bracketMode);
+			if (end != '>') {
+				throw new NoClosingBracketException(p);
+				// Exception("no closing bracket: " + p);
+			}
+			p = p.substring(1, p.length() - 1);
+		} else if (start == '"') {
+			mode = quoteMode;
 
-        terms = parsePhrase(p);
-        return new QueryPhrase(field, terms, qualifier, stemmed);
-    }
+			if (end != '"') {
+				throw new NoClosingQuoteException(p);
+				// Exception("no closing quotation mark: " + p);
+			}
+			p = p.substring(1, p.length() - 1);
+		}
 
-    private String[] parsePhrase(String s) throws QueryException {
-        LinkedList<String> terms = new LinkedList<String>();
+		stemmed = (mode != bracketMode);
 
-        String q = s + " ";
+		terms = parsePhrase(p);
+		return new QueryPhrase(field, terms, qualifier, stemmed);
+	}
 
-        StringBuffer collected = new StringBuffer();
+	private String[] parsePhrase(String s) throws QueryException {
+		LinkedList<String> terms = new LinkedList<String>();
 
-        for (int i = 0; i < q.length(); ++i) {
+		String q = s + " ";
 
-            char c = q.charAt(i);
+		StringBuffer collected = new StringBuffer();
 
-            if (Character.isWhitespace(c) || (c == '-') || (c == '.')) {
+		for (int i = 0; i < q.length(); ++i) {
 
-                if (collected.length() > 0) {
+			char c = q.charAt(i);
 
-                    terms.add(collected.toString());
-                    collected = new StringBuffer();
-                }
-            } else {
+			if (Character.isWhitespace(c) || (c == '-') || (c == '.')) {
 
-                collected.append(c);
-            }
+				if (collected.length() > 0) {
 
-            if ((c == '"') || (c == '<') || (c == '>') || (c == '+')) {
-                {
-                    throw new NotValidCharacterException(Character.toString(c)) ;
-                    //Exception("not valid character found: " + c);
-                }
-            }
-        }
-        return (String[]) terms.toArray(new String[0]);
-    }
+					terms.add(collected.toString());
+					collected = new StringBuffer();
+				}
+			} else {
 
-    final static int noparaMode = 1;
+				collected.append(c);
+			}
 
-    final static int bracketMode = 2;
+			if ((c == '"') || (c == '<') || (c == '>') || (c == '+')) {
+				{
+					throw new NotValidCharacterException(Character.toString(c));
+					// Exception("not valid character found: " + c);
+				}
+			}
+		}
+		return (String[]) terms.toArray(new String[0]);
+	}
 
-    final static int quoteMode = 3;
+	final static int noparaMode = 1;
 
-    /*
-     * Tokenize the text but leaves the " - + < > signs sticked to the tokens
-     */
-    private String[] primitiveParse(final String qc) throws QueryException 
-    {
-        ArrayList<String> ps = new ArrayList<String>();
+	final static int bracketMode = 2;
 
-        String q = qc + " ";
+	final static int quoteMode = 3;
 
-        StringBuffer collected = new StringBuffer();
-        int mode = noparaMode;
+	/*
+	 * Tokenize the text but leaves the " - + < > signs sticked to the tokens
+	 */
+	private String[] primitiveParse(final String qc) throws QueryException {
+		ArrayList<String> ps = new ArrayList<String>();
 
-        for (int i = 0; i < q.length(); ++i) {
-            char c = q.charAt(i);
+		String q = qc + " ";
 
-            if ((Character.isWhitespace(c)) && (mode == noparaMode)) {
-                if (collected.length() > 0) {
-                    ps.add(collected.toString());
-                    collected = new StringBuffer();
-                }
-            } else {
-                collected.append(c);
-            }
+		StringBuffer collected = new StringBuffer();
+		int mode = noparaMode;
 
-            if (c == '"') {
-                switch (mode) {
-                case noparaMode:
-                    mode = quoteMode;
-                    break;
+		for (int i = 0; i < q.length(); ++i) {
+			char c = q.charAt(i);
 
-                case bracketMode:
-                    throw new BracketInsideQuotationException(qc); 
-                    //Exception("found bracket inside quotation mark");
+			if ((Character.isWhitespace(c)) && (mode == noparaMode)) {
+				if (collected.length() > 0) {
+					ps.add(collected.toString());
+					collected = new StringBuffer();
+				}
+			} else {
+				collected.append(c);
+			}
 
-                case quoteMode:
-                    mode = noparaMode;
-                    break;
-                }
-            }
+			if (c == '"') {
+				switch (mode) {
+				case noparaMode:
+					mode = quoteMode;
+					break;
 
-            if (c == '<') {
-                switch (mode) {
-                case noparaMode:
-                    mode = bracketMode;
-                    break;
+				case bracketMode:
+					throw new BracketInsideQuotationException(qc);
+					// Exception("found bracket inside quotation mark");
 
-                case bracketMode:
-                    throw new OpeningBracketAfterOtherException(qc); 
-                    //Exception("found opening bracket after other ");
+				case quoteMode:
+					mode = noparaMode;
+					break;
+				}
+			}
 
-                case quoteMode:
-                	throw new BracketInsideQuotationException(qc); 
-                	//Exception("found opening bracket inside quatation mark");
+			if (c == '<') {
+				switch (mode) {
+				case noparaMode:
+					mode = bracketMode;
+					break;
 
-                }
-            }
+				case bracketMode:
+					throw new OpeningBracketAfterOtherException(qc);
+					// Exception("found opening bracket after other ");
 
-            if (c == '>') {
-                switch (mode) {
-                case noparaMode:
-                    throw new ClosingBracketButNoOpeningException(qc); 
-                    //Exception("found closing bracket but no opening one");
+				case quoteMode:
+					throw new BracketInsideQuotationException(qc);
+					// Exception("found opening bracket inside quatation mark");
 
-                case bracketMode:
-                    mode = noparaMode;
-                    break;
+				}
+			}
 
-                case quoteMode:
-                    throw new ClosingBracketInsideQuatation(qc); 
-                    //Exception("found closing bracket inside quatation marks");
+			if (c == '>') {
+				switch (mode) {
+				case noparaMode:
+					throw new ClosingBracketButNoOpeningException(qc);
+					// Exception("found closing bracket but no opening one");
 
-                }
-            }
-        }
+				case bracketMode:
+					mode = noparaMode;
+					break;
 
-        if (mode != noparaMode) {
-        	//throw new Exception("no closing bracket or quotation mark");
-        	if (mode == quoteMode){
-        		throw new NoClosingQuoteException(qc);
-        	} else if (mode == bracketMode){
-        		throw new NoClosingBracketException(qc);
-        	}
-        }
-        return (String[]) ps.toArray(new String[0]);
-    }
+				case quoteMode:
+					throw new BracketInsideQuotationException(qc);
+					// Exception("found closing bracket inside quatation marks");
+
+				}
+			}
+		}
+
+		if (mode != noparaMode) {
+			// throw new Exception("no closing bracket or quotation mark");
+			if (mode == quoteMode) {
+				throw new NoClosingQuoteException(qc);
+			} else if (mode == bracketMode) {
+				throw new NoClosingBracketException(qc);
+			}
+		}
+		return (String[]) ps.toArray(new String[0]);
+	}
 
 }

@@ -120,6 +120,7 @@
 		<property name="uploadDir" value="${deployment.dir}/${indexer.uploadDir}" />
 		<property name="uploadJobPath" value="bash ${webapp.dir}/${python.dir}/${uploadjob.path} ${deployment.dir} ${webapp.dir}/${python.dir}" />
 		<property name="dbBatchSize" value="${indexer.dbBatchSize}" />
+		<property name="voteFactor" value="${indexer.voteFactor}" />
 
 	</bean>
 
