@@ -171,13 +171,13 @@ CREATE TABLE `upload` (
   `en_original_file_size` bigint(20) ,
 
   
-  `hu_raw_file_size` bigint(20) , -- the size of the file after it was converted into text; this is fiilled by control_harness.py
-  `en_raw_file_size` bigint(20) ,
+  `hu_raw_file_size` bigint(20) DEFAULT NULL, -- the size of the file after it was converted into text; this is fiilled by control_harness.py
+  `en_raw_file_size` bigint(20) DEFAULT NULL,
   
-  `hu_sentence_count` bigint(20) , -- number of sentences after sen phase; this is fiilled by control_harness.py
-  `en_sentence_count` bigint(20) ,
+  `hu_sentence_count` bigint(20) DEFAULT NULL, -- number of sentences after sen phase; this is fiilled by control_harness.py
+  `en_sentence_count` bigint(20) DEFAULT NULL,
 
-  `align_bisentence_count` bigint(20) , -- number of aligned sentences; this is fiilled by control_harness.py
+  `align_bisentence_count` bigint(20) DEFAULT NULL, -- number of aligned sentences; this is fiilled by control_harness.py
    
   `is_processed` varchar(1) not null DEFAULT 'N', -- Y = processed, N = not processed, E = processed with error, L = processed without error but the result is of bad quality, P - is currently being processed
   `hu_title` varchar(255) DEFAULT NULL, -- this is user input via the webapp (UploadController)
