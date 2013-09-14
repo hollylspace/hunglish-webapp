@@ -140,6 +140,15 @@ insert into genre (name,description) values ("mag",   "Magazine") ;
 insert into genre (name,description) values ("swdoc", "Software Documentation") ;
 insert into genre (name,description) values ("law",   "Law") ;
 insert into genre (name,description) values ("science", "Science");
+insert into genre (name,description) values ("dic', "Dictionary");
+
+insert into doc (`en_title`, 
+`author`, 
+`genre`) 
+values ('user_contribution', 
+(SELECT id FROM author where name = 'unknown'), 
+(select id from genre where name = 'dic'));
+
 
 --
 -- Table structure for table `upload`
