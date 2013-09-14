@@ -140,7 +140,7 @@ insert into genre (name,description) values ("mag",   "Magazine") ;
 insert into genre (name,description) values ("swdoc", "Software Documentation") ;
 insert into genre (name,description) values ("law",   "Law") ;
 insert into genre (name,description) values ("science", "Science");
-insert into genre (name,description) values ("dic', "Dictionary");
+insert into genre (name,description) values ("dic", "Dictionary");
 
 insert into doc (`en_title`, 
 `author`, 
